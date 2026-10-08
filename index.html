@@ -6,7 +6,7 @@
 <title>週間学習プランナー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17232f;--sub:#5b6b7a;--line:#d9e0e6;--acc:#0b6e6e;--accbg:#dff1f0;--done:#9fb0bd;--red:#d62828;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -15,8 +15,13 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
-main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
-h1,h2,.count b{font-family:"Dela Gothic One","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-weight:400}
+.app{display:flex;align-items:flex-start;max-width:1000px;margin:0 auto;padding-left:env(safe-area-inset-left,0px)}
+.side{position:sticky;top:env(safe-area-inset-top,0px);flex:none;width:72px;padding:20px 6px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--line);min-height:100vh}
+.nv{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;padding:10px 2px;border:0;border-radius:10px;background:none;color:var(--sub);font-size:.7rem}
+.nv.on{background:var(--accbg);color:var(--acc);font-weight:700}
+@media (min-width:700px){.side{width:200px;padding:20px 12px}.nv{flex-direction:row;gap:14px;padding:12px 14px;font-size:1rem}}
+main{flex:1;min-width:0;max-width:720px;padding:20px 16px 48px}
+h1,h2,.count b{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-weight:900}
 h1{font-size:1.7rem;letter-spacing:.02em;margin:0 0 4px}
 h2{font-size:1.05rem;margin:0 0 10px}
 .count{color:var(--sub);margin:0 0 20px}
@@ -34,9 +39,14 @@ button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line
 button.main{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:700}
 button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.day{border-top:1px solid var(--line);padding:10px 0}
-.day:first-child{border-top:0}
+.days{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:8px}
+.day{flex:0 0 min(88%,340px);scroll-snap-align:start;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--bg)}
 .day h3{margin:0 0 6px;font-size:.95rem}
+.dh{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:.9rem;margin-bottom:6px}
+.dh input{width:72px}
+.ib{width:40px;height:40px;padding:0;flex:none;border-radius:50%;font-size:1rem}
+.addb{width:100%;margin-top:6px;border-style:dashed}
+select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;display:block;margin-top:4px}
 .item{flex:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;border:0;background:none;padding:6px 4px;min-height:44px;color:var(--ink)}
 .sp{color:var(--sub);font-size:.8rem}
 .tm{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:10}
@@ -44,6 +54,36 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 .tmbox{background:var(--card);width:100%;max-width:720px;border-radius:14px 14px 0 0;border-top:8px solid var(--acc);padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
 .tmname{font-size:1.2rem;font-weight:700}
 .tmplan{color:var(--sub);font-size:.9rem}
+.hd0{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sum3{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin:8px 0 14px}
+.sum3 small{display:block;color:var(--sub);font-size:.8rem}
+.sum3 b{font-size:1.5rem}
+.seg{display:flex;margin:0 auto 10px;max-width:260px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0;background:var(--card)}
+.seg button.on{background:var(--acc);color:var(--bg);font-weight:700}
+#schart svg{width:100%;display:block;background:var(--bg);border-radius:8px}
+.ax{fill:var(--sub);font-size:10px}
+.axb{font-weight:700}
+.gl{stroke:var(--line);stroke-width:1}
+.col{cursor:pointer}
+.sdetail{margin:8px 0;color:var(--sub);font-size:.9rem;min-height:1.4em}
+.sh{font-size:.95rem;margin:14px 0 4px}
+.srow{display:flex;align-items:center;gap:8px;padding:4px 0}
+.srow i{width:12px;height:12px;border-radius:3px;flex:none}
+.srow span:first-of-type{flex:1}
+.step{color:var(--sub);font-size:.85rem;margin:0 0 4px}
+.blk{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.blk.dragging{opacity:.35}
+.ghost{position:fixed;z-index:30;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.3);background:var(--card);border-radius:8px;padding-right:8px}
+.day.over{outline:2px solid var(--acc);outline-offset:-2px}
+.tmtime.over{color:var(--red)}
+#tmbox{min-height:78vh;display:flex;flex-direction:column;justify-content:center;text-align:center}
+#tmbox .actions{justify-content:center}
+.clock{position:relative;width:min(78vw,340px);margin:12px auto}
+.clock svg{width:100%;display:block;transform:rotate(-90deg)}
+.clock .trk{fill:none;stroke:var(--line);stroke-width:12}
+.clock .arc{fill:none;stroke:var(--acc);stroke-width:12;stroke-linecap:round;stroke-dasharray:565.49;stroke-dashoffset:0;transition:stroke-dashoffset .4s linear}
+.clock .tmtime{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;font-size:clamp(1.8rem,9vw,2.8rem)}
 .tmtime{font-size:3rem;text-align:center;font-variant-numeric:tabular-nums;margin:10px 0 4px}
 .today{font-style:normal;background:var(--acc);color:var(--bg);border-radius:4px;padding:0 6px;margin-left:8px;font-size:.75rem}
 .day h3 span{color:var(--sub);font-weight:400;margin-left:6px}
@@ -63,11 +103,17 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 </style>
 </head>
 <body>
+<div class="app">
+<nav class="side" aria-label="メニュー">
+<button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
+<button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
+</nav>
 <main>
 <h1>週間学習プランナー</h1>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
 
-<section>
+<section id="p1">
+<p class="step">ステップ 1 / 3</p>
 <h2>条件</h2>
 <div class="row">
 <label>試験日<input type="date" id="exam" value="2027-02-25"></label>
@@ -77,37 +123,61 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 <label>平日の勉強(時間)<input type="number" id="wd" min="0" max="16" step="0.5" value="3"></label>
 <label>休日の勉強(時間)<input type="number" id="we" min="0" max="16" step="0.5" value="8"></label>
 </div>
+<div class="actions"><button id="n1" class="main">完了</button></div>
 </section>
 
-<section>
+<section id="p2" hidden>
+<p class="step">ステップ 2 / 3</p>
 <h2>科目と重み</h2>
 <div class="subj hd"><span>科目</span><span>重み(1〜5)</span><span></span></div>
 <div id="subjects"></div>
 <div class="actions">
 <button id="add">科目を追加</button>
-<button id="make" class="main">1週間の計画を作る</button>
+<button id="back2">戻る</button>
+<button id="make" class="main">完了</button>
 </div>
 <p class="note">重みが大きい科目ほど、週の時間を多く割り当てます。</p>
 </section>
 
 <section id="planbox" hidden>
+<p class="step">ステップ 3 / 3</p>
 <h2>今日から7日間の計画</h2>
-<p class="note">項目の名前を押すとタイマーが開きます。左のチェックで完了にできます。</p>
+<p class="note">左右にスワイプして日を切り替えます。項目を長押ししてドラッグすると他の日へ移せます(⋯からも移動できます)。名前でタイマー、▶で計測開始、チェックで完了です。日ごとの勉強時間は数字を直すと、その日の項目を作り直します。</p>
 <div class="bar"><i id="prog"></i></div>
 <div class="sum" id="psum"></div>
-<div id="plan"></div>
-<div class="actions"><button id="reset">チェックと計測をリセット</button></div>
+<div id="plan" class="days"></div>
+<div class="actions"><button id="reset">チェックと計測をリセット</button><button id="back3">条件・科目を直す</button></div>
+<p class="note">直して完了すると、計画は作り直されます。</p>
+</section>
+<section id="stats" hidden>
+<h2>学習記録</h2>
+<div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
+<div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
+<div id="schart"></div>
+<div class="sdetail" id="sdetail"></div>
+<h3 class="sh">科目別(表示している期間)</h3>
+<div id="slist"></div>
+<p class="note">計画の項目のタイマー(▶)で計測した時間が、ここに記録されます。</p>
 </section>
 <div class="tm" id="tm" hidden role="dialog" aria-modal="true" aria-labelledby="tmname">
 <div class="tmbox" id="tmbox">
 <div class="tmname" id="tmname"></div>
 <div class="tmplan" id="tmplan"></div>
-<div class="tmtime" id="tmtime">0:00:00</div>
-<div class="bar"><i id="tmbar"></i></div>
+<div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div class="tmtime" id="tmtime">0:00:00</div></div>
 <div class="actions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmclose">閉じる</button></div>
 </div>
 </div>
+<div class="tm" id="em" hidden role="dialog" aria-modal="true" aria-labelledby="emtitle">
+<div class="tmbox">
+<div class="tmname" id="emtitle">項目を追加</div>
+<label>科目<input type="text" id="emname" list="subjlist"></label><datalist id="subjlist"></datalist>
+<label>時間<input type="number" id="emh" min="0.5" max="16" step="0.5"></label>
+<label>日付<select id="emday"></select></label>
+<div class="actions"><button id="emsave" class="main">保存</button><button id="emdel">削除</button><button id="emcancel">キャンセル</button></div>
+</div>
+</div>
 </main>
+</div>
 
 <script>
 // ===== 設定(ここを直せば初期値が変わる) =====
@@ -123,7 +193,7 @@ var STEP=0.5;      // 時間の刻み
 var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
-var state={subjects:DEFAULT_SUBJECTS,exam:"2027-02-25",wd:3,we:8,tot:"",rwd:2,rwe:5,plan:null,done:{},spent:{},timer:null};
+var state={subjects:DEFAULT_SUBJECTS,exam:"2027-02-25",wd:3,we:8,tot:"",rwd:2,rwe:5,plan:null,done:{},spent:{},timer:null,log:{},back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
@@ -175,92 +245,153 @@ function calcNeed(){
 
 // ===== 計画を作る =====
 function fmtDate(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function newId(){return "b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function activeSubs(){return state.subjects.filter(function(s){return s[0].trim()})}
+function dayLabel(date){var dt=new Date(date+"T00:00:00");return (dt.getMonth()+1)+"月"+dt.getDate()+"日("+DAYS[dt.getDay()]+")"}
+
+// 項目(ブロック)には固有のid(x.id)をつけ、完了・計測の記録はそのidで持つ。
+// こうすると、項目を別の日に移しても記録がついてくる。
+function ensureIds(){
+  if(!state.plan)return;
+  state.plan.forEach(function(day,d){
+    if(typeof day.h!=="number")day.h=day.blocks.reduce(function(a,x){return a+x.h},0);
+    day.blocks.forEach(function(x,k){
+      if(x.id)return;
+      var old=d+"-"+k;x.id=newId(); // 旧形式("日番号-順番")の記録を引き継ぐ
+      if(state.done[old]){state.done[x.id]=true;delete state.done[old]}
+      if(state.spent[old]){state.spent[x.id]=state.spent[old];delete state.spent[old]}
+      if(state.timer&&state.timer.id===old)state.timer.id=x.id;
+    });
+  });
+}
+function locate(id){
+  var pl=state.plan||[];
+  for(var d=0;d<pl.length;d++){var bl=pl[d].blocks;for(var k=0;k<bl.length;k++)if(bl[k].id===id)return{d:d,k:k,x:bl[k]}}
+  return null;
+}
+function findBlock(id){var l=locate(id);return l&&l.x}
+function dropState(id){if(running(id))pauseTimer();delete state.done[id];delete state.spent[id];if(openId===id)closeTimer()}
+
+// 1日分の項目を決める。時間が多いほどコマを増やし、残り目標が大きい科目を長めにする
+function makeTargets(subs,total){var wsum=subs.reduce(function(a,s){return a+s[1]},0)||1;return subs.map(function(s){return total*s[1]/wsum})}
+function allocDay(h,subs,target){
+  var out=[];
+  if(h<=0||!subs.length)return out;
+  var k=Math.max(1,Math.min(subs.length,Math.floor(h/MIN_SESSION),Math.round(h/AVG_SESSION)));
+  var idx=subs.map(function(_,i){return i}).sort(function(x,y){return target[y]-target[x]}).slice(0,k);
+  var alloc={};idx.forEach(function(i){alloc[i]=Math.min(MIN_SESSION,h/k)});
+  var left=h-idx.reduce(function(a,i){return a+alloc[i]},0);
+  while(left>1e-9){
+    var step=Math.min(STEP,left),best=-1;
+    idx.forEach(function(i){
+      if(alloc[i]+step>MAX_SESSION+1e-9)return;
+      if(best<0||target[i]-alloc[i]>target[best]-alloc[best])best=i;
+    });
+    if(best<0)break;
+    alloc[best]+=step;left-=step;
+  }
+  idx.sort(function(x,y){return alloc[y]-alloc[x]}).forEach(function(i){out.push({name:subs[i][0],h:alloc[i]});target[i]-=alloc[i]});
+  return out;
+}
 
 function makePlan(){
-  var subs=state.subjects.filter(function(s){return s[0].trim()});
-  if(!subs.length)return;
-  // 今日から7日間(試験日以降は含めない)。土日は休日、それ以外は平日として時間を決める
+  var subs=activeSubs();
+  if(!subs.length)return false;
+  // 今日から7日間(試験日以降は含めない)。土日は休日、それ以外は平日の時間
   var today=new Date();today.setHours(0,0,0,0);
   var end=new Date(state.exam+"T00:00:00");
-  var days=[];
+  var plan=[];
   for(var i=0;i<7;i++){
     var dt=new Date(today);dt.setDate(today.getDate()+i);
     if(!isNaN(end.getTime())&&dt>=end)break;
     var g=dt.getDay();
-    days.push({date:fmtDate(dt),h:(g===0||g===6)?state.we:state.wd});
+    plan.push({date:fmtDate(dt),h:(g===0||g===6)?state.we:state.wd,blocks:[]});
   }
-  var total=days.reduce(function(a,x){return a+x.h},0);
-  var wsum=subs.reduce(function(a,s){return a+s[1]},0)||1;
-  var target=subs.map(function(s){return total*s[1]/wsum}); // 期間の残り目標時間
-  var plan=days.map(function(x){return{date:x.date,blocks:[]}});
-  days.forEach(function(x,d){
-    var h=x.h;
-    if(h<=0)return;
-    // その日のコマ数: 時間が多いほど増やし、最短コマ・科目数を超えない
-    var k=Math.max(1,Math.min(subs.length,Math.floor(h/MIN_SESSION),Math.round(h/AVG_SESSION)));
-    // 残り目標が大きい科目からk個選ぶ
-    var idx=subs.map(function(_,i){return i}).sort(function(x,y){return target[y]-target[x]}).slice(0,k);
-    var alloc={};idx.forEach(function(i){alloc[i]=Math.min(MIN_SESSION,h/k)});
-    var left=h-idx.reduce(function(a,i){return a+alloc[i]},0);
-    // 残りの時間を、目標との差が大きい科目に少しずつ足す(長さは重み次第で決まる)
-    while(left>1e-9){
-      var step=Math.min(STEP,left),best=-1;
-      idx.forEach(function(i){
-        if(alloc[i]+step>MAX_SESSION+1e-9)return;
-        if(best<0||target[i]-alloc[i]>target[best]-alloc[best])best=i;
-      });
-      if(best<0)break;
-      alloc[best]+=step;left-=step;
-    }
-    idx.sort(function(x,y){return alloc[y]-alloc[x]}).forEach(function(i){
-      plan[d].blocks.push({name:subs[i][0],h:alloc[i]});target[i]-=alloc[i];
-    });
-  });
-  state.plan=plan;state.done={};state.spent={};state.timer=null;closeTimer();save();renderPlan();
+  var total=plan.reduce(function(a,x){return a+x.h},0);
+  var target=makeTargets(subs,total);
+  plan.forEach(function(day){allocDay(day.h,subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)})});
+  pauseTimer();state.plan=plan;state.done={};state.spent={};closeTimer();
+  $("plan").scrollLeft=0;save();renderPlan();
+  return true;
+}
+
+// 1日の勉強時間を変えたとき、その日の項目を作り直す。
+// 自分で追加・編集した項目、完了済み、計測済みの項目は残す。
+function regenDay(d,h){
+  var day=state.plan[d],subs=activeSubs();
+  h=Math.max(0,Math.min(16,Number(h)||0));
+  day.blocks=day.blocks.filter(function(x){return x.manual||state.done[x.id]||state.spent[x.id]>0||running(x.id)});
+  day.h=h;
+  var keptSum=day.blocks.reduce(function(a,x){return a+x.h},0);
+  if(subs.length){
+    var total=state.plan.reduce(function(a,y){return a+y.h},0);
+    var target=makeTargets(subs,total);
+    state.plan.forEach(function(y){y.blocks.forEach(function(x){subs.forEach(function(s,i){if(s[0]===x.name)target[i]-=x.h})})});
+    allocDay(Math.max(0,h-keptSum),subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)});
+  }
+  save();renderPlan();
 }
 
 function renderPlan(){
   if(!state.plan)return;
-  $("planbox").hidden=false;
-  var box=$("plan");box.innerHTML="";
+  var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
   if(!state.plan.length){box.innerHTML='<div class="note">試験日が今日以前になっています。先の日付にしてください。</div>';$("prog").style.width="0";$("psum").textContent="";return}
   var all=0,ok=0,per={},todayStr=fmtDate(new Date());
   state.plan.forEach(function(day,d){
-    var blocks=day.blocks,dt=new Date(day.date+"T00:00:00");
-    var label=(dt.getMonth()+1)+"月"+dt.getDate()+"日("+DAYS[dt.getDay()]+")";
-    var sum=blocks.reduce(function(a,x){return a+x.h},0);
     var el=document.createElement("div");el.className="day";
-    el.innerHTML="<h3>"+label+(day.date===todayStr?'<em class="today">今日</em>':"")+"<span>"+sum+"時間</span></h3>";
-    blocks.forEach(function(x,k){
-      var id=d+"-"+k,on=!!state.done[id];
+    var head=document.createElement("h3");head.textContent=dayLabel(day.date);
+    if(day.date===todayStr){var t=document.createElement("em");t.className="today";t.textContent="今日";head.appendChild(t)}
+    el.appendChild(head);
+    var dh=document.createElement("div");dh.className="dh";
+    dh.innerHTML='<span>勉強時間</span><input type="number" min="0" max="16" step="0.5" aria-label="この日の勉強時間"><span>時間</span>';
+    var inp=dh.querySelector("input");inp.value=day.h;
+    inp.onchange=function(){regenDay(d,inp.value)};
+    el.appendChild(dh);
+    day.blocks.forEach(function(x){
+      var id=x.id,on=!!state.done[id],run=running(id);
       all+=x.h;if(on)ok+=x.h;
       per[x.name]=(per[x.name]||0)+x.h;
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
-      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button>';
+      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
       b.querySelector("span").textContent=x.name+" "+x.h+"時間";
       b.querySelector(".sp").textContent=spText(id);
+      var pb=b.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){state.done[id]=e.target.checked;save();renderPlan()};
-      b.querySelector(".item").onclick=function(){openTimer(id)};
+      b.querySelector(".item").onclick=function(){if(justDragged)return;openTimer(id)};
+      bindDrag(b,id);
+      pb.onclick=function(){var wasRunning=running(id);toggleTimer(id);if(!wasRunning)openTimer(id)};
+      b.querySelector(".edit").onclick=function(){openEdit(id,d)};
       el.appendChild(b);
     });
-    if(!blocks.length)el.insertAdjacentHTML("beforeend",'<div class="note">予定なし</div>');
+    if(!day.blocks.length)el.insertAdjacentHTML("beforeend",'<div class="note">予定なし</div>');
+    var ab=document.createElement("button");ab.className="addb";ab.textContent="＋ 項目を追加";
+    ab.onclick=function(){openEdit(null,d)};
+    el.appendChild(ab);
     box.appendChild(el);
   });
+  box.scrollLeft=sl;
   $("prog").style.width=(all?ok/all*100:0)+"%";
   $("psum").textContent="達成 "+ok+" / "+all+" 時間  |  "+Object.keys(per).map(function(k){return k+" "+per[k]+"h"}).join("、");
 }
 
 // ===== タイマー(ストップウォッチ) =====
-// 計測は「開始した時刻」から計算するので、画面を閉じても、再読み込みしても進み続ける。
-// 計測時間は state.spent[コマのid] に秒で保存。同時に動くタイマーは1つだけ。
+// 計測は「開始した時刻」から計算するので、画面を閉じても進み続ける。
+// 計測時間は state.spent[項目のid] に秒で保存。同時に動くタイマーは1つだけ。
 var openId=null;
 function fmtT(sec){sec=Math.floor(sec);var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),r=sec%60;return h+":"+("0"+m).slice(-2)+":"+("0"+r).slice(-2)}
 function running(id){return !!(state.timer&&state.timer.id===id)}
 function elapsed(id){return (state.spent[id]||0)+(running(id)?(Date.now()-state.timer.start)/1000:0)}
-function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"計測 "+fmtT(e):""}
-function findBlock(id){var p=String(id).split("-"),day=state.plan&&state.plan[p[0]];return day&&day.blocks[p[1]]}
-function pauseTimer(){if(state.timer){state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save()}}
+function remain(id){var x=findBlock(id);return x?x.h*3600-elapsed(id):0}
+function fmtR(sec){return sec>=0?fmtT(Math.ceil(sec)):"+"+fmtT(Math.floor(-sec))+" 超過"} // 残り時間(カウントダウン)。過ぎたら「+ ○ 超過」
+function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
+function pauseTimer(){if(state.timer){var x=findBlock(state.timer.id);if(x)logAdd(x.name,(Date.now()-state.timer.start)/1000);state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save()}}
+var notified=null; // 時間ちょうどになったときに1回だけ振動させる
+function toggleTimer(id){
+  if(running(id))pauseTimer();
+  else{pauseTimer();state.timer={id:id,start:Date.now()};notified=remain(id)<=0?id:null;save()}
+  updateTimer();renderPlan();
+}
 function openTimer(id){
   var x=findBlock(id);if(!x)return;
   openId=id;
@@ -273,19 +404,229 @@ function closeTimer(){openId=null;$("tm").hidden=true}
 function updateTimer(){
   if(openId===null)return;
   var x=findBlock(openId);if(!x){closeTimer();return}
-  var e=elapsed(openId);
-  $("tmtime").textContent=fmtT(e);
-  $("tmbar").style.width=Math.min(100,e/(x.h*3600)*100)+"%";
+  var e=elapsed(openId),rm=x.h*3600-e;
+  $("tmtime").textContent=fmtR(rm);$("tmtime").classList.toggle("over",rm<0);
+  $("tmplan").textContent="予定 "+x.h+"時間(経過 "+fmtT(e)+")";
+  var frac=Math.max(0,Math.min(1,rm/(x.h*3600)));
+  $("tmarc").style.strokeDashoffset=565.49*(1-frac);
+  $("tmarc").style.stroke=rm<0?"var(--red)":colorOf(x.name);
   $("tmtoggle").textContent=running(openId)?"一時停止":(e>=1?"再開":"開始");
 }
 function tickAll(){
-  if(state.timer){var el=document.querySelector('[data-sp="'+state.timer.id+'"]');if(el)el.textContent=spText(state.timer.id)}
+  if(state.timer){
+    var id=state.timer.id,el=document.querySelector('[data-sp="'+id+'"]');
+    if(el)el.textContent=spText(id);
+    if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}}
+  }
   updateTimer();
+  if(state.page===4&&state.timer)renderStats();
+}
+
+// ===== 項目の追加・編集・他の日への移動 =====
+var edit=null; // {id: 編集する項目のid(追加のときはnull), day: 日の番号}
+function openEdit(id,d){
+  var l=id?locate(id):null;
+  edit={id:id,day:l?l.d:d};
+  $("emtitle").textContent=id?"項目を編集・他の日へ移動":"項目を追加";
+  $("emname").value=l?l.x.name:"";
+  $("emh").value=l?l.x.h:1;
+  var sel=$("emday");sel.innerHTML="";
+  state.plan.forEach(function(day,i){var o=document.createElement("option");o.value=i;o.textContent=dayLabel(day.date);sel.appendChild(o)});
+  sel.value=edit.day;
+  $("emdel").hidden=!id;
+  var dl=$("subjlist");dl.innerHTML="";
+  activeSubs().forEach(function(s){var o=document.createElement("option");o.value=s[0];dl.appendChild(o)});
+  $("em").hidden=false;
+}
+function closeEdit(){edit=null;$("em").hidden=true}
+function saveEdit(){
+  var name=$("emname").value.trim(),h=Number($("emh").value),nd=Number($("emday").value);
+  if(!name||!(h>0))return;
+  h=Math.min(16,h);
+  if(edit.id){
+    var l=locate(edit.id);if(!l){closeEdit();return}
+    l.x.name=name;l.x.h=h;l.x.manual=true;
+    if(nd!==l.d){state.plan[l.d].blocks.splice(l.k,1);state.plan[nd].blocks.push(l.x)}
+  }else{
+    state.plan[nd].blocks.push({id:newId(),name:name,h:h,manual:true});
+  }
+  save();closeEdit();renderPlan();
+}
+function deleteEdit(){
+  var l=edit&&edit.id?locate(edit.id):null;
+  if(l){dropState(edit.id);state.plan[l.d].blocks.splice(l.k,1)}
+  save();closeEdit();renderPlan();
+}
+
+// ===== 長押ししてドラッグ → 別の日へ移動 =====
+// 項目を約0.5秒押したままにするとドラッグ開始。カードの端に寄せると横にスクロールする。
+var lp=null,drag=null,justDragged=false;
+function dayUnder(x,y){var el=document.elementFromPoint(x,y);return el&&el.closest?el.closest(".day"):null}
+function bindDrag(row,id){
+  row.addEventListener("contextmenu",function(e){e.preventDefault()});
+  row.addEventListener("pointerdown",function(e){
+    if(e.button>0||e.target.closest("input,.ib"))return;
+    if(lp)clearTimeout(lp.t);
+    lp={x:e.clientX,y:e.clientY,t:setTimeout(function(){var p=lp;lp=null;if(p)startDrag(row,id,p.x,p.y)},500)};
+  });
+}
+function startDrag(row,id,x,y){
+  var r=row.getBoundingClientRect(),g=row.cloneNode(true);
+  g.className="blk ghost";g.style.width=r.width+"px";g.style.left=r.left+"px";g.style.top=r.top+"px";
+  document.body.appendChild(g);row.classList.add("dragging");
+  $("plan").style.scrollSnapType="none";
+  drag={id:id,row:row,ghost:g,dx:x-r.left,dy:y-r.top,x:x,y:y,over:null,raf:0};
+  try{if(navigator.vibrate)navigator.vibrate(30)}catch(e){}
+  dragLoop();
+}
+function dragLoop(){
+  if(!drag)return;
+  var box=$("plan"),r=box.getBoundingClientRect();
+  if(drag.x<r.left+48)box.scrollLeft-=10;else if(drag.x>r.right-48)box.scrollLeft+=10;
+  drag.ghost.style.left=(drag.x-drag.dx)+"px";drag.ghost.style.top=(drag.y-drag.dy)+"px";
+  var d=dayUnder(drag.x,drag.y);
+  if(d!==drag.over){if(drag.over)drag.over.classList.remove("over");if(d)d.classList.add("over");drag.over=d}
+  drag.raf=requestAnimationFrame(dragLoop);
+}
+function endDrag(cancel){
+  if(lp){clearTimeout(lp.t);lp=null}
+  if(!drag)return;
+  var d=drag;drag=null;cancelAnimationFrame(d.raf);
+  d.ghost.remove();d.row.classList.remove("dragging");
+  Array.prototype.forEach.call(document.querySelectorAll(".day.over"),function(el){el.classList.remove("over")});
+  $("plan").style.scrollSnapType="";
+  justDragged=true;setTimeout(function(){justDragged=false},400);
+  if(!cancel&&d.over){
+    var nd=Array.prototype.indexOf.call($("plan").children,d.over),l=locate(d.id);
+    if(l&&nd>=0&&nd!==l.d){state.plan[l.d].blocks.splice(l.k,1);l.x.manual=true;state.plan[nd].blocks.push(l.x)}
+    save();renderPlan();
+  }
+}
+document.addEventListener("pointermove",function(e){
+  if(lp&&(Math.abs(e.clientX-lp.x)>8||Math.abs(e.clientY-lp.y)>8)){clearTimeout(lp.t);lp=null}
+  if(drag){drag.x=e.clientX;drag.y=e.clientY}
+});
+document.addEventListener("pointerup",function(e){if(drag){drag.over=dayUnder(e.clientX,e.clientY)}endDrag(false)});
+document.addEventListener("pointercancel",function(){endDrag(true)});
+document.addEventListener("touchmove",function(e){if(drag)e.preventDefault()},{passive:false});
+
+// ===== 学習記録(日・週・月) =====
+// タイマーを止めるたびに、その日・その科目の計測時間(秒)を state.log に足していく。
+// state.log = {"2026-10-07": {"数学": 3600, "物理": 1800}, ...}。計画を作り直しても消えない。
+var sMode="d",sSel=-1;
+function logAdd(name,sec){
+  if(!(sec>0))return;
+  var d=fmtDate(new Date());
+  state.log=state.log||{};state.log[d]=state.log[d]||{};
+  state.log[d][name]=(state.log[d][name]||0)+sec;
+}
+function logData(){ // 計測中の分も含めた記録
+  var L={};
+  Object.keys(state.log||{}).forEach(function(d){L[d]=Object.assign({},state.log[d])});
+  if(state.timer){
+    var x=findBlock(state.timer.id);
+    if(x){var d=fmtDate(new Date());L[d]=L[d]||{};L[d][x.name]=(L[d][x.name]||0)+(Date.now()-state.timer.start)/1000}
+  }
+  return L;
+}
+function mondayOf(dt){var m=new Date(dt);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
+function fmtH(sec){return (Math.round(sec/360)/10)+" 時間"}
+function fmtDur(sec){return sec<3600?Math.round(sec/60)+"分":(Math.round(sec/360)/10)+"時間"}
+function buckets(L,mode){ // 日=直近7日 / 週=直近8週(月曜始まり) / 月=直近6か月
+  var out=[],today=new Date();today.setHours(0,0,0,0);
+  var n=mode==="d"?7:mode==="w"?8:6;
+  for(var i=n-1;i>=0;i--){
+    var dt,key,label,sub;
+    if(mode==="d"){dt=new Date(today);dt.setDate(today.getDate()-i);key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub=DAYS[dt.getDay()]}
+    else if(mode==="w"){dt=mondayOf(today);dt.setDate(dt.getDate()-7*i);key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub="週"}
+    else{dt=new Date(today.getFullYear(),today.getMonth()-i,1);key=fmtDate(dt).slice(0,7);label=(dt.getMonth()+1)+"月";sub=""}
+    out.push({key:key,label:label,sub:sub,parts:{},total:0});
+  }
+  var idx={};out.forEach(function(b,k){idx[b.key]=k});
+  Object.keys(L).forEach(function(d){
+    var k=mode==="d"?d:mode==="w"?fmtDate(mondayOf(new Date(d+"T00:00:00"))):d.slice(0,7);
+    var b=out[idx[k]];if(!b)return;
+    Object.keys(L[d]).forEach(function(nm){b.parts[nm]=(b.parts[nm]||0)+L[d][nm];b.total+=L[d][nm]});
+  });
+  return out;
+}
+function niceTop(maxH){ // 縦軸の目盛り(5本以内)
+  if(maxH<=0)return{top:3,step:1};
+  var steps=[0.5,1,1.5,2,3,5,10,20,25,50,100,200,500,1000];
+  for(var i=0;i<steps.length;i++)if(maxH/steps[i]<=5)return{step:steps[i],top:Math.ceil(maxH/steps[i]-1e-9)*steps[i]};
+  return{step:1000,top:Math.ceil(maxH/1000)*1000};
+}
+function renderStats(){
+  var L=logData(),today=fmtDate(new Date()),ym=today.slice(0,7),tot=0,mon=0,tdy=0;
+  Object.keys(L).forEach(function(d){
+    var sum=0;Object.keys(L[d]).forEach(function(n){sum+=L[d][n]});
+    tot+=sum;if(d.slice(0,7)===ym)mon+=sum;if(d===today)tdy=sum;
+  });
+  $("sToday").textContent=tdy<3600?Math.round(tdy/60)+" 分":fmtH(tdy);
+  $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
+  Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
+
+  var bs=buckets(L,sMode);
+  if(sSel<0||sSel>=bs.length)sSel=bs.length-1;
+  var names=state.subjects.map(function(s){return s[0]});
+  bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
+  var mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total/3600)});
+  var sc=niceTop(mx),W=360,H=230,ml=46,mr=8,mt=10,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="学習時間のグラフ">';
+  for(var v=0;v<=sc.top+1e-9;v+=sc.step){
+    var y=mt+ph-v/sc.top*ph;
+    svg+='<line class="gl" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+y+'" y2="'+y+'"/><text class="ax" x="'+(ml-6)+'" y="'+(y+3)+'" text-anchor="end">'+(v===0?"0":v+"時間")+'</text>';
+  }
+  bs.forEach(function(b,i){
+    var cx=ml+slot*i+slot/2,acc=0;
+    svg+='<g class="col" data-i="'+i+'" opacity="'+(i===sSel?1:0.8)+'"><rect x="'+(ml+slot*i)+'" y="'+mt+'" width="'+slot+'" height="'+(ph+mb)+'" fill="transparent"/>';
+    names.forEach(function(nm){
+      var h=(b.parts[nm]||0)/3600;if(h<=0)return;
+      var top=mt+ph-(acc+h)/sc.top*ph;
+      svg+='<rect x="'+(cx-bw/2)+'" y="'+top+'" width="'+bw+'" height="'+(h/sc.top*ph)+'" style="fill:'+colorOf(nm)+'"/>';
+      acc+=h;
+    });
+    svg+='<text class="ax axb" x="'+cx+'" y="'+(mt+ph+16)+'" text-anchor="middle"'+(i===sSel?' style="fill:var(--ink)"':'')+'>'+b.label+'</text><text class="ax" x="'+cx+'" y="'+(mt+ph+30)+'" text-anchor="middle">'+b.sub+'</text></g>';
+  });
+  $("schart").innerHTML=svg+'</svg>';
+  Array.prototype.forEach.call($("schart").querySelectorAll(".col"),function(g){
+    g.onclick=function(){sSel=Number(g.getAttribute("data-i"));renderStats()};
+  });
+
+  // 選んだ棒の内訳
+  var sb=bs[sSel],lab=sMode==="d"?sb.label+"("+sb.sub+")":sMode==="w"?sb.label+" からの週":sb.label;
+  var det=names.filter(function(n){return sb.parts[n]>0}).map(function(n){return n+" "+fmtDur(sb.parts[n])}).join("、");
+  $("sdetail").textContent=lab+"  合計 "+fmtDur(sb.total)+(det?"  |  "+det:"");
+
+  // 科目別(表示している期間の合計)
+  var per={};bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n]})});
+  var list=Object.keys(per).sort(function(a,b){return per[b]-per[a]}),box=$("slist");box.innerHTML="";
+  if(!list.length){box.innerHTML='<div class="note">まだ記録がありません。</div>';return}
+  list.forEach(function(n){
+    var r=document.createElement("div");r.className="srow";
+    r.innerHTML='<i></i><span></span><span></span>';
+    r.querySelector("i").style.background=colorOf(n);
+    var sp=r.querySelectorAll("span");sp[0].textContent=n;sp[1].textContent=fmtDur(per[n]);
+    box.appendChild(r);
+  });
+}
+
+// ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
+function showPage(n){
+  state.page=n;save();
+  $("p1").hidden=n!==1;$("p2").hidden=n!==2;$("planbox").hidden=n!==3;$("stats").hidden=n!==4;
+  if(n<=3)state.planPage=n;
+  $("navPlan").classList.toggle("on",n!==4);$("navStats").classList.toggle("on",n===4);
+  if(n===4)renderStats();
+  window.scrollTo(0,0);
 }
 
 // ===== イベント =====
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
+ensureIds();
+if(!state.page)state.page=state.plan?3:1;
+if(state.page===3&&!state.plan)state.page=1;
 $("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
 $("exam").onchange=function(){state.exam=this.value;save();countdown();calcNeed()};
 $("wd").oninput=function(){state.wd=Number(this.value)||0;save()};
@@ -294,18 +635,30 @@ $("rwd").oninput=function(){state.rwd=this.value;save();calcNeed()};
 $("rwe").oninput=function(){state.rwe=this.value;save();calcNeed()};
 $("tot").oninput=function(){state.tot=this.value;save();calcNeed()};
 $("add").onclick=function(){state.subjects.push(["新しい科目",3]);renderSubjects();save()};
-$("make").onclick=makePlan;
-$("reset").onclick=function(){state.done={};state.spent={};state.timer=null;closeTimer();save();renderPlan()};
-$("tmtoggle").onclick=function(){
-  if(running(openId))pauseTimer();
-  else{pauseTimer();state.timer={id:openId,start:Date.now()};save()}
-  updateTimer();renderPlan();
+$("navStats").onclick=function(){showPage(4)};
+$("navPlan").onclick=function(){ // プランは、最後に開いていたステップに戻る
+  var pp=state.planPage||state.back||1;
+  if(pp>3||(pp===3&&!state.plan))pp=1;
+  showPage(pp);
 };
+Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){
+  b.onclick=function(){sMode=b.getAttribute("data-m");sSel=-1;renderStats()};
+});
+$("n1").onclick=function(){showPage(2)};
+$("back2").onclick=function(){showPage(1)};
+$("back3").onclick=function(){showPage(1)};
+$("make").onclick=function(){if(makePlan())showPage(3)};
+$("reset").onclick=function(){pauseTimer();state.done={};state.spent={};closeTimer();save();renderPlan()};
+$("tmtoggle").onclick=function(){toggleTimer(openId)};
 $("tmdone").onclick=function(){if(running(openId))pauseTimer();state.done[openId]=true;save();closeTimer();renderPlan()};
 $("tmclose").onclick=closeTimer;
 $("tm").onclick=function(e){if(e.target===this)closeTimer()};
+$("emsave").onclick=saveEdit;
+$("emdel").onclick=deleteEdit;
+$("emcancel").onclick=closeEdit;
+$("em").onclick=function(e){if(e.target===this)closeEdit()};
 setInterval(tickAll,1000);
-renderSubjects();countdown();calcNeed();renderPlan();
+renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 </script>
 </body>
 </html>
