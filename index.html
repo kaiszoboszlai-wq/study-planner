@@ -92,6 +92,19 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .fstat b{display:block;font-size:1.05rem}
 .frow{display:flex;align-items:center;gap:10px;padding:6px 0}
 .frow>span{flex:1}
+.barx{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:4px 0}
+.barx i{display:block;height:100%;background:var(--acc)}
+.ovt{font-size:.9rem;margin:4px 0}
+.wt{width:100%;border-collapse:collapse;font-size:.85rem;margin:8px 0}
+.wt th,.wt td{text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+.wt th:first-child,.wt td:first-child{text-align:left}
+.wt th{color:var(--sub);font-weight:400}
+.neg{color:#b3261e}.pos{color:var(--acc)}
+.pl{stroke:var(--ink);stroke-width:1.6;stroke-dasharray:3 2}
+.tips{background:var(--accbg);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:.9rem}
+.tips ul{margin:6px 0 10px;padding-left:20px}
+.cheer{margin-top:4px;padding:2px 10px;font-size:.85rem}
+textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;margin-top:8px}
 .step{color:var(--sub);font-size:.85rem;margin:0 0 4px}
 .blk{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .blk.dragging{opacity:.35}
@@ -122,6 +135,13 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .need .warn{color:#b3261e;font-weight:700}
 .need button{margin-top:8px}
 </style>
+<meta name="theme-color" content="#0b6e6e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学習プランナー">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFEUlEQVR4nO3cy1EbQRRG4ZaKHZRTcAAOwCvKATgXORaUiwNwsWLDzpnAGi9sYSHNo7unH7f/e74lRYkezeHSkmbYBQNuD4e33mvAdq/H4673GrosgIB96BF4sx9IxL61irvqDyFiTKkZd5UHJmTEqBH2vvQDEjNi1Wil2G8IIWOLUtO6yIQmZmxVqqFNvxWEjBq2TOvsCU3MqGVLW1lBEzNqy20sOWhiRis5rSUFTcxoLbW56KCJGb2ktBcVNDGjt9gGV4MmZlgR02Lxj76BnhaDZjrDmrUmZ4MmZli11CZbDkiZDJrpDOvmGr0KmpgxiqlW2XJAyoegmc4YzWWzTGhIuem9gJbufv66+trL928dVlKPh2Nc8n5ngPp2Y+pEn1M46R6Occ7pLhcXW461Ex37PZZ5OMYYLoKGH/sQ9Lcb0HdqmAkNKQQNKQQNKXv2z1Bxezi8MaEhhaAhhaAhhaAhhaAhhaAhhaAhxdz10L8fH4s/5teOP7uVnsf45f6++GPmYkJDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDiougnz6tH2bM91jm4Rhj6B8hXHET9Nx0evq0l5lcHo5xjbmr7WrycFI9HOMS30cPOQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKeauh/78/Nx7CUj140fvFbxjQkMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQQu7M3SNRSsELeoUs7eoCVrQZcSeoiZoMXPxeomaoIWsReshaoIWERuretQELSA1UuWoCXpwOXG+PDxUWIkNBD0wYr5G0IMi5mkEPSBinkfQgyHmZQQ9EGJeR9CDIOY4BD0AYo5H0MYRcxqCNoyY0xG0UcSch6ANIuZ8BG0MMW9D0IYQ83YEPTBivuY+aCvXBqeug5inuQ7ayp3RxFyO26Ct3BlNzGW5DNrKndHEXJ67oK3cGU3MdbgKOuXO6Jph996zK3MTdE5ENcLjvea63ASdG0XJqIm5PjdBh9A3amJuw1XQIfSJmpjbcRd0CG2jJua2XAYdwt9ocsJJCZSY23Mb9EmtqIm5D/dBh1A+amLuh6D/KRU1MfdF0Gdyo95y1R4xl0XQF1q+A0LM5RH0hBahEXMdBD2jZnDEXA9BL6gRHjHXRdArSgZIzPURdITcTxUvHwP1EXSC3CiJuR2CTpQaJzG3RdAZYiMl5vYIOtNarMTcB0FvMPdikZj7uem9AAUEbAcTGlIIGlIIGlIIGlIIGlIIGlLMBc0/MhyLtfNlLmhgC4KGFJNBW/szhmkWz5PJoEOw+WThP6vnx2zQsMtqzCEYD9ryE+eV9XOyuz0c3novIgZXtPVnPeYQQti/Ho+73ouIMcKTqWyE5//1eNwNdT30+ZPKxK5vhIgvDRX0uRGfbNRn+kUhkGofwt+9R++FAFucGmZCQwpBQ8p70Gw7MKrzdpnQkELQkPIhaLYdGM1ls0xoSLkKmimNUUy1OjmhiRrWzTXKlgNSZoNmSsOqpTYXJzRRw5q1JtlyQMpq0ExpWBHTYtSEJmr0Fttg9JaDqNFLSntJe2iiRmupzSW/KCRqtJLTWta7HESN2nIby37bjqhRy5a2ikQ5yn9fgm0lhmSRD1aY1tiqVEPFQ2RaI0XpYVj8o2+mNWLVaKVqfExrTKk59JpNU+L2rdVf7i7bA+L2ocf208R+l8A1WHj99AfEOr4if60AxgAAAABJRU5ErkJggg==">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFEUlEQVR4nO3cy1EbQRRG4ZaKHZRTcAAOwCvKATgXORaUiwNwsWLDzpnAGi9sYSHNo7unH7f/e74lRYkezeHSkmbYBQNuD4e33mvAdq/H4673GrosgIB96BF4sx9IxL61irvqDyFiTKkZd5UHJmTEqBH2vvQDEjNi1Wil2G8IIWOLUtO6yIQmZmxVqqFNvxWEjBq2TOvsCU3MqGVLW1lBEzNqy20sOWhiRis5rSUFTcxoLbW56KCJGb2ktBcVNDGjt9gGV4MmZlgR02Lxj76BnhaDZjrDmrUmZ4MmZli11CZbDkiZDJrpDOvmGr0KmpgxiqlW2XJAyoegmc4YzWWzTGhIuem9gJbufv66+trL928dVlKPh2Nc8n5ngPp2Y+pEn1M46R6Occ7pLhcXW461Ex37PZZ5OMYYLoKGH/sQ9Lcb0HdqmAkNKQQNKQQNKXv2z1Bxezi8MaEhhaAhhaAhhaAhhaAhhaAhhaAhxdz10L8fH4s/5teOP7uVnsf45f6++GPmYkJDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDiougnz6tH2bM91jm4Rhj6B8hXHET9Nx0evq0l5lcHo5xjbmr7WrycFI9HOMS30cPOQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKeauh/78/Nx7CUj140fvFbxjQkMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQQu7M3SNRSsELeoUs7eoCVrQZcSeoiZoMXPxeomaoIWsReshaoIWERuretQELSA1UuWoCXpwOXG+PDxUWIkNBD0wYr5G0IMi5mkEPSBinkfQgyHmZQQ9EGJeR9CDIOY4BD0AYo5H0MYRcxqCNoyY0xG0UcSch6ANIuZ8BG0MMW9D0IYQ83YEPTBivuY+aCvXBqeug5inuQ7ayp3RxFyO26Ct3BlNzGW5DNrKndHEXJ67oK3cGU3MdbgKOuXO6Jph996zK3MTdE5ENcLjvea63ASdG0XJqIm5PjdBh9A3amJuw1XQIfSJmpjbcRd0CG2jJua2XAYdwt9ocsJJCZSY23Mb9EmtqIm5D/dBh1A+amLuh6D/KRU1MfdF0Gdyo95y1R4xl0XQF1q+A0LM5RH0hBahEXMdBD2jZnDEXA9BL6gRHjHXRdArSgZIzPURdITcTxUvHwP1EXSC3CiJuR2CTpQaJzG3RdAZYiMl5vYIOtNarMTcB0FvMPdikZj7uem9AAUEbAcTGlIIGlIIGlIIGlIIGlIIGlLMBc0/MhyLtfNlLmhgC4KGFJNBW/szhmkWz5PJoEOw+WThP6vnx2zQsMtqzCEYD9ryE+eV9XOyuz0c3novIgZXtPVnPeYQQti/Ho+73ouIMcKTqWyE5//1eNwNdT30+ZPKxK5vhIgvDRX0uRGfbNRn+kUhkGofwt+9R++FAFucGmZCQwpBQ8p70Gw7MKrzdpnQkELQkPIhaLYdGM1ls0xoSLkKmimNUUy1OjmhiRrWzTXKlgNSZoNmSsOqpTYXJzRRw5q1JtlyQMpq0ExpWBHTYtSEJmr0Fttg9JaDqNFLSntJe2iiRmupzSW/KCRqtJLTWta7HESN2nIby37bjqhRy5a2ikQ5yn9fgm0lhmSRD1aY1tiqVEPFQ2RaI0XpYVj8o2+mNWLVaKVqfExrTKk59JpNU+L2rdVf7i7bA+L2ocf208R+l8A1WHj99AfEOr4if60AxgAAAABJRU5ErkJggg==">
+<link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
 <div class="app">
@@ -163,6 +183,7 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 <div id="subjects"></div>
 <div class="actions">
 <button id="add">科目を追加</button>
+<button id="sug">得点率から重みを提案</button>
 <button id="back2">戻る</button>
 <button id="make" class="main">完了</button>
 </div>
@@ -176,14 +197,17 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 <div class="bar"><i id="prog"></i></div>
 <div class="sum" id="psum"></div>
 <div id="plan" class="days"></div>
-<div class="actions"><button id="reset">チェックと計測をリセット</button><button id="back3">条件・科目を直す</button></div>
+<div class="actions"><button id="reset">チェックと計測をリセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
 <p class="note">直して完了すると、計画は作り直されます。</p>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、翌日以降に自動で繰り越されます</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <h2>学習記録</h2>
 <div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
+<div id="overall"></div>
 <div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
 <div id="schart"></div>
+<p class="note">黒い点線は、予定の時間です。</p>
 <div class="sdetail" id="sdetail"></div>
 <h3 class="sh">科目別(表示している期間)</h3>
 <div id="slist"></div>
@@ -205,10 +229,21 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 <div id="flist"></div>
 <p class="err" id="myNote"></p>
 </div>
+<h3 class="sh">バックアップ</h3>
+<p class="note">端末やブラウザを変えるときのために、データを文字として書き出せます。</p>
+<div class="actions"><button id="bkOut">書き出す</button><button id="bkIn">読み込む</button></div>
+<textarea id="bkText" rows="5" placeholder="書き出したデータがここに出ます。読み込むときは、ここに貼り付けてください。"></textarea>
+<p class="note" id="bkNote"></p>
 </section>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
 <div class="actions"><button id="cfok" class="main">OK</button><button id="cfno">キャンセル</button></div></div>
+</div>
+<div class="tm" id="wm" hidden role="dialog" aria-modal="true" aria-labelledby="wmt">
+<div class="tmbox"><div class="tmname" id="wmt">得点率から重みを提案</div>
+<p class="note">模試などの得点率(0〜100)を入れると、低い科目ほど重みを大きくします。空欄の科目は、いまの重みのままです。</p>
+<div id="wmrows"></div>
+<div class="actions"><button id="wmok" class="main">提案を反映</button><button id="wmno">キャンセル</button></div></div>
 </div>
 <div class="tm" id="tm" hidden role="dialog" aria-modal="true" aria-labelledby="tmname">
 <div class="tmbox" id="tmbox">
@@ -244,7 +279,7 @@ var STEP=0.5;      // 時間の刻み
 var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
-var state={subjects:DEFAULT_SUBJECTS,exam:"2027-02-25",wd:3,we:8,tot:"",rwd:2,rwe:5,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",back:1};
+var state={subjects:DEFAULT_SUBJECTS,exam:"2027-02-25",wd:3,we:8,tot:"",rwd:2,rwe:5,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",tips:false,back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}if(typeof schedulePub==="function")schedulePub(4000)}
 
@@ -361,14 +396,14 @@ function makePlan(){
   var total=plan.reduce(function(a,x){return a+x.h},0);
   var target=makeTargets(subs,total);
   plan.forEach(function(day){allocDay(day.h,subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)})});
-  pauseTimer();state.plan=plan;state.done={};state.spent={};state.credit={};closeTimer();
+  pauseTimer();if(!state.start)state.start=fmtDate(new Date());state.plan=plan;state.done={};state.spent={};state.credit={};closeTimer();
   $("plan").scrollLeft=0;save();renderPlan();
   return true;
 }
 
 // 1日の勉強時間を変えたとき、その日の項目を作り直す。
 // 自分で追加・編集した項目、完了済み、計測済みの項目は残す。
-function regenDay(d,h){
+function regenCore(d,h){
   var day=state.plan[d],subs=activeSubs();
   h=Math.max(0,Math.min(16,Number(h)||0));
   day.blocks=day.blocks.filter(function(x){return x.manual||state.done[x.id]||state.spent[x.id]>0||running(x.id)});
@@ -380,9 +415,46 @@ function regenDay(d,h){
     state.plan.forEach(function(y){y.blocks.forEach(function(x){subs.forEach(function(s,i){if(s[0]===x.name)target[i]-=x.h})})});
     allocDay(Math.max(0,h-keptSum),subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)});
   }
-  save();renderPlan();
 }
+function regenDay(d,h){regenCore(d,h);save();renderPlan()}
 
+// 日付が変わったら、計画を「今日から7日間」にずらす。
+// 過去の日の未完了の項目は、残り時間(計測した分を引く)を翌日以降に繰り越す。
+function rollForward(){
+  if(!state.plan||!state.plan.length)return false;
+  var today=fmtDate(new Date());
+  if(state.plan[0].date>=today)return false;
+  pauseTimer();
+  var past=state.plan.filter(function(day){return day.date<today});
+  var rest=state.plan.filter(function(day){return day.date>=today});
+  var carry=[];
+  past.forEach(function(day){day.blocks.forEach(function(x){
+    if(!state.done[x.id]){var rem=Math.round((x.h-(state.spent[x.id]||0)/3600)*2)/2;if(rem>=0.5)carry.push({name:x.name,h:rem})}
+    delete state.done[x.id];delete state.spent[x.id];delete state.credit[x.id];if(state.contrib)delete state.contrib[x.id];
+  })});
+  var end=new Date(state.exam+"T00:00:00"),map={},t0=new Date(),plan=[];
+  t0.setHours(0,0,0,0);rest.forEach(function(d){map[d.date]=d});
+  for(var i=0;i<7;i++){
+    var dt=new Date(t0);dt.setDate(t0.getDate()+i);
+    if(!isNaN(end.getTime())&&dt>=end)break;
+    var ds=fmtDate(dt),g=dt.getDay();
+    plan.push(map[ds]||{date:ds,h:(g===0||g===6)?state.we:state.wd,blocks:[],fresh:true});
+  }
+  state.plan=plan;
+  var touched={};
+  plan.forEach(function(day,d){
+    if(day.fresh){delete day.fresh;touched[d]=true}
+    var used=0;
+    while(carry.length&&(used===0||used+carry[0].h<=day.h+0.001)){
+      var c=carry.shift();day.blocks.push({id:newId(),name:c.name,h:c.h,manual:true,carried:true});used+=c.h;touched[d]=true;
+      if(!(day.h>0))break;
+    }
+  });
+  if(carry.length&&plan.length){var last=plan[plan.length-1];carry.forEach(function(c){last.blocks.push({id:newId(),name:c.name,h:c.h,manual:true,carried:true})})}
+  plan.forEach(function(day,d){if(touched[d])regenCore(d,day.h)});
+  save();return true;
+}
+function rollAndRender(){if(rollForward())renderPlan()}
 function renderPlan(){
   if(!state.plan)return;
   var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
@@ -405,7 +477,7 @@ function renderPlan(){
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
-      b.querySelector("span").textContent=x.name+" "+x.h+"時間";
+      b.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰越)":"");
       b.querySelector(".sp").textContent=spText(id);
       var pb=b.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -437,10 +509,15 @@ function remain(id){var x=findBlock(id);return x?x.h*3600-elapsed(id):0}
 function fmtR(sec){return sec>=0?fmtT(Math.ceil(sec)):"+"+fmtT(Math.floor(-sec))+" 超過"} // 残り時間(カウントダウン)。過ぎたら「+ ○ 超過」
 function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
 function pauseTimer(){if(state.timer){var x=findBlock(state.timer.id);if(x)logAdd(x.name,(Date.now()-state.timer.start)/1000,state.timer.id,"t");state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save()}}
-var notified=null; // 時間ちょうどになったときに1回だけ振動させる
+var AC=null; // 時間になったときの音。画面を操作した時点で使えるようにしておく
+function unlockAudio(){try{if(!AC){var C=window.AudioContext||window.webkitAudioContext;AC=new C()}if(AC.state==="suspended")AC.resume()}catch(e){}}
+function beep(){try{if(!AC)return;var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=0.15;o.start();o.stop(AC.currentTime+0.7)}catch(e){}}
+function askNotify(){try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission()}catch(e){}}
+function notifyDone(name){try{if("Notification" in window&&Notification.permission==="granted")new Notification("時間です",{body:name+" の予定時間になりました"})}catch(e){}}
+var notified=null; // 時間ちょうどになったときに1回だけ知らせる
 function toggleTimer(id){
   if(running(id))pauseTimer();
-  else{pauseTimer();state.timer={id:id,start:Date.now()};notified=remain(id)<=0?id:null;save()}
+  else{unlockAudio();askNotify();pauseTimer();state.timer={id:id,start:Date.now()};notified=remain(id)<=0?id:null;save()}
   updateTimer();renderPlan();
 }
 function openTimer(id){
@@ -464,10 +541,11 @@ function updateTimer(){
   $("tmtoggle").textContent=running(openId)?"一時停止":(e>=1?"再開":"開始");
 }
 function tickAll(){
+  if(state.plan&&state.plan.length&&state.plan[0].date<fmtDate(new Date()))rollAndRender();
   if(state.timer){
     var id=state.timer.id,el=document.querySelector('[data-sp="'+id+'"]');
     if(el)el.textContent=spText(id);
-    if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}}
+    if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}beep();var xb=findBlock(id);notifyDone(xb?xb.name:"")}
   }
   updateTimer();
   if(state.page===4&&state.timer)renderStats();
@@ -639,6 +717,44 @@ function niceTop(maxH){ // 縦軸の目盛り(5本以内)
   for(var i=0;i<steps.length;i++)if(maxH/steps[i]<=5)return{step:steps[i],top:Math.ceil(maxH/steps[i]-1e-9)*steps[i]};
   return{step:1000,top:Math.ceil(maxH/1000)*1000};
 }
+function weekTarget(){ // 1週間あたりの予定時間
+  var T=Number(state.tot),end=new Date(state.exam+"T00:00:00");
+  if(T>0&&!isNaN(end.getTime())){
+    var t0=new Date();t0.setHours(0,0,0,0);
+    var st=state.start?new Date(state.start+"T00:00:00"):t0;
+    return T/Math.max(1,(end-st)/604800000);
+  }
+  return 5*(Number(state.wd)||0)+2*(Number(state.we)||0);
+}
+function plannedH(b){ // グラフの棒ごとの予定時間
+  if(sMode==="d"){
+    var pd=(state.plan||[]).filter(function(y){return y.date===b.key})[0];
+    if(pd)return pd.h;
+    var g=new Date(b.key+"T00:00:00").getDay();
+    return (g===0||g===6)?(Number(state.we)||0):(Number(state.wd)||0);
+  }
+  return sMode==="w"?weekTarget():weekTarget()*4.33;
+}
+function r1(v){return Math.round(v*10)/10}
+function renderOverall(L,totSec){
+  var box=$("overall"),T=Number(state.tot);
+  if(!(T>0)){box.innerHTML='<div class="note">「条件」で総勉強時間を設定すると、試験日までの進み具合がここに出ます。</div>';return}
+  var done=totSec/3600,pct=Math.min(100,done/T*100);
+  var t0=new Date();t0.setHours(0,0,0,0);var end=new Date(state.exam+"T00:00:00");
+  var days=isNaN(end.getTime())?0:Math.max(0,Math.ceil((end-t0)/86400000));
+  var left=Math.max(0,T-done),need=days>0?left/days:0;
+  var rec=buckets(L,"d").reduce(function(a,b){return a+b.total},0)/3600/7;
+  var wk=weekTarget(),rows="";
+  buckets(L,"w").slice(-5).forEach(function(b){
+    var a=b.total/3600,df=a-wk;
+    rows+='<tr><td>'+b.label+' の週</td><td>'+r1(wk)+'</td><td>'+r1(a)+'</td><td class="'+(df<0?"neg":"pos")+'">'+(df>=0?"+":"")+r1(df)+'</td></tr>';
+  });
+  var verdict=days<=0?"試験日が過ぎています":rec>=need?"順調です":"遅れ気味です(1日あたり約"+r1(need-rec)+"時間 足りません)";
+  box.innerHTML='<div class="barx"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="ovt">累計 '+r1(done)+' / '+T+' 時間(<b>'+Math.round(pct)+'%</b>)・残り '+r1(left)+' 時間</div>'+
+    '<div class="ovt">1日あたり必要 '+r1(need)+' 時間 / 直近7日の平均 '+r1(rec)+' 時間 → <b>'+verdict+'</b></div>'+
+    '<table class="wt"><tr><th>週</th><th>予定(時間)</th><th>実績(時間)</th><th>差</th></tr>'+rows+'</table>';
+}
 function renderStats(){
   var L=logData(),today=fmtDate(new Date()),ym=today.slice(0,7),tot=0,mon=0,tdy=0;
   Object.keys(L).forEach(function(d){
@@ -647,13 +763,14 @@ function renderStats(){
   });
   $("sToday").textContent=tdy<3600?Math.round(tdy/60)+" 分":fmtH(tdy);
   $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
+  renderOverall(L,tot);
   Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
 
   var bs=buckets(L,sMode);
   if(sSel<0||sSel>=bs.length)sSel=bs.length-1;
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
-  var mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total/3600)});
+  var mx=0;bs.forEach(function(b){b.plan=plannedH(b);mx=Math.max(mx,b.total/3600,b.plan)});
   var sc=niceTop(mx),W=360,H=230,ml=46,mr=8,mt=10,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="学習時間のグラフ">';
   for(var v=0;v<=sc.top+1e-9;v+=sc.step){
@@ -669,6 +786,7 @@ function renderStats(){
       svg+='<rect x="'+(cx-bw/2)+'" y="'+top+'" width="'+bw+'" height="'+(h/sc.top*ph)+'" style="fill:'+colorOf(nm)+'"/>';
       acc+=h;
     });
+    if(b.plan>0){var py=mt+ph-b.plan/sc.top*ph;svg+='<line class="pl" x1="'+(cx-bw/2-3)+'" x2="'+(cx+bw/2+3)+'" y1="'+py+'" y2="'+py+'"/>'}
     svg+='<text class="ax axb" x="'+cx+'" y="'+(mt+ph+16)+'" text-anchor="middle"'+(i===sSel?' style="fill:var(--ink)"':'')+'>'+b.label+'</text><text class="ax" x="'+cx+'" y="'+(mt+ph+30)+'" text-anchor="middle">'+b.sub+'</text></g>';
   });
   $("schart").innerHTML=svg+'</svg>';
@@ -702,6 +820,7 @@ function showPage(n){
   $("navPlan").classList.toggle("on",n<=3);$("navStats").classList.toggle("on",n===4);$("navMy").classList.toggle("on",n===5);
   if(n===0){$("goal").value=state.goal||"";$("goalErr").hidden=true}
   showGoal();
+  $("tips").hidden=!!state.tips;
   if(n===4)renderStats();
   if(n===5)renderMy();
   window.scrollTo(0,0);
@@ -717,7 +836,7 @@ function askConfirm(msg,sub,okLabel,fn){$("cfmsg").textContent=msg;$("cfsub").te
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var DB=null,UU=null,myId=null,pubTimer=null,lastPub="",pushing=false;
-var pub={icon:"📚",color:"#0b6e6e",bio:"",share:false,follows:[]};
+var pub={icon:"📚",color:"#0b6e6e",bio:"",share:false,follows:[],cheer:{}};
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
 function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
 function cleanLog(raw){ // 他の人のデータは信用せず、数字と短い名前だけ通す
@@ -755,13 +874,14 @@ function paintAv(el,icon,color,url){
   if(icon)el.textContent=icon;
   else if(url){var im=document.createElement("img");im.src=url;im.alt="";el.appendChild(im)}
 }
+function cheerNow(){var c={},t=fmtDate(new Date());Object.keys(pub.cheer||{}).forEach(function(k){if(pub.cheer[k]===t)c[k]=t});return c}
 function pubBody(){
   var L={};
   if(pub.share){
     var cut=new Date();cut.setDate(cut.getDate()-120);var cs=fmtDate(cut);
     Object.keys(state.log||{}).forEach(function(d){if(d>=cs){L[d]={};Object.keys(state.log[d]).forEach(function(n){L[d][n]=Math.round(state.log[d][n])})}});
   }
-  return {icon:pub.icon,color:pub.color,bio:pub.bio,share:pub.share,follows:pub.follows,goal:pub.share?(state.goal||""):"",log:L};
+  return {icon:pub.icon,color:pub.color,bio:pub.bio,share:pub.share,follows:pub.follows,cheer:cheerNow(),goal:pub.share?(state.goal||""):"",log:L};
 }
 function schedulePub(ms){if(!DB||!myId)return;clearTimeout(pubTimer);pubTimer=setTimeout(pushPub,ms||1500)}
 async function pushPub(){
@@ -784,7 +904,7 @@ async function initShare(){
     if(snap.exists){
       var d=snap.data()||{};
       pub={icon:goodIcon(d.icon)||pub.icon,color:goodColor(d.color),bio:String(d.bio||"").slice(0,40),share:d.share===true,
-        follows:Array.isArray(d.follows)?d.follows.filter(function(x){return typeof x==="string"}).slice(0,200):[]};
+        follows:Array.isArray(d.follows)?d.follows.filter(function(x){return typeof x==="string"}).slice(0,200):[],cheer:(d.cheer&&typeof d.cheer==="object")?d.cheer:{}};
     }
     lastPub=JSON.stringify(pubBody());
     if(state.page===5)renderMy();
@@ -825,6 +945,12 @@ async function renderFollows(){
     paintAv(card.querySelector(".av"),goodIcon(d.icon),goodColor(d.color||p.color),p.avatarUrl);
     card.querySelector("b").textContent=p.name||"名前がわからない人";
     card.querySelector(".bio").textContent=String(d.bio||"").slice(0,40);
+    var cd=fmtDate(new Date()),cb=document.createElement("button");cb.className="cheer";
+    var lab=function(){cb.textContent=pub.cheer[id]===cd?"👏 応援済み":"👏 応援する"};lab();
+    cb.onclick=function(){if(pub.cheer[id]===cd)delete pub.cheer[id];else pub.cheer[id]=cd;lab();schedulePub(800)};
+    var mid=card.querySelector(".fhead>div:nth-child(2)");
+    if(d.cheer&&d.cheer[myId]===cd){var bd=document.createElement("div");bd.className="note";bd.textContent="👏 応援が届いています";mid.appendChild(bd)}
+    mid.appendChild(cb);
     card.querySelector(".un").onclick=function(){pub.follows=pub.follows.filter(function(x){return x!==id});schedulePub(500);renderMy()};
     var body=card.querySelector(".body");
     if(open){
@@ -861,6 +987,7 @@ function renderSearch(hits){
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
 ensureIds();
+rollForward();
 if(typeof state.page!=="number")state.page=state.plan?3:((state.goal||"").trim()?1:0);
 if(state.page===3&&!state.plan)state.page=1;
 $("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
@@ -913,9 +1040,51 @@ $("bio").oninput=function(){pub.bio=this.value.slice(0,40);schedulePub(2000)};
 $("share").onchange=function(){pub.share=this.checked;schedulePub(500)};
 $("fq").oninput=function(){var q=this.value.trim();if(!q||!UU){$("fres").innerHTML="";return}UU.search(q).then(renderSearch)};
 $("fref").onclick=function(){renderFollows()};
+$("tipsOk").onclick=function(){state.tips=true;$("tips").hidden=true;save()};
+$("tipsShow").onclick=function(){state.tips=false;$("tips").hidden=false;save();$("tips").scrollIntoView({block:"nearest"})};
+$("sug").onclick=function(){
+  var box=$("wmrows");box.innerHTML="";
+  state.subjects.forEach(function(s,i){
+    if(!String(s[0]).trim())return;
+    var r=document.createElement("div");r.className="frow";
+    r.innerHTML='<span></span><input type="number" min="0" max="100" placeholder="%" style="width:90px">';
+    r.querySelector("span").textContent=s[0];
+    var inp=r.querySelector("input");inp.setAttribute("data-i",i);if(typeof s[2]==="number")inp.value=s[2];
+    box.appendChild(r);
+  });
+  $("wm").hidden=false;
+};
+$("wmok").onclick=function(){
+  Array.prototype.forEach.call($("wmrows").querySelectorAll("input"),function(inp){
+    if(inp.value==="")return;
+    var i=Number(inp.getAttribute("data-i")),sc=Math.max(0,Math.min(100,Number(inp.value)||0));
+    state.subjects[i][2]=sc;
+    state.subjects[i][1]=Math.max(1,Math.min(5,Math.round(1+(100-sc)/25)));
+  });
+  $("wm").hidden=true;renderSubjects();save();
+};
+$("wmno").onclick=function(){$("wm").hidden=true};
+$("wm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("bkOut").onclick=function(){
+  var t=JSON.stringify({app:"study-planner",v:1,state:state}),ta=$("bkText"),ok=false;
+  ta.value=t;ta.focus();ta.select();
+  try{if(navigator.clipboard){navigator.clipboard.writeText(t);ok=true}}catch(e){}
+  $("bkNote").textContent=ok?"書き出しました。コピーもしています。メモアプリなどに貼って保管してください。":"書き出しました。文字を全部選んでコピーしてください。";
+};
+$("bkIn").onclick=function(){
+  var obj;try{obj=JSON.parse($("bkText").value)}catch(e){obj=null}
+  if(!obj||obj.app!=="study-planner"||!obj.state||typeof obj.state!=="object"){$("bkNote").textContent="読み込めませんでした。書き出したデータを、そのまま貼り付けてください。";return}
+  askConfirm("データを読み込みますか?","いまのデータは、貼り付けたデータで置き換わります。","読み込む",function(){
+    pauseTimer();
+    Object.keys(obj.state).forEach(function(k){if(k in state)state[k]=obj.state[k]});
+    state.timer=null;save();location.reload();
+  });
+};
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 if(typeof claude!=="undefined"&&claude&&claude.use)initShare();
+document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}
 </script>
 </body>
 </html>
