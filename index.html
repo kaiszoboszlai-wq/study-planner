@@ -164,6 +164,18 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .need b{color:var(--acc);font-size:1.15rem}
 .need .warn{color:#b3261e;font-weight:700}
 .need button{margin-top:8px}
+#splash{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .45s ease,visibility .45s;animation:spGone .01s 2.8s forwards}
+#splash.out{opacity:0;visibility:hidden}
+.sp-in{text-align:center;padding:0 24px}
+.sp-logo{display:block;margin:0 auto;animation:spPop .7s cubic-bezier(.2,.9,.3,1.25) both}
+.sp-check{stroke-dasharray:44;stroke-dashoffset:44;animation:spDraw .5s .55s ease-out forwards}
+.sp-t{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-weight:900;font-size:1.6rem;margin-top:16px;opacity:0;animation:spUp .5s .75s ease-out forwards}
+.sp-g{color:var(--sub);margin-top:8px;opacity:0;animation:spUp .5s 1s ease-out forwards}
+@keyframes spPop{from{transform:scale(.4) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes spDraw{to{stroke-dashoffset:0}}
+@keyframes spUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes spGone{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.sp-logo,.sp-t,.sp-g{animation:none;opacity:1}.sp-check{animation:none;stroke-dashoffset:0}}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -174,6 +186,11 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
+<div id="splash" aria-hidden="true"><div class="sp-in">
+<svg class="sp-logo" viewBox="0 0 100 100" width="104" height="104"><rect width="100" height="100" rx="24" fill="#0b6e6e"/><rect x="20" y="24" width="60" height="56" rx="7" fill="#fff"/><rect x="20" y="24" width="60" height="15" rx="7" fill="#e03131"/><rect x="20" y="31" width="60" height="8" fill="#e03131"/><rect x="33" y="15" width="6" height="16" rx="3" fill="#17232f"/><rect x="61" y="15" width="6" height="16" rx="3" fill="#17232f"/><path class="sp-check" d="M35 60l10 10 20-23" fill="none" stroke="#0b6e6e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="sp-t">週間学習プランナー</div>
+<div class="sp-g" id="spGoal"></div>
+</div></div>
 <div class="app">
 <nav class="side" aria-label="メニュー">
 <button class="nv" id="navToday"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg><span>今日</span></button>
@@ -1225,6 +1242,15 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
     $("gNote").textContent="比率を更新しました:"+targets.map(function(x){return x[0]+" "+x[1]}).join("、")+"(「プラン」の科目の画面で確認できます)";
   });
 };
+// アプリを開いたときのアニメーション。タップするとすぐ閉じる。動きを減らす設定の端末では短くする。
+(function(){
+  var sp=$("splash"),done=false;
+  var g=(state.goal||"").trim();if(g)$("spGoal").textContent="🎯 "+g;
+  function hide(){if(done)return;done=true;sp.classList.add("out");setTimeout(function(){sp.hidden=true;sp.style.display="none"},600)}
+  var calm=false;try{calm=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){}
+  sp.onclick=hide;
+  setTimeout(hide,calm?500:1900);
+})();
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
