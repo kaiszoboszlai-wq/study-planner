@@ -243,7 +243,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="pies" id="pies"></div>
 <h3 class="sh">記録の削除</h3>
 <p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。</p>
-<div class="actions"><button id="delAll" class="dng">すべての記録を削除</button></div>
 </section>
 <section id="today" hidden>
 <h2 id="tdTitle"></h2>
@@ -264,6 +263,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <section id="mypage" hidden>
 <h2>マイページ</h2>
 <div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
+<div id="pfEdit">
 <div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
 <div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
 <input type="file" id="pfPhoto" accept="image/*" style="display:none">
@@ -273,6 +273,9 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
 <div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
 <div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
+<div class="actions"><button id="pfDone" class="main">完了</button></div>
+</div>
+<div class="actions" id="pfView"><button id="pfEditBtn">プロフィールを編集</button></div>
 <p class="note">入力した内容は、この端末の中にだけ保存されます。</p>
 </section>
 <div class="tm" id="gm" hidden role="dialog" aria-modal="true" aria-labelledby="gmt">
@@ -1059,8 +1062,11 @@ function saveGrade(){
 // アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。外には出さない。
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
+var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
 function renderMy(){
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
+  if(pfEditing===null)pfEditing=!(p.set||p.name||p.school||p.photo||p.grade||p.age);
+  $("pfEdit").hidden=!pfEditing;$("pfView").hidden=pfEditing;
   var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
   if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
   $("pfPhotoDel").hidden=!p.photo;
@@ -1088,9 +1094,8 @@ load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
 ensureIds();
 rollForward();
-if(typeof state.page!=="number")state.page=state.plan?3:((state.goal||"").trim()?1:0);
+state.page=state.plan?3:((state.goal||"").trim()?1:0); // アプリを開いたときは「プラン」から。計画がまだなければ、設定の途中から
 if(state.page===3&&!state.plan)state.page=1;
-if(state.plan&&state.page===3)state.page=6; // 計画があるときは、開いたらまず「今日」を出す
 $("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
 $("exam").onchange=function(){state.exam=this.value;save();countdown();calcNeed()};
 $("wd").oninput=function(){state.wd=Number(this.value)||0;save()};
@@ -1142,6 +1147,8 @@ $("emsave").onclick=saveEdit;
 $("emdel").onclick=deleteEdit;
 $("emcancel").onclick=closeEdit;
 $("em").onclick=function(e){if(e.target===this)closeEdit()};
+$("pfEditBtn").onclick=function(){pfEditing=true;renderMy()};
+$("pfDone").onclick=function(){pfEditing=false;state.profile.set=true;save();renderMy()};
 $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
@@ -1193,9 +1200,6 @@ $("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜�
 $("delSel").onclick=function(){
   var ls=lastSel;if(!ls)return;
   askConfirm(ls.label+" の記録を削除しますか?","削除した記録は元に戻せません。","削除する",function(){deleteRecords(bucketMatch(ls.mode,ls.key));renderStats()});
-};
-$("delAll").onclick=function(){
-  askConfirm("すべての学習記録を削除しますか?","今までの記録がすべて消えます。元に戻せません。","すべて削除する",function(){deleteRecords(function(){return true});renderStats()});
 };
 $("navToday").onclick=function(){showPage(6)};
 $("navGrades").onclick=function(){showPage(7)};
