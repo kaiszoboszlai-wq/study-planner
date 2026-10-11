@@ -106,6 +106,11 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .tcard .item{font-size:1.05rem;font-weight:700}
 .tcard .ib{width:48px;height:48px;font-size:1.2rem}
 .tcard.on .item span{color:var(--done);text-decoration:line-through}
+.rk{display:flex;align-items:center;gap:6px}
+.rk input{width:90px;min-width:0}
+.gmr{display:grid;grid-template-columns:1fr 62px 12px 62px 32px;gap:6px;align-items:center;margin:6px 0}
+.gmr input{min-width:0;padding:6px 4px}
+.gmr button{padding:4px 0}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .chips button{padding:4px 12px;font-size:.85rem;border-radius:16px}
 .chips button.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
@@ -274,9 +279,10 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="tmbox"><div class="tmname" id="gmt">成績を追加</div>
 <div class="fld"><label>名前(模試・テスト)<input type="text" id="gmName" maxlength="30" placeholder="例 前期中間テスト"></label></div>
 <div class="fld"><label>日付<input type="date" id="gmDate"></label></div>
-<div class="fld"><label>順位(わかれば)<input type="number" id="gmRank" min="1" placeholder="例 28"></label></div>
-<div class="lb">科目ごとの点数 / 満点(入れた科目だけ記録します)</div>
+<div class="fld"><span class="lb">順位(任意)</span><div class="rk"><input type="number" id="gmRank" min="1" placeholder="例 28" aria-label="順位"><span>位 /</span><input type="number" id="gmOf" min="1" placeholder="例 120" aria-label="何人中"><span>人中</span></div></div>
+<div class="lb">科目ごとの点数 / 満点(科目名は自由に変えられます。点数を入れた科目だけ記録します)</div>
 <div id="gmRows"></div>
+<div class="actions"><button id="gmAddRow">＋ 科目を追加</button></div>
 <p class="err" id="gmErr"></p>
 <div class="actions"><button id="gmSave" class="main">保存</button><button id="gmDel" class="dng" hidden>削除</button><button id="gmNo">キャンセル</button></div></div>
 </div>
@@ -929,6 +935,12 @@ function renderToday(){
 }
 
 // ===== 模試・テストの成績 =====
+function gColor(nm){ // プランで色を決めた科目はその色。ない科目は名前から自動で色を決める
+  var n=String(nm).trim();
+  if((state.subjColors&&state.subjColors[n])||SUBJECT_COLORS[n])return colorOf(n);
+  var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
+  return PALETTE[h%PALETTE.length];
+}
 // state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。得点率(%)=s/m×100
 var gSel="all",gEdit=null,gmRows=[];
 function gSorted(){return (state.exams||[]).slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0})}
@@ -939,14 +951,14 @@ function gLine(recs,sel){ // 得点率(%)の折れ線グラフ
   var X=function(i){return ml+(n>1?pw*i/(n-1):pw/2)},Y=function(p){return mt+ph-p/100*ph};
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="得点率のグラフ">';
   [0,25,50,75,100].forEach(function(v){svg+='<line class="gl0" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="ax" x="'+(ml-6)+'" y="'+(Y(v)+3)+'" text-anchor="end">'+v+'%</text>'});
-  var names=[];state.subjects.forEach(function(x){names.push(x[0])});
+  var names=[];
   last.forEach(function(e){Object.keys(e.sc).forEach(function(k){if(names.indexOf(k)<0)names.push(k)})});
   names.filter(function(nm){return sel==="all"||sel===nm}).forEach(function(nm){
     var pts=[];last.forEach(function(e,i){if(e.sc[nm])pts.push({x:X(i),y:Y(gPct(e.sc[nm])),p:gPct(e.sc[nm])})});
     if(!pts.length)return;
-    if(pts.length>1)svg+='<polyline fill="none" stroke-width="2.5" style="stroke:'+colorOf(nm)+'" points="'+pts.map(function(q){return q.x+","+q.y}).join(" ")+'"/>';
+    if(pts.length>1)svg+='<polyline fill="none" stroke-width="2.5" style="stroke:'+gColor(nm)+'" points="'+pts.map(function(q){return q.x+","+q.y}).join(" ")+'"/>';
     pts.forEach(function(q){
-      svg+='<circle cx="'+q.x+'" cy="'+q.y+'" r="4" style="fill:'+colorOf(nm)+'"/>';
+      svg+='<circle cx="'+q.x+'" cy="'+q.y+'" r="4" style="fill:'+gColor(nm)+'"/>';
       if(sel!=="all")svg+='<text class="ax" x="'+q.x+'" y="'+(q.y-8)+'" text-anchor="middle">'+Math.round(q.p)+'</text>';
     });
   });
@@ -963,12 +975,12 @@ function gRank(recs){ // 順位のグラフ(上ほど良い)
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="順位のグラフ"><text class="ax" x="'+ml+'" y="10">順位(上ほど良い)</text>';
   svg+='<line class="gl0" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+(mt+ph)+'" y2="'+(mt+ph)+'"/>';
   if(n>1)svg+='<polyline fill="none" stroke-width="2.5" style="stroke:var(--acc)" points="'+r.map(function(e,i){return X(i)+","+Y(e.rank)}).join(" ")+'"/>';
-  r.forEach(function(e,i){svg+='<circle cx="'+X(i)+'" cy="'+Y(e.rank)+'" r="4" style="fill:var(--acc)"/><text class="ax" x="'+X(i)+'" y="'+(Y(e.rank)-8)+'" text-anchor="middle">'+e.rank+'位</text><text class="ax" x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle">'+gDate(e.date)+'</text>'});
+  r.forEach(function(e,i){svg+='<circle cx="'+X(i)+'" cy="'+Y(e.rank)+'" r="4" style="fill:var(--acc)"/><text class="ax" x="'+X(i)+'" y="'+(Y(e.rank)-8)+'" text-anchor="middle">'+e.rank+(e.of>0?"/"+e.of:"")+'位</text><text class="ax" x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle">'+gDate(e.date)+'</text>'});
   return svg+'</svg>';
 }
 function renderGrades(){
   var recs=gSorted(),chips=$("gchips");chips.innerHTML="";
-  var names=[];state.subjects.forEach(function(x){if(String(x[0]).trim())names.push(x[0])});
+  var names=[];
   recs.forEach(function(e){Object.keys(e.sc).forEach(function(k){if(names.indexOf(k)<0)names.push(k)})});
   if(gSel!=="all"&&names.indexOf(gSel)<0)gSel="all";
   ["all"].concat(names).forEach(function(nm){
@@ -983,13 +995,13 @@ function renderGrades(){
     var idx=recs.indexOf(e),card=document.createElement("div");card.className="gr";
     card.innerHTML='<h4></h4><div class="gl2"></div><div class="rows"></div><div class="actions"><button class="ed">編集</button></div>';
     card.querySelector("h4").textContent=e.name;
-    card.querySelector(".gl2").textContent=gDate(e.date)+(e.rank>0?"  順位 "+e.rank+"位":"");
+    card.querySelector(".gl2").textContent=gDate(e.date)+(e.rank>0?"  順位 "+e.rank+"位"+(e.of>0?" / "+e.of+"人中":""):"");
     var rows=card.querySelector(".rows");
     Object.keys(e.sc).forEach(function(nm){
       var p=gPct(e.sc[nm]),prev=null;
       for(var j=idx-1;j>=0;j--){if(recs[j].sc[nm]){prev=gPct(recs[j].sc[nm]);break}}
       var r=document.createElement("div");r.className="gl";r.innerHTML="<i></i><span></span><span></span><span></span>";
-      r.querySelector("i").style.background=colorOf(nm);
+      r.querySelector("i").style.background=gColor(nm);
       var sp=r.querySelectorAll("span");sp[0].textContent=nm;
       sp[1].textContent=e.sc[nm].s+" / "+e.sc[nm].m+"("+Math.round(p)+"%)";
       if(prev!==null){var df=Math.round(p-prev);sp[2].textContent=(df>0?"▲+":df<0?"▼":"±")+df;sp[2].className=df>0?"up":df<0?"dn":""}
@@ -1000,38 +1012,48 @@ function renderGrades(){
   });
   if(!recs.length)box.innerHTML='<div class="note">まだ成績がありません。「成績を追加」から入れてみましょう。</div>';
 }
+function addGmRow(name,s,m){ // 成績の入力欄に、科目の行を1つ足す(科目名は自由)
+  var r=document.createElement("div");r.className="gmr";
+  r.innerHTML='<input type="text" maxlength="12" placeholder="科目名" aria-label="科目名"><input type="number" min="0" placeholder="点数" aria-label="点数"><span>/</span><input type="number" min="1" placeholder="満点" aria-label="満点"><button aria-label="この科目を削除">×</button>';
+  var ins=r.querySelectorAll("input");
+  ins[0].value=name;ins[1].value=s;ins[2].value=m;
+  var o={n:ins[0],s:ins[1],m:ins[2]};gmRows.push(o);
+  r.querySelector("button").onclick=function(){gmRows=gmRows.filter(function(x){return x!==o});if(r.parentNode)r.parentNode.removeChild(r)};
+  $("gmRows").appendChild(r);
+}
 function openGrade(id){
   var e=id?(state.exams||[]).filter(function(x){return x.id===id})[0]:null;
   gEdit=e?e.id:null;
   $("gmt").textContent=e?"成績を編集":"成績を追加";
-  $("gmName").value=e?e.name:"";$("gmDate").value=e?e.date:fmtDate(new Date());$("gmRank").value=e&&e.rank>0?e.rank:"";
+  $("gmName").value=e?e.name:"";$("gmDate").value=e?e.date:fmtDate(new Date());
+  $("gmRank").value=e&&e.rank>0?e.rank:"";$("gmOf").value=e&&e.of>0?e.of:"";
   $("gmErr").textContent="";
-  var names=[];state.subjects.forEach(function(x){if(String(x[0]).trim())names.push(x[0])});
-  if(e)Object.keys(e.sc).forEach(function(k){if(names.indexOf(k)<0)names.push(k)});
-  var box=$("gmRows");box.innerHTML="";gmRows=[];
-  names.forEach(function(nm){
-    var r=document.createElement("div");r.className="frow";
-    r.innerHTML='<span></span><input type="number" min="0" placeholder="点数" style="width:80px"><span style="flex:none">/</span><input type="number" min="1" placeholder="満点" style="width:80px">';
-    r.querySelector("span").textContent=nm;
-    var ins=r.querySelectorAll("input"),o=e&&e.sc[nm];
-    ins[0].value=o?o.s:"";ins[1].value=o?o.m:100;
-    gmRows.push({name:nm,s:ins[0],m:ins[1]});box.appendChild(r);
-  });
+  $("gmRows").innerHTML="";gmRows=[];
+  if(e){Object.keys(e.sc).forEach(function(nm){addGmRow(nm,e.sc[nm].s,e.sc[nm].m)})}
+  else{ // 新しく追加するときは、前回の成績の科目を出発点にする(プランの科目とは別。自由に直せる)
+    var recs=gSorted(),prev=recs.length?recs[recs.length-1]:null;
+    if(prev&&Object.keys(prev.sc).length)Object.keys(prev.sc).forEach(function(nm){addGmRow(nm,"",prev.sc[nm].m)});
+    else["国語","数学","英語","理科","社会"].forEach(function(nm){addGmRow(nm,"",100)});
+  }
   $("gmDel").hidden=!e;$("gm").hidden=false;
 }
 function saveGrade(){
-  var name=$("gmName").value.trim(),date=$("gmDate").value,rank=Math.round(Number($("gmRank").value))||0,sc={};
+  var name=$("gmName").value.trim(),date=$("gmDate").value,rank=Math.round(Number($("gmRank").value))||0,of=Math.round(Number($("gmOf").value))||0,sc={},dup=false;
   gmRows.forEach(function(r){
-    if(r.s.value==="")return;
-    var m=Number(r.m.value),sv=Number(r.s.value);
-    if(m>0&&sv>=0)sc[r.name]={s:Math.min(sv,m*10),m:m};
+    var nm=r.n.value.trim(),m=Number(r.m.value),sv=Number(r.s.value);
+    if(!nm||r.s.value==="")return;
+    if(sc[nm])dup=true;
+    if(m>0&&sv>=0)sc[nm]={s:Math.min(sv,m*10),m:m};
   });
   if(!name||!date){$("gmErr").textContent="名前と日付を入れてください。";return}
+  if(dup){$("gmErr").textContent="同じ科目名が2つあります。";return}
+  if(rank>0&&of>0&&rank>of){$("gmErr").textContent="順位は、人数以内の数字にしてください。";return}
   if(!Object.keys(sc).length&&!(rank>0)){$("gmErr").textContent="点数か順位を、1つ以上入れてください。";return}
-  var rec={id:gEdit||newId(),date:date,name:name.slice(0,30),rank:rank>0?rank:0,sc:sc};
+  var rec={id:gEdit||newId(),date:date,name:name.slice(0,30),rank:rank>0?rank:0,of:(rank>0&&of>0)?of:0,sc:sc};
   state.exams=(state.exams||[]).filter(function(x){return x.id!==rec.id});
   state.exams.push(rec);save();$("gm").hidden=true;renderGrades();
 }
+
 
 // ===== マイページ(プロフィール) =====
 // アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。外には出さない。
@@ -1180,6 +1202,7 @@ $("navGrades").onclick=function(){showPage(7)};
 $("tdPlan").onclick=function(){showPage(3)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
+$("gmAddRow").onclick=function(){addGmRow("","","100")};
 $("gmNo").onclick=function(){$("gm").hidden=true};
 $("gm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("gmDel").onclick=function(){
