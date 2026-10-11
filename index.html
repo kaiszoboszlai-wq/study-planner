@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -689,6 +689,15 @@ function rollback(id,kind){
     var old=(state.spent[id]||0)-tSum,l=locate(id);
     if(old>0.5&&l)subLogAny(l.x.name,old);
   }
+}
+function logData(){ // 計測中の分も含めた記録
+  var L={};
+  Object.keys(state.log||{}).forEach(function(d){L[d]=Object.assign({},state.log[d])});
+  if(state.timer){
+    var x=findBlock(state.timer.id);
+    if(x){var d=fmtDate(new Date());L[d]=L[d]||{};L[d][x.name]=(L[d][x.name]||0)+(Date.now()-state.timer.start)/1000}
+  }
+  return L;
 }
 function mondayOf(dt){var m=new Date(dt);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
 function fmtH(sec){return (Math.round(sec/360)/10)+" 時間"}
