@@ -32,9 +32,10 @@ input[type=date],input[type=number],input[type=text]{font:inherit;color:var(--in
 label input{display:block;margin-top:4px}
 input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;min-height:2.4em}
 .row{display:flex;flex-direction:column;gap:12px}
-.subj{display:grid;grid-template-columns:1fr 96px 36px;gap:8px;margin-bottom:8px;align-items:center}
+.subj{display:grid;grid-template-columns:34px 1fr 88px 34px;gap:6px;margin-bottom:8px;align-items:center}
 .subj.hd{font-size:.8rem;color:var(--sub)}
-.subj.hd span{white-space:nowrap}
+.subj.hd span{white-space:nowrap;font-size:.72rem}
+.subj input[type=color]{width:34px;height:36px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
 button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px}
 button.main{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:700}
 button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
@@ -157,49 +158,50 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
-<h2>目標</h2>
+<h2>目標と試験日</h2>
+<div class="row">
 <label>あなたの目標を入力しよう<input type="text" id="goal" maxlength="60" placeholder="例 東京大学 理科一類に合格する"></label>
-<p class="err" id="goalErr" hidden>目標を入力してください。</p>
+<label>試験日<input type="date" id="exam" value=""></label>
+</div>
+<p class="err" id="goalErr" hidden>目標と試験日を入力してください。</p>
 <div class="actions"><button id="n0" class="main">完了</button></div>
 </section>
 <section id="p1">
 <p class="step">ステップ 2 / 4</p>
 <h2>条件</h2>
 <div class="row">
-<label>試験日<input type="date" id="exam" value="2027-02-25"></label>
-<label>試験までに必要な総勉強時間を設定しよう!!<input type="number" id="tot" min="0" step="10" placeholder="例 1500"></label>
-<label>平日 : 休日 の比率<span class="pair"><input type="number" id="rwd" min="0.5" step="0.5" value="2"><span>:</span><input type="number" id="rwe" min="0.5" step="0.5" value="5"></span></label>
+<label>1週間に必要な総勉強時間を設定しよう!!<input type="number" id="tot" min="0" step="1" placeholder="例 40"></label>
+<label>平日：休日の勉強時間の比率<span class="pair"><input type="number" id="rwd" min="0.5" step="0.5" value="3"><span>：</span><input type="number" id="rwe" min="0.5" step="0.5" value="4"></span></label>
 <div class="need" id="need" hidden></div>
 <label>平日の勉強(時間)<input type="number" id="wd" min="0" max="16" step="0.5" value="3"></label>
-<label>休日の勉強(時間)<input type="number" id="we" min="0" max="16" step="0.5" value="8"></label>
+<label>休日の勉強(時間)<input type="number" id="we" min="0" max="16" step="0.5" value="6"></label>
 </div>
 <div class="actions"><button id="n1" class="main">完了</button></div>
 </section>
 
 <section id="p2" hidden>
 <p class="step">ステップ 3 / 4</p>
-<h2>科目と重み</h2>
-<div class="subj hd"><span>科目</span><span>重み(1〜5)</span><span></span></div>
+<h2>科目、教材の勉強時間の比率をそれぞれ設定しよう</h2>
+<div class="subj hd"><span></span><span>科目、教材</span><span>勉強時間の比率</span><span></span></div>
 <div id="subjects"></div>
 <div class="actions">
 <button id="add">科目を追加</button>
-<button id="sug">得点率から重みを提案</button>
+<button id="sug">得点率から比率を提案</button>
 <button id="back2">戻る</button>
 <button id="make" class="main">完了</button>
 </div>
-<p class="note">重みが大きい科目ほど、週の時間を多く割り当てます。</p>
+<p class="note">比率(1〜7)が大きいほど、勉強時間を多く割り当てます。</p>
 </section>
 
 <section id="planbox" hidden>
 <p class="step">ステップ 4 / 4</p>
 <h2>今日から7日間の計画</h2>
-<p class="note">左右にスワイプして日を切り替えます。項目を長押ししてドラッグすると他の日へ移せます(⋯からも移動できます)。名前でタイマー、▶で計測開始、チェックで完了です。日ごとの勉強時間は数字を直すと、その日の項目を作り直します。</p>
+<p class="note">左右にスワイプして日を切り替えられます。</p>
 <div class="bar"><i id="prog"></i></div>
 <div class="sum" id="psum"></div>
 <div id="plan" class="days"></div>
-<div class="actions"><button id="reset">チェックと計測をリセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
-<p class="note">直して完了すると、計画は作り直されます。</p>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、翌日以降に自動で繰り越されます</li></ul><button id="tipsOk" class="main">わかった</button></div>
+<div class="actions"><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <h2>学習記録</h2>
@@ -215,33 +217,25 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
-<p class="note" id="myOff" hidden>この画面では、アカウントやフォローの機能は使えません。Claudeで開いたこのページで使えます。</p>
-<div id="myBody" hidden>
-<div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meGoal"></div></div></div>
-<div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div></div>
+<div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
+<div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
+<div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
+<input type="file" id="pfPhoto" accept="image/*" style="display:none">
+<p class="err" id="pfNote"></p></div>
 <div class="fld"><span class="lb">テーマの色</span><div class="icons" id="colorPick"></div></div>
-<div class="fld"><label>ひとこと<input type="text" id="bio" maxlength="40" placeholder="例 毎日2時間は机に向かう"></label></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="share">学習記録と目標を、フォロー中の人に公開する</label></div>
-<h3 class="sh">フォロー</h3>
-<input type="text" id="fq" placeholder="名前で探す" aria-label="名前で探す">
-<div id="fres"></div>
-<div class="actions"><button id="fref">フォロー中の記録を更新</button></div>
-<div id="flist"></div>
-<p class="err" id="myNote"></p>
-</div>
-<h3 class="sh">バックアップ</h3>
-<p class="note">端末やブラウザを変えるときのために、データを文字として書き出せます。</p>
-<div class="actions"><button id="bkOut">書き出す</button><button id="bkIn">読み込む</button></div>
-<textarea id="bkText" rows="5" placeholder="書き出したデータがここに出ます。読み込むときは、ここに貼り付けてください。"></textarea>
-<p class="note" id="bkNote"></p>
+<div class="fld"><label>名前<input type="text" id="pfName" maxlength="20" placeholder="例 たろう"></label></div>
+<div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
+<div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
+<div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
+<p class="note">入力した内容は、この端末の中にだけ保存されます。</p>
 </section>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
 <div class="actions"><button id="cfok" class="main">OK</button><button id="cfno">キャンセル</button></div></div>
 </div>
 <div class="tm" id="wm" hidden role="dialog" aria-modal="true" aria-labelledby="wmt">
-<div class="tmbox"><div class="tmname" id="wmt">得点率から重みを提案</div>
-<p class="note">模試などの得点率(0〜100)を入れると、低い科目ほど重みを大きくします。空欄の科目は、いまの重みのままです。</p>
+<div class="tmbox"><div class="tmname" id="wmt">得点率から比率を提案</div>
+<p class="note">模試などの得点率(0〜100)を入れると、低い科目ほど比率を大きくします。空欄の科目は、いまの比率のままです。</p>
 <div id="wmrows"></div>
 <div class="actions"><button id="wmok" class="main">提案を反映</button><button id="wmno">キャンセル</button></div></div>
 </div>
@@ -270,7 +264,8 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 var DEFAULT_SUBJECTS=[["数学",5],["物理",4],["化学",4],["英語",4],["国語",2],["社会",2]];
 // 科目ごとの色(ここを直せば色が変わる。未登録の科目はグレー)
 var SUBJECT_COLORS={"国語":"#e03131","数学":"#3bc9db","英語":"#9c36b5","化学":"#82c91e","物理":"#1971c2"};
-function colorOf(name){return SUBJECT_COLORS[String(name).trim()]||"#8b98a5"}
+var PALETTE=["#e8590c","#d6336c","#0ca678","#5c7cfa","#f59f00","#845ef7","#15aabf","#868e96"];
+function colorOf(name){var n=String(name).trim();return (state.subjColors&&state.subjColors[n])||SUBJECT_COLORS[n]||"#8b98a5"}
 var DAYS=["日","月","火","水","木","金","土"]; // Date.getDay() の番号(0=日)にそのまま対応
 var AVG_SESSION=2; // コマの平均的な長さ(時間)。これを目安にコマ数を決める
 var MIN_SESSION=1; // 1コマの最短
@@ -279,9 +274,9 @@ var STEP=0.5;      // 時間の刻み
 var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
-var state={subjects:DEFAULT_SUBJECTS,exam:"2027-02-25",wd:3,we:8,tot:"",rwd:2,rwe:5,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",tips:false,back:1};
+var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}if(typeof schedulePub==="function")schedulePub(4000)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
 var $=function(id){return document.getElementById(id)};
 
@@ -289,11 +284,17 @@ function renderSubjects(){
   var box=$("subjects");box.innerHTML="";
   state.subjects.forEach(function(s,i){
     var r=document.createElement("div");r.className="subj";
-    r.innerHTML='<input type="text" value="'+s[0]+'" aria-label="科目名"><input type="number" min="1" max="5" value="'+s[1]+'" aria-label="重み"><button aria-label="削除">×</button>';
+    r.innerHTML='<input type="color" aria-label="色"><input type="text" aria-label="科目、教材の名前"><input type="number" min="1" max="7" aria-label="勉強時間の比率"><button aria-label="削除">×</button>';
     var ins=r.querySelectorAll("input");
-    ins[0].style.borderLeft="6px solid "+colorOf(s[0]);
-    ins[0].oninput=function(){state.subjects[i][0]=ins[0].value;ins[0].style.borderLeft="6px solid "+colorOf(ins[0].value);save()};
-    ins[1].oninput=function(){state.subjects[i][1]=Number(ins[1].value)||1;save()};
+    ins[0].value=colorOf(s[0]).length===7?colorOf(s[0]):"#8b98a5";
+    ins[1].value=s[0];ins[2].value=s[1];
+    ins[0].oninput=function(){state.subjColors=state.subjColors||{};state.subjColors[String(state.subjects[i][0]).trim()]=ins[0].value;save()};
+    ins[1].oninput=function(){ // 名前を変えても、色はついてくる
+      var old=String(state.subjects[i][0]).trim(),nw=ins[1].value.trim();
+      if(state.subjColors&&state.subjColors[old]&&old!==nw){state.subjColors[nw]=state.subjColors[old];delete state.subjColors[old]}
+      state.subjects[i][0]=ins[1].value;save();
+    };
+    ins[2].oninput=function(){state.subjects[i][1]=Math.max(1,Math.min(7,Number(ins[2].value)||1));save()};
     r.querySelector("button").onclick=function(){state.subjects.splice(i,1);renderSubjects();save()};
     box.appendChild(r);
   });
@@ -305,25 +306,21 @@ function countdown(){
 }
 
 // ===== 必要な勉強時間を計算する =====
-// 今日から試験前日までの平日・休日の日数を数え、総時間を満たす最低ラインを出す。
-// 平日と休日の比率は state.rwd : state.rwe を使う。
+// 1週間の総時間 T を、平日5日・休日2日に、比率 rwd:rwe で割り振る。
+// 平日 x 時間、休日 r×x 時間(r=rwe/rwd)なら、5x + 2rx = T。
 var need=null;
 function calcNeed(){
   var box=$("need"),T=Number(state.tot);
-  var end=new Date(state.exam+"T00:00:00"),t=new Date();t.setHours(0,0,0,0);
   need=null;
-  if(!T||isNaN(end.getTime())){box.hidden=true;return}
-  var nwd=0,nwe=0;
-  for(var d=new Date(t);d<end;d.setDate(d.getDate()+1)){var g=d.getDay();if(g===0||g===6)nwe++;else nwd++;}
-  box.hidden=false;
-  if(nwd+nwe===0){box.textContent="試験日が今日以前になっています。先の日付にしてください。";return}
+  if(!(T>0)){box.hidden=true;return}
   var a=Number(state.rwd)>0?Number(state.rwd):1,b=Number(state.rwe)>0?Number(state.rwe):1,r=b/a;
-  var wd=Math.ceil(T/(nwd+r*nwe)*2)/2;   // 0.5時間単位で切り上げ
+  var wd=Math.ceil(T/(5+2*r)*2)/2;   // 0.5時間単位で切り上げ
   var we=Math.ceil(wd*r*2)/2;
   need={wd:wd,we:we};
-  var warn=(wd>16||we>16)?'<div class="warn">1日16時間を超えます。総時間か試験日を見直してください。</div>':"";
-  box.innerHTML="あと"+(nwd+nwe)+"日(平日"+nwd+"日・休日"+nwe+"日)で"+T+"時間勉強するには、<br>最低でも <b>平日 "+wd+"時間</b> / <b>休日 "+we+"時間</b> が必要です。"+warn+
-    '<div class="note">平日 : 休日 = '+a+' : '+b+' として計算しています。</div><button id="apply">この時間を条件に反映する</button>';
+  var warn=(wd>16||we>16)?'<div class="warn">1日16時間を超えます。総時間を見直してください。</div>':"";
+  box.hidden=false;
+  box.innerHTML="1週間で"+T+"時間勉強するには、<br>最低でも <b>平日 "+wd+"時間</b> / <b>休日 "+we+"時間</b> が必要です。"+warn+
+    '<div class="note">平日：休日 = '+a+'：'+b+' として計算しています。</div><button id="apply">この時間を条件に反映する</button>';
   $("apply").onclick=function(){
     state.wd=need.wd;state.we=need.we;$("wd").value=state.wd;$("we").value=state.we;save();calcNeed();
   };
@@ -664,31 +661,34 @@ function logAdd(name,sec,id,kind){ // id/kind: どの項目の、計測(t)か完
   state.log[d][name]=(state.log[d][name]||0)+sec;
   if(id){state.contrib=state.contrib||{};(state.contrib[id]=state.contrib[id]||[]).push({date:d,name:name,sec:sec,k:kind})}
 }
-function subLog(date,name,sec){
-  var d=state.log&&state.log[date];if(!d||!d[name])return;
-  d[name]=Math.max(0,d[name]-sec);if(d[name]<=0.5)delete d[name];
+function subLog(date,name,sec){ // 取り消せた分(秒)を返す
+  var d=state.log&&state.log[date];if(!d||!d[name])return 0;
+  var take=Math.min(d[name],sec);d[name]-=take;
+  if(d[name]<=0.5)delete d[name];
   if(!Object.keys(d).length)delete state.log[date];
+  return take;
+}
+function subLogAny(name,sec){ // 日付がわからない古い記録は、新しい日から順にさかのぼって引く
+  var dates=Object.keys(state.log||{}).sort().reverse(),left=sec;
+  for(var i=0;i<dates.length&&left>0.5;i++)left-=subLog(dates[i],name,left);
 }
 // その項目で記録した分を学習記録から取り消す。kind="t"(計測のみ) "c"(完了分のみ) 未指定なら両方
 function rollback(id,kind){
-  var list=(state.contrib&&state.contrib[id])||[],keep=[];
-  list.forEach(function(e){if(!kind||e.k===kind)subLog(e.date,e.name,e.sec);else keep.push(e)});
+  var list=(state.contrib&&state.contrib[id])||[],keep=[],tSum=0;
+  list.forEach(function(e){
+    if(e.k==="t")tSum+=e.sec;
+    if(!kind||e.k===kind)subLog(e.date,e.name,e.sec);else keep.push(e);
+  });
   if(state.contrib){if(keep.length)state.contrib[id]=keep;else delete state.contrib[id]}
-  // 記録の取り消し機能ができる前の分(項目ごとの記録なし)の後始末
+  // 取り消し機能ができる前に記録された分(項目ごとの記録なし)の後始末
   var c=state.credit&&state.credit[id];
-  if((!kind||kind==="c")&&c&&!list.some(function(e){return e.k==="c"}))subLog(c.date,c.name,c.sec);
-  if(!kind&&state.spent[id]>0&&!list.some(function(e){return e.k==="t"})){
-    var l=locate(id);
-    if(l){var dt=state.plan[l.d].date;subLog(state.log&&state.log[dt]?dt:fmtDate(new Date()),l.x.name,state.spent[id])}
+  if((!kind||kind==="c")&&c&&!list.some(function(e){return e.k==="c"})){
+    var rest=c.sec-subLog(c.date,c.name,c.sec);if(rest>0.5)subLogAny(c.name,rest);
   }
-}function logData(){ // 計測中の分も含めた記録
-  var L={};
-  Object.keys(state.log||{}).forEach(function(d){L[d]=Object.assign({},state.log[d])});
-  if(state.timer){
-    var x=findBlock(state.timer.id);
-    if(x){var d=fmtDate(new Date());L[d]=L[d]||{};L[d][x.name]=(L[d][x.name]||0)+(Date.now()-state.timer.start)/1000}
+  if(!kind){
+    var old=(state.spent[id]||0)-tSum,l=locate(id);
+    if(old>0.5&&l)subLogAny(l.x.name,old);
   }
-  return L;
 }
 function mondayOf(dt){var m=new Date(dt);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
 function fmtH(sec){return (Math.round(sec/360)/10)+" 時間"}
@@ -717,14 +717,9 @@ function niceTop(maxH){ // 縦軸の目盛り(5本以内)
   for(var i=0;i<steps.length;i++)if(maxH/steps[i]<=5)return{step:steps[i],top:Math.ceil(maxH/steps[i]-1e-9)*steps[i]};
   return{step:1000,top:Math.ceil(maxH/1000)*1000};
 }
-function weekTarget(){ // 1週間あたりの予定時間
-  var T=Number(state.tot),end=new Date(state.exam+"T00:00:00");
-  if(T>0&&!isNaN(end.getTime())){
-    var t0=new Date();t0.setHours(0,0,0,0);
-    var st=state.start?new Date(state.start+"T00:00:00"):t0;
-    return T/Math.max(1,(end-st)/604800000);
-  }
-  return 5*(Number(state.wd)||0)+2*(Number(state.we)||0);
+function weekTarget(){ // 1週間あたりの予定時間(条件で設定した値。なければ平日・休日の時間から)
+  var T=Number(state.tot);
+  return T>0?T:5*(Number(state.wd)||0)+2*(Number(state.we)||0);
 }
 function plannedH(b){ // グラフの棒ごとの予定時間
   if(sMode==="d"){
@@ -737,22 +732,18 @@ function plannedH(b){ // グラフの棒ごとの予定時間
 }
 function r1(v){return Math.round(v*10)/10}
 function renderOverall(L,totSec){
-  var box=$("overall"),T=Number(state.tot);
-  if(!(T>0)){box.innerHTML='<div class="note">「条件」で総勉強時間を設定すると、試験日までの進み具合がここに出ます。</div>';return}
-  var done=totSec/3600,pct=Math.min(100,done/T*100);
-  var t0=new Date();t0.setHours(0,0,0,0);var end=new Date(state.exam+"T00:00:00");
-  var days=isNaN(end.getTime())?0:Math.max(0,Math.ceil((end-t0)/86400000));
-  var left=Math.max(0,T-done),need=days>0?left/days:0;
-  var rec=buckets(L,"d").reduce(function(a,b){return a+b.total},0)/3600/7;
-  var wk=weekTarget(),rows="";
-  buckets(L,"w").slice(-5).forEach(function(b){
-    var a=b.total/3600,df=a-wk;
-    rows+='<tr><td>'+b.label+' の週</td><td>'+r1(wk)+'</td><td>'+r1(a)+'</td><td class="'+(df<0?"neg":"pos")+'">'+(df>=0?"+":"")+r1(df)+'</td></tr>';
+  var box=$("overall"),wk=weekTarget();
+  if(!(wk>0)){box.innerHTML='<div class="note">「条件」で1週間の総勉強時間を設定すると、予定との比べ方がここに出ます。</div>';return}
+  var wks=buckets(L,"w"),cur=wks[wks.length-1],a=cur.total/3600,pct=Math.min(100,a/wk*100);
+  var rec=buckets(L,"d").reduce(function(x,b){return x+b.total},0)/3600,rows="";
+  wks.slice(-5).forEach(function(b){
+    var h=b.total/3600,df=h-wk;
+    rows+='<tr><td>'+b.label+' の週</td><td>'+r1(wk)+'</td><td>'+r1(h)+'</td><td class="'+(df<0?"neg":"pos")+'">'+(df>=0?"+":"")+r1(df)+'</td></tr>';
   });
-  var verdict=days<=0?"試験日が過ぎています":rec>=need?"順調です":"遅れ気味です(1日あたり約"+r1(need-rec)+"時間 足りません)";
+  var verdict=rec>=wk?"順調です":"遅れ気味です(1週間で約"+r1(wk-rec)+"時間 足りません)";
   box.innerHTML='<div class="barx"><i style="width:'+pct+'%"></i></div>'+
-    '<div class="ovt">累計 '+r1(done)+' / '+T+' 時間(<b>'+Math.round(pct)+'%</b>)・残り '+r1(left)+' 時間</div>'+
-    '<div class="ovt">1日あたり必要 '+r1(need)+' 時間 / 直近7日の平均 '+r1(rec)+' 時間 → <b>'+verdict+'</b></div>'+
+    '<div class="ovt">今週(月曜から) '+r1(a)+' / '+r1(wk)+' 時間(<b>'+Math.round(pct)+'%</b>)</div>'+
+    '<div class="ovt">直近7日の合計 '+r1(rec)+' / '+r1(wk)+' 時間 → <b>'+verdict+'</b></div>'+
     '<table class="wt"><tr><th>週</th><th>予定(時間)</th><th>実績(時間)</th><th>差</th></tr>'+rows+'</table>';
 }
 function renderStats(){
@@ -818,9 +809,9 @@ function showPage(n){
   $("p0").hidden=n!==0;$("p1").hidden=n!==1;$("p2").hidden=n!==2;$("planbox").hidden=n!==3;$("stats").hidden=n!==4;$("mypage").hidden=n!==5;
   if(n<=3)state.planPage=n;
   $("navPlan").classList.toggle("on",n<=3);$("navStats").classList.toggle("on",n===4);$("navMy").classList.toggle("on",n===5);
-  if(n===0){$("goal").value=state.goal||"";$("goalErr").hidden=true}
+  if(n===0){$("goal").value=state.goal||"";$("exam").value=state.exam||"";$("goalErr").hidden=true}
   showGoal();
-  $("tips").hidden=!!state.tips;
+  $("tips").hidden=true;
   if(n===4)renderStats();
   if(n===5)renderMy();
   window.scrollTo(0,0);
@@ -829,158 +820,32 @@ function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"�
 var goalBack=null,cfFn=null;
 function askConfirm(msg,sub,okLabel,fn){$("cfmsg").textContent=msg;$("cfsub").textContent=sub||"";$("cfok").textContent=okLabel||"OK";cfFn=fn;$("cf").hidden=false}
 
-// ===== マイページ(アカウント・フォロー・記録の共有) =====
-// アカウントは、このページを開いているClaudeのアカウントそのもの。データは共有データベース(db)の
-// pub/<自分のid> に1件だけ置く(アイコン・色・ひとこと・フォローするid・公開する学習記録)。
-// 保存するのはidだけ。名前や写真は、表示のたびに user.profiles() で調べ直す。
+// ===== マイページ(プロフィール) =====
+// アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。外には出さない。
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
-var DB=null,UU=null,myId=null,pubTimer=null,lastPub="",pushing=false;
-var pub={icon:"📚",color:"#0b6e6e",bio:"",share:false,follows:[],cheer:{}};
-function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
-function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
-function cleanLog(raw){ // 他の人のデータは信用せず、数字と短い名前だけ通す
-  var L={};
-  if(!raw||typeof raw!=="object")return L;
-  Object.keys(raw).slice(0,400).forEach(function(d){
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!raw[d]||typeof raw[d]!=="object")return;
-    Object.keys(raw[d]).slice(0,30).forEach(function(n){
-      var v=Number(raw[d][n]);
-      if(isFinite(v)&&v>0&&v<1e7){L[d]=L[d]||{};L[d][String(n).slice(0,20)]=v}
-    });
-  });
-  return L;
-}
-function sumsOf(L){
-  var today=fmtDate(new Date()),ym=today.slice(0,7),r={tdy:0,mon:0,tot:0};
-  Object.keys(L).forEach(function(d){var s=0;Object.keys(L[d]).forEach(function(n){s+=L[d][n]});r.tot+=s;if(d.slice(0,7)===ym)r.mon+=s;if(d===today)r.tdy=s});
-  return r;
-}
-function mini7(L){ // 直近7日の積み上げ棒(小さいグラフ)
-  var bs=buckets(L,"d"),mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total)});
-  var W=210,H=64,bw=20,gap=(W-7*bw)/8,svg='<svg viewBox="0 0 '+W+' '+(H+14)+'" role="img" aria-label="直近7日の学習時間">';
-  bs.forEach(function(b,i){
-    var x=gap+i*(bw+gap),acc=0;
-    Object.keys(b.parts).forEach(function(n){
-      var h=mx>0?b.parts[n]/mx*H:0;if(h<=0)return;
-      svg+='<rect x="'+x+'" y="'+(H-acc-h)+'" width="'+bw+'" height="'+h+'" style="fill:'+colorOf(n)+'"/>';acc+=h;
-    });
-    svg+='<text class="ax" x="'+(x+bw/2)+'" y="'+(H+11)+'" text-anchor="middle">'+b.sub+'</text>';
-  });
-  return svg+'</svg>';
-}
-function paintAv(el,icon,color,url){
-  el.innerHTML="";el.style.background=color;
-  if(icon)el.textContent=icon;
-  else if(url){var im=document.createElement("img");im.src=url;im.alt="";el.appendChild(im)}
-}
-function cheerNow(){var c={},t=fmtDate(new Date());Object.keys(pub.cheer||{}).forEach(function(k){if(pub.cheer[k]===t)c[k]=t});return c}
-function pubBody(){
-  var L={};
-  if(pub.share){
-    var cut=new Date();cut.setDate(cut.getDate()-120);var cs=fmtDate(cut);
-    Object.keys(state.log||{}).forEach(function(d){if(d>=cs){L[d]={};Object.keys(state.log[d]).forEach(function(n){L[d][n]=Math.round(state.log[d][n])})}});
-  }
-  return {icon:pub.icon,color:pub.color,bio:pub.bio,share:pub.share,follows:pub.follows,cheer:cheerNow(),goal:pub.share?(state.goal||""):"",log:L};
-}
-function schedulePub(ms){if(!DB||!myId)return;clearTimeout(pubTimer);pubTimer=setTimeout(pushPub,ms||1500)}
-async function pushPub(){
-  if(!DB||!myId)return;
-  if(pushing){schedulePub(1500);return}
-  var body=pubBody(),key=JSON.stringify(body);
-  if(key===lastPub)return;
-  pushing=true;
-  try{body.updated=Date.now();await DB.doc("pub/"+myId).set(body);lastPub=key;$("myNote").textContent=""}
-  catch(e){$("myNote").textContent="保存できませんでした。このページを「編集できる(Contributor)」権限で開いているか確認してください。"}
-  pushing=false;
-}
-async function initShare(){
-  try{
-    UU=await claude.use("user");DB=await claude.use("db");
-    if(!UU||!DB){DB=null;return}
-    myId=await UU.id();
-    if(!myId){DB=null;return}
-    var snap=await DB.doc("pub/"+myId).get();
-    if(snap.exists){
-      var d=snap.data()||{};
-      pub={icon:goodIcon(d.icon)||pub.icon,color:goodColor(d.color),bio:String(d.bio||"").slice(0,40),share:d.share===true,
-        follows:Array.isArray(d.follows)?d.follows.filter(function(x){return typeof x==="string"}).slice(0,200):[],cheer:(d.cheer&&typeof d.cheer==="object")?d.cheer:{}};
-    }
-    lastPub=JSON.stringify(pubBody());
-    if(state.page===5)renderMy();
-  }catch(e){DB=null}
-}
-async function renderMy(){
-  var off=!DB||!myId;
-  $("myOff").hidden=!off;$("myBody").hidden=off;
-  if(off)return;
-  var me=await UU.me();
-  $("meName").textContent=me.name||"あなた";
-  $("meGoal").textContent=state.goal?"🎯 "+state.goal:"目標は未設定です";
-  paintAv($("meAv"),pub.icon,pub.color,me.avatarUrl);
+function renderMy(){
+  var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
+  var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
+  if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
+  $("pfPhotoDel").hidden=!p.photo;
+  $("meName").textContent=p.name||"名前は未設定です";
+  $("meSub").textContent=[p.grade,p.age?p.age+"歳":""].filter(Boolean).join("・");
+  $("meSchool").textContent=p.school?"🎓 "+p.school:"";
   var ip=$("iconPick");ip.innerHTML="";
   ICONS.forEach(function(ic){
-    var b=document.createElement("button");b.textContent=ic;b.className=ic===pub.icon?"on":"";b.setAttribute("aria-label","アイコン "+ic);
-    b.onclick=function(){pub.icon=ic;schedulePub(1500);renderMy()};ip.appendChild(b);
+    var b=document.createElement("button");b.textContent=ic;b.className=(ic===p.icon&&!p.photo)?"on":"";b.setAttribute("aria-label","アイコン "+ic);
+    b.onclick=function(){p.icon=ic;p.photo="";save();renderMy()};ip.appendChild(b);
   });
   var cp=$("colorPick");cp.innerHTML="";
   COLORS.forEach(function(c){
-    var b=document.createElement("button");b.className="sw"+(c===pub.color?" on":"");b.style.background=c;b.setAttribute("aria-label","色 "+c);
-    b.onclick=function(){pub.color=c;schedulePub(1500);renderMy()};cp.appendChild(b);
+    var b=document.createElement("button");b.className="sw"+(c===p.color?" on":"");b.style.background=c;b.setAttribute("aria-label","色 "+c);
+    b.onclick=function(){p.color=c;save();renderMy()};cp.appendChild(b);
   });
-  if(document.activeElement!==$("bio"))$("bio").value=pub.bio;
-  $("share").checked=pub.share;
-  renderFollows();
-}
-async function renderFollows(){
-  var box=$("flist");
-  if(!pub.follows.length){box.innerHTML='<div class="note">まだ誰もフォローしていません。上の検索で名前を入れて、フォローしてみましょう。</div>';return}
-  var ids=pub.follows.slice(),ps=await UU.profiles(ids);
-  var docs=await Promise.all(ids.map(function(id){return DB.doc("pub/"+id).get().then(function(sn){return sn.exists?sn.data():null},function(){return null})}));
-  box.innerHTML="";
-  ids.forEach(function(id,i){
-    var p=ps[id]||{name:"",avatarUrl:"",color:"#8b98a5"},d=docs[i]||{},open=d.share===true;
-    var card=document.createElement("div");card.className="fcard";
-    card.innerHTML='<div class="fhead"><div class="av"></div><div><b></b><div class="note bio"></div></div><button class="un">解除</button></div><div class="body"></div>';
-    paintAv(card.querySelector(".av"),goodIcon(d.icon),goodColor(d.color||p.color),p.avatarUrl);
-    card.querySelector("b").textContent=p.name||"名前がわからない人";
-    card.querySelector(".bio").textContent=String(d.bio||"").slice(0,40);
-    var cd=fmtDate(new Date()),cb=document.createElement("button");cb.className="cheer";
-    var lab=function(){cb.textContent=pub.cheer[id]===cd?"👏 応援済み":"👏 応援する"};lab();
-    cb.onclick=function(){if(pub.cheer[id]===cd)delete pub.cheer[id];else pub.cheer[id]=cd;lab();schedulePub(800)};
-    var mid=card.querySelector(".fhead>div:nth-child(2)");
-    if(d.cheer&&d.cheer[myId]===cd){var bd=document.createElement("div");bd.className="note";bd.textContent="👏 応援が届いています";mid.appendChild(bd)}
-    mid.appendChild(cb);
-    card.querySelector(".un").onclick=function(){pub.follows=pub.follows.filter(function(x){return x!==id});schedulePub(500);renderMy()};
-    var body=card.querySelector(".body");
-    if(open){
-      var L=cleanLog(d.log),sm=sumsOf(L);
-      if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
-      var st=document.createElement("div");st.className="fstat";
-      [["今日",sm.tdy<3600?Math.round(sm.tdy/60)+" 分":fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){
-        var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];st.appendChild(c);
-      });
-      body.appendChild(st);
-      var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
-    }else{
-      body.innerHTML='<div class="note">学習記録は非公開です。相手が「公開する」をオンにすると見られます。</div>';
-    }
-    box.appendChild(card);
-  });
-}
-function renderSearch(hits){
-  var box=$("fres");box.innerHTML="";
-  hits.filter(function(h){return h.id!==myId&&pub.follows.indexOf(h.id)<0}).forEach(function(h){
-    var r=document.createElement("div");r.className="frow";
-    r.innerHTML='<div class="av"></div><span></span><button class="main">フォロー</button>';
-    paintAv(r.querySelector(".av"),"",h.color,h.avatarUrl);
-    r.querySelector("span").textContent=h.name;
-    r.querySelector("button").onclick=function(){
-      pub.follows.push(h.id);schedulePub(500);$("fq").value="";box.innerHTML="";renderMy();
-    };
-    box.appendChild(r);
-  });
-  if(!box.children.length&&$("fq").value.trim())box.innerHTML='<div class="note">見つかりませんでした。同じ組織の人だけ探せます。</div>';
+  if(document.activeElement!==$("pfName"))$("pfName").value=p.name||"";
+  $("pfGrade").value=p.grade||"";
+  if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
+  if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
 }
 
 // ===== イベント =====
@@ -997,7 +862,12 @@ $("we").oninput=function(){state.we=Number(this.value)||0;save()};
 $("rwd").oninput=function(){state.rwd=this.value;save();calcNeed()};
 $("rwe").oninput=function(){state.rwe=this.value;save();calcNeed()};
 $("tot").oninput=function(){state.tot=this.value;save();calcNeed()};
-$("add").onclick=function(){state.subjects.push(["新しい科目",3]);renderSubjects();save()};
+$("add").onclick=function(){ // 新しい科目には、まだ使っていない色を自動で割り当てる
+  var used={};state.subjects.forEach(function(x){used[colorOf(x[0])]=1});
+  var c=PALETTE.filter(function(p){return !used[p]})[0]||"#8b98a5";
+  state.subjColors=state.subjColors||{};state.subjColors["新しい科目"]=c;
+  state.subjects.push(["新しい科目",3]);renderSubjects();save();
+};
 $("navStats").onclick=function(){showPage(4)};
 $("navPlan").onclick=function(){ // プランは、最後に開いていたステップに戻る
   var pp=typeof state.planPage==="number"?state.planPage:(state.back||1);
@@ -1009,8 +879,8 @@ Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){
 });
 $("n0").onclick=function(){
   var g=$("goal").value.trim();
-  if(!g){$("goalErr").hidden=false;return}
-  state.goal=g;var to=goalBack!==null?goalBack:1;goalBack=null;save();schedulePub(1500);showPage(to===0?1:to);
+  if(!g||!$("exam").value){$("goalErr").hidden=false;return}
+  state.goal=g;var to=goalBack!==null?goalBack:1;goalBack=null;save();showPage(to===0?1:to);
 };
 $("goalEdit").onclick=function(){goalBack=state.page===0?null:state.page;showPage(0)};
 $("navMy").onclick=function(){showPage(5)};
@@ -1036,12 +906,12 @@ $("emsave").onclick=saveEdit;
 $("emdel").onclick=deleteEdit;
 $("emcancel").onclick=closeEdit;
 $("em").onclick=function(e){if(e.target===this)closeEdit()};
-$("bio").oninput=function(){pub.bio=this.value.slice(0,40);schedulePub(2000)};
-$("share").onchange=function(){pub.share=this.checked;schedulePub(500)};
-$("fq").oninput=function(){var q=this.value.trim();if(!q||!UU){$("fres").innerHTML="";return}UU.search(q).then(renderSearch)};
-$("fref").onclick=function(){renderFollows()};
-$("tipsOk").onclick=function(){state.tips=true;$("tips").hidden=true;save()};
-$("tipsShow").onclick=function(){state.tips=false;$("tips").hidden=false;save();$("tips").scrollIntoView({block:"nearest"})};
+$("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
+$("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
+$("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
+$("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
+$("tipsOk").onclick=function(){$("tips").hidden=true};
+$("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
 $("sug").onclick=function(){
   var box=$("wmrows");box.innerHTML="";
   state.subjects.forEach(function(s,i){
@@ -1059,30 +929,33 @@ $("wmok").onclick=function(){
     if(inp.value==="")return;
     var i=Number(inp.getAttribute("data-i")),sc=Math.max(0,Math.min(100,Number(inp.value)||0));
     state.subjects[i][2]=sc;
-    state.subjects[i][1]=Math.max(1,Math.min(5,Math.round(1+(100-sc)/25)));
+    state.subjects[i][1]=Math.max(1,Math.min(7,Math.round(1+(100-sc)/100*6)));
   });
   $("wm").hidden=true;renderSubjects();save();
 };
 $("wmno").onclick=function(){$("wm").hidden=true};
 $("wm").onclick=function(e){if(e.target===this)this.hidden=true};
-$("bkOut").onclick=function(){
-  var t=JSON.stringify({app:"study-planner",v:1,state:state}),ta=$("bkText"),ok=false;
-  ta.value=t;ta.focus();ta.select();
-  try{if(navigator.clipboard){navigator.clipboard.writeText(t);ok=true}}catch(e){}
-  $("bkNote").textContent=ok?"書き出しました。コピーもしています。メモアプリなどに貼って保管してください。":"書き出しました。文字を全部選んでコピーしてください。";
-};
-$("bkIn").onclick=function(){
-  var obj;try{obj=JSON.parse($("bkText").value)}catch(e){obj=null}
-  if(!obj||obj.app!=="study-planner"||!obj.state||typeof obj.state!=="object"){$("bkNote").textContent="読み込めませんでした。書き出したデータを、そのまま貼り付けてください。";return}
-  askConfirm("データを読み込みますか?","いまのデータは、貼り付けたデータで置き換わります。","読み込む",function(){
-    pauseTimer();
-    Object.keys(obj.state).forEach(function(k){if(k in state)state[k]=obj.state[k]});
-    state.timer=null;save();location.reload();
-  });
+$("pfPhotoBtn").onclick=function(){$("pfPhoto").click()};
+$("pfPhotoDel").onclick=function(){state.profile.photo="";$("pfNote").textContent="";save();renderMy()};
+$("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜いて小さくしてから、この端末の中に保存する
+  var f=this.files&&this.files[0];this.value="";
+  if(!f)return;
+  var rd=new FileReader();
+  rd.onerror=function(){$("pfNote").textContent="写真を読み込めませんでした。"};
+  rd.onload=function(){
+    var im=new Image();
+    im.onerror=function(){$("pfNote").textContent="この写真は使えません。別の写真を選んでください。"};
+    im.onload=function(){
+      var n=Math.min(im.width,im.height),c=document.createElement("canvas");c.width=c.height=160;
+      c.getContext("2d").drawImage(im,(im.width-n)/2,(im.height-n)/2,n,n,0,0,160,160);
+      state.profile.photo=c.toDataURL("image/jpeg",0.85);$("pfNote").textContent="";save();renderMy();
+    };
+    im.src=rd.result;
+  };
+  rd.readAsDataURL(f);
 };
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
-if(typeof claude!=="undefined"&&claude&&claude.use)initShare();
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}
 </script>
