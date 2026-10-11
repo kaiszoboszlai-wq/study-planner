@@ -551,7 +551,7 @@ function renderPlan(){
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
-      b.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰越)":"");
+      b.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰り越し)":"");
       b.querySelector(".sp").textContent=spText(id);
       var pb=b.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -942,7 +942,7 @@ function renderToday(){
     var c=document.createElement("div");c.className="tcard"+(on?" on":"");
     c.style.borderLeft="8px solid "+colorOf(x.name);
     c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button>';
-    c.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰越)":"");
+    c.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰り越し)":"");
     c.querySelector(".sp").textContent=spText(id);
     var pb=c.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
