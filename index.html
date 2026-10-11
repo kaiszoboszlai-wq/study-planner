@@ -100,6 +100,7 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .wt th,.wt td{text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
 .wt th:first-child,.wt td:first-child{text-align:left}
 .wt th{color:var(--sub);font-weight:400}
+.dng{border-color:#b3261e;color:#b3261e}
 .neg{color:#b3261e}.pos{color:var(--acc)}
 .pl{stroke:var(--ink);stroke-width:1.6;stroke-dasharray:3 2}
 .tips{background:var(--accbg);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:.9rem}
@@ -211,9 +212,13 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div id="schart"></div>
 <p class="note">黒い点線は、予定の時間です。</p>
 <div class="sdetail" id="sdetail"></div>
+<div class="actions"><button id="delSel" class="dng" hidden>選んだ期間の記録を削除</button></div>
 <h3 class="sh">科目別(表示している期間)</h3>
 <div id="slist"></div>
 <p class="note">計画の項目のタイマー(▶)で計測した時間が、ここに記録されます。</p>
+<h3 class="sh">記録の削除</h3>
+<p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。</p>
+<div class="actions"><button id="delAll" class="dng">すべての記録を削除</button></div>
 </section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
@@ -682,14 +687,29 @@ function rollback(id,kind){
   if(state.contrib){if(keep.length)state.contrib[id]=keep;else delete state.contrib[id]}
   // 取り消し機能ができる前に記録された分(項目ごとの記録なし)の後始末
   var c=state.credit&&state.credit[id];
-  if((!kind||kind==="c")&&c&&!list.some(function(e){return e.k==="c"})){
+  if(!state.legacyOff&&(!kind||kind==="c")&&c&&!list.some(function(e){return e.k==="c"})){
     var rest=c.sec-subLog(c.date,c.name,c.sec);if(rest>0.5)subLogAny(c.name,rest);
   }
-  if(!kind){
+  if(!kind&&!state.legacyOff){
     var old=(state.spent[id]||0)-tSum,l=locate(id);
     if(old>0.5&&l)subLogAny(l.x.name,old);
   }
 }
+// 記録の削除。match(日付)が真の日の記録を、グラフ・内訳の元データごと消す。
+function deleteRecords(match){
+  Object.keys(state.log||{}).forEach(function(d){if(match(d))delete state.log[d]});
+  Object.keys(state.contrib||{}).forEach(function(id){
+    var keep=state.contrib[id].filter(function(e){return !match(e.date)});
+    if(keep.length)state.contrib[id]=keep;else delete state.contrib[id];
+  });
+  Object.keys(state.credit||{}).forEach(function(id){if(match(state.credit[id].date))delete state.credit[id]});
+  state.legacyOff=true; // 削除したあとは、古い記録をさかのぼって引く処理はしない
+  save();
+}
+function bucketMatch(mode,key){
+  return function(d){return mode==="d"?d===key:mode==="w"?fmtDate(mondayOf(new Date(d+"T00:00:00")))===key:d.slice(0,7)===key};
+}
+var lastSel=null;
 function logData(){ // 計測中の分も含めた記録
   var L={};
   Object.keys(state.log||{}).forEach(function(d){L[d]=Object.assign({},state.log[d])});
@@ -798,6 +818,9 @@ function renderStats(){
   var sb=bs[sSel],lab=sMode==="d"?sb.label+"("+sb.sub+")":sMode==="w"?sb.label+" からの週":sb.label;
   var det=names.filter(function(n){return sb.parts[n]>0}).map(function(n){return n+" "+fmtDur(sb.parts[n])}).join("、");
   $("sdetail").textContent=lab+"  合計 "+fmtDur(sb.total)+(det?"  |  "+det:"");
+  lastSel={mode:sMode,key:sb.key,label:lab};
+  $("delSel").textContent=lab+" の記録を削除";
+  $("delSel").hidden=!(sb.total>0);
 
   // 科目別(表示している期間の合計)
   var per={};bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n]})});
@@ -962,6 +985,13 @@ $("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜�
     im.src=rd.result;
   };
   rd.readAsDataURL(f);
+};
+$("delSel").onclick=function(){
+  var ls=lastSel;if(!ls)return;
+  askConfirm(ls.label+" の記録を削除しますか?","削除した記録は元に戻せません。","削除する",function(){deleteRecords(bucketMatch(ls.mode,ls.key));renderStats()});
+};
+$("delAll").onclick=function(){
+  askConfirm("すべての学習記録を削除しますか?","今までの記録がすべて消えます。元に戻せません。","すべて削除する",function(){deleteRecords(function(){return true});renderStats()});
 };
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
