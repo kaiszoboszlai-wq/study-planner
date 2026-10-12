@@ -176,6 +176,13 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 @keyframes spUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
 @keyframes spGone{to{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.sp-logo,.sp-t,.sp-g{animation:none;opacity:1}.sp-check{animation:none;stroke-dashoffset:0}}
+.chat{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.bub{max-width:90%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;line-height:1.6}
+.bub.u{align-self:flex-end;background:var(--acc);color:var(--bg);border-bottom-right-radius:4px}
+.bub.a{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub.w{color:var(--sub)}
+.aiin{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
+.aiin textarea{flex:1;margin-top:0}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -197,6 +204,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
 <button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
 <button class="nv" id="navGrades"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 15l4-4 3 3 5-6"/></svg><span>成績</span></button>
+<button class="nv" id="navAI"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>相談</span></button>
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span></button>
 </nav>
 <main>
@@ -277,8 +285,27 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="gc" id="grank"></div>
 <div id="glist"></div>
 </section>
+<section id="ai" hidden>
+<h2>AIに相談</h2>
+<p class="note" id="aiOff" hidden>この画面では、AI相談は使えません。Claudeで開いたこのページで使えます。</p>
+<div id="aiBody">
+<div class="chips" id="aiQuick"></div>
+<div class="chat" id="aiChat"></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="aiUse" checked>勉強のデータ(目標・記録・成績など)を相談に使う</label></div>
+<div class="aiin"><textarea id="aiText" rows="2" maxlength="1000" placeholder="例 今週は数学が遅れています。どう取り戻せばいい?" aria-label="相談の内容"></textarea><button id="aiSend" class="main">送信</button></div>
+<div class="actions"><button id="aiStop" hidden>止める</button><button id="aiClear">会話を消す</button></div>
+<p class="err" id="aiErr"></p>
+<p class="note">相談の内容と、チェックを入れたときは勉強のデータが、Claudeに送られます。AIの答えは目安です。大事なことは、先生や家族にも相談してください。</p>
+</div>
+</section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
+<h3 class="sh">アカウント</h3>
+<div class="me"><div class="av" id="accAv"></div><div><b id="accName"></b><div class="note" id="accSt"></div></div></div>
+<div class="actions" id="accBtns"><button id="accSync" class="main">いますぐ同期</button><button id="accLoad">クラウドから読み込む</button></div>
+<p class="note" id="accOff">ログインしていません。Claudeにログインしてこのページを開くと、データがクラウドに保存されて、別の端末でも続きから使えます。</p>
+<p class="note" id="accNote" hidden>記録・計画・成績・プロフィールが、あなた専用のクラウドに自動で保存されます。ほかの人からは見えません。</p>
+<h3 class="sh">プロフィール</h3>
 <div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
 <div id="pfEdit">
 <div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
@@ -353,7 +380,8 @@ var KEY="study-planner-v1";
 // ===== 保存(localStorageが使えない場合も動く) =====
 var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function store(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function save(){state.updatedAt=Date.now();store();if(typeof scheduleCloud==="function")scheduleCloud()}
 
 var $=function(id){return document.getElementById(id)};
 
@@ -906,11 +934,11 @@ function renderStats(){
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
 function showPage(n){
   state.page=n;save();
-  var map={0:"p0",1:"p1",2:"p2",3:"planbox",4:"stats",5:"mypage",6:"today",7:"grades"};
+  var map={0:"p0",1:"p1",2:"p2",3:"planbox",4:"stats",5:"mypage",6:"today",7:"grades",8:"ai"};
   Object.keys(map).forEach(function(k){$(map[k]).hidden=Number(k)!==n});
   if(n<=3)state.planPage=n;
   $("navToday").classList.toggle("on",n===6);$("navPlan").classList.toggle("on",n<=3);$("navStats").classList.toggle("on",n===4);
-  $("navGrades").classList.toggle("on",n===7);$("navMy").classList.toggle("on",n===5);
+  $("navGrades").classList.toggle("on",n===7);$("navAI").classList.toggle("on",n===8);$("navMy").classList.toggle("on",n===5);
   if(n===0){$("goal").value=state.goal||"";$("exam").value=state.exam||"";$("goalErr").hidden=true}
   showGoal();
   $("tips").hidden=true;
@@ -918,11 +946,12 @@ function showPage(n){
   if(n===5)renderMy();
   if(n===6)renderToday();
   if(n===7)renderGrades();
+  if(n===8)renderAI();
   window.scrollTo(0,0);
 }
 function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"目標は未設定です";$("goalEdit").textContent=g?"変更":"設定する"}
-var goalBack=null,cfFn=null;
-function askConfirm(msg,sub,okLabel,fn){$("cfmsg").textContent=msg;$("cfsub").textContent=sub||"";$("cfok").textContent=okLabel||"OK";cfFn=fn;$("cf").hidden=false}
+var goalBack=null,cfFn=null,cfNoFn=null;
+function askConfirm(msg,sub,okLabel,fn,noLabel,noFn){$("cfmsg").textContent=msg;$("cfsub").textContent=sub||"";$("cfok").textContent=okLabel||"OK";$("cfno").textContent=noLabel||"キャンセル";cfFn=fn;cfNoFn=noFn||null;$("cf").hidden=false}
 
 // ===== 今日のやること =====
 function renderToday(){
@@ -1081,6 +1110,7 @@ var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","�
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
 function renderMy(){
+  renderAcc();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
   if(pfEditing===null)pfEditing=!(p.set||p.name||p.school||p.photo||p.grade||p.age);
   $("pfEdit").hidden=!pfEditing;$("pfView").hidden=pfEditing;
@@ -1104,6 +1134,158 @@ function renderMy(){
   $("pfGrade").value=p.grade||"";
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
+}
+
+// ===== アカウント(Claudeのアカウントでログインし、データをクラウドに保存) =====
+// ログインは、このページを開いているClaudeのアカウントそのもの。データは「あなた専用」の領域
+// data/users/<自分のid>/state に1件だけ保存する(ほかの人からは読めない)。変更するたびに自動で保存し、
+// 開いたときに、クラウドの方が新しければ読み込む。端末ごとの状態(開いているページ、計測中のタイマー)は保存しない。
+var ACC={db:null,id:null,name:"",avatar:"",busy:false,timer:null};
+var SYNC_SKIP=["chat","timer","page","planPage","back","cloudAt","updatedAt","__proto__","constructor","prototype"];
+function accPath(){return "data/users/"+ACC.id+"/state"}
+function hhmm(t){var d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)}
+function setAcc(msg){var e=$("accSt");if(e)e.textContent=msg}
+function renderAcc(){
+  var on=!!ACC.db;
+  $("accOff").hidden=on;$("accNote").hidden=!on;$("accBtns").hidden=!on;
+  var av=$("accAv");av.innerHTML="";
+  if(on&&ACC.avatar){var im=document.createElement("img");im.src=ACC.avatar;im.alt="";av.appendChild(im);av.style.background="none"}
+  else{av.textContent="👤";av.style.background="var(--line)"}
+  $("accName").textContent=on?(ACC.name||"ログイン中"):"ログインしていません";
+}
+function syncData(){
+  var o={};
+  Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});
+  var js=JSON.stringify(o);
+  if(js.length>230000){if(o.profile)o.profile=Object.assign({},o.profile,{photo:""});js=JSON.stringify(o)} // 大きすぎるときは写真を外す
+  return js;
+}
+async function pullCloud(){
+  var sn=await ACC.db.doc(accPath()).get();
+  if(!sn.exists)return null;
+  try{var d=sn.data();return{updated:Number(d.updated)||0,state:JSON.parse(d.json)}}catch(e){return null}
+}
+async function pushCloud(){
+  if(!ACC.db||ACC.busy)return false;
+  ACC.busy=true;setAcc("同期中…");
+  try{
+    var t=Date.now(),js=syncData();
+    if(js.length>240000)throw new Error("too big");
+    await ACC.db.doc(accPath()).set({updated:t,json:js});
+    state.cloudAt=t;state.updatedAt=t;store();
+    setAcc("同期しました("+hhmm(t)+")");ACC.busy=false;return true;
+  }catch(e){
+    ACC.busy=false;
+    setAcc("同期できませんでした。このページを「編集できる(Contributor)」の権限で開いているか、確認してください。");return false;
+  }
+}
+function applyCloud(c){ // クラウドのデータで、この端末のデータを置き換える
+  Object.keys(c.state||{}).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)state[k]=c.state[k]});
+  state.timer=null;state.cloudAt=c.updated;state.updatedAt=c.updated;store();
+  location.reload();
+}
+function scheduleCloud(){
+  if(!ACC.db)return;
+  if((state.updatedAt||0)<=(state.cloudAt||0))return;
+  clearTimeout(ACC.timer);ACC.timer=setTimeout(pushCloud,6000);
+}
+async function syncOnStart(){
+  setAcc("確認中…");
+  var cloud=await pullCloud();
+  var dirty=(state.updatedAt||0)>(state.cloudAt||0);
+  var hasLocal=!!(state.plan||(state.goal||"").trim()||Object.keys(state.log||{}).length||(state.exams||[]).length);
+  if(!cloud){if(hasLocal)await pushCloud();else setAcc("クラウドには、まだ何も保存されていません");return}
+  if(cloud.updated<=(state.cloudAt||0)){
+    if(dirty)await pushCloud();else setAcc("最新です(最終同期 "+hhmm(state.cloudAt)+")");
+    return;
+  }
+  if(!dirty||!hasLocal){applyCloud(cloud);return}
+  askConfirm("クラウドとこの端末で、データが違います","クラウドは "+hhmm(cloud.updated)+" に保存したものです。どちらを使いますか?",
+    "クラウドのデータを使う",function(){applyCloud(cloud)},
+    "この端末のデータを使う",function(){pushCloud()});
+}
+async function initAccount(){
+  try{
+    var u=await claude.use("user"),d=await claude.use("db");
+    if(!u||!d)return;
+    var me=await u.me();
+    if(!me||!me.id)return;
+    ACC.db=d;ACC.id=me.id;ACC.name=me.name||"";ACC.avatar=me.avatarUrl||"";
+    renderAcc();
+    await syncOnStart();
+  }catch(e){ACC.db=null;renderAcc()}
+}
+
+// ===== AIに相談 =====
+// Claudeに聞く「sample」機能を使う。1回ごとに独立して動くので、毎回「役割・勉強のデータ・これまでの会話」をまとめて送る。
+var AI={s:null,ctl:null,busy:false};
+var AI_RULES="あなたは、日本の学生の勉強を支える、やさしくて頼れる学習コーチです。次を守ってください。\n"+
+"・日本語で、短く具体的に答える。前置きは省いて、まず結論。長くても300字くらい。箇条書きは多くても5個まで。\n"+
+"・「【勉強のデータ】」がある場合は、その数字を根拠にして、このアプリでできる行動(プランの日の勉強時間を直す、項目を別の日へ移す、科目の比率を変える、タイマーで計測する)に結びつけて提案する。データにないことは決めつけず、質問する。\n"+
+"・勉強法は、根拠のある方法(思い出す練習、時間を空けて復習する、間違いの直しなど)を、すぐ試せる形で示す。\n"+
+"・無理な長時間の勉強や、睡眠を削る提案はしない。体や心がつらそうなときは、休むことも大切だと伝える。つらい気持ちが強いときは、まず気持ちを受け止めて、身近な大人や学校、専門の相談窓口に話すことを勧める。\n"+
+"・医療や診断はしない。わからないことは、わからないと言う。\n"+
+"・マークダウンの記法(#、**、表など)は使わず、ふつうの文章で書く。";
+var AI_QUICK=["今週の計画を見直したい","今日は何から始めればいい?","苦手科目の勉強法を教えて","成績を上げるために、何を変えればいい?","やる気が出ないとき、どうしたらいい?"];
+function aiContext(){ // アプリのデータを、短い文章にまとめる(名前は送らない)
+  var L=logData(),t=new Date();t.setHours(0,0,0,0);var lines=[];
+  var g=(state.goal||"").trim();if(g)lines.push("目標: "+g);
+  if(state.exam){var dd=Math.ceil((new Date(state.exam+"T00:00:00")-t)/86400000);if(isFinite(dd))lines.push("試験日: "+state.exam+"(あと"+dd+"日)")}
+  var p=state.profile||{};if(p.grade)lines.push("学年: "+p.grade);if(p.school)lines.push("志望校: "+p.school);
+  lines.push("1週間の目標時間: "+r1(weekTarget())+"時間(平日"+state.wd+"時間・休日"+state.we+"時間)");
+  lines.push("科目の勉強時間の比率(1〜7): "+state.subjects.map(function(x){return x[0]+" "+x[1]}).join("、"));
+  var per={},days=buckets(L,"d").map(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n]});return b.label+"("+b.sub+") "+r1(b.total/3600)+"時間"});
+  lines.push("直近7日の勉強時間: "+days.join("、"));
+  lines.push("直近7日の科目別: "+(Object.keys(per).length?Object.keys(per).map(function(n){return n+" "+r1(per[n]/3600)+"時間"}).join("、"):"記録なし"));
+  var td=(state.plan||[]).filter(function(d){return d.date===fmtDate(new Date())})[0];
+  if(td)lines.push("今日の予定: "+(td.blocks.length?td.blocks.map(function(b){return b.name+b.h+"時間"+(state.done[b.id]?"(完了)":"")+(b.carried?"(繰り越し)":"")}).join("、"):"なし"));
+  gSorted().slice(-2).forEach(function(e){
+    var sc=Object.keys(e.sc).map(function(n){return n+" "+Math.round(e.sc[n].s/e.sc[n].m*100)+"%"}).join("、");
+    lines.push("成績("+e.date+" "+e.name+"): "+(sc||"点数なし")+(e.rank>0?"、順位 "+e.rank+"位"+(e.of>0?"/"+e.of+"人中":""):""));
+  });
+  return lines.join("\n");
+}
+function aiBub(cls,text){var b=document.createElement("div");b.className="bub "+cls;b.textContent=text;$("aiChat").appendChild(b);return b}
+function renderAI(){
+  var on=typeof claude!=="undefined"&&claude&&claude.use;
+  $("aiOff").hidden=!!on;$("aiBody").hidden=!on;
+  if(!on)return;
+  if(!AI.s)claude.use("sample").then(function(f){AI.s=f;if(!f){$("aiOff").hidden=false;$("aiBody").hidden=true}});
+  var q=$("aiQuick");q.innerHTML="";
+  AI_QUICK.forEach(function(x){var b=document.createElement("button");b.textContent=x;b.onclick=function(){aiSend(x)};q.appendChild(b)});
+  $("aiChat").innerHTML="";
+  if(!(state.chat||[]).length)aiBub("a w","こんにちは!勉強のことなら、なんでも相談してください。上のボタンを押すか、下に書いて送ってね。");
+  (state.chat||[]).forEach(function(m){aiBub(m.r==="u"?"u":"a",m.t)});
+  $("aiSend").disabled=AI.busy;$("aiStop").hidden=!AI.busy;
+}
+var AI_ERR={not_granted:"AIへの相談が許可されませんでした。もう一度送ると、許可を選べます。",rate_limited:"続けて送りすぎです。少し待ってから、もう一度送ってください。"};
+async function aiSend(text){
+  text=String(text||"").trim().slice(0,1000);
+  if(!text||AI.busy)return;
+  var s=AI.s||(typeof claude!=="undefined"&&claude&&claude.use?await claude.use("sample"):null);
+  if(!s){renderAI();return}
+  AI.s=s;state.chat=state.chat||[];
+  var hist=state.chat.slice(-8);while(hist.length&&hist[0].r!=="u")hist.shift();
+  var content=($("aiUse").checked?"【勉強のデータ】\n"+aiContext()+"\n\n":"")+"【相談】\n"+text;
+  var turns=hist.map(function(m){return{role:m.r==="u"?"user":"assistant",content:m.t}}).concat([{role:"user",content:content}]);
+  state.chat.push({r:"u",t:text});
+  $("aiText").value="";$("aiErr").textContent="";
+  AI.busy=true;AI.ctl=new AbortController();
+  renderAI();
+  var bub=aiBub("a w","考え中…");bub.scrollIntoView({block:"nearest"});
+  try{
+    var res=await s([{role:"user",content:AI_RULES}].concat(turns),{cache:false,signal:AI.ctl.signal,onText:function(o){if(o&&o.text){bub.className="bub a";bub.textContent=o.text}}});
+    var ans=String(res.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
+    if(res.truncated)ans+="\n(途中で切れました。「続けて」と送ってください)";
+    state.chat.push({r:"a",t:ans});
+  }catch(e){
+    var part=e&&e.text?String(e.text).trim():"";
+    if(part)state.chat.push({r:"a",t:part});
+    if(!e||e.code!=="cancelled")$("aiErr").textContent=AI_ERR[e&&e.code]||"うまく答えられませんでした。もう一度送ってください。";
+  }
+  state.chat=state.chat.slice(-40);
+  AI.busy=false;AI.ctl=null;save();renderAI();
+  var last=$("aiChat").lastChild;if(last&&last.scrollIntoView)last.scrollIntoView({block:"nearest"});
 }
 
 // ===== イベント =====
@@ -1154,8 +1336,8 @@ $("reset").onclick=function(){
   });
 };
 $("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
-$("cfno").onclick=function(){cfFn=null;$("cf").hidden=true};
-$("cf").onclick=function(e){if(e.target===this){cfFn=null;this.hidden=true}};
+$("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
+$("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
 $("tmtoggle").onclick=function(){toggleTimer(openId)};
 $("tmdone").onclick=function(){if(running(openId))pauseTimer();setDone(openId,true);closeTimer();renderPlan()};
 $("tmclose").onclick=closeTimer;
@@ -1220,6 +1402,14 @@ $("delSel").onclick=function(){
 };
 $("navToday").onclick=function(){showPage(6)};
 $("navGrades").onclick=function(){showPage(7)};
+$("navAI").onclick=function(){showPage(8)};
+$("aiSend").onclick=function(){aiSend($("aiText").value)};
+$("aiText").onkeydown=function(e){if(e&&e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();aiSend($("aiText").value)}};
+$("aiStop").onclick=function(){if(AI.ctl)AI.ctl.abort()};
+$("aiClear").onclick=function(){
+  if(!(state.chat||[]).length)return;
+  askConfirm("会話を消しますか?","これまでの相談の内容が消えます。","消す",function(){state.chat=[];save();renderAI()});
+};
 $("tdPlan").onclick=function(){showPage(3)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
@@ -1251,6 +1441,13 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
   sp.onclick=hide;
   setTimeout(hide,calm?500:1900);
 })();
+$("accSync").onclick=function(){pushCloud()};
+$("accLoad").onclick=function(){
+  askConfirm("クラウドのデータを読み込みますか?","この端末のデータは、クラウドのデータで置き換わります。","読み込む",async function(){
+    try{var c=await pullCloud();if(c)applyCloud(c);else setAcc("クラウドにデータがありません")}catch(e){setAcc("読み込めませんでした")}
+  });
+};
+if(typeof claude!=="undefined"&&claude&&claude.use)initAccount();
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
