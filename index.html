@@ -287,7 +287,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 <section id="ai" hidden>
 <h2>AIに相談</h2>
-<p class="note" id="aiOff" hidden>この画面では、AI相談は使えません。Claudeで開いたこのページで使えます。</p>
+<p class="note" id="aiOff" hidden>AI相談の接続先を確認できません。サーバーを起動してから再読み込みしてください。</p>
 <div id="aiBody">
 <div class="chips" id="aiQuick"></div>
 <div class="chat" id="aiChat"></div>
@@ -1247,10 +1247,8 @@ function aiContext(){ // アプリのデータを、短い文章にまとめる(
 }
 function aiBub(cls,text){var b=document.createElement("div");b.className="bub "+cls;b.textContent=text;$("aiChat").appendChild(b);return b}
 function renderAI(){
-  var on=typeof claude!=="undefined"&&claude&&claude.use;
-  $("aiOff").hidden=!!on;$("aiBody").hidden=!on;
-  if(!on)return;
-  if(!AI.s)claude.use("sample").then(function(f){AI.s=f;if(!f){$("aiOff").hidden=false;$("aiBody").hidden=true}});
+  $("aiOff").hidden=true;
+  $("aiBody").hidden=false;
   var q=$("aiQuick");q.innerHTML="";
   AI_QUICK.forEach(function(x){var b=document.createElement("button");b.textContent=x;b.onclick=function(){aiSend(x)};q.appendChild(b)});
   $("aiChat").innerHTML="";
@@ -1258,13 +1256,11 @@ function renderAI(){
   (state.chat||[]).forEach(function(m){aiBub(m.r==="u"?"u":"a",m.t)});
   $("aiSend").disabled=AI.busy;$("aiStop").hidden=!AI.busy;
 }
-var AI_ERR={not_granted:"AIへの相談が許可されませんでした。もう一度送ると、許可を選べます。",rate_limited:"続けて送りすぎです。少し待ってから、もう一度送ってください。"};
+var AI_ERR={not_granted:"AIへの相談が許可されませんでした。",rate_limited:"続けて送りすぎです。少し待ってから、もう一度送ってください。"};
 async function aiSend(text){
   text=String(text||"").trim().slice(0,1000);
   if(!text||AI.busy)return;
-  var s=AI.s||(typeof claude!=="undefined"&&claude&&claude.use?await claude.use("sample"):null);
-  if(!s){renderAI();return}
-  AI.s=s;state.chat=state.chat||[];
+  state.chat=state.chat||[];
   var hist=state.chat.slice(-8);while(hist.length&&hist[0].r!=="u")hist.shift();
   var content=($("aiUse").checked?"【勉強のデータ】\n"+aiContext()+"\n\n":"")+"【相談】\n"+text;
   var turns=hist.map(function(m){return{role:m.r==="u"?"user":"assistant",content:m.t}}).concat([{role:"user",content:content}]);
@@ -1274,14 +1270,13 @@ async function aiSend(text){
   renderAI();
   var bub=aiBub("a w","考え中…");bub.scrollIntoView({block:"nearest"});
   try{
-    var res=await s([{role:"user",content:AI_RULES}].concat(turns),{cache:false,signal:AI.ctl.signal,onText:function(o){if(o&&o.text){bub.className="bub a";bub.textContent=o.text}}});
-    var ans=String(res.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
-    if(res.truncated)ans+="\n(途中で切れました。「続けて」と送ってください)";
+    var res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system:AI_RULES,messages:turns}),signal:AI.ctl.signal});
+    var data=await res.json().catch(function(){return {}});
+    if(!res.ok)throw new Error(data.error||"AIサーバーからエラーが返されました。");
+    var ans=String(data.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
     state.chat.push({r:"a",t:ans});
   }catch(e){
-    var part=e&&e.text?String(e.text).trim():"";
-    if(part)state.chat.push({r:"a",t:part});
-    if(!e||e.code!=="cancelled")$("aiErr").textContent=AI_ERR[e&&e.code]||"うまく答えられませんでした。もう一度送ってください。";
+    if(!e||e.name!=="AbortError")$("aiErr").textContent=(e&&e.message&&e.message!=="Failed to fetch")?e.message:"AIサーバーに接続できません。READMEの手順でサーバーを起動してください。";
   }
   state.chat=state.chat.slice(-40);
   AI.busy=false;AI.ctl=null;save();renderAI();
