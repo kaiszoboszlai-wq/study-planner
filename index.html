@@ -287,11 +287,12 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 <section id="ai" hidden>
 <h2>AIに相談</h2>
-<p class="note" id="aiOff" hidden>AI相談の接続先を確認できません。サーバーを起動してから再読み込みしてください。</p>
+<p class="note" id="aiOff" hidden>この画面では、AI相談は使えません。Claudeで開いたこのページで使えます。</p>
 <div id="aiBody">
 <div class="chips" id="aiQuick"></div>
 <div class="chat" id="aiChat"></div>
 <div class="fld"><label class="chk"><input type="checkbox" id="aiUse" checked>勉強のデータ(目標・記録・成績など)を相談に使う</label></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="aiDeep">じっくり考えてもらう(答えが出るまで時間がかかります)</label></div>
 <div class="aiin"><textarea id="aiText" rows="2" maxlength="1000" placeholder="例 今週は数学が遅れています。どう取り戻せばいい?" aria-label="相談の内容"></textarea><button id="aiSend" class="main">送信</button></div>
 <div class="actions"><button id="aiStop" hidden>止める</button><button id="aiClear">会話を消す</button></div>
 <p class="err" id="aiErr"></p>
@@ -1247,8 +1248,10 @@ function aiContext(){ // アプリのデータを、短い文章にまとめる(
 }
 function aiBub(cls,text){var b=document.createElement("div");b.className="bub "+cls;b.textContent=text;$("aiChat").appendChild(b);return b}
 function renderAI(){
-  $("aiOff").hidden=true;
-  $("aiBody").hidden=false;
+  var on=typeof claude!=="undefined"&&claude&&claude.use;
+  $("aiOff").hidden=!!on;$("aiBody").hidden=!on;
+  if(!on)return;
+  if(!AI.s)claude.use("sample").then(function(f){AI.s=f;if(!f){$("aiOff").hidden=false;$("aiBody").hidden=true}});
   var q=$("aiQuick");q.innerHTML="";
   AI_QUICK.forEach(function(x){var b=document.createElement("button");b.textContent=x;b.onclick=function(){aiSend(x)};q.appendChild(b)});
   $("aiChat").innerHTML="";
@@ -1256,11 +1259,27 @@ function renderAI(){
   (state.chat||[]).forEach(function(m){aiBub(m.r==="u"?"u":"a",m.t)});
   $("aiSend").disabled=AI.busy;$("aiStop").hidden=!AI.busy;
 }
-var AI_ERR={not_granted:"AIへの相談が許可されませんでした。",rate_limited:"続けて送りすぎです。少し待ってから、もう一度送ってください。"};
+var AI_ERR={
+  not_granted:"AIへの相談が許可されていません。もう一度送ると、許可を選べます。",
+  sampling_disabled:"このアカウントでは、Claudeが使えない設定になっています。",
+  not_declared:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
+  capability_disabled:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
+  capability_removed:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
+  session_expired:"ログインの期限が切れました。Claudeにログインし直してください。",
+  rate_limited:"続けて送りすぎ、または利用の上限です。少し待ってから、もう一度送ってください。",
+  refused:"この内容には答えられませんでした。聞き方を変えてみてください。",
+  empty_completion:"答えが返ってきませんでした。聞き方を変えて、もう一度送ってください。",
+  prompt_too_large:"会話が長すぎます。「会話を消す」を押してから、もう一度送ってください。",
+  invalid_request:"送り方に問題がありました。「会話を消す」を押してから、もう一度試してください。",
+  transform_error:"送り方に問題がありました。「会話を消す」を押してから、もう一度試してください。",
+  upstream_error:"AIのサーバーが、一時的にエラーを返しました。少し待ってから、もう一度送ってください。"
+};
 async function aiSend(text){
   text=String(text||"").trim().slice(0,1000);
   if(!text||AI.busy)return;
-  state.chat=state.chat||[];
+  var s=AI.s||(typeof claude!=="undefined"&&claude&&claude.use?await claude.use("sample"):null);
+  if(!s){renderAI();return}
+  AI.s=s;state.chat=state.chat||[];
   var hist=state.chat.slice(-8);while(hist.length&&hist[0].r!=="u")hist.shift();
   var content=($("aiUse").checked?"【勉強のデータ】\n"+aiContext()+"\n\n":"")+"【相談】\n"+text;
   var turns=hist.map(function(m){return{role:m.r==="u"?"user":"assistant",content:m.t}}).concat([{role:"user",content:content}]);
@@ -1270,13 +1289,15 @@ async function aiSend(text){
   renderAI();
   var bub=aiBub("a w","考え中…");bub.scrollIntoView({block:"nearest"});
   try{
-    var res=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system:AI_RULES,messages:turns}),signal:AI.ctl.signal});
-    var data=await res.json().catch(function(){return {}});
-    if(!res.ok)throw new Error(data.error||"AIサーバーからエラーが返されました。");
-    var ans=String(data.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
+    var res=await s([{role:"user",content:AI_RULES}].concat(turns),{cache:false,modelTier:$("aiDeep").checked?"default":"quick",signal:AI.ctl.signal,onText:function(o){if(o&&o.text){bub.className="bub a";bub.textContent=o.text}}});
+    var ans=String(res.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
+    if(res.truncated)ans+="\n(途中で切れました。「続けて」と送ってください)";
     state.chat.push({r:"a",t:ans});
   }catch(e){
-    if(!e||e.name!=="AbortError")$("aiErr").textContent=(e&&e.message&&e.message!=="Failed to fetch")?e.message:"AIサーバーに接続できません。READMEの手順でサーバーを起動してください。";
+    var part=e&&e.text?String(e.text).trim():"",code=(e&&e.code)||"unknown";
+    if(part)state.chat.push({r:"a",t:part});
+    else{state.chat.pop();$("aiText").value=text} // 答えが来なかったときは、送った文を入力欄に戻す(そのまま送り直せる)
+    if(code!=="cancelled")$("aiErr").textContent=(AI_ERR[code]||AI_ERR.upstream_error)+"(コード: "+code+")";
   }
   state.chat=state.chat.slice(-40);
   AI.busy=false;AI.ctl=null;save();renderAI();
