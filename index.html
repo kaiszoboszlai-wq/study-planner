@@ -176,6 +176,12 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 @keyframes spUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
 @keyframes spGone{to{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.sp-logo,.sp-t,.sp-g{animation:none;opacity:1}.sp-check{animation:none;stroke-dashoffset:0}}
+.blk+.blk{box-shadow:0 -1px 0 var(--line)}
+.day .blk{padding-top:8px;padding-bottom:8px}
+.adj{margin:14px 0 4px}
+.adjb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.adjin{display:flex;gap:6px;align-items:center;justify-content:center}
+.adjin input{width:80px;min-width:0}
 .chat{display:flex;flex-direction:column;gap:8px;margin:10px 0}
 .bub{max-width:90%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;line-height:1.6}
 .bub.u{align-self:flex-end;background:var(--acc);color:var(--bg);border-bottom-right-radius:4px}
@@ -253,9 +259,11 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <p class="step">ステップ 4 / 4</p>
 <h2>今日から7日間の計画</h2>
 <p class="note">左右にスワイプして日を切り替えられます。</p>
+<div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を、翌日に繰り越す</label>
+<p class="note" id="carryNote"></p></div>
 <div id="plan" class="days"></div>
 <div class="actions"><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <h2>学習記録</h2>
@@ -301,11 +309,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
-<h3 class="sh">アカウント</h3>
-<div class="me"><div class="av" id="accAv"></div><div><b id="accName"></b><div class="note" id="accSt"></div></div></div>
-<div class="actions" id="accBtns"><button id="accSync" class="main">いますぐ同期</button><button id="accLoad">クラウドから読み込む</button></div>
-<p class="note" id="accOff">ログインしていません。Claudeにログインしてこのページを開くと、データがクラウドに保存されて、別の端末でも続きから使えます。</p>
-<p class="note" id="accNote" hidden>記録・計画・成績・プロフィールが、あなた専用のクラウドに自動で保存されます。ほかの人からは見えません。</p>
 <h3 class="sh">プロフィール</h3>
 <div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
 <div id="pfEdit">
@@ -349,6 +352,9 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="tmname" id="tmname"></div>
 <div class="tmplan" id="tmplan"></div>
 <div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div class="tmtime" id="tmtime">0:00:00</div></div>
+<div class="adj"><span class="lb">計り忘れたときは、勉強した時間を直せます</span>
+<div class="adjb"><button id="adjM10">−10分</button><button id="adjP10">+10分</button><button id="adjP30">+30分</button></div>
+<div class="adjin"><input type="number" id="tmMin" min="0" max="999" aria-label="勉強した時間(分)"><span>分</span><button id="tmSet">この時間にする</button></div></div>
 <div class="actions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmclose">閉じる</button></div>
 </div>
 </div>
@@ -382,7 +388,7 @@ var KEY="study-planner-v1";
 var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
 function store(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function save(){state.updatedAt=Date.now();store();if(typeof scheduleCloud==="function")scheduleCloud()}
+function save(){state.updatedAt=Date.now();store()}
 
 var $=function(id){return document.getElementById(id)};
 
@@ -532,7 +538,7 @@ function rollForward(){
   var rest=state.plan.filter(function(day){return day.date>=today});
   var carry=[];
   past.forEach(function(day){day.blocks.forEach(function(x){
-    if(!state.done[x.id]){var rem=Math.round((x.h-(state.spent[x.id]||0)/3600)*2)/2;if(rem>=0.5)carry.push({name:x.name,h:rem})}
+    if(state.carry!==false&&!state.done[x.id]){var rem=Math.round((x.h-(state.spent[x.id]||0)/3600)*2)/2;if(rem>=0.5)carry.push({name:x.name,h:rem})} // 繰り越しがオフのときは、できなかった分は引き継がない
     delete state.done[x.id];delete state.spent[x.id];delete state.credit[x.id];if(state.contrib)delete state.contrib[x.id];
   })});
   var end=new Date(state.exam+"T00:00:00"),map={},t0=new Date(),plan=[];
@@ -558,7 +564,13 @@ function rollForward(){
   save();return true;
 }
 function rollAndRender(){if(rollForward())renderPlan()}
+function showCarry(){ // 繰り越しのオン・オフの表示(初期はオン)
+  var on=state.carry!==false;
+  $("carryOn").checked=on;
+  $("carryNote").textContent=on?"日が変わると、できなかった項目の残り時間が、翌日以降に入ります。":"日が変わると、できなかった項目は消えます(翌日には入りません)。";
+}
 function renderPlan(){
+  showCarry();
   if(!state.plan)return;
   var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
   if(!state.plan.length){box.innerHTML='<div class="note">試験日が今日以前になっています。先の日付にしてください。</div>';return}
@@ -622,12 +634,32 @@ function toggleTimer(id){
   else{unlockAudio();askNotify();pauseTimer();state.timer={id:id,start:Date.now()};notified=remain(id)<=0?id:null;save()}
   updateTimer();renderPlan();
 }
+// 勉強した時間(計測した時間)を、あとから増やしたり減らしたりする。学習記録にも同じだけ反映する。
+function adjustSpent(id,deltaSec){
+  var x=findBlock(id);if(!x||!deltaSec)return;
+  var wasRun=running(id);if(wasRun)pauseTimer();
+  var wasDone=!!state.done[id];if(wasDone)setDone(id,false); // 完了のときは、予定との差で足した分を一度戻して、あとで入れ直す
+  if(deltaSec>0){logAdd(x.name,deltaSec,id,"t");state.spent[id]=(state.spent[id]||0)+deltaSec}
+  else{
+    var cut=Math.min(-deltaSec,state.spent[id]||0),left=cut,list=(state.contrib&&state.contrib[id])||[];
+    for(var i=list.length-1;i>=0&&left>0.5;i--){var e=list[i];if(e.k!=="t")continue;var take=Math.min(e.sec,left);subLog(e.date,e.name,take);e.sec-=take;left-=take}
+    if(state.contrib&&list.length)state.contrib[id]=list.filter(function(e){return e.sec>0.5});
+    if(left>0.5&&!state.legacyOff)subLogAny(x.name,left);
+    state.spent[id]=Math.max(0,(state.spent[id]||0)-cut);
+  }
+  if(wasDone)setDone(id,true);
+  if(wasRun)state.timer={id:id,start:Date.now()};
+  save();
+  if($("tmMin"))$("tmMin").value=Math.round(elapsed(id)/60);
+  updateTimer();renderPlan();if(state.page===6&&typeof renderToday==="function")renderToday();
+}
 function openTimer(id){
   var x=findBlock(id);if(!x)return;
   openId=id;
   $("tmname").textContent=x.name;
   $("tmplan").textContent="予定 "+x.h+"時間";
   $("tmbox").style.borderTopColor=colorOf(x.name);
+  $("tmMin").value=Math.round(elapsed(id)/60);
   $("tm").hidden=false;updateTimer();
 }
 function closeTimer(){openId=null;$("tm").hidden=true}
@@ -991,25 +1023,29 @@ function gColor(nm){ // プランで色を決めた科目はその色。ない�
   var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
   return PALETTE[h%PALETTE.length];
 }
-// state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。得点率(%)=s/m×100
+// state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。グラフは点数(s)。比率の提案・AI相談では 得点率(%)=s/m×100 も使う
 var gSel="all",gEdit=null,gmRows=[];
 function gSorted(){return (state.exams||[]).slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0})}
 function gPct(o){return o.m>0?o.s/o.m*100:0}
 function gDate(d){var x=new Date(d+"T00:00:00");return (x.getMonth()+1)+"/"+x.getDate()}
-function gLine(recs,sel){ // 得点率(%)の折れ線グラフ
+function gLine(recs,sel){ // 点数の折れ線グラフ(縦軸は、表示している科目の満点の最大まで)
   var last=recs.slice(-10),W=320,H=250,ml=38,mr=10,mt=12,mb=30,pw=W-ml-mr,ph=H-mt-mb,n=last.length;
-  var X=function(i){return ml+(n>1?pw*i/(n-1):pw/2)},Y=function(p){return mt+ph-p/100*ph};
-  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="得点率のグラフ">';
-  [0,25,50,75,100].forEach(function(v){svg+='<line class="gl0" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="ax" x="'+(ml-6)+'" y="'+(Y(v)+3)+'" text-anchor="end">'+v+'%</text>'});
   var names=[];
   last.forEach(function(e){Object.keys(e.sc).forEach(function(k){if(names.indexOf(k)<0)names.push(k)})});
-  names.filter(function(nm){return sel==="all"||sel===nm}).forEach(function(nm){
-    var pts=[];last.forEach(function(e,i){if(e.sc[nm])pts.push({x:X(i),y:Y(gPct(e.sc[nm])),p:gPct(e.sc[nm])})});
+  var show=names.filter(function(nm){return sel==="all"||sel===nm}),top=0;
+  last.forEach(function(e){show.forEach(function(nm){if(e.sc[nm])top=Math.max(top,e.sc[nm].m,e.sc[nm].s)})});
+  top=top>0?Math.ceil(top/10)*10:100;
+  var step=top<=50?10:top<=100?25:top<=200?50:top<=500?100:200;
+  var X=function(i){return ml+(n>1?pw*i/(n-1):pw/2)},Y=function(v){return mt+ph-v/top*ph};
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="点数のグラフ">';
+  for(var v=0;v<=top+1e-9;v+=step)svg+='<line class="gl0" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="ax" x="'+(ml-6)+'" y="'+(Y(v)+3)+'" text-anchor="end">'+v+'</text>';
+  show.forEach(function(nm){
+    var pts=[];last.forEach(function(e,i){if(e.sc[nm])pts.push({x:X(i),y:Y(e.sc[nm].s),p:e.sc[nm].s})});
     if(!pts.length)return;
     if(pts.length>1)svg+='<polyline fill="none" stroke-width="2.5" style="stroke:'+gColor(nm)+'" points="'+pts.map(function(q){return q.x+","+q.y}).join(" ")+'"/>';
     pts.forEach(function(q){
       svg+='<circle cx="'+q.x+'" cy="'+q.y+'" r="4" style="fill:'+gColor(nm)+'"/>';
-      if(sel!=="all")svg+='<text class="ax" x="'+q.x+'" y="'+(q.y-8)+'" text-anchor="middle">'+Math.round(q.p)+'</text>';
+      if(sel!=="all")svg+='<text class="ax" x="'+q.x+'" y="'+(q.y-8)+'" text-anchor="middle">'+(Math.round(q.p*10)/10)+'</text>';
     });
   });
   last.forEach(function(e,i){if(n<=7||i%2===n%2)svg+='<text class="ax" x="'+X(i)+'" y="'+(H-10)+'" text-anchor="middle">'+gDate(e.date)+'</text>'});
@@ -1038,7 +1074,7 @@ function renderGrades(){
     b.onclick=function(){gSel=nm;renderGrades()};chips.appendChild(b);
   });
   var hasPct=recs.some(function(e){return Object.keys(e.sc).length>0});
-  $("gchart").innerHTML=hasPct?gLine(recs,gSel):'<div class="note">成績を追加すると、得点率(点数÷満点)のグラフが出ます。</div>';
+  $("gchart").innerHTML=hasPct?gLine(recs,gSel):'<div class="note">成績を追加すると、点数のグラフが出ます。</div>';
   $("grank").innerHTML=gRank(recs);
   var box=$("glist");box.innerHTML="";
   recs.slice().reverse().forEach(function(e){
@@ -1048,13 +1084,13 @@ function renderGrades(){
     card.querySelector(".gl2").textContent=gDate(e.date)+(e.rank>0?"  順位 "+e.rank+"位"+(e.of>0?" / "+e.of+"人中":""):"");
     var rows=card.querySelector(".rows");
     Object.keys(e.sc).forEach(function(nm){
-      var p=gPct(e.sc[nm]),prev=null;
-      for(var j=idx-1;j>=0;j--){if(recs[j].sc[nm]){prev=gPct(recs[j].sc[nm]);break}}
+      var p=e.sc[nm].s,prev=null;
+      for(var j=idx-1;j>=0;j--){if(recs[j].sc[nm]){prev=recs[j].sc[nm].s;break}}
       var r=document.createElement("div");r.className="gl";r.innerHTML="<i></i><span></span><span></span><span></span>";
       r.querySelector("i").style.background=gColor(nm);
       var sp=r.querySelectorAll("span");sp[0].textContent=nm;
-      sp[1].textContent=e.sc[nm].s+" / "+e.sc[nm].m+"("+Math.round(p)+"%)";
-      if(prev!==null){var df=Math.round(p-prev);sp[2].textContent=(df>0?"▲+":df<0?"▼":"±")+df;sp[2].className=df>0?"up":df<0?"dn":""}
+      sp[1].textContent=e.sc[nm].s+" / "+e.sc[nm].m+"点";
+      if(prev!==null){var df=Math.round((p-prev)*10)/10;sp[2].textContent=(df>0?"▲+":df<0?"▼":"±")+df+"点";sp[2].className=df>0?"up":df<0?"dn":""}
       rows.appendChild(r);
     });
     card.querySelector(".ed").onclick=function(){openGrade(e.id)};
@@ -1111,7 +1147,6 @@ var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","�
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
 function renderMy(){
-  renderAcc();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
   if(pfEditing===null)pfEditing=!(p.set||p.name||p.school||p.photo||p.grade||p.age);
   $("pfEdit").hidden=!pfEditing;$("pfView").hidden=pfEditing;
@@ -1135,86 +1170,6 @@ function renderMy(){
   $("pfGrade").value=p.grade||"";
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
-}
-
-// ===== アカウント(Claudeのアカウントでログインし、データをクラウドに保存) =====
-// ログインは、このページを開いているClaudeのアカウントそのもの。データは「あなた専用」の領域
-// data/users/<自分のid>/state に1件だけ保存する(ほかの人からは読めない)。変更するたびに自動で保存し、
-// 開いたときに、クラウドの方が新しければ読み込む。端末ごとの状態(開いているページ、計測中のタイマー)は保存しない。
-var ACC={db:null,id:null,name:"",avatar:"",busy:false,timer:null};
-var SYNC_SKIP=["chat","timer","page","planPage","back","cloudAt","updatedAt","__proto__","constructor","prototype"];
-function accPath(){return "data/users/"+ACC.id+"/state"}
-function hhmm(t){var d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+d.getHours()+":"+("0"+d.getMinutes()).slice(-2)}
-function setAcc(msg){var e=$("accSt");if(e)e.textContent=msg}
-function renderAcc(){
-  var on=!!ACC.db;
-  $("accOff").hidden=on;$("accNote").hidden=!on;$("accBtns").hidden=!on;
-  var av=$("accAv");av.innerHTML="";
-  if(on&&ACC.avatar){var im=document.createElement("img");im.src=ACC.avatar;im.alt="";av.appendChild(im);av.style.background="none"}
-  else{av.textContent="👤";av.style.background="var(--line)"}
-  $("accName").textContent=on?(ACC.name||"ログイン中"):"ログインしていません";
-}
-function syncData(){
-  var o={};
-  Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});
-  var js=JSON.stringify(o);
-  if(js.length>230000){if(o.profile)o.profile=Object.assign({},o.profile,{photo:""});js=JSON.stringify(o)} // 大きすぎるときは写真を外す
-  return js;
-}
-async function pullCloud(){
-  var sn=await ACC.db.doc(accPath()).get();
-  if(!sn.exists)return null;
-  try{var d=sn.data();return{updated:Number(d.updated)||0,state:JSON.parse(d.json)}}catch(e){return null}
-}
-async function pushCloud(){
-  if(!ACC.db||ACC.busy)return false;
-  ACC.busy=true;setAcc("同期中…");
-  try{
-    var t=Date.now(),js=syncData();
-    if(js.length>240000)throw new Error("too big");
-    await ACC.db.doc(accPath()).set({updated:t,json:js});
-    state.cloudAt=t;state.updatedAt=t;store();
-    setAcc("同期しました("+hhmm(t)+")");ACC.busy=false;return true;
-  }catch(e){
-    ACC.busy=false;
-    setAcc("同期できませんでした。このページを「編集できる(Contributor)」の権限で開いているか、確認してください。");return false;
-  }
-}
-function applyCloud(c){ // クラウドのデータで、この端末のデータを置き換える
-  Object.keys(c.state||{}).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)state[k]=c.state[k]});
-  state.timer=null;state.cloudAt=c.updated;state.updatedAt=c.updated;store();
-  location.reload();
-}
-function scheduleCloud(){
-  if(!ACC.db)return;
-  if((state.updatedAt||0)<=(state.cloudAt||0))return;
-  clearTimeout(ACC.timer);ACC.timer=setTimeout(pushCloud,6000);
-}
-async function syncOnStart(){
-  setAcc("確認中…");
-  var cloud=await pullCloud();
-  var dirty=(state.updatedAt||0)>(state.cloudAt||0);
-  var hasLocal=!!(state.plan||(state.goal||"").trim()||Object.keys(state.log||{}).length||(state.exams||[]).length);
-  if(!cloud){if(hasLocal)await pushCloud();else setAcc("クラウドには、まだ何も保存されていません");return}
-  if(cloud.updated<=(state.cloudAt||0)){
-    if(dirty)await pushCloud();else setAcc("最新です(最終同期 "+hhmm(state.cloudAt)+")");
-    return;
-  }
-  if(!dirty||!hasLocal){applyCloud(cloud);return}
-  askConfirm("クラウドとこの端末で、データが違います","クラウドは "+hhmm(cloud.updated)+" に保存したものです。どちらを使いますか?",
-    "クラウドのデータを使う",function(){applyCloud(cloud)},
-    "この端末のデータを使う",function(){pushCloud()});
-}
-async function initAccount(){
-  try{
-    var u=await claude.use("user"),d=await claude.use("db");
-    if(!u||!d)return;
-    var me=await u.me();
-    if(!me||!me.id)return;
-    ACC.db=d;ACC.id=me.id;ACC.name=me.name||"";ACC.avatar=me.avatarUrl||"";
-    renderAcc();
-    await syncOnStart();
-  }catch(e){ACC.db=null;renderAcc()}
 }
 
 // ===== AIに相談 =====
@@ -1241,7 +1196,7 @@ function aiContext(){ // アプリのデータを、短い文章にまとめる(
   var td=(state.plan||[]).filter(function(d){return d.date===fmtDate(new Date())})[0];
   if(td)lines.push("今日の予定: "+(td.blocks.length?td.blocks.map(function(b){return b.name+b.h+"時間"+(state.done[b.id]?"(完了)":"")+(b.carried?"(繰り越し)":"")}).join("、"):"なし"));
   gSorted().slice(-2).forEach(function(e){
-    var sc=Object.keys(e.sc).map(function(n){return n+" "+Math.round(e.sc[n].s/e.sc[n].m*100)+"%"}).join("、");
+    var sc=Object.keys(e.sc).map(function(n){return n+" "+e.sc[n].s+"/"+e.sc[n].m+"点("+Math.round(e.sc[n].s/e.sc[n].m*100)+"%)"}).join("、");
     lines.push("成績("+e.date+" "+e.name+"): "+(sc||"点数なし")+(e.rank>0?"、順位 "+e.rank+"位"+(e.of>0?"/"+e.of+"人中":""):""));
   });
   return lines.join("\n");
@@ -1355,6 +1310,10 @@ $("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
 $("tmtoggle").onclick=function(){toggleTimer(openId)};
+$("adjM10").onclick=function(){adjustSpent(openId,-600)};
+$("adjP10").onclick=function(){adjustSpent(openId,600)};
+$("adjP30").onclick=function(){adjustSpent(openId,1800)};
+$("tmSet").onclick=function(){var v=Number($("tmMin").value);if(!(v>=0))return;adjustSpent(openId,Math.round(v*60-elapsed(openId)))};
 $("tmdone").onclick=function(){if(running(openId))pauseTimer();setDone(openId,true);closeTimer();renderPlan()};
 $("tmclose").onclick=closeTimer;
 $("tm").onclick=function(e){if(e.target===this)closeTimer()};
@@ -1368,6 +1327,7 @@ $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
 $("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
+$("carryOn").onchange=function(){state.carry=this.checked;save();showCarry()};
 $("tipsOk").onclick=function(){$("tips").hidden=true};
 $("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
 $("sug").onclick=function(){
@@ -1457,13 +1417,9 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
   sp.onclick=hide;
   setTimeout(hide,calm?500:1900);
 })();
-$("accSync").onclick=function(){pushCloud()};
-$("accLoad").onclick=function(){
-  askConfirm("クラウドのデータを読み込みますか?","この端末のデータは、クラウドのデータで置き換わります。","読み込む",async function(){
-    try{var c=await pullCloud();if(c)applyCloud(c);else setAcc("クラウドにデータがありません")}catch(e){setAcc("読み込めませんでした")}
-  });
-};
-if(typeof claude!=="undefined"&&claude&&claude.use)initAccount();
+// Geminiの機能を消したので、残っているかもしれないキーや会話を、この端末から消す
+try{localStorage.removeItem("study-planner-gkey");localStorage.removeItem("study-planner-gmodel")}catch(e){}
+if(state.gchat||state.aiMode){delete state.gchat;delete state.aiMode;save()}
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
