@@ -13,7 +13,8 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--card:#18232d;--ink:#e8eef3;--sub:#93a4b3;--line:#2a3a47;--acc:#5fc4bf;--accbg:#173a3a;--done:#5d7080;--red:#ff6b6b}}
 :root[data-theme="dark"]{--bg:#10181f;--card:#18232d;--ink:#e8eef3;--sub:#93a4b3;--line:#2a3a47;--acc:#5fc4bf;--accbg:#173a3a;--done:#5d7080;--red:#ff6b6b}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
+*{box-sizing:border-box;touch-action:manipulation}
+html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
 .app{max-width:720px;margin:0 auto}
 .side{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
@@ -69,6 +70,7 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .col{cursor:pointer}
 .sdetail{margin:8px 0;color:var(--sub);font-size:.9rem;min-height:1.4em}
 .sh{font-size:.95rem;margin:14px 0 4px}
+.dot{width:12px;height:12px;border-radius:3px;flex:none}
 .srow{display:flex;align-items:center;gap:8px;padding:4px 0}
 .srow i{width:12px;height:12px;border-radius:3px;flex:none}
 .srow span:first-of-type{flex:1}
@@ -182,13 +184,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .adjb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .adjin{display:flex;gap:6px;align-items:center;justify-content:center}
 .adjin input{width:80px;min-width:0}
-.chat{display:flex;flex-direction:column;gap:8px;margin:10px 0}
-.bub{max-width:90%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;line-height:1.6}
-.bub.u{align-self:flex-end;background:var(--acc);color:var(--bg);border-bottom-right-radius:4px}
-.bub.a{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
-.bub.w{color:var(--sub)}
-.aiin{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
-.aiin textarea{flex:1;margin-top:0}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -210,7 +205,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
 <button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
 <button class="nv" id="navGrades"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 15l4-4 3 3 5-6"/></svg><span>成績</span></button>
-<button class="nv" id="navAI"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>相談</span></button>
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span></button>
 </nav>
 <main>
@@ -260,9 +254,10 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <h2>今日から7日間の計画</h2>
 <p class="note">左右にスワイプして日を切り替えられます。</p>
 <div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を、翌日に繰り越す</label>
-<p class="note" id="carryNote"></p></div>
+<p class="note" id="carryNote"></p>
+<p class="note" id="styleNote"></p></div>
 <div id="plan" class="days"></div>
-<div class="actions"><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
+<div class="actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
@@ -274,7 +269,16 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="sdetail" id="sdetail"></div>
 <div class="actions"><button id="delSel" class="dng" hidden>選んだ期間の記録を削除</button></div>
 <div class="pies" id="pies"></div>
-<h3 class="sh">記録の削除</h3>
+<h3 class="sh">学習記録を入力する</h3>
+<div class="fld"><label>日付<input type="date" id="mrDate"></label></div>
+<div class="fld"><label>科目<input type="text" id="mrSubj" list="mrNames" maxlength="12" placeholder="例 数学"></label><datalist id="mrNames"></datalist></div>
+<div class="fld"><span class="lb">勉強した時間</span><div class="rk"><input type="number" id="mrH" min="0" max="24" placeholder="0" aria-label="時間"><span>時間</span><input type="number" id="mrM" min="0" max="59" placeholder="0" aria-label="分"><span>分</span></div></div>
+<p class="err" id="mrErr"></p>
+<div class="actions"><button id="mrAdd" class="main">記録する</button></div>
+<h3 class="sh">記録の一覧(1件ずつ削除できます)</h3>
+<div id="mrRows"></div>
+<div class="actions"><button id="mrMore" hidden>もっと見る</button></div>
+<h3 class="sh">期間まとめて削除</h3>
 <p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。</p>
 </section>
 <section id="today" hidden>
@@ -292,20 +296,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="gc" id="gchart"></div>
 <div class="gc" id="grank"></div>
 <div id="glist"></div>
-</section>
-<section id="ai" hidden>
-<h2>AIに相談</h2>
-<p class="note" id="aiOff" hidden>この画面では、AI相談は使えません。Claudeで開いたこのページで使えます。</p>
-<div id="aiBody">
-<div class="chips" id="aiQuick"></div>
-<div class="chat" id="aiChat"></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="aiUse" checked>勉強のデータ(目標・記録・成績など)を相談に使う</label></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="aiDeep">じっくり考えてもらう(答えが出るまで時間がかかります)</label></div>
-<div class="aiin"><textarea id="aiText" rows="2" maxlength="1000" placeholder="例 今週は数学が遅れています。どう取り戻せばいい?" aria-label="相談の内容"></textarea><button id="aiSend" class="main">送信</button></div>
-<div class="actions"><button id="aiStop" hidden>止める</button><button id="aiClear">会話を消す</button></div>
-<p class="err" id="aiErr"></p>
-<p class="note">相談の内容と、チェックを入れたときは勉強のデータが、Claudeに送られます。AIの答えは目安です。大事なことは、先生や家族にも相談してください。</p>
-</div>
 </section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
@@ -355,7 +345,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="adj"><span class="lb">計り忘れたときは、勉強した時間を直せます</span>
 <div class="adjb"><button id="adjM10">−10分</button><button id="adjP10">+10分</button><button id="adjP30">+30分</button></div>
 <div class="adjin"><input type="number" id="tmMin" min="0" max="999" aria-label="勉強した時間(分)"><span>分</span><button id="tmSet">この時間にする</button></div></div>
-<div class="actions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmclose">閉じる</button></div>
+<div class="actions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmReset">リセット</button><button id="tmclose">閉じる</button></div>
 </div>
 </div>
 <div class="tm" id="em" hidden role="dialog" aria-modal="true" aria-labelledby="emtitle">
@@ -431,7 +421,7 @@ function calcNeed(){
   need={wd:wd,we:we};
   var warn=(wd>16||we>16)?'<div class="warn">1日16時間を超えます。総時間を見直してください。</div>':"";
   box.hidden=false;
-  box.innerHTML="1週間で"+T+"時間勉強するには、<br>最低でも <b>平日 "+wd+"時間</b> / <b>休日 "+we+"時間</b> が必要です。"+warn+
+  box.innerHTML="1週間で"+hm(T)+"勉強するには、<br>最低でも <b>平日 "+hm(wd)+"</b> / <b>休日 "+hm(we)+"</b> が必要です。"+warn+
     '<div class="note">平日：休日 = '+a+'：'+b+' として計算しています。</div><button id="apply">この時間を条件に反映する</button>';
   $("apply").onclick=function(){
     state.wd=need.wd;state.we=need.we;$("wd").value=state.wd;$("we").value=state.we;save();calcNeed();
@@ -469,18 +459,23 @@ function dropState(id){if(running(id))pauseTimer();rollback(id);delete state.don
 
 // 1日分の項目を決める。時間が多いほどコマを増やし、残り目標が大きい科目を長めにする
 function makeTargets(subs,total){var wsum=subs.reduce(function(a,s){return a+s[1]},0)||1;return subs.map(function(s){return total*s[1]/wsum})}
+// 計画の案。「別の計画を提案」で、順番に切り替わる(コマの長さ・1日の科目数・選び方がちがう)
+var PLAN_STYLES=[{n:"標準",avg:2,max:3},{n:"まんべんなく",avg:1,max:2},{n:"集中型",avg:3,max:4},{n:"ランダム",avg:2,max:3,rnd:true}];
 function allocDay(h,subs,target){
   var out=[];
   if(h<=0||!subs.length)return out;
-  var k=Math.max(1,Math.min(subs.length,Math.floor(h/MIN_SESSION),Math.round(h/AVG_SESSION)));
-  var idx=subs.map(function(_,i){return i}).sort(function(x,y){return target[y]-target[x]}).slice(0,k);
+  var st=PLAN_STYLES[state.planStyle||0]||PLAN_STYLES[0];
+  var noise=subs.map(function(){return st.rnd?Math.random()*1.5:0});
+  var tv=function(i){return target[i]+noise[i]};
+  var k=Math.max(1,Math.min(subs.length,Math.floor(h/MIN_SESSION),Math.round(h/st.avg)));
+  var idx=subs.map(function(_,i){return i}).sort(function(x,y){return tv(y)-tv(x)}).slice(0,k);
   var alloc={};idx.forEach(function(i){alloc[i]=Math.min(MIN_SESSION,h/k)});
   var left=h-idx.reduce(function(a,i){return a+alloc[i]},0);
   while(left>1e-9){
     var step=Math.min(STEP,left),best=-1;
     idx.forEach(function(i){
-      if(alloc[i]+step>MAX_SESSION+1e-9)return;
-      if(best<0||target[i]-alloc[i]>target[best]-alloc[best])best=i;
+      if(alloc[i]+step>st.max+1e-9)return;
+      if(best<0||tv(i)-alloc[i]>tv(best)-alloc[best])best=i;
     });
     if(best<0)break;
     alloc[best]+=step;left-=step;
@@ -505,7 +500,7 @@ function makePlan(){
   var total=plan.reduce(function(a,x){return a+x.h},0);
   var target=makeTargets(subs,total);
   plan.forEach(function(day){allocDay(day.h,subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)})});
-  pauseTimer();if(!state.start)state.start=fmtDate(new Date());state.plan=plan;state.done={};state.spent={};state.credit={};closeTimer();
+  pauseTimer();if(!state.start)state.start=fmtDate(new Date());state.planStyle=0;state.plan=plan;state.done={};state.spent={};state.credit={};closeTimer();
   $("plan").scrollLeft=0;save();renderPlan();
   return true;
 }
@@ -564,7 +559,9 @@ function rollForward(){
   save();return true;
 }
 function rollAndRender(){if(rollForward())renderPlan()}
-function showCarry(){ // 繰り越しのオン・オフの表示(初期はオン)
+function showCarry(){ // 繰り越しのオン・オフ、計画の案の表示
+  var ps=PLAN_STYLES[state.planStyle||0]||PLAN_STYLES[0];
+  $("styleNote").textContent="いまの計画の案: "+ps.n+"(「別の計画を提案」で切り替わります。完了・計測ずみ・自分で直した項目は、そのまま残ります)";
   var on=state.carry!==false;
   $("carryOn").checked=on;
   $("carryNote").textContent=on?"日が変わると、できなかった項目の残り時間が、翌日以降に入ります。":"日が変わると、できなかった項目は消えます(翌日には入りません)。";
@@ -592,7 +589,7 @@ function renderPlan(){
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
-      b.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰り越し)":"");
+      b.querySelector("span").textContent=x.name+" "+hm(x.h)+(x.carried?"(繰り越し)":"");
       b.querySelector(".sp").textContent=spText(id);
       var pb=b.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -653,11 +650,17 @@ function adjustSpent(id,deltaSec){
   if($("tmMin"))$("tmMin").value=Math.round(elapsed(id)/60);
   updateTimer();renderPlan();if(state.page===6&&typeof renderToday==="function")renderToday();
 }
+function resetTimer(id){ // このタイマーで計測した時間を0に戻す(学習記録からも引く)
+  if(running(id))pauseTimer();
+  adjustSpent(id,-(state.spent[id]||0));
+  if($("tmMin"))$("tmMin").value=0;
+  updateTimer();renderPlan();
+}
 function openTimer(id){
   var x=findBlock(id);if(!x)return;
   openId=id;
   $("tmname").textContent=x.name;
-  $("tmplan").textContent="予定 "+x.h+"時間";
+  $("tmplan").textContent="予定 "+hm(x.h);
   $("tmbox").style.borderTopColor=colorOf(x.name);
   $("tmMin").value=Math.round(elapsed(id)/60);
   $("tm").hidden=false;updateTimer();
@@ -668,7 +671,7 @@ function updateTimer(){
   var x=findBlock(openId);if(!x){closeTimer();return}
   var e=elapsed(openId),rm=x.h*3600-e;
   $("tmtime").textContent=fmtR(rm);$("tmtime").classList.toggle("over",rm<0);
-  $("tmplan").textContent="予定 "+x.h+"時間(経過 "+fmtT(e)+")";
+  $("tmplan").textContent="予定 "+hm(x.h)+"(経過 "+fmtT(e)+")";
   var frac=Math.max(0,Math.min(1,rm/(x.h*3600)));
   $("tmarc").style.strokeDashoffset=565.49*(1-frac);
   $("tmarc").style.stroke=rm<0?"var(--red)":colorOf(x.name);
@@ -709,7 +712,7 @@ function saveEdit(){
   if(edit.id){
     var l=locate(edit.id);if(!l){closeEdit();return}
     l.x.name=name;l.x.h=h;l.x.manual=true;
-    if(nd!==l.d){state.plan[l.d].blocks.splice(l.k,1);state.plan[nd].blocks.push(l.x)}
+    if(nd!==l.d)moveBlock(edit.id,nd);
   }else{
     state.plan[nd].blocks.push({id:newId(),name:name,h:h,manual:true});
   }
@@ -751,6 +754,22 @@ function dragLoop(){
   if(d!==drag.over){if(drag.over)drag.over.classList.remove("over");if(d)d.classList.add("over");drag.over=d}
   drag.raf=requestAnimationFrame(dragLoop);
 }
+// 項目を別の日へ移す。移動先に同じ科目の項目があれば、時間を足して1つに合わせる(どちらも完了していないとき)。
+// 日ごとの勉強時間も、移した分だけ、移動元を減らして移動先を増やす。
+function moveBlock(id,nd){
+  var l=locate(id);if(!l||nd<0||nd>=state.plan.length||nd===l.d)return;
+  var src=state.plan[l.d],dst=state.plan[nd],x=l.x;
+  src.blocks.splice(l.k,1);
+  var twin=dst.blocks.filter(function(y){return y.name===x.name&&!state.done[y.id]&&!state.done[x.id]})[0];
+  if(twin){
+    twin.h+=x.h;twin.manual=true;
+    state.spent[twin.id]=(state.spent[twin.id]||0)+(state.spent[x.id]||0);delete state.spent[x.id];
+    if(state.contrib&&state.contrib[x.id]){state.contrib[twin.id]=(state.contrib[twin.id]||[]).concat(state.contrib[x.id]);delete state.contrib[x.id]}
+    if(running(x.id))state.timer.id=twin.id;
+  }else{x.manual=true;dst.blocks.push(x)}
+  src.h=Math.max(0,Math.round((src.h-x.h)*2)/2);
+  dst.h=Math.min(16,Math.round((dst.h+x.h)*2)/2);
+}
 function endDrag(cancel){
   if(lp){clearTimeout(lp.t);lp=null}
   if(!drag)return;
@@ -761,7 +780,7 @@ function endDrag(cancel){
   justDragged=true;setTimeout(function(){justDragged=false},400);
   if(!cancel&&d.over){
     var nd=Array.prototype.indexOf.call($("plan").children,d.over),l=locate(d.id);
-    if(l&&nd>=0&&nd!==l.d){state.plan[l.d].blocks.splice(l.k,1);l.x.manual=true;state.plan[nd].blocks.push(l.x)}
+    if(l&&nd>=0&&nd!==l.d)moveBlock(d.id,nd);
     save();renderPlan();
   }
 }
@@ -852,8 +871,13 @@ function logData(){ // 計測中の分も含めた記録
   return L;
 }
 function mondayOf(dt){var m=new Date(dt);m.setHours(0,0,0,0);m.setDate(m.getDate()-((m.getDay()+6)%7));return m}
-function fmtH(sec){return (Math.round(sec/360)/10)+" 時間"}
-function fmtDur(sec){return sec<3600?Math.round(sec/60)+"分":(Math.round(sec/360)/10)+"時間"}
+function hm(h){ // 時間(小数)を「○時間○分」で表す。例: 0.5→30分、2.5→2時間30分
+  var t=Math.round(h*60);if(t<=0)return "0分";
+  var H=Math.floor(t/60),M=t%60;
+  return (H?H+"時間":"")+(M?M+"分":"");
+}
+function fmtH(sec){return hm(sec/3600)}
+function fmtDur(sec){return hm(sec/3600)}
 function buckets(L,mode){ // 日=直近7日 / 週=直近8週(月曜始まり) / 月=直近6か月
   var out=[],today=new Date();today.setHours(0,0,0,0);
   var n=mode==="d"?7:mode==="w"?8:6;
@@ -891,6 +915,52 @@ function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:�
   });
   return svg+'<text x="70" y="75" text-anchor="middle" class="dc">'+center+'</text></svg>';
 }
+// ---- 記録の手入力と、1件ずつの削除 ----
+var mrLimit=15,mrSig="";
+function delRecord(date,name){ // その日の、その科目の記録を消す
+  if(state.log&&state.log[date]){delete state.log[date][name];if(!Object.keys(state.log[date]).length)delete state.log[date]}
+  Object.keys(state.contrib||{}).forEach(function(id){
+    var keep=state.contrib[id].filter(function(e){return !(e.date===date&&e.name===name)});
+    if(keep.length)state.contrib[id]=keep;else delete state.contrib[id];
+  });
+  Object.keys(state.credit||{}).forEach(function(id){if(state.credit[id].date===date&&state.credit[id].name===name)delete state.credit[id]});
+  state.legacyOff=true;save();
+}
+function renderRecords(){
+  var today=fmtDate(new Date());
+  if(!$("mrDate").value)$("mrDate").value=today;
+  var rows=[];
+  Object.keys(state.log||{}).forEach(function(d){Object.keys(state.log[d]).forEach(function(n){if(state.log[d][n]>=30)rows.push({d:d,n:n,s:state.log[d][n]})})});
+  rows.sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:b.s-a.s});
+  var names=[];state.subjects.forEach(function(x){if(String(x[0]).trim())names.push(x[0])});rows.forEach(function(r){if(names.indexOf(r.n)<0)names.push(r.n)});
+  var sig=rows.map(function(r){return r.d+r.n+Math.round(r.s)}).join("|")+"#"+mrLimit+"#"+names.join(",");
+  if(sig===mrSig)return;mrSig=sig;
+  var dl=$("mrNames");dl.innerHTML="";names.forEach(function(n){var o=document.createElement("option");o.value=n;dl.appendChild(o)});
+  var box=$("mrRows");box.innerHTML="";
+  if(!rows.length)box.innerHTML='<div class="note">まだ記録がありません。</div>';
+  rows.slice(0,mrLimit).forEach(function(r){
+    var dt=new Date(r.d+"T00:00:00"),row=document.createElement("div");row.className="frow";
+    row.innerHTML='<i class="dot"></i><span></span><button class="dng">削除</button>';
+    row.querySelector(".dot").style.background=colorOf(r.n);
+    row.querySelector("span").textContent=(dt.getMonth()+1)+"/"+dt.getDate()+"("+DAYS[dt.getDay()]+")  "+r.n+"  "+fmtDur(r.s);
+    row.querySelector("button").onclick=function(){
+      askConfirm((dt.getMonth()+1)+"月"+dt.getDate()+"日の「"+r.n+"」"+fmtDur(r.s)+"の記録を削除しますか?","削除した記録は元に戻せません。","削除する",function(){delRecord(r.d,r.n);renderStats()});
+    };
+    box.appendChild(row);
+  });
+  $("mrMore").hidden=rows.length<=mrLimit;
+}
+function addRecord(){
+  var date=$("mrDate").value,name=$("mrSubj").value.trim(),h=Math.max(0,Math.floor(Number($("mrH").value)||0)),m=Math.max(0,Math.floor(Number($("mrM").value)||0));
+  var sec=(h*60+m)*60,err=$("mrErr");
+  if(!date||!name){err.textContent="日付と科目を入れてください。";return}
+  if(date>fmtDate(new Date())){err.textContent="今日より先の日付は入れられません。";return}
+  if(!(sec>0)){err.textContent="勉強した時間を入れてください。";return}
+  if(sec>24*3600){err.textContent="1回の記録は、24時間までです。";return}
+  err.textContent="";
+  state.log=state.log||{};state.log[date]=state.log[date]||{};state.log[date][name]=(state.log[date][name]||0)+sec;
+  $("mrH").value="";$("mrM").value="";$("mrSubj").value="";save();renderStats();
+}
 function renderPies(bs,L){
   var per={},sum=0;
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n];sum+=b.parts[n]})});
@@ -900,7 +970,7 @@ function renderPies(bs,L){
   var rng={d:"直近7日",w:"直近8週",m:"直近6か月"}[sMode],c1=document.createElement("div");c1.className="pie";
   c1.innerHTML='<div class="pt"></div><div class="pg"></div><div class="pl2"></div>';
   c1.querySelector(".pt").textContent="勉強した時間配分("+rng+")";
-  c1.querySelector(".pg").innerHTML=donut(names.map(function(n){return{c:colorOf(n),v:per[n]}}),sum,sum>0?r1(sum/3600)+"h":"記録なし");
+  c1.querySelector(".pg").innerHTML=donut(names.map(function(n){return{c:colorOf(n),v:per[n]}}),sum,sum>0?hm(sum/3600):"記録なし");
   var lg=c1.querySelector(".pl2");
   names.forEach(function(n){
     var r=document.createElement("div");r.className="srow";r.innerHTML="<i></i><span></span><span></span>";
@@ -913,7 +983,7 @@ function renderPies(bs,L){
   var wk=weekTarget(),wks=buckets(L,"w"),a=wks[wks.length-1].total/3600,c2=document.createElement("div");c2.className="pie";
   c2.innerHTML='<div class="pt">今週の目標の達成度</div><div class="pg"></div><div class="pc"></div>';
   c2.querySelector(".pg").innerHTML=donut([{c:"var(--acc)",v:a}],wk>0?wk:0,wk>0?Math.round(a/wk*100)+"%":"未設定");
-  c2.querySelector(".pc").textContent=wk>0?"今週(月曜から) "+r1(a)+" / "+r1(wk)+" 時間":"「条件」で1週間の総勉強時間を設定すると表示されます";
+  c2.querySelector(".pc").textContent=wk>0?"今週(月曜から) "+hm(a)+" / "+hm(wk):"「条件」で1週間の総勉強時間を設定すると表示されます";
   box.appendChild(c2);
 }
 function renderStats(){
@@ -922,7 +992,7 @@ function renderStats(){
     var sum=0;Object.keys(L[d]).forEach(function(n){sum+=L[d][n]});
     tot+=sum;if(d.slice(0,7)===ym)mon+=sum;if(d===today)tdy=sum;
   });
-  $("sToday").textContent=tdy<3600?Math.round(tdy/60)+" 分":fmtH(tdy);
+  $("sToday").textContent=fmtH(tdy);
   $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
   Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
 
@@ -962,16 +1032,17 @@ function renderStats(){
   $("delSel").hidden=!(sb.total>0);
 
   renderPies(bs,L);
+  renderRecords();
 }
 
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
 function showPage(n){
   state.page=n;save();
-  var map={0:"p0",1:"p1",2:"p2",3:"planbox",4:"stats",5:"mypage",6:"today",7:"grades",8:"ai"};
+  var map={0:"p0",1:"p1",2:"p2",3:"planbox",4:"stats",5:"mypage",6:"today",7:"grades"};
   Object.keys(map).forEach(function(k){$(map[k]).hidden=Number(k)!==n});
   if(n<=3)state.planPage=n;
   $("navToday").classList.toggle("on",n===6);$("navPlan").classList.toggle("on",n<=3);$("navStats").classList.toggle("on",n===4);
-  $("navGrades").classList.toggle("on",n===7);$("navAI").classList.toggle("on",n===8);$("navMy").classList.toggle("on",n===5);
+  $("navGrades").classList.toggle("on",n===7);$("navMy").classList.toggle("on",n===5);
   if(n===0){$("goal").value=state.goal||"";$("exam").value=state.exam||"";$("goalErr").hidden=true}
   showGoal();
   $("tips").hidden=true;
@@ -979,7 +1050,6 @@ function showPage(n){
   if(n===5)renderMy();
   if(n===6)renderToday();
   if(n===7)renderGrades();
-  if(n===8)renderAI();
   window.scrollTo(0,0);
 }
 function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"目標は未設定です";$("goalEdit").textContent=g?"変更":"設定する"}
@@ -1004,7 +1074,7 @@ function renderToday(){
     var c=document.createElement("div");c.className="tcard"+(on?" on":"");
     c.style.borderLeft="8px solid "+colorOf(x.name);
     c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button>';
-    c.querySelector("span").textContent=x.name+" "+x.h+"時間"+(x.carried?"(繰り越し)":"");
+    c.querySelector("span").textContent=x.name+" "+hm(x.h)+(x.carried?"(繰り越し)":"");
     c.querySelector(".sp").textContent=spText(id);
     var pb=c.querySelector(".play");pb.textContent=run?"⏸":"▶";pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -1013,7 +1083,7 @@ function renderToday(){
     box.appendChild(c);
   });
   $("tdBar").style.width=(tot?ok/tot*100:0)+"%";
-  $("tdSum").textContent="完了 "+r1(ok)+" / "+r1(tot)+" 時間・残り "+r1(tot-ok)+" 時間";
+  $("tdSum").textContent="完了 "+hm(ok)+" / "+hm(tot)+"・残り "+hm(tot-ok);
 }
 
 // ===== 模試・テストの成績 =====
@@ -1023,7 +1093,7 @@ function gColor(nm){ // プランで色を決めた科目はその色。ない�
   var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
   return PALETTE[h%PALETTE.length];
 }
-// state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。グラフは点数(s)。比率の提案・AI相談では 得点率(%)=s/m×100 も使う
+// state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。グラフは点数(s)。比率の提案では 得点率(%)=s/m×100 も使う
 var gSel="all",gEdit=null,gmRows=[];
 function gSorted(){return (state.exams||[]).slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0})}
 function gPct(o){return o.m>0?o.s/o.m*100:0}
@@ -1172,93 +1242,6 @@ function renderMy(){
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
 }
 
-// ===== AIに相談 =====
-// Claudeに聞く「sample」機能を使う。1回ごとに独立して動くので、毎回「役割・勉強のデータ・これまでの会話」をまとめて送る。
-var AI={s:null,ctl:null,busy:false};
-var AI_RULES="あなたは、日本の学生の勉強を支える、やさしくて頼れる学習コーチです。次を守ってください。\n"+
-"・日本語で、短く具体的に答える。前置きは省いて、まず結論。長くても300字くらい。箇条書きは多くても5個まで。\n"+
-"・「【勉強のデータ】」がある場合は、その数字を根拠にして、このアプリでできる行動(プランの日の勉強時間を直す、項目を別の日へ移す、科目の比率を変える、タイマーで計測する)に結びつけて提案する。データにないことは決めつけず、質問する。\n"+
-"・勉強法は、根拠のある方法(思い出す練習、時間を空けて復習する、間違いの直しなど)を、すぐ試せる形で示す。\n"+
-"・無理な長時間の勉強や、睡眠を削る提案はしない。体や心がつらそうなときは、休むことも大切だと伝える。つらい気持ちが強いときは、まず気持ちを受け止めて、身近な大人や学校、専門の相談窓口に話すことを勧める。\n"+
-"・医療や診断はしない。わからないことは、わからないと言う。\n"+
-"・マークダウンの記法(#、**、表など)は使わず、ふつうの文章で書く。";
-var AI_QUICK=["今週の計画を見直したい","今日は何から始めればいい?","苦手科目の勉強法を教えて","成績を上げるために、何を変えればいい?","やる気が出ないとき、どうしたらいい?"];
-function aiContext(){ // アプリのデータを、短い文章にまとめる(名前は送らない)
-  var L=logData(),t=new Date();t.setHours(0,0,0,0);var lines=[];
-  var g=(state.goal||"").trim();if(g)lines.push("目標: "+g);
-  if(state.exam){var dd=Math.ceil((new Date(state.exam+"T00:00:00")-t)/86400000);if(isFinite(dd))lines.push("試験日: "+state.exam+"(あと"+dd+"日)")}
-  var p=state.profile||{};if(p.grade)lines.push("学年: "+p.grade);if(p.school)lines.push("志望校: "+p.school);
-  lines.push("1週間の目標時間: "+r1(weekTarget())+"時間(平日"+state.wd+"時間・休日"+state.we+"時間)");
-  lines.push("科目の勉強時間の比率(1〜7): "+state.subjects.map(function(x){return x[0]+" "+x[1]}).join("、"));
-  var per={},days=buckets(L,"d").map(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n]});return b.label+"("+b.sub+") "+r1(b.total/3600)+"時間"});
-  lines.push("直近7日の勉強時間: "+days.join("、"));
-  lines.push("直近7日の科目別: "+(Object.keys(per).length?Object.keys(per).map(function(n){return n+" "+r1(per[n]/3600)+"時間"}).join("、"):"記録なし"));
-  var td=(state.plan||[]).filter(function(d){return d.date===fmtDate(new Date())})[0];
-  if(td)lines.push("今日の予定: "+(td.blocks.length?td.blocks.map(function(b){return b.name+b.h+"時間"+(state.done[b.id]?"(完了)":"")+(b.carried?"(繰り越し)":"")}).join("、"):"なし"));
-  gSorted().slice(-2).forEach(function(e){
-    var sc=Object.keys(e.sc).map(function(n){return n+" "+e.sc[n].s+"/"+e.sc[n].m+"点("+Math.round(e.sc[n].s/e.sc[n].m*100)+"%)"}).join("、");
-    lines.push("成績("+e.date+" "+e.name+"): "+(sc||"点数なし")+(e.rank>0?"、順位 "+e.rank+"位"+(e.of>0?"/"+e.of+"人中":""):""));
-  });
-  return lines.join("\n");
-}
-function aiBub(cls,text){var b=document.createElement("div");b.className="bub "+cls;b.textContent=text;$("aiChat").appendChild(b);return b}
-function renderAI(){
-  var on=typeof claude!=="undefined"&&claude&&claude.use;
-  $("aiOff").hidden=!!on;$("aiBody").hidden=!on;
-  if(!on)return;
-  if(!AI.s)claude.use("sample").then(function(f){AI.s=f;if(!f){$("aiOff").hidden=false;$("aiBody").hidden=true}});
-  var q=$("aiQuick");q.innerHTML="";
-  AI_QUICK.forEach(function(x){var b=document.createElement("button");b.textContent=x;b.onclick=function(){aiSend(x)};q.appendChild(b)});
-  $("aiChat").innerHTML="";
-  if(!(state.chat||[]).length)aiBub("a w","こんにちは!勉強のことなら、なんでも相談してください。上のボタンを押すか、下に書いて送ってね。");
-  (state.chat||[]).forEach(function(m){aiBub(m.r==="u"?"u":"a",m.t)});
-  $("aiSend").disabled=AI.busy;$("aiStop").hidden=!AI.busy;
-}
-var AI_ERR={
-  not_granted:"AIへの相談が許可されていません。もう一度送ると、許可を選べます。",
-  sampling_disabled:"このアカウントでは、Claudeが使えない設定になっています。",
-  not_declared:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
-  capability_disabled:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
-  capability_removed:"この画面では、AI相談が使えません。アプリや別のブラウザで開き直してみてください。",
-  session_expired:"ログインの期限が切れました。Claudeにログインし直してください。",
-  rate_limited:"続けて送りすぎ、または利用の上限です。少し待ってから、もう一度送ってください。",
-  refused:"この内容には答えられませんでした。聞き方を変えてみてください。",
-  empty_completion:"答えが返ってきませんでした。聞き方を変えて、もう一度送ってください。",
-  prompt_too_large:"会話が長すぎます。「会話を消す」を押してから、もう一度送ってください。",
-  invalid_request:"送り方に問題がありました。「会話を消す」を押してから、もう一度試してください。",
-  transform_error:"送り方に問題がありました。「会話を消す」を押してから、もう一度試してください。",
-  upstream_error:"AIのサーバーが、一時的にエラーを返しました。少し待ってから、もう一度送ってください。"
-};
-async function aiSend(text){
-  text=String(text||"").trim().slice(0,1000);
-  if(!text||AI.busy)return;
-  var s=AI.s||(typeof claude!=="undefined"&&claude&&claude.use?await claude.use("sample"):null);
-  if(!s){renderAI();return}
-  AI.s=s;state.chat=state.chat||[];
-  var hist=state.chat.slice(-8);while(hist.length&&hist[0].r!=="u")hist.shift();
-  var content=($("aiUse").checked?"【勉強のデータ】\n"+aiContext()+"\n\n":"")+"【相談】\n"+text;
-  var turns=hist.map(function(m){return{role:m.r==="u"?"user":"assistant",content:m.t}}).concat([{role:"user",content:content}]);
-  state.chat.push({r:"u",t:text});
-  $("aiText").value="";$("aiErr").textContent="";
-  AI.busy=true;AI.ctl=new AbortController();
-  renderAI();
-  var bub=aiBub("a w","考え中…");bub.scrollIntoView({block:"nearest"});
-  try{
-    var res=await s([{role:"user",content:AI_RULES}].concat(turns),{cache:false,modelTier:$("aiDeep").checked?"default":"quick",signal:AI.ctl.signal,onText:function(o){if(o&&o.text){bub.className="bub a";bub.textContent=o.text}}});
-    var ans=String(res.text||"").trim()||"うまく答えられませんでした。もう一度送ってください。";
-    if(res.truncated)ans+="\n(途中で切れました。「続けて」と送ってください)";
-    state.chat.push({r:"a",t:ans});
-  }catch(e){
-    var part=e&&e.text?String(e.text).trim():"",code=(e&&e.code)||"unknown";
-    if(part)state.chat.push({r:"a",t:part});
-    else{state.chat.pop();$("aiText").value=text} // 答えが来なかったときは、送った文を入力欄に戻す(そのまま送り直せる)
-    if(code!=="cancelled")$("aiErr").textContent=(AI_ERR[code]||AI_ERR.upstream_error)+"(コード: "+code+")";
-  }
-  state.chat=state.chat.slice(-40);
-  AI.busy=false;AI.ctl=null;save();renderAI();
-  var last=$("aiChat").lastChild;if(last&&last.scrollIntoView)last.scrollIntoView({block:"nearest"});
-}
-
 // ===== イベント =====
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
@@ -1310,6 +1293,10 @@ $("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
 $("tmtoggle").onclick=function(){toggleTimer(openId)};
+$("tmReset").onclick=function(){
+  if(openId===null)return;var id=openId;
+  askConfirm("このタイマーをリセットしますか?","計測した時間が0分になり、その分の学習記録も元に戻ります。","リセットする",function(){resetTimer(id)});
+};
 $("adjM10").onclick=function(){adjustSpent(openId,-600)};
 $("adjP10").onclick=function(){adjustSpent(openId,600)};
 $("adjP30").onclick=function(){adjustSpent(openId,1800)};
@@ -1327,6 +1314,12 @@ $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
 $("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
+$("altPlan").onclick=function(){
+  if(!state.plan||!state.plan.length)return;
+  state.planStyle=((state.planStyle||0)+1)%PLAN_STYLES.length;
+  state.plan.forEach(function(day,d){regenCore(d,day.h)});
+  save();renderPlan();
+};
 $("carryOn").onchange=function(){state.carry=this.checked;save();showCarry()};
 $("tipsOk").onclick=function(){$("tips").hidden=true};
 $("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
@@ -1372,20 +1365,14 @@ $("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜�
   };
   rd.readAsDataURL(f);
 };
+$("mrAdd").onclick=addRecord;
+$("mrMore").onclick=function(){mrLimit+=15;renderStats()};
 $("delSel").onclick=function(){
   var ls=lastSel;if(!ls)return;
   askConfirm(ls.label+" の記録を削除しますか?","削除した記録は元に戻せません。","削除する",function(){deleteRecords(bucketMatch(ls.mode,ls.key));renderStats()});
 };
 $("navToday").onclick=function(){showPage(6)};
 $("navGrades").onclick=function(){showPage(7)};
-$("navAI").onclick=function(){showPage(8)};
-$("aiSend").onclick=function(){aiSend($("aiText").value)};
-$("aiText").onkeydown=function(e){if(e&&e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();aiSend($("aiText").value)}};
-$("aiStop").onclick=function(){if(AI.ctl)AI.ctl.abort()};
-$("aiClear").onclick=function(){
-  if(!(state.chat||[]).length)return;
-  askConfirm("会話を消しますか?","これまでの相談の内容が消えます。","消す",function(){state.chat=[];save();renderAI()});
-};
 $("tdPlan").onclick=function(){showPage(3)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
@@ -1419,7 +1406,7 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
 })();
 // Geminiの機能を消したので、残っているかもしれないキーや会話を、この端末から消す
 try{localStorage.removeItem("study-planner-gkey");localStorage.removeItem("study-planner-gmodel")}catch(e){}
-if(state.gchat||state.aiMode){delete state.gchat;delete state.aiMode;save()}
+if(state.gchat||state.aiMode||state.chat){delete state.gchat;delete state.aiMode;delete state.chat;save()}
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
