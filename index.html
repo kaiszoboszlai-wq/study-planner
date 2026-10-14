@@ -342,6 +342,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </div>
 <div class="actions" id="pfView"><button id="pfEditBtn">プロフィールを編集</button></div>
 <p class="note">入力した内容は、この端末の中にだけ保存されます。</p>
+<p class="note" id="appVer"></p>
 </section>
 <div class="tm" id="gm" hidden role="dialog" aria-modal="true" aria-labelledby="gmt">
 <div class="tmbox"><div class="tmname" id="gmt">成績を追加</div>
@@ -1286,6 +1287,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
+var APP_VERSION="2026-10-14 v2"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1320,7 +1322,7 @@ async function fbInit(){
   }catch(e){FB.err="Firebaseを読み込めませんでした。通信の状態を確認してください。"}
   renderFb();
 }
-var FB_AUTH_ERR={"auth/unauthorized-domain":"このサイトのアドレスが、Firebaseの「承認済みドメイン」に入っていません。","auth/operation-not-allowed":"FirebaseでGoogleでのログインがオンになっていません。","auth/network-request-failed":"通信できませんでした。通信の状態を確認してください。"};
+var FB_AUTH_ERR={"auth/unauthorized-domain":"このサイトのアドレス("+location.hostname+")が、Firebaseの「承認済みドメイン」に入っていません。","auth/operation-not-allowed":"FirebaseでGoogleでのログインがオンになっていません。","auth/network-request-failed":"通信できませんでした。通信の状態を確認してください。","auth/web-storage-unsupported":"このブラウザでは、ログインできません。SafariかChromeで、プライベートブラウズをオフにして開いてください。","auth/internal-error":"ログインの途中でエラーになりました。LINEなどのアプリの中ではなく、SafariかChromeで開いてください。"};
 async function fbSignIn(){
   try{await FB.Au.signInWithPopup(FB.auth,new FB.Au.GoogleAuthProvider())}
   catch(e){
@@ -1392,6 +1394,7 @@ function fbRow(prof,id){
   return r;
 }
 async function renderFb(){
+  $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
   var cl=inClaudeEnv(),cfg=fbConfig();
   var off=$("fbOff");
   off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
