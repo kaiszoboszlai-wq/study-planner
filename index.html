@@ -189,14 +189,28 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .adjb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .adjin{display:flex;gap:6px;align-items:center;justify-content:center}
 .adjin input{width:80px;min-width:0}
+/* ここから、マイページの新しいデザイン用 */
+.nv{position:relative}
+.nbdg{position:absolute;top:4px;left:calc(50% + 8px);width:10px;height:10px;border-radius:50%;background:#e8465a}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mh h2{margin:0;font-size:1.3rem}
+.bell{position:relative;width:42px;height:42px;padding:0;border:0;background:none;color:var(--ink);border-radius:50%}
+.bdg{position:absolute;top:0;right:-2px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e8465a;color:#fff;font-size:.7rem;font-weight:700;line-height:18px;text-align:center}
+.me.big{gap:16px}
+.me.big .av{width:84px;height:84px;font-size:2.6rem}
+#meName{font-size:1.15rem}
+.cnt{display:flex;align-items:center;gap:10px;margin:4px 0}
+.cnt button{border:0;background:none;padding:2px 0;color:var(--sub);font-size:.9rem}
+.cnt button b{color:var(--ink);margin-right:4px}
+.cnt i{width:1px;height:18px;background:var(--line)}
+#lm .tmbox{max-height:80vh;overflow-y:auto}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学習プランナー">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFEUlEQVR4nO3cy1EbQRRG4ZaKHZRTcAAOwCvKATgXORaUiwNwsWLDzpnAGi9sYSHNo7unH7f/e74lRYkezeHSkmbYBQNuD4e33mvAdq/H4673GrosgIB96BF4sx9IxL61irvqDyFiTKkZd5UHJmTEqBH2vvQDEjNi1Wil2G8IIWOLUtO6yIQmZmxVqqFNvxWEjBq2TOvsCU3MqGVLW1lBEzNqy20sOWhiRis5rSUFTcxoLbW56KCJGb2ktBcVNDGjt9gGV4MmZlgR02Lxj76BnhaDZjrDmrUmZ4MmZli11CZbDkiZDJrpDOvmGr0KmpgxiqlW2XJAyoegmc4YzWWzTGhIuem9gJbufv66+trL928dVlKPh2Nc8n5ngPp2Y+pEn1M46R6Occ7pLhcXW461Ex37PZZ5OMYYLoKGH/sQ9Lcb0HdqmAkNKQQNKQQNKXv2z1Bxezi8MaEhhaAhhaAhhaAhhaAhhaAhhaAhxdz10L8fH4s/5teOP7uVnsf45f6++GPmYkJDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDiougnz6tH2bM91jm4Rhj6B8hXHET9Nx0evq0l5lcHo5xjbmr7WrycFI9HOMS30cPOQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKeauh/78/Nx7CUj140fvFbxjQkMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQQu7M3SNRSsELeoUs7eoCVrQZcSeoiZoMXPxeomaoIWsReshaoIWERuretQELSA1UuWoCXpwOXG+PDxUWIkNBD0wYr5G0IMi5mkEPSBinkfQgyHmZQQ9EGJeR9CDIOY4BD0AYo5H0MYRcxqCNoyY0xG0UcSch6ANIuZ8BG0MMW9D0IYQ83YEPTBivuY+aCvXBqeug5inuQ7ayp3RxFyO26Ct3BlNzGW5DNrKndHEXJ67oK3cGU3MdbgKOuXO6Jph996zK3MTdE5ENcLjvea63ASdG0XJqIm5PjdBh9A3amJuw1XQIfSJmpjbcRd0CG2jJua2XAYdwt9ocsJJCZSY23Mb9EmtqIm5D/dBh1A+amLuh6D/KRU1MfdF0Gdyo95y1R4xl0XQF1q+A0LM5RH0hBahEXMdBD2jZnDEXA9BL6gRHjHXRdArSgZIzPURdITcTxUvHwP1EXSC3CiJuR2CTpQaJzG3RdAZYiMl5vYIOtNarMTcB0FvMPdikZj7uem9AAUEbAcTGlIIGlIIGlIIGlIIGlIIGlLMBc0/MhyLtfNlLmhgC4KGFJNBW/szhmkWz5PJoEOw+WThP6vnx2zQsMtqzCEYD9ryE+eV9XOyuz0c3novIgZXtPVnPeYQQti/Ho+73ouIMcKTqWyE5//1eNwNdT30+ZPKxK5vhIgvDRX0uRGfbNRn+kUhkGofwt+9R++FAFucGmZCQwpBQ8p70Gw7MKrzdpnQkELQkPIhaLYdGM1ls0xoSLkKmimNUUy1OjmhiRrWzTXKlgNSZoNmSsOqpTYXJzRRw5q1JtlyQMpq0ExpWBHTYtSEJmr0Fttg9JaDqNFLSntJe2iiRmupzSW/KCRqtJLTWta7HESN2nIby37bjqhRy5a2ikQ5yn9fgm0lhmSRD1aY1tiqVEPFQ2RaI0XpYVj8o2+mNWLVaKVqfExrTKk59JpNU+L2rdVf7i7bA+L2ocf208R+l8A1WHj99AfEOr4if60AxgAAAABJRU5ErkJggg==">
-<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFEUlEQVR4nO3cy1EbQRRG4ZaKHZRTcAAOwCvKATgXORaUiwNwsWLDzpnAGi9sYSHNo7unH7f/e74lRYkezeHSkmbYBQNuD4e33mvAdq/H4673GrosgIB96BF4sx9IxL61irvqDyFiTKkZd5UHJmTEqBH2vvQDEjNi1Wil2G8IIWOLUtO6yIQmZmxVqqFNvxWEjBq2TOvsCU3MqGVLW1lBEzNqy20sOWhiRis5rSUFTcxoLbW56KCJGb2ktBcVNDGjt9gGV4MmZlgR02Lxj76BnhaDZjrDmrUmZ4MmZli11CZbDkiZDJrpDOvmGr0KmpgxiqlW2XJAyoegmc4YzWWzTGhIuem9gJbufv66+trL928dVlKPh2Nc8n5ngPp2Y+pEn1M46R6Occ7pLhcXW461Ex37PZZ5OMYYLoKGH/sQ9Lcb0HdqmAkNKQQNKQQNKXv2z1Bxezi8MaEhhaAhhaAhhaAhhaAhhaAhhaAhxdz10L8fH4s/5teOP7uVnsf45f6++GPmYkJDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDCkFDiougnz6tH2bM91jm4Rhj6B8hXHET9Nx0evq0l5lcHo5xjbmr7WrycFI9HOMS30cPOQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKQQNKeauh/78/Nx7CUj140fvFbxjQkMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQUMKQQu7M3SNRSsELeoUs7eoCVrQZcSeoiZoMXPxeomaoIWsReshaoIWERuretQELSA1UuWoCXpwOXG+PDxUWIkNBD0wYr5G0IMi5mkEPSBinkfQgyHmZQQ9EGJeR9CDIOY4BD0AYo5H0MYRcxqCNoyY0xG0UcSch6ANIuZ8BG0MMW9D0IYQ83YEPTBivuY+aCvXBqeug5inuQ7ayp3RxFyO26Ct3BlNzGW5DNrKndHEXJ67oK3cGU3MdbgKOuXO6Jph996zK3MTdE5ENcLjvea63ASdG0XJqIm5PjdBh9A3amJuw1XQIfSJmpjbcRd0CG2jJua2XAYdwt9ocsJJCZSY23Mb9EmtqIm5D/dBh1A+amLuh6D/KRU1MfdF0Gdyo95y1R4xl0XQF1q+A0LM5RH0hBahEXMdBD2jZnDEXA9BL6gRHjHXRdArSgZIzPURdITcTxUvHwP1EXSC3CiJuR2CTpQaJzG3RdAZYiMl5vYIOtNarMTcB0FvMPdikZj7uem9AAUEbAcTGlIIGlIIGlIIGlIIGlIIGlLMBc0/MhyLtfNlLmhgC4KGFJNBW/szhmkWz5PJoEOw+WThP6vnx2zQsMtqzCEYD9ryE+eV9XOyuz0c3novIgZXtPVnPeYQQti/Ho+73ouIMcKTqWyE5//1eNwNdT30+ZPKxK5vhIgvDRX0uRGfbNRn+kUhkGofwt+9R++FAFucGmZCQwpBQ8p70Gw7MKrzdpnQkELQkPIhaLYdGM1ls0xoSLkKmimNUUy1OjmhiRrWzTXKlgNSZoNmSsOqpTYXJzRRw5q1JtlyQMpq0ExpWBHTYtSEJmr0Fttg9JaDqNFLSntJe2iiRmupzSW/KCRqtJLTWta7HESN2nIby37bjqhRy5a2ikQ5yn9fgm0lhmSRD1aY1tiqVEPFQ2RaI0XpYVj8o2+mNWLVaKVqfExrTKk59JpNU+L2rdVf7i7bA+L2ocf208R+l8A1WHj99AfEOr4if60AxgAAAABJRU5ErkJggg==">
 <link rel="manifest" href="manifest.webmanifest">
+<!-- ★ここに、今のindex.htmlの「apple-touch-icon」と「icon」の2行を、そのままコピーして入れる -->
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -210,7 +224,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
 <button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
 <button class="nv" id="navGrades"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 15l4-4 3 3 5-6"/></svg><span>成績</span></button>
-<button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span></button>
+<button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
 <h1>週間学習プランナー</h1>
@@ -303,31 +317,11 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div id="glist"></div>
 </section>
 <section id="mypage" hidden>
-<h2>マイページ</h2>
-<h3 class="sh">アカウント・フレンド</h3>
-<p class="note" id="fbOff" hidden></p>
-<div id="fbSetup" hidden>
-<p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
-<textarea id="fbCfg" rows="6" placeholder='apiKey: "…", authDomain: "…", projectId: "…", appId: "…", databaseId: "(default)以外のときだけ"' aria-label="firebaseConfig"></textarea>
-<div class="actions"><button id="fbCfgSave" class="main">設定を保存</button></div>
-</div>
-<div id="fbOutBox" hidden>
-<p class="note">Googleアカウントでログインすると、友達と学習記録を見せ合えます。メールアドレスと本名は、友達には見えません。</p>
-<div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
-</div>
-<div id="fbOn" hidden>
-<div class="me"><div class="av" id="fbAv"></div><div><b id="fbName"></b><div class="note" id="fbMail"></div></div></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="fbShare">学習記録と目標を、承認した友達に公開する</label></div>
-<div class="fld"><span class="lb">あなたのフレンドコード(友達に教えるコードです)</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
-<div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
-<p class="note" id="fbMsg"></p>
-<h3 class="sh">届いたリクエスト</h3><div id="fbReq"></div>
-<h3 class="sh">フォロー中</h3><div id="fbFol"></div>
-<h3 class="sh">あなたの記録を見られる人</h3><div id="fbVie"></div>
-<div class="actions"><button id="fbLogout">ログアウト</button></div>
-</div>
-<h3 class="sh">プロフィール</h3>
-<div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
+<div class="mh"><h2>マイページ</h2><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button></div>
+<div class="me big"><div class="av" id="meAv"></div><div><b id="meName"></b>
+<div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
+<div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
+<div class="actions" id="pfView"><button id="pfEditBtn">編集</button><button id="shareBtn" hidden>シェア</button></div>
 <div id="pfEdit">
 <div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
 <div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
@@ -340,7 +334,25 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
 <div class="actions"><button id="pfDone" class="main">完了</button></div>
 </div>
-<div class="actions" id="pfView"><button id="pfEditBtn">プロフィールを編集</button></div>
+<h3 class="sh">アカウント・フレンド</h3>
+<p class="note" id="fbOff" hidden></p>
+<div id="fbSetup" hidden>
+<p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
+<textarea id="fbCfg" rows="6" placeholder='apiKey: "…", authDomain: "…", projectId: "…", appId: "…", databaseId: "(default)以外のときだけ"' aria-label="firebaseConfig"></textarea>
+<div class="actions"><button id="fbCfgSave" class="main">設定を保存</button></div>
+</div>
+<div id="fbOutBox" hidden>
+<p class="note">Googleアカウントでログインすると、友達と学習記録を見せ合えます。メールアドレスと本名は、友達には見えません。</p>
+<div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
+</div>
+<div id="fbOn" hidden>
+<div class="note" id="fbMail"></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="fbShare">学習記録と目標を、承認した友達に公開する</label></div>
+<div class="fld"><span class="lb">あなたのフレンドコード(友達に教えるコードです)</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
+<div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
+<p class="note" id="fbMsg"></p>
+<div class="actions"><button id="fbLogout">ログアウト</button></div>
+</div>
 <p class="note">入力した内容は、この端末の中にだけ保存されます。</p>
 <p class="note" id="appVer"></p>
 </section>
@@ -354,6 +366,10 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="actions"><button id="gmAddRow">＋ 科目を追加</button></div>
 <p class="err" id="gmErr"></p>
 <div class="actions"><button id="gmSave" class="main">保存</button><button id="gmDel" class="dng" hidden>削除</button><button id="gmNo">キャンセル</button></div></div>
+</div>
+<div class="tm" id="lm" hidden role="dialog" aria-modal="true" aria-labelledby="lmt">
+<div class="tmbox"><div class="tmname" id="lmt"></div><div id="lmBody"></div>
+<div class="actions"><button id="lmClose">閉じる</button></div></div>
 </div>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
@@ -387,7 +403,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </div>
 </main>
 </div>
-
 <script>
 // ===== 設定(ここを直せば初期値が変わる) =====
 var DEFAULT_SUBJECTS=[["数学",5],["物理",4],["化学",4],["英語",4],["国語",2],["社会",2]];
@@ -1062,7 +1077,6 @@ function renderStats(){
   renderPies(bs,L);
   renderRecords();
 }
-
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
 function showPage(n){
   state.page=n;save();
@@ -1287,7 +1301,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-14 v3"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-15 v1"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1371,7 +1385,7 @@ async function fbPublish(force){ // プロフィールと、公開をオンに�
 }
 async function fbOnAuth(){
   renderFb();
-  if(!FB.uid){FB.code="";fbSig="";return}
+  if(!FB.uid){FB.code="";fbSig="";FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
   try{await fbEnsure();await fbPublish(true)}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
@@ -1402,25 +1416,31 @@ function fbRow(prof,id){
   r.querySelector("b").textContent=(prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||"名前がわからない人";
   return r;
 }
-async function renderFb(){
-  $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
-  var cl=inClaudeEnv(),cfg=fbConfig();
-  var off=$("fbOff");
-  off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
-  if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
-  if(!cfg){$("fbSetup").hidden=false;return}
-  if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
-  if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
-  if(!FB.uid){$("fbOutBox").hidden=false;return}
-  $("fbOn").hidden=false;
-  var me=fbMine();
-  fbPaint($("fbAv"),me.icon,me.color);$("fbName").textContent=me.name;
-  $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email+"(自分にだけ見えます)":"")+(FB.err?"  "+FB.err:"");
-  $("fbShare").checked=!!state.fbShare;$("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+// ---- フォロー数・通知のベル・一覧の画面 ----
+var FBN={fol:0,fr:0,req:0},listMode=null;
+function paintCounts(){
+  $("nFol").textContent=FBN.fol;$("nFr").textContent=FBN.fr;
+  var b=$("bellBdg");b.hidden=FBN.req<1;b.textContent=FBN.req>99?"99+":FBN.req;
+  $("navBdg").hidden=FBN.req<1;
+}
+async function fbPoll(){ // リクエストが来ているか、ときどき確認する
+  if(!FB.uid||document.hidden)return;
+  try{FBN.req=(await fList("requests/"+FB.uid+"/from")).length;paintCounts()}catch(e){}
+}
+function fbAfter(){renderFb();fillList()}
+function openList(m){listMode=m;$("lmt").textContent={fol:"フォロー中",fr:"フォロワー",req:"フォローリクエスト"}[m];$("lm").hidden=false;fillList()}
+function closeList(){listMode=null;$("lm").hidden=true}
+async function fillList(){
+  if(!listMode||!FB.uid)return;
+  var mode=listMode,out=document.createElement("div");
+  if(!$("lmBody").firstChild)$("lmBody").innerHTML='<div class="note">読み込み中…</div>';
+  if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
+  if(listMode===mode){$("lmBody").innerHTML="";$("lmBody").appendChild(out)}
+}
+async function fillReq(box){
   var uid=FB.uid;
-  // 届いたリクエスト
   try{
-    var reqs=await fList("requests/"+uid+"/from"),box=$("fbReq");box.innerHTML="";
+    var reqs=await fList("requests/"+uid+"/from");
     if(!reqs.length)box.innerHTML='<div class="note">リクエストは来ていません。</div>';
     for(var i=0;i<reqs.length;i++){
       var rid=reqs[i].id,pr=null;try{pr=await fGet("profiles/"+rid)}catch(e){}
@@ -1428,15 +1448,17 @@ async function renderFb(){
       var ok=document.createElement("button");ok.className="main";ok.textContent="承認";
       var no=document.createElement("button");no.textContent="拒否";
       (function(rid){
-        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now()});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}renderFb()};
-        no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}renderFb()};
+        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now()});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}fbAfter()};
+        no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}fbAfter()};
       })(rid);
       row.appendChild(ok);row.appendChild(no);box.appendChild(row);
     }
-  }catch(e){$("fbReq").innerHTML='<div class="note">読み込めませんでした。</div>'}
-  // フォロー中
+  }catch(e){box.innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function fillFol(fb){
+  var uid=FB.uid;
   try{
-    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[],fb=$("fbFol");fb.innerHTML="";
+    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[];
     if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
     for(var j=0;j<ids.length;j++){
       var id=ids[j],p=null,d=null,state2="ok";
@@ -1449,7 +1471,7 @@ async function renderFb(){
           try{var f2=await fGet("follows/"+uid),a2=((f2&&f2.ids)||[]).filter(function(x){return x!==id});await fSet("follows/"+uid,{ids:a2})}catch(e){}
           try{await fDel("requests/"+id+"/from/"+uid)}catch(e){}
           try{await fDel("stats/"+id+"/viewers/"+uid)}catch(e){}
-          renderFb();
+          fbAfter();
         });
       }})(id);
       hd.appendChild(un);card.appendChild(hd);
@@ -1466,18 +1488,40 @@ async function renderFb(){
       }
       fb.appendChild(card);
     }
-  }catch(e){$("fbFol").innerHTML='<div class="note">読み込めませんでした。</div>'}
-  // 記録を見られる人
+  }catch(e){fb.innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function fillVie(vb){
+  var uid=FB.uid;
   try{
-    var vs=await fList("stats/"+uid+"/viewers"),vb=$("fbVie");vb.innerHTML="";
-    if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。</div>';
+    var vs=await fList("stats/"+uid+"/viewers");
+    if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。リクエストを承認すると、ここに入ります。</div>';
     for(var k=0;k<vs.length;k++){
       var vid=vs[k].id,vp=null;try{vp=await fGet("profiles/"+vid)}catch(e){}
       var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
-      (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}renderFb()}})(vid);
+      (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}fbAfter()}})(vid);
       vr.appendChild(rv);vb.appendChild(vr);
     }
-  }catch(e){$("fbVie").innerHTML='<div class="note">読み込めませんでした。</div>'}
+  }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function renderFb(){
+  $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
+  var cl=inClaudeEnv(),cfg=fbConfig();
+  var off=$("fbOff");
+  off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
+  $("cntRow").hidden=true;$("bellBtn").hidden=true;$("shareBtn").hidden=true;
+  if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
+  if(!cfg){$("fbSetup").hidden=false;return}
+  if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
+  if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
+  if(!FB.uid){$("fbOutBox").hidden=false;return}
+  $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("shareBtn").hidden=!FB.code;
+  $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email+"(自分にだけ見えます)":"")+(FB.err?"  "+FB.err:"");
+  $("fbShare").checked=!!state.fbShare;$("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+  var uid=FB.uid;
+  try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).length:0}catch(e){}
+  try{FBN.fr=(await fList("stats/"+uid+"/viewers")).length}catch(e){}
+  try{FBN.req=(await fList("requests/"+uid+"/from")).length}catch(e){}
+  paintCounts();
 }
 async function fbAddFriend(){
   var code=$("fbAddCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -1671,6 +1715,19 @@ $("fbLogout").onclick=function(){if(FB.Au)FB.Au.signOut(FB.auth)};
 $("fbShare").onchange=function(){state.fbShare=this.checked;save();fbPublish(true)};
 $("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
 $("fbAdd").onclick=function(){fbAddFriend()};
+$("bellBtn").onclick=function(){openList("req")};
+$("cntFol").onclick=function(){openList("fol")};
+$("cntFr").onclick=function(){openList("fr")};
+$("lmClose").onclick=closeList;
+$("lm").onclick=function(e){if(e.target===this)closeList()};
+$("shareBtn").onclick=async function(){
+  if(!FB.code)return;
+  var t="学習プランナーで友達になろう!フレンドコード: "+FB.code+"\n"+location.href.split("#")[0];
+  try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(t);fbMsg("シェア用の文章をコピーしました。")}catch(e){fbMsg("コピーできませんでした。")}
+};
+setInterval(fbPoll,60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)fbPoll()});
 fbInit();
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
