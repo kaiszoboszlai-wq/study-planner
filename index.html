@@ -70,6 +70,11 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .col{cursor:pointer}
 .sdetail{margin:8px 0;color:var(--sub);font-size:.9rem;min-height:1.4em}
 .sh{font-size:.95rem;margin:14px 0 4px}
+.fbrow{display:flex;align-items:center;gap:8px;padding:6px 0}
+.fbrow>div:nth-child(2){flex:1;min-width:0}
+.fbrow button{padding:4px 10px}
+.fbcode{font-size:1.4rem;letter-spacing:.12em;font-weight:700}
+.fbin{width:150px;min-width:0;text-transform:uppercase}
 .dot{width:12px;height:12px;border-radius:3px;flex:none}
 .srow{display:flex;align-items:center;gap:8px;padding:4px 0}
 .srow i{width:12px;height:12px;border-radius:3px;flex:none}
@@ -299,6 +304,28 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 <section id="mypage" hidden>
 <h2>マイページ</h2>
+<h3 class="sh">アカウント・フレンド</h3>
+<p class="note" id="fbOff" hidden></p>
+<div id="fbSetup" hidden>
+<p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
+<textarea id="fbCfg" rows="6" placeholder='apiKey: "…", authDomain: "…", projectId: "…", appId: "…"' aria-label="firebaseConfig"></textarea>
+<div class="actions"><button id="fbCfgSave" class="main">設定を保存</button></div>
+</div>
+<div id="fbOutBox" hidden>
+<p class="note">Googleアカウントでログインすると、友達と学習記録を見せ合えます。メールアドレスと本名は、友達には見えません。</p>
+<div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
+</div>
+<div id="fbOn" hidden>
+<div class="me"><div class="av" id="fbAv"></div><div><b id="fbName"></b><div class="note" id="fbMail"></div></div></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="fbShare">学習記録と目標を、承認した友達に公開する</label></div>
+<div class="fld"><span class="lb">あなたのフレンドコード(友達に教えるコードです)</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
+<div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
+<p class="note" id="fbMsg"></p>
+<h3 class="sh">届いたリクエスト</h3><div id="fbReq"></div>
+<h3 class="sh">フォロー中</h3><div id="fbFol"></div>
+<h3 class="sh">あなたの記録を見られる人</h3><div id="fbVie"></div>
+<div class="actions"><button id="fbLogout">ログアウト</button></div>
+</div>
 <h3 class="sh">プロフィール</h3>
 <div class="me"><div class="av" id="meAv"></div><div><b id="meName"></b><div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
 <div id="pfEdit">
@@ -378,7 +405,7 @@ var KEY="study-planner-v1";
 var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
 function store(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function save(){state.updatedAt=Date.now();store()}
+function save(){state.updatedAt=Date.now();store();if(typeof fbSchedule==="function")fbSchedule()}
 
 var $=function(id){return document.getElementById(id)};
 
@@ -1217,6 +1244,7 @@ var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","�
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
 function renderMy(){
+  if(typeof renderFb==="function")renderFb();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
   if(pfEditing===null)pfEditing=!(p.set||p.name||p.school||p.photo||p.grade||p.age);
   $("pfEdit").hidden=!pfEditing;$("pfView").hidden=pfEditing;
@@ -1240,6 +1268,211 @@ function renderMy(){
   $("pfGrade").value=p.grade||"";
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
+}
+
+// ===== Googleでログイン・フレンド(Firebaseを使う) =====
+// ログインとデータの保存は、Googleの「Firebase」が担当する。Claudeで公開したページからは外に接続できないので、
+// GitHub Pagesなどに置いたファイルで動く。firebaseConfig(公開してよい設定)は、下の FIREBASE_CONFIG に貼るか、
+// マイページの入力欄に貼る。
+// 守りかた: フレンドコードを知っている人が「リクエスト」を送り、本人が「承認」した人だけが、記録を読める。
+//   公開するのは、名前(アプリ内の名前)・アイコン・色・フレンドコードと、公開をオンにしたときの目標・学習記録だけ。
+//   メールアドレス・Googleの本名・写真・学年・年齢・志望校・成績は、公開しない。
+var FIREBASE_CONFIG=null; // 例: {apiKey:"…",authDomain:"…",projectId:"…",appId:"…"}
+var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
+var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
+function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
+function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
+function inClaudeEnv(){return typeof claude!=="undefined"&&!!claude&&!!claude.use}
+function fbConfig(){
+  if(FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey)return FIREBASE_CONFIG;
+  try{var c=JSON.parse(localStorage.getItem(FB_CFG_KEY)||"null");return c&&c.apiKey&&c.projectId?c:null}catch(e){return null}
+}
+function parseFbConfig(text){ // firebaseConfig の貼り付け(JSでもJSONでもよい)を読み取る
+  var o={},re=/([A-Za-z]+)\s*:\s*["']([^"']*)["']/g,m;
+  while((m=re.exec(text)))o[m[1]]=m[2];
+  try{var j=JSON.parse(text);if(j&&typeof j==="object")Object.keys(j).forEach(function(k){o[k]=j[k]})}catch(e){}
+  if(!o.apiKey||!o.projectId)return null;
+  return{apiKey:String(o.apiKey),authDomain:String(o.authDomain||o.projectId+".firebaseapp.com"),projectId:String(o.projectId),appId:String(o.appId||""),storageBucket:String(o.storageBucket||""),messagingSenderId:String(o.messagingSenderId||"")};
+}
+// ---- Firestore(データの置き場)の読み書き。テストでは、ここを差し替える ----
+async function fGet(path){var r=await FB.Fs.getDoc(FB.Fs.doc(FB.db,path));return r.exists()?r.data():null}
+async function fSet(path,data){await FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data)}
+async function fDel(path){await FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path))}
+async function fList(path){var r=await FB.Fs.getDocs(FB.Fs.collection(FB.db,path)),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function fbInit(){
+  var cfg=fbConfig();
+  if(!cfg||inClaudeEnv()){renderFb();return}
+  try{
+    var B="https://www.gstatic.com/firebasejs/"+FB_VER+"/";
+    var m=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
+    var app=m[0].initializeApp(cfg);
+    FB.Au=m[1];FB.Fs=m[2];FB.auth=FB.Au.getAuth(app);FB.db=FB.Fs.getFirestore(app);FB.loaded=true;
+    try{await FB.Au.getRedirectResult(FB.auth)}catch(e){}
+    FB.Au.onAuthStateChanged(FB.auth,function(u){FB.user=u;FB.uid=u?u.uid:null;fbOnAuth()});
+  }catch(e){FB.err="Firebaseを読み込めませんでした。通信の状態を確認してください。"}
+  renderFb();
+}
+var FB_AUTH_ERR={"auth/unauthorized-domain":"このサイトのアドレスが、Firebaseの「承認済みドメイン」に入っていません。","auth/operation-not-allowed":"FirebaseでGoogleでのログインがオンになっていません。","auth/network-request-failed":"通信できませんでした。通信の状態を確認してください。"};
+async function fbSignIn(){
+  try{await FB.Au.signInWithPopup(FB.auth,new FB.Au.GoogleAuthProvider())}
+  catch(e){
+    var c=(e&&e.code)||"";
+    if(c==="auth/popup-blocked"||c==="auth/operation-not-supported-in-this-environment"){try{await FB.Au.signInWithRedirect(FB.auth,new FB.Au.GoogleAuthProvider());return}catch(x){c=(x&&x.code)||c}}
+    if(c==="auth/popup-closed-by-user"||c==="auth/cancelled-popup-request")return;
+    FB.err=(FB_AUTH_ERR[c]||"ログインできませんでした。")+"(コード: "+(c||"unknown")+")";renderFb();
+  }
+}
+function genCode(){ // 紛らわしい文字(0 O 1 I)を除いた8文字
+  var A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",a=new Uint8Array(8),o="";
+  (window.crypto||crypto).getRandomValues(a);
+  for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o;
+}
+function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color)}}
+async function fbEnsure(){ // 初めてのログインで、フレンドコードを作る
+  var p=await fGet("profiles/"+FB.uid);
+  if(p&&p.code){FB.code=p.code;return}
+  for(var i=0;i<8;i++){
+    var c=genCode();
+    try{await fSet("codes/"+c,{uid:FB.uid});FB.code=c;return}catch(e){} // すでにあるコードなら、拒否されるので、作り直す
+  }
+  throw new Error("code");
+}
+function trimLog(){var cut=new Date();cut.setDate(cut.getDate()-120);var cs=fmtDate(cut),L={};Object.keys(state.log||{}).forEach(function(d){if(d>=cs){L[d]={};Object.keys(state.log[d]).forEach(function(n){L[d][n]=Math.round(state.log[d][n])})}});return L}
+function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=setTimeout(function(){fbPublish(false)},3000)}
+async function fbPublish(force){ // プロフィールと、公開をオンにしたときの記録を、保存する
+  if(!FB.uid||!FB.code)return;
+  var me=fbMine(),share=!!state.fbShare,st={share:share,goal:share?String(state.goal||"").slice(0,60):"",log:share?trimLog():{},updated:Date.now()};
+  var sig=JSON.stringify([me.name,me.icon,me.color,FB.code,share,st.goal,st.log]);
+  if(!force&&sig===fbSig)return;
+  try{
+    await fSet("profiles/"+FB.uid,{name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()});
+    await fSet("stats/"+FB.uid,st);
+    fbSig=sig;FB.err="";
+  }catch(e){FB.err="保存できませんでした。通信の状態と、Firebaseの「ルール」の設定を確認してください。"}
+}
+async function fbOnAuth(){
+  renderFb();
+  if(!FB.uid){FB.code="";fbSig="";return}
+  try{await fbEnsure();await fbPublish(true)}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  renderFb();
+}
+function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
+function sumsOf(L){var today=fmtDate(new Date()),ym=today.slice(0,7),r={tdy:0,mon:0,tot:0};Object.keys(L).forEach(function(d){var s=0;Object.keys(L[d]).forEach(function(n){s+=L[d][n]});r.tot+=s;if(d.slice(0,7)===ym)r.mon+=s;if(d===today)r.tdy=s});return r}
+function cleanLog(raw){ // 他の人のデータは信用せず、数字と短い名前だけ通す
+  var L={};if(!raw||typeof raw!=="object")return L;
+  Object.keys(raw).slice(0,400).forEach(function(d){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!raw[d]||typeof raw[d]!=="object")return;
+    Object.keys(raw[d]).slice(0,30).forEach(function(n){var v=Number(raw[d][n]);if(isFinite(v)&&v>0&&v<1e7){L[d]=L[d]||{};L[d][String(n).slice(0,20)]=v}});
+  });return L;
+}
+function mini7(L){ // 直近7日の積み上げ棒(小さいグラフ)
+  var bs=buckets(L,"d"),mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total)});
+  var W=210,H=64,bw=20,gap=(W-7*bw)/8,svg='<svg viewBox="0 0 '+W+' '+(H+14)+'" role="img" aria-label="直近7日の学習時間">';
+  bs.forEach(function(b,i){
+    var x=gap+i*(bw+gap),acc=0;
+    Object.keys(b.parts).forEach(function(n){var h=mx>0?b.parts[n]/mx*H:0;if(h<=0)return;svg+='<rect x="'+x+'" y="'+(H-acc-h)+'" width="'+bw+'" height="'+h+'" style="fill:'+colorOf(n)+'"/>';acc+=h});
+    svg+='<text class="ax" x="'+(x+bw/2)+'" y="'+(H+11)+'" text-anchor="middle">'+b.sub+'</text>';
+  });
+  return svg+'</svg>';
+}
+function fbPaint(el,icon,color){el.textContent=goodIcon(icon)||"👤";el.style.background=goodColor(color)}
+function fbRow(prof,id){
+  var r=document.createElement("div");r.className="fbrow";
+  r.innerHTML='<div class="av"></div><div><b></b><div class="note"></div></div>';
+  fbPaint(r.querySelector(".av"),prof&&prof.icon,prof&&prof.color);
+  r.querySelector("b").textContent=(prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||"名前がわからない人";
+  return r;
+}
+async function renderFb(){
+  var cl=inClaudeEnv(),cfg=fbConfig();
+  var off=$("fbOff");
+  off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
+  if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
+  if(!cfg){$("fbSetup").hidden=false;return}
+  if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
+  if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
+  if(!FB.uid){$("fbOutBox").hidden=false;return}
+  $("fbOn").hidden=false;
+  var me=fbMine();
+  fbPaint($("fbAv"),me.icon,me.color);$("fbName").textContent=me.name;
+  $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email+"(自分にだけ見えます)":"")+(FB.err?"  "+FB.err:"");
+  $("fbShare").checked=!!state.fbShare;$("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+  var uid=FB.uid;
+  // 届いたリクエスト
+  try{
+    var reqs=await fList("requests/"+uid+"/from"),box=$("fbReq");box.innerHTML="";
+    if(!reqs.length)box.innerHTML='<div class="note">リクエストは来ていません。</div>';
+    for(var i=0;i<reqs.length;i++){
+      var rid=reqs[i].id,pr=null;try{pr=await fGet("profiles/"+rid)}catch(e){}
+      var row=fbRow(pr,rid);row.querySelector(".note").textContent="あなたの記録を見たいそうです";
+      var ok=document.createElement("button");ok.className="main";ok.textContent="承認";
+      var no=document.createElement("button");no.textContent="拒否";
+      (function(rid){
+        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now()});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}renderFb()};
+        no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}renderFb()};
+      })(rid);
+      row.appendChild(ok);row.appendChild(no);box.appendChild(row);
+    }
+  }catch(e){$("fbReq").innerHTML='<div class="note">読み込めませんでした。</div>'}
+  // フォロー中
+  try{
+    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[],fb=$("fbFol");fb.innerHTML="";
+    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
+    for(var j=0;j<ids.length;j++){
+      var id=ids[j],p=null,d=null,state2="ok";
+      try{p=await fGet("profiles/"+id)}catch(e){}
+      try{d=await fGet("stats/"+id)}catch(e){state2=(e&&e.code==="permission-denied")?"wait":"err"}
+      var card=document.createElement("div");card.className="fcard";
+      var hd=fbRow(p,id),un=document.createElement("button");un.textContent="解除";
+      (function(id){un.onclick=function(){
+        askConfirm("フォローをやめますか?","この人の記録は、見られなくなります。","やめる",async function(){
+          try{var f2=await fGet("follows/"+uid),a2=((f2&&f2.ids)||[]).filter(function(x){return x!==id});await fSet("follows/"+uid,{ids:a2})}catch(e){}
+          try{await fDel("requests/"+id+"/from/"+uid)}catch(e){}
+          try{await fDel("stats/"+id+"/viewers/"+uid)}catch(e){}
+          renderFb();
+        });
+      }})(id);
+      hd.appendChild(un);card.appendChild(hd);
+      var body=document.createElement("div");card.appendChild(body);
+      if(state2==="wait")body.innerHTML='<div class="note">承認待ちです。相手が承認すると、記録が見られます。</div>';
+      else if(state2==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
+      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は非公開です。</div>';
+      else{
+        var L=cleanLog(d.log),sm=sumsOf(L);
+        if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
+        var st=document.createElement("div");st.className="fstat";
+        [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];st.appendChild(c)});
+        body.appendChild(st);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
+      }
+      fb.appendChild(card);
+    }
+  }catch(e){$("fbFol").innerHTML='<div class="note">読み込めませんでした。</div>'}
+  // 記録を見られる人
+  try{
+    var vs=await fList("stats/"+uid+"/viewers"),vb=$("fbVie");vb.innerHTML="";
+    if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。</div>';
+    for(var k=0;k<vs.length;k++){
+      var vid=vs[k].id,vp=null;try{vp=await fGet("profiles/"+vid)}catch(e){}
+      var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
+      (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}renderFb()}})(vid);
+      vr.appendChild(rv);vb.appendChild(vr);
+    }
+  }catch(e){$("fbVie").innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function fbAddFriend(){
+  var code=$("fbAddCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(code.length!==8){fbMsg("コードは8文字です。");return}
+  try{
+    var c=await fGet("codes/"+code);
+    if(!c||typeof c.uid!=="string"){fbMsg("そのコードは見つかりません。");return}
+    if(c.uid===FB.uid){fbMsg("それは、あなた自身のコードです。");return}
+    var f=await fGet("follows/"+FB.uid),ids=(f&&Array.isArray(f.ids))?f.ids.slice(0,100):[];
+    if(ids.indexOf(c.uid)>=0){fbMsg("すでにフォローしています。");return}
+    await fSet("requests/"+c.uid+"/from/"+FB.uid,{at:Date.now()});
+    ids.push(c.uid);await fSet("follows/"+FB.uid,{ids:ids});
+    $("fbAddCode").value="";fbMsg("リクエストを送りました。相手が承認すると、記録が見られます。");
+  }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
+  renderFb();
 }
 
 // ===== イベント =====
@@ -1407,6 +1640,18 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
 // Geminiの機能を消したので、残っているかもしれないキーや会話を、この端末から消す
 try{localStorage.removeItem("study-planner-gkey");localStorage.removeItem("study-planner-gmodel")}catch(e){}
 if(state.gchat||state.aiMode||state.chat){delete state.gchat;delete state.aiMode;delete state.chat;save()}
+$("fbCfgSave").onclick=function(){
+  var c=parseFbConfig($("fbCfg").value);
+  if(!c){$("fbOff").hidden=false;$("fbOff").textContent="設定を読み取れませんでした。apiKey と projectId が入っているか確認してください。";return}
+  try{localStorage.setItem(FB_CFG_KEY,JSON.stringify(c))}catch(e){}
+  location.reload();
+};
+$("fbIn").onclick=function(){fbSignIn()};
+$("fbLogout").onclick=function(){if(FB.Au)FB.Au.signOut(FB.auth)};
+$("fbShare").onchange=function(){state.fbShare=this.checked;save();fbPublish(true)};
+$("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
+$("fbAdd").onclick=function(){fbAddFriend()};
+fbInit();
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
