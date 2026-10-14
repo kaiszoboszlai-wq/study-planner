@@ -1287,15 +1287,24 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-14 v2"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-14 v3"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
 function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
 function inClaudeEnv(){return typeof claude!=="undefined"&&!!claude&&!!claude.use}
-function fbConfig(){
+// iPhoneのSafariなどは、「別のサイトをまたぐ記録」を止めるので、ログインの通り道(firebaseapp.com)をまたぐと失敗しやすい。
+// ここに書いたアドレスで開いたときは、ログインの通り道を「同じアドレスの中(/__/auth/)」にする。
+// そのアドレスのサーバー側に、/__/auth/ を firebaseapp.com へ中継する設定(vercel.json)が必要。
+var AUTH_PROXY_HOSTS=["study-planner-sigma-tawny.vercel.app"];
+function fbConfigRaw(){
   if(FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey)return FIREBASE_CONFIG;
   try{var c=JSON.parse(localStorage.getItem(FB_CFG_KEY)||"null");return c&&c.apiKey&&c.projectId?c:null}catch(e){return null}
+}
+function fbConfig(){
+  var c=fbConfigRaw();
+  if(c&&typeof location!=="undefined"&&AUTH_PROXY_HOSTS.indexOf(location.hostname)>=0)c=Object.assign({},c,{authDomain:location.host});
+  return c;
 }
 function parseFbConfig(text){ // firebaseConfig の貼り付け(JSでもJSONでもよい)を読み取る
   var o={},re=/([A-Za-z]+)\s*:\s*["']([^"']*)["']/g,m;
