@@ -308,7 +308,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
 <p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
-<textarea id="fbCfg" rows="6" placeholder='apiKey: "…", authDomain: "…", projectId: "…", appId: "…"' aria-label="firebaseConfig"></textarea>
+<textarea id="fbCfg" rows="6" placeholder='apiKey: "…", authDomain: "…", projectId: "…", appId: "…", databaseId: "(default)以外のときだけ"' aria-label="firebaseConfig"></textarea>
 <div class="actions"><button id="fbCfgSave" class="main">設定を保存</button></div>
 </div>
 <div id="fbOutBox" hidden>
@@ -1277,7 +1277,15 @@ function renderMy(){
 // 守りかた: フレンドコードを知っている人が「リクエスト」を送り、本人が「承認」した人だけが、記録を読める。
 //   公開するのは、名前(アプリ内の名前)・アイコン・色・フレンドコードと、公開をオンにしたときの目標・学習記録だけ。
 //   メールアドレス・Googleの本名・写真・学年・年齢・志望校・成績は、公開しない。
-var FIREBASE_CONFIG=null; // 例: {apiKey:"…",authDomain:"…",projectId:"…",appId:"…"}
+var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの、公開してよい値。守っているのは、Firestoreの「ルール」)
+  apiKey:"AIzaSyDnAv-i5g5QBY5HiwbN8An8tIER3rGOdZk",
+  authDomain:"study-planner-d2ee7.firebaseapp.com",
+  projectId:"study-planner-d2ee7",
+  storageBucket:"study-planner-d2ee7.firebasestorage.app",
+  messagingSenderId:"523330976385",
+  appId:"1:523330976385:web:69342f4db8674cafbfeb80"
+  // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
+};
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1292,7 +1300,7 @@ function parseFbConfig(text){ // firebaseConfig の貼り付け(JSでもJSONで�
   while((m=re.exec(text)))o[m[1]]=m[2];
   try{var j=JSON.parse(text);if(j&&typeof j==="object")Object.keys(j).forEach(function(k){o[k]=j[k]})}catch(e){}
   if(!o.apiKey||!o.projectId)return null;
-  return{apiKey:String(o.apiKey),authDomain:String(o.authDomain||o.projectId+".firebaseapp.com"),projectId:String(o.projectId),appId:String(o.appId||""),storageBucket:String(o.storageBucket||""),messagingSenderId:String(o.messagingSenderId||"")};
+  return{apiKey:String(o.apiKey),authDomain:String(o.authDomain||o.projectId+".firebaseapp.com"),projectId:String(o.projectId),appId:String(o.appId||""),storageBucket:String(o.storageBucket||""),messagingSenderId:String(o.messagingSenderId||""),databaseId:String(o.databaseId||"")};
 }
 // ---- Firestore(データの置き場)の読み書き。テストでは、ここを差し替える ----
 async function fGet(path){var r=await FB.Fs.getDoc(FB.Fs.doc(FB.db,path));return r.exists()?r.data():null}
@@ -1306,7 +1314,7 @@ async function fbInit(){
     var B="https://www.gstatic.com/firebasejs/"+FB_VER+"/";
     var m=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-auth.js"),import(B+"firebase-firestore.js")]);
     var app=m[0].initializeApp(cfg);
-    FB.Au=m[1];FB.Fs=m[2];FB.auth=FB.Au.getAuth(app);FB.db=FB.Fs.getFirestore(app);FB.loaded=true;
+    FB.Au=m[1];FB.Fs=m[2];FB.auth=FB.Au.getAuth(app);FB.db=cfg.databaseId?FB.Fs.getFirestore(app,cfg.databaseId):FB.Fs.getFirestore(app);FB.loaded=true; // データベースのIDが (default) 以外のときは、IDを指定する
     try{await FB.Au.getRedirectResult(FB.auth)}catch(e){}
     FB.Au.onAuthStateChanged(FB.auth,function(u){FB.user=u;FB.uid=u?u.uid:null;fbOnAuth()});
   }catch(e){FB.err="Firebaseを読み込めませんでした。通信の状態を確認してください。"}
