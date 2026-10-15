@@ -40,7 +40,7 @@ button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line
 button.main{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:700}
 button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.days{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:8px}
+.plan-actions{margin:0 0 10px}.days{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:8px}
 .day{flex:0 0 min(88%,340px);scroll-snap-align:start;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--bg)}
 .day h3{margin:0 0 6px;font-size:.95rem}
 .dh{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:.9rem;margin-bottom:6px}
@@ -62,6 +62,9 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .seg{display:flex;margin:0 auto 10px;max-width:260px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{flex:1;border:0;border-radius:0;background:var(--card)}
 .seg button.on{background:var(--acc);color:var(--bg);font-weight:700}
+.periodnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0;font-size:.85rem}
+.periodnav button{padding:5px 9px;white-space:nowrap}
+.periodnav span{flex:1;text-align:center;color:var(--sub)}
 #schart svg{width:100%;display:block;background:var(--bg);border-radius:8px}
 .ax{fill:var(--sub);font-size:10px}
 .gl0{stroke:var(--line);stroke-width:1}
@@ -156,7 +159,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .clock .arc{fill:none;stroke:var(--acc);stroke-width:12;stroke-linecap:round;stroke-dasharray:565.49;stroke-dashoffset:0;transition:stroke-dashoffset .4s linear}
 .clock .tmtime{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;font-size:clamp(1.8rem,9vw,2.8rem)}
 .tmtime{font-size:3rem;text-align:center;font-variant-numeric:tabular-nums;margin:10px 0 4px}
-.today{font-style:normal;background:var(--acc);color:var(--bg);border-radius:4px;padding:0 6px;margin-left:8px;font-size:.75rem}
+.today-friends{margin:18px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}.today-friends h2{margin-bottom:8px}.today-friends .fcard{margin:8px 0}.today{font-style:normal;background:var(--acc);color:var(--bg);border-radius:4px;padding:0 6px;margin-left:8px;font-size:.75rem}
 .day h3 span{color:var(--sub);font-weight:400;margin-left:6px}
 .blk{display:flex;align-items:center;gap:10px;padding:4px 0}
 .blk input{width:20px;height:20px;accent-color:var(--acc)}
@@ -206,6 +209,9 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 #lm .tmbox,#pm .tmbox,#dm .tmbox,#mrm .tmbox{max-height:85vh;overflow-y:auto}
 #cf{z-index:40}
 .fbrow .av,.fbrow b{cursor:pointer}
+.fbrow{border-radius:8px}
+.fbrow:active{background:var(--accbg)}
+.col:focus{outline:2px solid var(--acc);outline-offset:2px}
 .pav{width:84px;height:84px;font-size:2.6rem}
 .rs{margin:4px 0 8px}
 .rs div{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--sub);padding:1px 0}
@@ -278,29 +284,26 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 </section>
 
 <section id="planbox" hidden>
-<p class="step">ステップ 4 / 4</p>
 <h2>今日から7日間の計画</h2>
-<p class="note">左右にスワイプして日を切り替えられます。</p>
-<div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を、翌日に繰り越す</label>
-<p class="note" id="carryNote"></p>
-<p class="note" id="styleNote"></p></div>
+<div class="actions plan-actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を翌日に繰り越す</label></div>
 <div id="plan" class="days"></div>
-<div class="actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動(その分、日ごとの勉強時間も変わります)</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
 <div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
 <div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
+<div class="periodnav" id="periodNav"><button id="periodPrev" aria-label="前の期間">← 前へ</button><span id="periodLabel">現在の期間</span><button id="periodNext" aria-label="次の期間" disabled>次へ →</button></div>
 <div class="rs" id="rs"></div>
-<div class="hint"><span>グラフを押すと、過去の記録の詳細が見られます</span></div>
+<div class="hint"><span>棒を押すとその期間の記録、グラフの背景を押すと全記録が見られます</span></div>
 <div id="schart"></div>
 
 <div class="sdetail" id="sdetail"></div>
 <div class="actions"><button id="delSel" class="dng" hidden>選んだ期間の記録を削除</button></div>
 <div class="pies" id="pies"></div>
 <h3 class="sh">期間まとめて削除</h3>
-<p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。1件ずつ消したいときは、グラフの枠を押して、詳細を開いてください。</p>
+<p class="note">選んだ期間の記録をまとめて削除できます。1件ずつ削除するには、棒を押してその期間の記録を開いてください。削除した記録は元に戻せません。</p>
 </section>
 <section id="today" hidden>
 <h2 id="tdTitle"></h2>
@@ -308,6 +311,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="ovt" id="tdSum"></div>
 <div id="tdList"></div>
 <div class="actions"><button id="tdPlan">今日から7日間のプランを見る</button></div>
+<section class="today-friends" id="tdFriendsBox"><h2>フォロー中の今日の学習</h2><div id="tdFriends"><p class="note">読み込み中…</p></div></section>
 </section>
 <section id="grades" hidden>
 <h2>模試・テストの成績</h2>
@@ -347,7 +351,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
 </div>
 <div id="fbOn" hidden>
-<div class="note" id="fbMail"></div>
+<div class="note" id="fbMail"></div><div class="note" id="syncStatus"></div>
 <div class="actions"><button id="fbLogout">ログアウト</button></div>
 </div>
 <p class="note" id="appVer"></p>
@@ -623,12 +627,9 @@ function rollForward(){
   save();return true;
 }
 function rollAndRender(){if(rollForward())renderPlan()}
-function showCarry(){ // 繰り越しのオン・オフ、計画の案の表示
-  var ps=PLAN_STYLES[state.planStyle||0]||PLAN_STYLES[0];
-  $("styleNote").textContent="いまの計画の案: "+ps.n+"(「別の計画を提案」で切り替わります。完了・計測ずみ・自分で直した項目は、そのまま残ります)";
+function showCarry(){ // 繰り越しのオン・オフ
   var on=state.carry!==false;
   $("carryOn").checked=on;
-  $("carryNote").textContent=on?"日が変わると、できなかった項目の残り時間が、翌日以降に入ります。":"日が変わると、できなかった項目は消えます(翌日には入りません)。";
 }
 function renderPlan(){
   showCarry();
@@ -859,7 +860,7 @@ document.addEventListener("touchmove",function(e){if(drag)e.preventDefault()},{p
 // ===== 学習記録(日・週・月) =====
 // タイマーを止めるたびに、その日・その科目の計測時間(秒)を state.log に足していく。
 // state.log = {"2026-10-07": {"数学": 3600, "物理": 1800}, ...}。計画を作り直しても消えない。
-var sMode="d",sSel=-1;
+var sMode="d",sSel=-1,sOffset=0;
 // 完了にした項目は、予定時間のうち計測していない分も学習記録に入れる(チェックを外すと取り消す)
 function setDone(id,on){
   var x=findBlock(id);state.credit=state.credit||{};
@@ -942,14 +943,15 @@ function hm(h){ // 時間(小数)を「○時間○分」で表す。例: 0.5→
 }
 function fmtH(sec){return hm(sec/3600)}
 function fmtDur(sec){return hm(sec/3600)}
-function buckets(L,mode){ // 日=直近7日 / 週=直近8週(月曜始まり) / 月=直近6か月
+function buckets(L,mode,offset){ // 日=7日 / 週=8週(月曜始まり) / 月=6か月。offsetで過去へ移動
+  offset=Math.max(0,Math.floor(Number(offset)||0));
   var out=[],today=new Date();today.setHours(0,0,0,0);
-  var n=mode==="d"?7:mode==="w"?8:6;
+  var n=mode==="d"?7:mode==="w"?8:6,shift=offset*n;
   for(var i=n-1;i>=0;i--){
     var dt,key,label,sub;
-    if(mode==="d"){dt=new Date(today);dt.setDate(today.getDate()-i);key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub=DAYS[dt.getDay()]}
-    else if(mode==="w"){dt=mondayOf(today);dt.setDate(dt.getDate()-7*i);key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub="週"}
-    else{dt=new Date(today.getFullYear(),today.getMonth()-i,1);key=fmtDate(dt).slice(0,7);label=(dt.getMonth()+1)+"月";sub=""}
+    if(mode==="d"){dt=new Date(today);dt.setDate(today.getDate()-i-shift);key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub=DAYS[dt.getDay()]}
+    else if(mode==="w"){dt=mondayOf(today);dt.setDate(dt.getDate()-7*(i+shift));key=fmtDate(dt);label=(dt.getMonth()+1)+"/"+dt.getDate();sub="週"}
+    else{dt=new Date(today.getFullYear(),today.getMonth()-i-shift,1);key=fmtDate(dt).slice(0,7);label=(dt.getMonth()+1)+"月";sub=""}
     out.push({key:key,label:label,sub:sub,parts:{},total:0});
   }
   var idx={};out.forEach(function(b,k){idx[b.key]=k});
@@ -980,7 +982,7 @@ function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:�
   return svg+'<text x="70" y="75" text-anchor="middle" class="dc">'+center+'</text></svg>';
 }
 // ---- 記録の手入力(右上の「記録」ボタン)と、一覧・1件ずつの削除(グラフの枠を押す) ----
-var mrLimit=15,mrSig="";
+var mrLimit=15,mrSig="",mrFilter=null,mrFilterKey="all";
 function delRecord(date,name){ // その日の、その科目の記録を消す
   if(state.log&&state.log[date]){delete state.log[date][name];if(!Object.keys(state.log[date]).length)delete state.log[date]}
   Object.keys(state.contrib||{}).forEach(function(id){
@@ -1011,8 +1013,9 @@ function renderRecords(){
   var today=fmtDate(new Date());
   if(!$("mrDate").value)$("mrDate").value=today;
   var rows=recRows();
+  if(mrFilter)rows=rows.filter(function(r){return mrFilter(r.d)});
   var names=[];state.subjects.forEach(function(x){if(String(x[0]).trim())names.push(x[0])});rows.forEach(function(r){if(names.indexOf(r.n)<0)names.push(r.n)});
-  var sig=rows.map(function(r){return r.d+r.n+Math.round(r.s)}).join("|")+"#"+mrLimit+"#"+names.join(",");
+  var sig=rows.map(function(r){return r.d+r.n+Math.round(r.s)}).join("|")+"#"+mrLimit+"#"+names.join(",")+"#"+mrFilterKey;
   if(sig===mrSig)return;mrSig=sig;
   var dl=$("mrNames");dl.innerHTML="";names.forEach(function(n){var o=document.createElement("option");o.value=n;dl.appendChild(o)});
   var box=$("mrRows");box.innerHTML="";
@@ -1032,8 +1035,17 @@ function renderRecords(){
 function openMr(){ // 「記録」ボタン: 入力の画面を開く
   $("mrErr").textContent="";$("mrDate").value=fmtDate(new Date());$("mrm").hidden=false;
 }
-function openDm(){ // グラフの枠を押す: 過去の記録の詳細を開く
-  mrLimit=15;mrSig="";renderRecords();$("dm").hidden=false;
+function openDm(){ // グラフの背景を押す: 全期間の記録一覧を開く
+  mrFilter=null;mrFilterKey="all";mrLimit=15;mrSig="";$("dmt").textContent="学習記録の詳細";renderRecords();$("dm").hidden=false;
+}
+function openSelectedRecords(){ // 棒グラフを押す: その日・週・月の記録だけを開く
+  if(!lastSel)return openDm();
+  var sel=lastSel;
+  mrFilter=bucketMatch(sel.mode,sel.key);
+  mrFilterKey=sel.mode+":"+sel.key;
+  mrLimit=1000;mrSig="";renderRecords();
+  $("dmt").textContent=sel.label+" の学習記録";
+  $("dm").hidden=false;
 }
 function addRecord(){
   var date=$("mrDate").value,name=$("mrSubj").value.trim(),h=Math.max(0,Math.floor(Number($("mrH").value)||0)),m=Math.max(0,Math.floor(Number($("mrM").value)||0));
@@ -1081,12 +1093,12 @@ function renderStats(){
   $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
   Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
 
-  var bs=buckets(L,sMode);
+  var bs=buckets(L,sMode,sOffset);
   if(sSel<0||sSel>=bs.length)sSel=bs.length-1;
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
   var mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total/3600)});
-  var sc=niceTop(mx),W=320,H=340,ml=42,mr=6,mt=10,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
+  var sc=niceTop(mx),W=320,H=350,ml=42,mr=6,mt=28,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="学習時間のグラフ">';
   for(var v=0;v<=sc.top+1e-9;v+=sc.step){
     var y=mt+ph-v/sc.top*ph;
@@ -1101,11 +1113,22 @@ function renderStats(){
       svg+='<rect x="'+(cx-bw/2)+'" y="'+top+'" width="'+bw+'" height="'+(h/sc.top*ph)+'" style="fill:'+colorOf(nm)+'"/>';
       acc+=h;
     });
+    var totalY=Math.max(mt+10,mt+ph-(b.total/3600)/sc.top*ph-5);
+    svg+='<text class="ax" style="font-size:9px;fill:var(--ink);font-weight:700" x="'+cx+'" y="'+totalY+'" text-anchor="middle">'+(b.total/3600).toFixed(1)+'h</text>';
     svg+='<text class="ax axb" x="'+cx+'" y="'+(mt+ph+16)+'" text-anchor="middle"'+(i===sSel?' style="fill:var(--ink)"':'')+'>'+b.label+'</text><text class="ax" x="'+cx+'" y="'+(mt+ph+30)+'" text-anchor="middle">'+b.sub+'</text></g>';
   });
   $("schart").innerHTML=svg+'</svg>';
+  var periodText=sOffset===0?"現在の期間":(sMode==="d"?"約"+(sOffset*7)+"〜"+((sOffset+1)*7)+"日前":sMode==="w"?"約"+(sOffset*8)+"〜"+((sOffset+1)*8)+"週間前":"約"+(sOffset*6)+"〜"+((sOffset+1)*6)+"か月前");
+  $("periodLabel").textContent=periodText;$("periodNext").disabled=sOffset===0;
   Array.prototype.forEach.call($("schart").querySelectorAll(".col"),function(g){
-    g.onclick=function(e){e.stopPropagation();sSel=Number(g.getAttribute("data-i"));renderStats()}; // 棒を押すと期間を選ぶ(枠のほかの場所を押すと、詳細が開く)
+    g.setAttribute("tabindex","0");
+    g.setAttribute("role","button");
+    g.setAttribute("aria-label",bs[Number(g.getAttribute("data-i"))].label+" の学習記録を表示");
+    var choose=function(e){
+      if(e){e.stopPropagation();if(e.type==="keydown"&&e.key!=="Enter"&&e.key!==" ")return;if(e.type==="keydown")e.preventDefault()}
+      sSel=Number(g.getAttribute("data-i"));renderStats();openSelectedRecords();
+    };
+    g.onclick=choose;g.onkeydown=choose;
   });
 
   // 選んだ棒の内訳
@@ -1134,7 +1157,7 @@ function showPage(n){
   $("tips").hidden=true;
   if(n===4)renderStats();
   if(n===5)renderMy();
-  if(n===6)renderToday();
+  if(n===6){renderToday();renderTodayFriends();}
   if(n===7)renderGrades();
   window.scrollTo(0,0);
 }
@@ -1170,6 +1193,26 @@ function renderToday(){
   });
   $("tdBar").style.width=(tot?ok/tot*100:0)+"%";
   $("tdSum").textContent="完了 "+hm(ok)+" / "+hm(tot)+"・残り "+hm(tot-ok);
+}
+async function renderTodayFriends(){
+  var box=$("tdFriends");if(!box)return;box.innerHTML='<p class="note">読み込み中…</p>';
+  if(!FB.uid){box.innerHTML='<p class="note">Googleでログインすると、フォロー中の人の今日の学習記録が表示されます。</p>';return}
+  var ids=await myFollowIds();box.innerHTML="";
+  if(!ids.length){box.innerHTML='<p class="note">まだフォロー中の人はいません。</p>';return}
+  var today=fmtDate(new Date()),shown=0;
+  for(var i=0;i<ids.length;i++){
+    var id=ids[i],p=null,d=null;
+    try{p=await fGet("profiles/"+id)}catch(e){}
+    try{d=await fGet("stats/"+id)}catch(e){continue}
+    if(!d||d.share!==true)continue;
+    var L=cleanLog(d.log),parts=L[today]||{},total=Object.keys(parts).reduce(function(a,n){return a+parts[n]},0);
+    var card=document.createElement("div");card.className="fcard";
+    var head=fbRow(p,id);head.querySelector(".note").textContent=total>0?"今日 "+fmtH(total):"今日はまだ記録がありません";
+    card.appendChild(head);
+    if(total>0){var line=document.createElement("div");line.className="note";line.textContent=Object.keys(parts).sort(function(a,b){return parts[b]-parts[a]}).map(function(n){return n+" "+fmtH(parts[n])}).join("・");card.appendChild(line)}
+    box.appendChild(card);shown++;
+  }
+  if(!shown)box.innerHTML='<p class="note">今日の学習記録を見られるフォロー中の人はいません。</p>';
 }
 
 // ===== 模試・テストの成績 =====
@@ -1299,7 +1342,7 @@ function saveGrade(){
 
 // ===== マイページ(プロフィール) =====
 // アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。
-// 友達に見せるのは、名前・アイコン(写真は小さくしたもの)・色・目標・学習記録だけ(学年・年齢・志望校・成績は出さない)。
+// 承認したフォロワーには、名前・アイコン・色・学年・志望校・目標・学習記録を表示する。年齢・成績は公開しない。
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
@@ -1335,8 +1378,8 @@ function renderMy(){
 // GitHub Pagesなどに置いたファイルで動く。firebaseConfig(公開してよい設定)は、下の FIREBASE_CONFIG に貼るか、
 // マイページの入力欄に貼る。
 // 守りかた: フレンドコードを知っている人が「リクエスト」を送り、本人が「承認」した人だけが、記録を読める。
-//   承認した人(フォロワー)には、全員に、名前・アイコン(写真は小さくしたもの)・色・目標・学習記録が見える(公開の選択はなし)。
-//   メールアドレス・Googleの本名・学年・年齢・志望校・成績は、公開しない。
+//   承認した人(フォロワー)には、名前・アイコン・色・学年・志望校・目標・学習記録が見える。
+//   メールアドレス・Googleの本名・年齢・成績は公開しない。
 var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの、公開してよい値。守っているのは、Firestoreの「ルール」)
   apiKey:"AIzaSyDnAv-i5g5QBY5HiwbN8An8tIER3rGOdZk",
   authDomain:"study-planner-d2ee7.firebaseapp.com",
@@ -1346,9 +1389,9 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-15 v5"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
-var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
-var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
+var APP_VERSION="2026-10-15 v7"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:"",syncReady:false,syncStatus:""};
+var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbPrivateSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
 function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
 function goodPhoto(v){return typeof v==="string"&&v.length<40000&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(v)?v:""} // 他の人の写真は、小さなJPEGだけ通す
@@ -1406,7 +1449,7 @@ function genCode(){ // 紛らわしい文字(0 O 1 I)を除いた8文字
   (window.crypto||crypto).getRandomValues(a);
   for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o;
 }
-function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS)}}
+function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS),grade:String(p.grade||"").slice(0,20),school:String(p.school||"").slice(0,40)}}
 // 友達に見せる写真は、96×96の小さなJPEG(photoS)。古い写真(photoSがまだない)は、ここで作る。
 function ensureSmallPhoto(){
   var p=state.profile||{};
@@ -1431,15 +1474,53 @@ async function fbEnsure(){ // 初めてのログインで、フレンドコー�
   throw new Error("code");
 }
 function trimLog(){var cut=new Date();cut.setDate(cut.getDate()-120);var cs=fmtDate(cut),L={};Object.keys(state.log||{}).forEach(function(d){if(d>=cs){L[d]={};Object.keys(state.log[d]).forEach(function(n){L[d][n]=Math.round(state.log[d][n])})}});return L}
-function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=setTimeout(function(){fbPublish(false)},3000)}
+function fbSchedule(){if(!FB.uid||!FB.code||!FB.syncReady)return;clearTimeout(fbTimer);fbTimer=setTimeout(async function(){await fbPushPrivate(false);await fbPublish(false)},1800)}
+function localStateHasData(){
+  var p=state.profile||{};
+  return !!((state.log&&Object.keys(state.log).length)||(state.plan&&state.plan.length)||(state.goal||state.exam)||(state.exams&&state.exams.length)||(p.name||p.school||p.grade||p.set||p.photo)||(state.done&&Object.keys(state.done).length)||(state.spent&&Object.keys(state.spent).length)||(state.tot&&Number(state.tot)>0));
+}
+function stateForCloud(){var copy=JSON.parse(JSON.stringify(state));copy.timer=null;return copy}
+async function fbPushPrivate(force){
+  if(!FB.uid||!FB.syncReady)return;
+  try{
+    var data=stateForCloud(),sig=JSON.stringify(data);
+    if(!force&&sig===fbPrivateSig)return;
+    await fSet("privateData/"+FB.uid,{state:data,updatedAt:Date.now()});
+    fbPrivateSig=sig;FB.syncStatus="クラウド同期済み";
+  }catch(e){FB.syncStatus="同期できません。Firebaseのデータベースルール設定が必要な可能性があります。"}
+  var el=$("syncStatus");if(el)el.textContent=FB.syncStatus;
+}
+async function fbLoadPrivate(){
+  var remote=await fGet("privateData/"+FB.uid),localHas=localStateHasData();
+  if(remote&&remote.state&&typeof remote.state==="object"){
+    var cloudTime=Number(remote.state.updatedAt||remote.updatedAt||0),localTime=Number(state.updatedAt||0);
+    if(!localHas||cloudTime>localTime){
+      state=Object.assign(state,remote.state);state.timer=null;store();FB.syncStatus="このアカウントのデータを同期しました";
+    }else{
+      FB.syncStatus="この端末のデータをクラウドに同期しています";
+      FB.syncReady=true;await fbPushPrivate(true);
+    }
+    return;
+  }
+  if(!localHas){
+    // 以前の版で公開用に保存された学習記録だけは、初回同期時に引き継ぐ
+    try{var old=await fGet("stats/"+FB.uid);if(old&&old.log)state.log=cleanLog(old.log);if(old&&old.goal&&!state.goal)state.goal=String(old.goal).slice(0,60)}catch(e){}
+    try{var pr=await fGet("profiles/"+FB.uid);if(pr&&state.profile){state.profile.name=String(pr.name||"");state.profile.icon=goodIcon(pr.icon)||state.profile.icon;state.profile.color=goodColor(pr.color);state.profile.grade=String(pr.grade||"");state.profile.school=String(pr.school||"")}}catch(e){}
+    store();
+  }
+  FB.syncReady=true;await fbPushPrivate(true);
+}
 async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
   var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),updated:Date.now()};
-  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,FB.code,st.goal,st.log]);
+  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log]);
   if(!force&&sig===fbSig)return;
   try{
-    var prof={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},photoNg=false;
+    var followingCount=0,followerCount=0;
+    try{var mineF=await fGet("follows/"+FB.uid);followingCount=(mineF&&Array.isArray(mineF.ids))?mineF.ids.length:0}catch(e){}
+    try{followerCount=(await fList("stats/"+FB.uid+"/viewers")).length}catch(e){}
+    var prof={name:me.name,icon:me.icon,color:me.color,grade:me.grade,school:me.school,followingCount:followingCount,followerCount:followerCount,code:FB.code,updated:Date.now()},photoNg=false;
     if(me.photo)prof.photo=me.photo; // 写真がないときは、photoの項目そのものを送らない
     try{await fSet("profiles/"+FB.uid,prof)}
     catch(e){ // 写真の項目がルールで断られたときは、写真なしで保存し直す(ほかの項目は保存する)
@@ -1452,8 +1533,14 @@ async function fbPublish(force){ // プロフィールと、目標・学習記�
 }
 async function fbOnAuth(){
   renderFb();
-  if(!FB.uid){FB.code="";fbSig="";FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
-  try{await fbEnsure();await fbPublish(true)}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  if(!FB.uid){FB.code="";fbSig="";fbPrivateSig="";FB.syncReady=false;FB.syncStatus="";FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
+  FB.syncReady=false;FB.syncStatus="クラウド同期を確認中…";renderFb();
+  try{
+    await fbEnsure();
+    try{await fbLoadPrivate();FB.syncReady=true;await fbPushPrivate(true)}
+    catch(syncErr){FB.syncReady=false;FB.syncStatus="端末間同期にはFirebaseの privateData 用ルール設定が必要です。"}
+    await fbPublish(true);
+  }catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
 function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
@@ -1486,20 +1573,30 @@ function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと
   fbPaint(r.querySelector(".av"),prof&&prof.icon,prof&&prof.color,prof&&prof.photo);
   r.querySelector("b").textContent=(prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||"名前がわからない人";
   var open=function(){openProfile(id)};
+  r.style.cursor="pointer";
+  r.onclick=function(e){if(e.target.closest("button"))return;open()};
   r.querySelector(".av").onclick=open;r.querySelector("b").onclick=open;
   return r;
 }
-async function openProfile(id){ // 他の人のプロフィール(名前・アイコン・目標・学習記録)
+async function openProfile(id){ // 他の人のプロフィール
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
-  var p=null,d=null,st="ok";
+  var p=null,d=null,st="ok",following=null,followers=null;
   try{p=await fGet("profiles/"+id)}catch(e){}
+  following=p&&typeof p.followingCount==="number"?p.followingCount:null;
+  followers=p&&typeof p.followerCount==="number"?p.followerCount:null;
   try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
+  try{var ff=await fGet("follows/"+id);following=ff&&Array.isArray(ff.ids)?ff.ids.length:0}catch(e){}
+  try{followers=(await fList("stats/"+id+"/viewers")).length}catch(e){}
   if($("pm").hidden)return;
   box.innerHTML="";
   var top=document.createElement("div");top.className="me big";
-  top.innerHTML='<div class="av pav"></div><div><b></b></div>';
+  top.innerHTML='<div class="av pav"></div><div><b></b><div class="note profile-grade"></div><div class="note profile-school"></div><div class="fstat profile-counts"></div></div>';
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
   top.querySelector("b").textContent=(p&&typeof p.name==="string"&&p.name.slice(0,20))||"名前がわからない人";
+  top.querySelector(".profile-grade").textContent=p&&p.grade?"学年："+String(p.grade).slice(0,20):"学年：未設定";
+  top.querySelector(".profile-school").textContent=p&&p.school?"志望校："+String(p.school).slice(0,40):"志望校：未設定";
+  var cnt=top.querySelector(".profile-counts");
+  [["フォロー中",following===null?"—":following],["フォロワー",followers===null?"—":followers]].forEach(function(a){var c=document.createElement("div");c.innerHTML='<small></small><b></b>';c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];cnt.appendChild(c)});
   box.appendChild(top);
   var body=document.createElement("div");box.appendChild(body);
   if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
@@ -1525,7 +1622,7 @@ async function fbPoll(){ // リクエストが来ているか、ときどき確�
   if(!FB.uid||document.hidden)return;
   try{FBN.req=(await fList("requests/"+FB.uid+"/from")).length;paintCounts()}catch(e){}
 }
-function fbAfter(){renderFb();fillList()}
+function fbAfter(){renderFb();fillList();if(FB.uid)fbPublish(true)}
 function openList(m){listMode=m;$("lmt").textContent={fol:"フォロー中",fr:"フォロワー",req:"フォローリクエスト"}[m];$("lm").hidden=false;fillList()}
 function closeList(){listMode=null;$("lm").hidden=true}
 async function fillList(){
@@ -1641,6 +1738,7 @@ async function renderFb(){
   if(!FB.uid){$("fbOutBox").hidden=false;return}
   $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("addBtn").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
+  $("syncStatus").textContent=FB.syncStatus||"";
   $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
   try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).length:0}catch(e){}
@@ -1662,7 +1760,7 @@ async function fbAddFriend(){
     var pn=null;try{pn=await fGet("profiles/"+c.uid)}catch(e){}
     $("fbAddCode").value="";fbMsg(fbNm(pn)+"さんにフォローリクエストを送りました。");
   }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
-  renderFb();
+  fbAfter();
 }
 
 // ===== イベント =====
@@ -1692,8 +1790,10 @@ $("navPlan").onclick=function(){ // プランは、最後に開いていたス�
   showPage(pp);
 };
 Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){
-  b.onclick=function(){sMode=b.getAttribute("data-m");sSel=-1;renderStats()};
+  b.onclick=function(){sMode=b.getAttribute("data-m");sOffset=0;sSel=-1;renderStats()};
 });
+$("periodPrev").onclick=function(){sOffset++;sSel=-1;renderStats()};
+$("periodNext").onclick=function(){if(sOffset>0){sOffset--;sSel=-1;renderStats()}};
 $("n0").onclick=function(){
   var g=$("goal").value.trim();
   if(!g||!$("exam").value){$("goalErr").hidden=false;return}
