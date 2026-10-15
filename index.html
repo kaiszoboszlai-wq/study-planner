@@ -189,7 +189,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .adjb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .adjin{display:flex;gap:6px;align-items:center;justify-content:center}
 .adjin input{width:80px;min-width:0}
-/* ここから、マイページの新しいデザイン用 */
+/* ここから、マイページ・学習記録などの新しいデザイン用 */
 .nv{position:relative}
 .nbdg{position:absolute;top:4px;left:calc(50% + 8px);width:10px;height:10px;border-radius:50%;background:#e8465a}
 .mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -203,7 +203,14 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .cnt button{border:0;background:none;padding:2px 0;color:var(--sub);font-size:.9rem}
 .cnt button b{color:var(--ink);margin-right:4px}
 .cnt i{width:1px;height:18px;background:var(--line)}
-#lm .tmbox{max-height:80vh;overflow-y:auto}
+#lm .tmbox,#pm .tmbox,#dm .tmbox,#mrm .tmbox{max-height:85vh;overflow-y:auto}
+#cf{z-index:40}
+.fbrow .av,.fbrow b{cursor:pointer}
+.pav{width:84px;height:84px;font-size:2.6rem}
+.rs{margin:4px 0 8px}
+.rs div{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--sub);padding:1px 0}
+.hint{display:flex;justify-content:space-between;align-items:center;color:var(--sub);font-size:.8rem;margin:6px 0 4px}
+#schart{cursor:pointer}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -278,28 +285,21 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <p class="note" id="styleNote"></p></div>
 <div id="plan" class="days"></div>
 <div class="actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>▶ で計測開始、⏸ で一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動(その分、日ごとの勉強時間も変わります)</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
-<h2>学習記録</h2>
+<div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
 <div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
 <div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
+<div class="rs" id="rs"></div>
+<div class="hint"><span>グラフを押すと、過去の記録の詳細が見られます</span></div>
 <div id="schart"></div>
 
 <div class="sdetail" id="sdetail"></div>
 <div class="actions"><button id="delSel" class="dng" hidden>選んだ期間の記録を削除</button></div>
 <div class="pies" id="pies"></div>
-<h3 class="sh">学習記録を入力する</h3>
-<div class="fld"><label>日付<input type="date" id="mrDate"></label></div>
-<div class="fld"><label>科目<input type="text" id="mrSubj" list="mrNames" maxlength="12" placeholder="例 数学"></label><datalist id="mrNames"></datalist></div>
-<div class="fld"><span class="lb">勉強した時間</span><div class="rk"><input type="number" id="mrH" min="0" max="24" placeholder="0" aria-label="時間"><span>時間</span><input type="number" id="mrM" min="0" max="59" placeholder="0" aria-label="分"><span>分</span></div></div>
-<p class="err" id="mrErr"></p>
-<div class="actions"><button id="mrAdd" class="main">記録する</button></div>
-<h3 class="sh">記録の一覧(1件ずつ削除できます)</h3>
-<div id="mrRows"></div>
-<div class="actions"><button id="mrMore" hidden>もっと見る</button></div>
 <h3 class="sh">期間まとめて削除</h3>
-<p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。</p>
+<p class="note">グラフの棒を押して期間を選ぶと、その期間の記録だけ削除できます。削除した記録は元に戻せません。1件ずつ消したいときは、グラフの枠を押して、詳細を開いてください。</p>
 </section>
 <section id="today" hidden>
 <h2 id="tdTitle"></h2>
@@ -343,18 +343,18 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <div class="actions"><button id="fbCfgSave" class="main">設定を保存</button></div>
 </div>
 <div id="fbOutBox" hidden>
-<p class="note">Googleアカウントでログインすると、友達と学習記録を見せ合えます。メールアドレスと本名は、友達には見えません。</p>
+<p class="note">Googleアカウントでログインすると、友達と学習記録を見せ合えます。メールアドレスと本名は、友達には見えません。承認した人には、学習記録と目標が見えます。</p>
 <div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
 </div>
 <div id="fbOn" hidden>
 <div class="note" id="fbMail"></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="fbShare">学習記録と目標を、承認した友達に公開する</label></div>
+<div class="note">フォローを承認した人は、あなたの名前・アイコン・目標・学習記録を見られます。</div>
 <div class="fld"><span class="lb">あなたのフレンドコード(友達に教えるコードです)</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
 <div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fbLogout">ログアウト</button></div>
 </div>
-<p class="note">入力した内容は、この端末の中にだけ保存されます。</p>
+<p class="note">入力した内容は、この端末の中にだけ保存されます(ログインして友達に見せる部分を除く)。</p>
 <p class="note" id="appVer"></p>
 </section>
 <div class="tm" id="gm" hidden role="dialog" aria-modal="true" aria-labelledby="gmt">
@@ -368,9 +368,27 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <p class="err" id="gmErr"></p>
 <div class="actions"><button id="gmSave" class="main">保存</button><button id="gmDel" class="dng" hidden>削除</button><button id="gmNo">キャンセル</button></div></div>
 </div>
+<div class="tm" id="mrm" hidden role="dialog" aria-modal="true" aria-labelledby="mrmt">
+<div class="tmbox"><div class="tmname" id="mrmt">学習記録を入力する</div>
+<div class="fld"><label>日付<input type="date" id="mrDate"></label></div>
+<div class="fld"><label>科目<input type="text" id="mrSubj" list="mrNames" maxlength="12" placeholder="例 数学"></label><datalist id="mrNames"></datalist></div>
+<div class="fld"><span class="lb">勉強した時間</span><div class="rk"><input type="number" id="mrH" min="0" max="24" placeholder="0" aria-label="時間"><span>時間</span><input type="number" id="mrM" min="0" max="59" placeholder="0" aria-label="分"><span>分</span></div></div>
+<p class="err" id="mrErr"></p>
+<div class="actions"><button id="mrAdd" class="main">記録する</button><button id="mrNo">キャンセル</button></div></div>
+</div>
+<div class="tm" id="dm" hidden role="dialog" aria-modal="true" aria-labelledby="dmt">
+<div class="tmbox"><div class="tmname" id="dmt">学習記録の詳細</div>
+<p class="note">過去の記録の一覧です。1件ずつ削除できます。</p>
+<div id="mrRows"></div>
+<div class="actions"><button id="mrMore" hidden>もっと見る</button><button id="dmClose">閉じる</button></div></div>
+</div>
 <div class="tm" id="lm" hidden role="dialog" aria-modal="true" aria-labelledby="lmt">
 <div class="tmbox"><div class="tmname" id="lmt"></div><div id="lmBody"></div>
 <div class="actions"><button id="lmClose">閉じる</button></div></div>
+</div>
+<div class="tm" id="pm" hidden role="dialog" aria-modal="true" aria-label="プロフィール">
+<div class="tmbox"><div id="pmBody"></div>
+<div class="actions"><button id="pmClose">閉じる</button></div></div>
 </div>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
@@ -959,7 +977,7 @@ function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:�
   });
   return svg+'<text x="70" y="75" text-anchor="middle" class="dc">'+center+'</text></svg>';
 }
-// ---- 記録の手入力と、1件ずつの削除 ----
+// ---- 記録の手入力(右上の「記録」ボタン)と、一覧・1件ずつの削除(グラフの枠を押す) ----
 var mrLimit=15,mrSig="";
 function delRecord(date,name){ // その日の、その科目の記録を消す
   if(state.log&&state.log[date]){delete state.log[date][name];if(!Object.keys(state.log[date]).length)delete state.log[date]}
@@ -970,12 +988,27 @@ function delRecord(date,name){ // その日の、その科目の記録を消す
   Object.keys(state.credit||{}).forEach(function(id){if(state.credit[id].date===date&&state.credit[id].name===name)delete state.credit[id]});
   state.legacyOff=true;save();
 }
-function renderRecords(){
-  var today=fmtDate(new Date());
-  if(!$("mrDate").value)$("mrDate").value=today;
+function recRows(){ // 記録の一覧(新しい日から)。30秒に満たない記録は出さない
   var rows=[];
   Object.keys(state.log||{}).forEach(function(d){Object.keys(state.log[d]).forEach(function(n){if(state.log[d][n]>=30)rows.push({d:d,n:n,s:state.log[d][n]})})});
   rows.sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:b.s-a.s});
+  return rows;
+}
+function recLabel(r){var dt=new Date(r.d+"T00:00:00");return (dt.getMonth()+1)+"/"+dt.getDate()+"("+DAYS[dt.getDay()]+")  "+r.n+"  "+fmtDur(r.s)}
+function renderRecSmall(){ // グラフの上に、最近の記録を小さく3件出す
+  var rows=recRows().slice(0,3),box=$("rs");box.innerHTML="";
+  if(!rows.length){box.innerHTML="<div>まだ記録がありません。右上の「記録」から入れられます。</div>";return}
+  rows.forEach(function(r){
+    var e=document.createElement("div");e.innerHTML='<i class="dot"></i><span></span>';
+    e.querySelector(".dot").style.background=colorOf(r.n);
+    e.querySelector("span").textContent=recLabel(r);
+    box.appendChild(e);
+  });
+}
+function renderRecords(){
+  var today=fmtDate(new Date());
+  if(!$("mrDate").value)$("mrDate").value=today;
+  var rows=recRows();
   var names=[];state.subjects.forEach(function(x){if(String(x[0]).trim())names.push(x[0])});rows.forEach(function(r){if(names.indexOf(r.n)<0)names.push(r.n)});
   var sig=rows.map(function(r){return r.d+r.n+Math.round(r.s)}).join("|")+"#"+mrLimit+"#"+names.join(",");
   if(sig===mrSig)return;mrSig=sig;
@@ -986,13 +1019,19 @@ function renderRecords(){
     var dt=new Date(r.d+"T00:00:00"),row=document.createElement("div");row.className="frow";
     row.innerHTML='<i class="dot"></i><span></span><button class="dng">削除</button>';
     row.querySelector(".dot").style.background=colorOf(r.n);
-    row.querySelector("span").textContent=(dt.getMonth()+1)+"/"+dt.getDate()+"("+DAYS[dt.getDay()]+")  "+r.n+"  "+fmtDur(r.s);
+    row.querySelector("span").textContent=recLabel(r);
     row.querySelector("button").onclick=function(){
       askConfirm((dt.getMonth()+1)+"月"+dt.getDate()+"日の「"+r.n+"」"+fmtDur(r.s)+"の記録を削除しますか?","削除した記録は元に戻せません。","削除する",function(){delRecord(r.d,r.n);renderStats()});
     };
     box.appendChild(row);
   });
   $("mrMore").hidden=rows.length<=mrLimit;
+}
+function openMr(){ // 「記録」ボタン: 入力の画面を開く
+  $("mrErr").textContent="";$("mrDate").value=fmtDate(new Date());$("mrm").hidden=false;
+}
+function openDm(){ // グラフの枠を押す: 過去の記録の詳細を開く
+  mrLimit=15;mrSig="";renderRecords();$("dm").hidden=false;
 }
 function addRecord(){
   var date=$("mrDate").value,name=$("mrSubj").value.trim(),h=Math.max(0,Math.floor(Number($("mrH").value)||0)),m=Math.max(0,Math.floor(Number($("mrM").value)||0));
@@ -1003,7 +1042,7 @@ function addRecord(){
   if(sec>24*3600){err.textContent="1回の記録は、24時間までです。";return}
   err.textContent="";
   state.log=state.log||{};state.log[date]=state.log[date]||{};state.log[date][name]=(state.log[date][name]||0)+sec;
-  $("mrH").value="";$("mrM").value="";$("mrSubj").value="";save();renderStats();
+  $("mrH").value="";$("mrM").value="";$("mrSubj").value="";save();$("mrm").hidden=true;renderStats();
 }
 function renderPies(bs,L){
   var per={},sum=0;
@@ -1064,7 +1103,7 @@ function renderStats(){
   });
   $("schart").innerHTML=svg+'</svg>';
   Array.prototype.forEach.call($("schart").querySelectorAll(".col"),function(g){
-    g.onclick=function(){sSel=Number(g.getAttribute("data-i"));renderStats()};
+    g.onclick=function(e){e.stopPropagation();sSel=Number(g.getAttribute("data-i"));renderStats()}; // 棒を押すと期間を選ぶ(枠のほかの場所を押すと、詳細が開く)
   });
 
   // 選んだ棒の内訳
@@ -1076,8 +1115,10 @@ function renderStats(){
   $("delSel").hidden=!(sb.total>0);
 
   renderPies(bs,L);
+  renderRecSmall();
   renderRecords();
 }
+
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
 function showPage(n){
   state.page=n;save();
@@ -1255,7 +1296,8 @@ function saveGrade(){
 
 
 // ===== マイページ(プロフィール) =====
-// アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。外には出さない。
+// アイコン・名前・学年・年齢・志望校を、この端末の中(state.profile)に保存する。
+// 友達に見せるのは、名前・アイコン(写真は小さくしたもの)・色・目標・学習記録だけ(学年・年齢・志望校・成績は出さない)。
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
@@ -1273,7 +1315,7 @@ function renderMy(){
   var ip=$("iconPick");ip.innerHTML="";
   ICONS.forEach(function(ic){
     var b=document.createElement("button");b.textContent=ic;b.className=(ic===p.icon&&!p.photo)?"on":"";b.setAttribute("aria-label","アイコン "+ic);
-    b.onclick=function(){p.icon=ic;p.photo="";save();renderMy()};ip.appendChild(b);
+    b.onclick=function(){p.icon=ic;p.photo="";p.photoS="";save();renderMy()};ip.appendChild(b);
   });
   var cp=$("colorPick");cp.innerHTML="";
   COLORS.forEach(function(c){
@@ -1291,8 +1333,8 @@ function renderMy(){
 // GitHub Pagesなどに置いたファイルで動く。firebaseConfig(公開してよい設定)は、下の FIREBASE_CONFIG に貼るか、
 // マイページの入力欄に貼る。
 // 守りかた: フレンドコードを知っている人が「リクエスト」を送り、本人が「承認」した人だけが、記録を読める。
-//   公開するのは、名前(アプリ内の名前)・アイコン・色・フレンドコードと、公開をオンにしたときの目標・学習記録だけ。
-//   メールアドレス・Googleの本名・写真・学年・年齢・志望校・成績は、公開しない。
+//   承認した人(フォロワー)には、全員に、名前・アイコン(写真は小さくしたもの)・色・目標・学習記録が見える(公開の選択はなし)。
+//   メールアドレス・Googleの本名・学年・年齢・志望校・成績は、公開しない。
 var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの、公開してよい値。守っているのは、Firestoreの「ルール」)
   apiKey:"AIzaSyDnAv-i5g5QBY5HiwbN8An8tIER3rGOdZk",
   authDomain:"study-planner-d2ee7.firebaseapp.com",
@@ -1302,11 +1344,12 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-15 v1"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-15 v3"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
 function goodColor(v){return typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v)?v:"#0b6e6e"}
+function goodPhoto(v){return typeof v==="string"&&v.length<40000&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(v)?v:""} // 他の人の写真は、小さなJPEGだけ通す
 function inClaudeEnv(){return typeof claude!=="undefined"&&!!claude&&!!claude.use}
 // iPhoneのSafariなどは、「別のサイトをまたぐ記録」を止めるので、ログインの通り道(firebaseapp.com)をまたぐと失敗しやすい。
 // ここに書いたアドレスで開いたときは、ログインの通り道を「同じアドレスの中(/__/auth/)」にする。
@@ -1361,7 +1404,21 @@ function genCode(){ // 紛らわしい文字(0 O 1 I)を除いた8文字
   (window.crypto||crypto).getRandomValues(a);
   for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o;
 }
-function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color)}}
+function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS)}}
+// 友達に見せる写真は、96×96の小さなJPEG(photoS)。古い写真(photoSがまだない)は、ここで作る。
+function ensureSmallPhoto(){
+  var p=state.profile||{};
+  return new Promise(function(res){
+    if(!p.photo||p.photoS){res();return}
+    var im=new Image();
+    im.onerror=function(){res()};
+    im.onload=function(){
+      try{var n=Math.min(im.width,im.height),c=document.createElement("canvas");c.width=c.height=96;c.getContext("2d").drawImage(im,(im.width-n)/2,(im.height-n)/2,n,n,0,0,96,96);p.photoS=c.toDataURL("image/jpeg",0.7);store()}catch(e){}
+      res();
+    };
+    im.src=p.photo;
+  });
+}
 async function fbEnsure(){ // 初めてのログインで、フレンドコードを作る
   var p=await fGet("profiles/"+FB.uid);
   if(p&&p.code){FB.code=p.code;return}
@@ -1373,13 +1430,14 @@ async function fbEnsure(){ // 初めてのログインで、フレンドコー�
 }
 function trimLog(){var cut=new Date();cut.setDate(cut.getDate()-120);var cs=fmtDate(cut),L={};Object.keys(state.log||{}).forEach(function(d){if(d>=cs){L[d]={};Object.keys(state.log[d]).forEach(function(n){L[d][n]=Math.round(state.log[d][n])})}});return L}
 function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=setTimeout(function(){fbPublish(false)},3000)}
-async function fbPublish(force){ // プロフィールと、公開をオンにしたときの記録を、保存する
+async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
-  var me=fbMine(),share=!!state.fbShare,st={share:share,goal:share?String(state.goal||"").slice(0,60):"",log:share?trimLog():{},updated:Date.now()};
-  var sig=JSON.stringify([me.name,me.icon,me.color,FB.code,share,st.goal,st.log]);
+  await ensureSmallPhoto();
+  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),updated:Date.now()};
+  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,FB.code,st.goal,st.log]);
   if(!force&&sig===fbSig)return;
   try{
-    await fSet("profiles/"+FB.uid,{name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()});
+    await fSet("profiles/"+FB.uid,{name:me.name,icon:me.icon,color:me.color,photo:me.photo,code:FB.code,updated:Date.now()});
     await fSet("stats/"+FB.uid,st);
     fbSig=sig;FB.err="";
   }catch(e){FB.err="保存できませんでした。通信の状態と、Firebaseの「ルール」の設定を確認してください。"}
@@ -1409,14 +1467,45 @@ function mini7(L){ // 直近7日の積み上げ棒(小さいグラフ)
   });
   return svg+'</svg>';
 }
-function fbPaint(el,icon,color){el.textContent=goodIcon(icon)||"👤";el.style.background=goodColor(color)}
-function fbRow(prof,id){
+function fbPaint(el,icon,color,photo){ // 写真があれば写真、なければ絵文字
+  el.innerHTML="";el.style.background=goodColor(color);
+  var ph=goodPhoto(photo);
+  if(ph){var im=document.createElement("img");im.src=ph;im.alt="";el.appendChild(im)}else el.textContent=goodIcon(icon)||"👤";
+}
+function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと、プロフィールが開く
   var r=document.createElement("div");r.className="fbrow";
   r.innerHTML='<div class="av"></div><div><b></b><div class="note"></div></div>';
-  fbPaint(r.querySelector(".av"),prof&&prof.icon,prof&&prof.color);
+  fbPaint(r.querySelector(".av"),prof&&prof.icon,prof&&prof.color,prof&&prof.photo);
   r.querySelector("b").textContent=(prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||"名前がわからない人";
+  var open=function(){openProfile(id)};
+  r.querySelector(".av").onclick=open;r.querySelector("b").onclick=open;
   return r;
 }
+async function openProfile(id){ // 他の人のプロフィール(名前・アイコン・目標・学習記録)
+  var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
+  var p=null,d=null,st="ok";
+  try{p=await fGet("profiles/"+id)}catch(e){}
+  try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
+  if($("pm").hidden)return;
+  box.innerHTML="";
+  var top=document.createElement("div");top.className="me big";
+  top.innerHTML='<div class="av pav"></div><div><b></b></div>';
+  fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
+  top.querySelector("b").textContent=(p&&typeof p.name==="string"&&p.name.slice(0,20))||"名前がわからない人";
+  box.appendChild(top);
+  var body=document.createElement("div");box.appendChild(body);
+  if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
+  else if(st==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
+  else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
+  else{
+    var L=cleanLog(d.log),sm=sumsOf(L);
+    if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
+    var s=document.createElement("div");s.className="fstat";
+    [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];s.appendChild(c)});
+    body.appendChild(s);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
+  }
+}
+
 // ---- フォロー数・通知のベル・一覧の画面 ----
 var FBN={fol:0,fr:0,req:0},listMode=null;
 function paintCounts(){
@@ -1502,7 +1591,7 @@ async function fillFol(fb){
       var body=document.createElement("div");card.appendChild(body);
       if(state2==="wait")body.innerHTML='<div class="note">承認待ちです。相手が承認すると、記録が見られます。</div>';
       else if(state2==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
-      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は非公開です。</div>';
+      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
       else{
         var L=cleanLog(d.log),sm=sumsOf(L);
         if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
@@ -1528,54 +1617,6 @@ async function fillVie(vb){
     }
   }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
 }
-async function fillFol(fb){
-  var uid=FB.uid;
-  try{
-    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[];
-    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
-    for(var j=0;j<ids.length;j++){
-      var id=ids[j],p=null,d=null,state2="ok";
-      try{p=await fGet("profiles/"+id)}catch(e){}
-      try{d=await fGet("stats/"+id)}catch(e){state2=(e&&e.code==="permission-denied")?"wait":"err"}
-      var card=document.createElement("div");card.className="fcard";
-      var hd=fbRow(p,id),un=document.createElement("button");un.textContent="解除";
-      (function(id){un.onclick=function(){
-        askConfirm("フォローをやめますか?","この人の記録は、見られなくなります。","やめる",async function(){
-          try{var f2=await fGet("follows/"+uid),a2=((f2&&f2.ids)||[]).filter(function(x){return x!==id});await fSet("follows/"+uid,{ids:a2})}catch(e){}
-          try{await fDel("requests/"+id+"/from/"+uid)}catch(e){}
-          try{await fDel("stats/"+id+"/viewers/"+uid)}catch(e){}
-          fbAfter();
-        });
-      }})(id);
-      hd.appendChild(un);card.appendChild(hd);
-      var body=document.createElement("div");card.appendChild(body);
-      if(state2==="wait")body.innerHTML='<div class="note">承認待ちです。相手が承認すると、記録が見られます。</div>';
-      else if(state2==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
-      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は非公開です。</div>';
-      else{
-        var L=cleanLog(d.log),sm=sumsOf(L);
-        if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
-        var st=document.createElement("div");st.className="fstat";
-        [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];st.appendChild(c)});
-        body.appendChild(st);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
-      }
-      fb.appendChild(card);
-    }
-  }catch(e){fb.innerHTML='<div class="note">読み込めませんでした。</div>'}
-}
-async function fillVie(vb){
-  var uid=FB.uid;
-  try{
-    var vs=await fList("stats/"+uid+"/viewers");
-    if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。リクエストを承認すると、ここに入ります。</div>';
-    for(var k=0;k<vs.length;k++){
-      var vid=vs[k].id,vp=null;try{vp=await fGet("profiles/"+vid)}catch(e){}
-      var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
-      (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}fbAfter()}})(vid);
-      vr.appendChild(rv);vb.appendChild(vr);
-    }
-  }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
-}
 async function renderFb(){
   $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
   var cl=inClaudeEnv(),cfg=fbConfig();
@@ -1589,7 +1630,7 @@ async function renderFb(){
   if(!FB.uid){$("fbOutBox").hidden=false;return}
   $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email+"(自分にだけ見えます)":"")+(FB.err?"  "+FB.err:"");
-  $("fbShare").checked=!!state.fbShare;$("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+  $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
   try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).length:0}catch(e){}
   try{FBN.fr=(await fList("stats/"+uid+"/viewers")).length}catch(e){}
@@ -1717,8 +1758,8 @@ $("wmok").onclick=function(){
 $("wmno").onclick=function(){$("wm").hidden=true};
 $("wm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("pfPhotoBtn").onclick=function(){$("pfPhoto").click()};
-$("pfPhotoDel").onclick=function(){state.profile.photo="";$("pfNote").textContent="";save();renderMy()};
-$("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜いて小さくしてから、この端末の中に保存する
+$("pfPhotoDel").onclick=function(){state.profile.photo="";state.profile.photoS="";$("pfNote").textContent="";save();renderMy()};
+$("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜いて小さくしてから、この端末の中に保存する(友達に見せる用の、もっと小さい版も作る)
   var f=this.files&&this.files[0];this.value="";
   if(!f)return;
   var rd=new FileReader();
@@ -1727,15 +1768,21 @@ $("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜�
     var im=new Image();
     im.onerror=function(){$("pfNote").textContent="この写真は使えません。別の写真を選んでください。"};
     im.onload=function(){
-      var n=Math.min(im.width,im.height),c=document.createElement("canvas");c.width=c.height=160;
-      c.getContext("2d").drawImage(im,(im.width-n)/2,(im.height-n)/2,n,n,0,0,160,160);
-      state.profile.photo=c.toDataURL("image/jpeg",0.85);$("pfNote").textContent="";save();renderMy();
+      var n=Math.min(im.width,im.height),sx=(im.width-n)/2,sy=(im.height-n)/2;
+      function sq(sz,q){var c=document.createElement("canvas");c.width=c.height=sz;c.getContext("2d").drawImage(im,sx,sy,n,n,0,0,sz,sz);return c.toDataURL("image/jpeg",q)}
+      state.profile.photo=sq(160,0.85);state.profile.photoS=sq(96,0.7);$("pfNote").textContent="";save();renderMy();
     };
     im.src=rd.result;
   };
   rd.readAsDataURL(f);
 };
+$("mrOpen").onclick=openMr;
 $("mrAdd").onclick=addRecord;
+$("mrNo").onclick=function(){$("mrm").hidden=true};
+$("mrm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("schart").onclick=openDm; // グラフの枠を押す → 過去の記録の詳細(棒を押したときは、期間を選ぶだけ)
+$("dmClose").onclick=function(){$("dm").hidden=true};
+$("dm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("mrMore").onclick=function(){mrLimit+=15;renderStats()};
 $("delSel").onclick=function(){
   var ls=lastSel;if(!ls)return;
@@ -1785,7 +1832,6 @@ $("fbCfgSave").onclick=function(){
 };
 $("fbIn").onclick=function(){fbSignIn()};
 $("fbLogout").onclick=function(){if(FB.Au)FB.Au.signOut(FB.auth)};
-$("fbShare").onchange=function(){state.fbShare=this.checked;save();fbPublish(true)};
 $("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
 $("fbAdd").onclick=function(){fbAddFriend()};
 $("bellBtn").onclick=function(){openList("req")};
@@ -1793,6 +1839,8 @@ $("cntFol").onclick=function(){openList("fol")};
 $("cntFr").onclick=function(){openList("fr")};
 $("lmClose").onclick=closeList;
 $("lm").onclick=function(e){if(e.target===this)closeList()};
+$("pmClose").onclick=function(){$("pm").hidden=true};
+$("pm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("shareBtn").onclick=async function(){
   if(!FB.code)return;
   var t="学習プランナーで友達になろう!フレンドコード: "+FB.code+"\n"+location.href.split("#")[0];
