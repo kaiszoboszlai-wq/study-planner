@@ -1346,7 +1346,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-15 v4"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-15 v5"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1439,10 +1439,16 @@ async function fbPublish(force){ // プロフィールと、目標・学習記�
   var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,FB.code,st.goal,st.log]);
   if(!force&&sig===fbSig)return;
   try{
-    await fSet("profiles/"+FB.uid,{name:me.name,icon:me.icon,color:me.color,photo:me.photo,code:FB.code,updated:Date.now()});
+    var prof={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},photoNg=false;
+    if(me.photo)prof.photo=me.photo; // 写真がないときは、photoの項目そのものを送らない
+    try{await fSet("profiles/"+FB.uid,prof)}
+    catch(e){ // 写真の項目がルールで断られたときは、写真なしで保存し直す(ほかの項目は保存する)
+      if(!me.photo)throw e;
+      delete prof.photo;await fSet("profiles/"+FB.uid,prof);photoNg=true;
+    }
     await fSet("stats/"+FB.uid,st);
-    fbSig=sig;FB.err="";
-  }catch(e){FB.err="保存できませんでした。通信の状態と、Firebaseの「ルール」の設定を確認してください。"}
+    fbSig=sig;FB.err=photoNg?"写真だけ保存できませんでした。Firebaseの「ルール」で、profilesのphotoの項目を許可してください。":"";
+  }catch(e){} // 保存できなかったときは、画面には何も出さない(次の保存のときに、もう一度ためす)
 }
 async function fbOnAuth(){
   renderFb();
