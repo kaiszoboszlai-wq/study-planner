@@ -1438,8 +1438,30 @@ async function fillList(){
   if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
   if(listMode===mode){$("lmBody").innerHTML="";$("lmBody").appendChild(out)}
 }
+async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid
+  try{var f=await fGet("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}):[]}catch(e){return[]}
+}
+async function fbFollowBack(rid){ // 相手に、自分からもフォローリクエストを送る
+  try{
+    var f=await fGet("follows/"+FB.uid),ids=(f&&Array.isArray(f.ids))?f.ids.slice(0,100):[];
+    if(ids.indexOf(rid)<0){
+      await fSet("requests/"+rid+"/from/"+FB.uid,{at:Date.now()});
+      ids.push(rid);await fSet("follows/"+FB.uid,{ids:ids});
+      fbMsg("リクエストを送りました。相手が承認すると、記録が見られます。");
+    }
+  }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
+  fbAfter();
+}
+function fbFollowEl(rid,ids){
+  var w=document.createElement("div");
+  if(ids.indexOf(rid)>=0){w.className="note";w.textContent="この人をフォロー中です(承認待ちのこともあります)";return w}
+  w.className="actions";
+  var b=document.createElement("button");b.textContent="フォローリクエストを送り返す";
+  b.onclick=function(){b.disabled=true;fbFollowBack(rid)};
+  w.appendChild(b);return w;
+}
 async function fillReq(box){
-  var uid=FB.uid;
+  var uid=FB.uid,mine=await myFollowIds();
   try{
     var reqs=await fList("requests/"+uid+"/from");
     if(!reqs.length)box.innerHTML='<div class="note">リクエストは来ていません。</div>';
@@ -1452,9 +1474,59 @@ async function fillReq(box){
         ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now()});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}fbAfter()};
         no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}fbAfter()};
       })(rid);
-      row.appendChild(ok);row.appendChild(no);box.appendChild(row);
+      row.appendChild(ok);row.appendChild(no);
+      var card=document.createElement("div");card.className="fcard";card.appendChild(row);card.appendChild(fbFollowEl(rid,mine));box.appendChild(card);
     }
   }catch(e){box.innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function fillFol(fb){
+  var uid=FB.uid;
+  try{
+    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[];
+    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
+    for(var j=0;j<ids.length;j++){
+      var id=ids[j],p=null,d=null,state2="ok";
+      try{p=await fGet("profiles/"+id)}catch(e){}
+      try{d=await fGet("stats/"+id)}catch(e){state2=(e&&e.code==="permission-denied")?"wait":"err"}
+      var card=document.createElement("div");card.className="fcard";
+      var hd=fbRow(p,id),un=document.createElement("button");un.textContent="解除";
+      (function(id){un.onclick=function(){
+        askConfirm("フォローをやめますか?","この人の記録は、見られなくなります。","やめる",async function(){
+          try{var f2=await fGet("follows/"+uid),a2=((f2&&f2.ids)||[]).filter(function(x){return x!==id});await fSet("follows/"+uid,{ids:a2})}catch(e){}
+          try{await fDel("requests/"+id+"/from/"+uid)}catch(e){}
+          try{await fDel("stats/"+id+"/viewers/"+uid)}catch(e){}
+          fbAfter();
+        });
+      }})(id);
+      hd.appendChild(un);card.appendChild(hd);
+      var body=document.createElement("div");card.appendChild(body);
+      if(state2==="wait")body.innerHTML='<div class="note">承認待ちです。相手が承認すると、記録が見られます。</div>';
+      else if(state2==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
+      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は非公開です。</div>';
+      else{
+        var L=cleanLog(d.log),sm=sumsOf(L);
+        if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
+        var st=document.createElement("div");st.className="fstat";
+        [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];st.appendChild(c)});
+        body.appendChild(st);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
+      }
+      fb.appendChild(card);
+    }
+  }catch(e){fb.innerHTML='<div class="note">読み込めませんでした。</div>'}
+}
+async function fillVie(vb){
+  var uid=FB.uid,mine=await myFollowIds();
+  try{
+    var vs=await fList("stats/"+uid+"/viewers");
+    if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。リクエストを承認すると、ここに入ります。</div>';
+    for(var k=0;k<vs.length;k++){
+      var vid=vs[k].id,vp=null;try{vp=await fGet("profiles/"+vid)}catch(e){}
+      var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
+      (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}fbAfter()}})(vid);
+      vr.appendChild(rv);
+      var card=document.createElement("div");card.className="fcard";card.appendChild(vr);card.appendChild(fbFollowEl(vid,mine));vb.appendChild(card);
+    }
+  }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
 }
 async function fillFol(fb){
   var uid=FB.uid;
