@@ -159,7 +159,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .clock .arc{fill:none;stroke:var(--acc);stroke-width:12;stroke-linecap:round;stroke-dasharray:565.49;stroke-dashoffset:0;transition:stroke-dashoffset .4s linear}
 .clock .tmtime{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;font-size:clamp(1.8rem,9vw,2.8rem)}
 .tmtime{font-size:3rem;text-align:center;font-variant-numeric:tabular-nums;margin:10px 0 4px}
-.today-friends{margin:18px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}.today-friends h2{margin-bottom:8px}.today-friends .fcard{margin:8px 0}.today{font-style:normal;background:var(--acc);color:var(--bg);border-radius:4px;padding:0 6px;margin-left:8px;font-size:.75rem}
+.today-friends{margin:18px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}.today-friends h2{margin-bottom:8px}.today-friends .fcard{margin:8px 0}.td-rank-head{display:flex;align-items:center;gap:9px}.td-rank-no{flex:0 0 25px;height:25px;display:flex;align-items:center;justify-content:center;border-radius:7px;background:var(--accbg);font-weight:800;font-variant-numeric:tabular-nums}.td-rank-person{flex:1;min-width:0;margin:0;padding:2px 0}.td-rank-person>div:nth-child(2){flex:1;min-width:0}.td-rank-time{white-space:nowrap;font-size:1rem;font-variant-numeric:tabular-nums}.td-rank-detail{padding-left:34px;margin-top:1px}.today{font-style:normal;background:var(--acc);color:var(--bg);border-radius:4px;padding:0 6px;margin-left:8px;font-size:.75rem}
 .day h3 span{color:var(--sub);font-weight:400;margin-left:6px}
 .blk{display:flex;align-items:center;gap:10px;padding:4px 0}
 .blk input{width:20px;height:20px;accent-color:var(--acc)}
@@ -1199,20 +1199,29 @@ async function renderTodayFriends(){
   if(!FB.uid){box.innerHTML='<p class="note">Googleでログインすると、フォロー中の人の今日の学習記録が表示されます。</p>';return}
   var ids=await myFollowIds();box.innerHTML="";
   if(!ids.length){box.innerHTML='<p class="note">まだフォロー中の人はいません。</p>';return}
-  var today=fmtDate(new Date()),shown=0;
+  var today=fmtDate(new Date()),items=[];
   for(var i=0;i<ids.length;i++){
     var id=ids[i],p=null,d=null;
     try{p=await fGet("profiles/"+id)}catch(e){}
     try{d=await fGet("stats/"+id)}catch(e){continue}
     if(!d||d.share!==true)continue;
     var L=cleanLog(d.log),parts=L[today]||{},total=Object.keys(parts).reduce(function(a,n){return a+parts[n]},0);
-    var card=document.createElement("div");card.className="fcard";
-    var head=fbRow(p,id);head.querySelector(".note").textContent=total>0?"今日 "+fmtH(total):"今日はまだ記録がありません";
-    card.appendChild(head);
-    if(total>0){var line=document.createElement("div");line.className="note";line.textContent=Object.keys(parts).sort(function(a,b){return parts[b]-parts[a]}).map(function(n){return n+" "+fmtH(parts[n])}).join("・");card.appendChild(line)}
-    box.appendChild(card);shown++;
+    items.push({id:id,p:p,parts:parts,total:total});
   }
-  if(!shown)box.innerHTML='<p class="note">今日の学習記録を見られるフォロー中の人はいません。</p>';
+  items.sort(function(a,b){return b.total-a.total||String((a.p&&a.p.name)||"").localeCompare(String((b.p&&b.p.name)||""),"ja")});
+  if(!items.length){box.innerHTML='<p class="note">今日の学習記録を見られるフォロー中の人はいません。</p>';return}
+  items.forEach(function(item,i){
+    var card=document.createElement("div");card.className="fcard td-rank-card";
+    var line=document.createElement("div");line.className="td-rank-head";
+    var rank=document.createElement("span");rank.className="td-rank-no";rank.textContent=String(i+1);
+    var head=fbRow(item.p,item.id);head.classList.add("td-rank-person");head.querySelector(".note").textContent="";
+    var hours=document.createElement("b");hours.className="td-rank-time";hours.textContent=fmtH(item.total);
+    line.appendChild(rank);line.appendChild(head);line.appendChild(hours);card.appendChild(line);
+    var subjects=Object.keys(item.parts).filter(function(n){return item.parts[n]>0}).sort(function(a,b){return item.parts[b]-item.parts[a]});
+    if(subjects.length){var detail=document.createElement("div");detail.className="note td-rank-detail";detail.textContent=subjects.map(function(n){return n+" "+fmtH(item.parts[n])}).join("・");card.appendChild(detail)}
+    else{var empty=document.createElement("div");empty.className="note td-rank-detail";empty.textContent="今日はまだ記録がありません";card.appendChild(empty)}
+    box.appendChild(card);
+  });
 }
 
 // ===== 模試・テストの成績 =====
@@ -1389,7 +1398,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-15 v7"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-15 v8"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:"",syncReady:false,syncStatus:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbPrivateSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1513,7 +1522,7 @@ async function fbLoadPrivate(){
 async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
-  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),updated:Date.now()};
+  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),grade:me.grade,school:me.school,updated:Date.now()};
   var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log]);
   if(!force&&sig===fbSig)return;
   try{
@@ -1582,21 +1591,25 @@ async function openProfile(id){ // 他の人のプロフィール
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
   var p=null,d=null,st="ok",following=null,followers=null;
   try{p=await fGet("profiles/"+id)}catch(e){}
-  following=p&&typeof p.followingCount==="number"?p.followingCount:null;
-  followers=p&&typeof p.followerCount==="number"?p.followerCount:null;
   try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
-  try{var ff=await fGet("follows/"+id);following=ff&&Array.isArray(ff.ids)?ff.ids.length:0}catch(e){}
+  // 古いプロフィールに学年・志望校がない場合は、公開学習データ側の値も確認する。
+  if(!p||typeof p!=="object")p={};
+  if(!p.grade&&d&&d.grade)p.grade=d.grade;
+  if(!p.school&&d&&d.school)p.school=d.school;
+  following=typeof p.followingCount==="number"?p.followingCount:0;
+  followers=typeof p.followerCount==="number"?p.followerCount:0;
+  try{var ff=await fGet("follows/"+id);if(ff&&Array.isArray(ff.ids))following=ff.ids.length}catch(e){}
   try{followers=(await fList("stats/"+id+"/viewers")).length}catch(e){}
   if($("pm").hidden)return;
   box.innerHTML="";
   var top=document.createElement("div");top.className="me big";
   top.innerHTML='<div class="av pav"></div><div><b></b><div class="note profile-grade"></div><div class="note profile-school"></div><div class="fstat profile-counts"></div></div>';
-  fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-  top.querySelector("b").textContent=(p&&typeof p.name==="string"&&p.name.slice(0,20))||"名前がわからない人";
-  top.querySelector(".profile-grade").textContent=p&&p.grade?"学年："+String(p.grade).slice(0,20):"学年：未設定";
-  top.querySelector(".profile-school").textContent=p&&p.school?"志望校："+String(p.school).slice(0,40):"志望校：未設定";
+  fbPaint(top.querySelector(".av"),p.icon,p.color,p.photo);
+  top.querySelector("b").textContent=(typeof p.name==="string"&&p.name.slice(0,20))||"名前がわからない人";
+  top.querySelector(".profile-grade").textContent=p.grade?"学年："+String(p.grade).slice(0,20):"学年：未設定";
+  top.querySelector(".profile-school").textContent=p.school?"志望校："+String(p.school).slice(0,40):"志望校：未設定";
   var cnt=top.querySelector(".profile-counts");
-  [["フォロー中",following===null?"—":following],["フォロワー",followers===null?"—":followers]].forEach(function(a){var c=document.createElement("div");c.innerHTML='<small></small><b></b>';c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];cnt.appendChild(c)});
+  [["フォロー中",following],["フォロワー",followers]].forEach(function(a){var c=document.createElement("div");c.innerHTML='<small></small><b></b>';c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=String(a[1]);cnt.appendChild(c)});
   box.appendChild(top);
   var body=document.createElement("div");box.appendChild(body);
   if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
