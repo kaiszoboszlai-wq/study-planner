@@ -216,53 +216,6 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .rkrow .rn{width:1.6em;text-align:center;font-weight:700}
 .rkrow .rname{flex:1;min-width:0}
 .rkrow.me{background:var(--accbg);border-radius:8px;padding:6px 8px}
-
-/* ===== Navy + mint visual refresh (presentation only) ===== */
-:root{--bg:#101f36;--card:#1b2d47;--ink:#f7f9fd;--sub:#c8d4e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71849d;--red:#ffb3a7;color-scheme:dark}
-:root[data-theme="light"]{--bg:#101f36;--card:#1b2d47;--ink:#f7f9fd;--sub:#c8d4e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71849d;--red:#ffb3a7;color-scheme:dark}
-:root[data-theme="dark"]{--bg:#101f36;--card:#1b2d47;--ink:#f7f9fd;--sub:#c8d4e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71849d;--red:#ffb3a7;color-scheme:dark}
-body{background:var(--bg);color:var(--ink)}
-.app{max-width:900px}
-main{padding:22px 16px calc(100px + env(safe-area-inset-bottom,0px))}
-.hero{margin:-22px -16px 22px;padding:26px 22px 22px;background:#172b49;color:#f7f9fd;border-radius:0 0 20px 20px}
-.hero-brand{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.hero-logo{width:64px;height:64px;flex:0 0 64px;border-radius:17px;background:#82cbaa;display:grid;place-items:center;color:#152b49}
-.hero-logo svg{width:38px;height:38px}
-.hero-title{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:clamp(1.35rem,4.5vw,2rem);line-height:1.25;font-weight:900;letter-spacing:.01em;margin:0}
-.hero-subtitle{font-size:clamp(.95rem,2.8vw,1.12rem);letter-spacing:.06em;color:#d2ddec;font-weight:700;margin-top:7px}
-.hero-tagline{font-size:1.05rem;font-weight:700;color:#dce6f4;margin:0 0 20px}
-.hero-goal{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#d2ddec;font-size:.88rem;margin:-8px 0 18px}
-.hero-goal .lnk{background:#263f60;color:#fff;border-color:#405675;padding:3px 9px}
-.hero-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.hero-card{min-width:0;min-height:142px;padding:18px 17px;border:0;border-radius:19px;background:#263f60;color:#f7f9fd;text-align:left;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;box-shadow:none}
-.hero-card-label{font-size:1rem;color:#d0dbea;font-weight:700}
-.hero-card-value{font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.15;font-weight:900;color:#fff;letter-spacing:-.02em}
-.hero-card-sub{font-size:.88rem;color:#d0dbea;font-weight:600}
-.hero-card .days-value{color:#fff;font-size:clamp(2rem,6vw,2.65rem)}
-.hero-card-follow{width:100%;cursor:pointer;transition:background .15s,transform .15s}
-.hero-card-follow:hover{background:#304d73}
-.hero-card-follow:active{transform:scale(.99)}
-.hero-card-follow:focus-visible{outline:3px solid #82cbaa;outline-offset:3px}
-.hero-follow-label{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.hero-follow-count{white-space:nowrap}
-.hero-follow-hint{display:flex;align-items:center;gap:6px}
-.goalbar,.count{display:none}
-section{background:#1b2d47;border-color:#344a66;border-radius:16px;color:#f7f9fd;box-shadow:0 4px 18px rgba(0,0,0,.08)}
-.day{background:#14243b;border-color:#344a66;border-radius:13px}
-button{background:#1f3552;color:#f7f9fd;border-color:#405675;border-radius:10px}
-button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #82cbaa;outline-offset:2px}
-input[type=date],input[type=number],input[type=text],input[type=email],input[type=password],select,textarea{background:#14243b;color:#f7f9fd;border-color:#405675;border-radius:9px}
-.side{background:#172b49;border-top-color:#344a66;box-shadow:0 -4px 18px rgba(0,0,0,.12)}
-.nv{color:#c8d4e5;border-radius:12px}
-.nv.on{background:#82cbaa;color:#152b49}
-.note,.count,.step,label{color:#c8d4e5}
-.need{background:#263f60;color:#f7f9fd}
-.bar,.barx{background:#344a66}
-.pill,.chip{border-color:#405675}
-@media(min-width:700px){.hero{padding:30px 28px 26px}.hero-cards{gap:16px}.hero-card{padding:21px 24px;min-height:160px}.hero-brand{margin-bottom:24px}.hero-logo{width:72px;height:72px;flex-basis:72px}}
-@media(max-width:420px){.hero{padding:20px 14px 16px;margin-left:-16px;margin-right:-16px}.hero-brand{gap:11px}.hero-logo{width:52px;height:52px;flex-basis:52px;border-radius:14px}.hero-logo svg{width:32px;height:32px}.hero-tagline{font-size:.95rem}.hero-cards{gap:9px}.hero-card{min-height:126px;padding:13px 12px;border-radius:15px}.hero-card-label{font-size:.88rem}.hero-card-sub{font-size:.76rem}.hero-card-value{font-size:1.55rem}.hero-card .days-value{font-size:1.95rem}}
-
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -287,26 +240,9 @@ input[type=date],input[type=number],input[type=text],input[type=email],input[typ
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
-<header class="hero">
-  <div class="hero-brand">
-    <div class="hero-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5 12 4l10 5.5-10 5.5L2 9.5Z"/><path d="M6 12v4.5c3.8 3 8.2 3 12 0V12M22 9.5v6"/></svg></div>
-    <div><h1 class="hero-title">週間学習プランナー</h1><div class="hero-subtitle">STUDY PLANNER</div></div>
-  </div>
-  <p class="hero-tagline">目標まで、今日の一歩を積み重ねよう。</p>
-  <p class="hero-goal">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
-  <div class="hero-cards">
-    <div class="hero-card" aria-live="polite">
-      <div class="hero-card-label">試験まで</div>
-      <div class="hero-card-value"><span class="days-value" id="days">-</span> 日</div>
-      <div class="hero-card-sub">目標日までのカウントダウン</div>
-    </div>
-    <button class="hero-card hero-card-follow" type="button" onclick="openList('fol')" aria-label="フォロー中のアカウント一覧を開く">
-      <div class="hero-follow-label"><span class="hero-card-label">フォロー中</span><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></div>
-      <div class="hero-card-value hero-follow-count"><span id="heroFollowCount">—</span> 人</div>
-      <div class="hero-card-sub hero-follow-hint">タップして一覧を開く <span aria-hidden="true">→</span></div>
-    </button>
-  </div>
-</header>
+<h1>週間学習プランナー</h1>
+<p class="goalbar">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
+<p class="count">試験まであと <b id="days">-</b> 日</p>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -1642,12 +1578,10 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
 }
 // ---- フォロー数・通知のベル・一覧の画面 ----
 var FBN={fol:0,fr:0,req:0},listMode=null,FBSENT={};
-function paintHeroFollowCount(){var a=$("heroFollowCount"),b=$("nFol");if(a&&b)a.textContent=b.textContent||"0"}
 function paintCounts(){
   $("nFol").textContent=FBN.fol;$("nFr").textContent=FBN.fr;
   var b=$("bellBdg");b.hidden=FBN.req<1;b.textContent=FBN.req>99?"99+":FBN.req;
   $("navBdg").hidden=FBN.req<1;
-  paintHeroFollowCount();
 }
 async function fbPoll(){ // リクエストが来ているか、ときどき確認する
   if(!FB.uid||document.hidden)return;
@@ -2024,7 +1958,7 @@ setInterval(fbPoll,60000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden){fbPoll();syncPull()}});
 fbInit();
 setInterval(tickAll,1000);
-renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);paintHeroFollowCount();
+renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}
 </script>
