@@ -217,22 +217,22 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .rkrow .rname{flex:1;min-width:0}
 .rkrow.me{background:var(--accbg);border-radius:8px;padding:6px 8px}
 
-/* Visual refresh: navy + mint theme. Only presentation rules; app logic is untouched. */
-:root{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
-:root[data-theme="light"]{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
-:root[data-theme="dark"]{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
-body{background:var(--bg);color:var(--ink)}
-main{max-width:1100px;margin:0 auto}
+/* Visual refresh: navy header only; content area stays white. App logic is untouched. */
+:root{--bg:#ffffff;--card:#ffffff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#58b88f;--accbg:#e4f5ed;--done:#9fb0bd;--red:#d62828}
+:root[data-theme="light"],:root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#58b88f;--accbg:#e4f5ed;--done:#9fb0bd;--red:#d62828}
+body{background:#ffffff;color:#172b43}
+main{max-width:1100px;margin:0 auto;background:#fff}
 section,.tips,.fld,.need,.day,.stat-card,.card{border-radius:16px}
-section{background:var(--card);border-color:var(--line);box-shadow:0 8px 24px rgba(0,0,0,.12)}
-input,select,textarea{background:#12233b!important;color:#f4f7fb!important;border-color:#405570!important}
+section{background:#fff;border-color:#dce3eb;box-shadow:0 5px 18px rgba(20,40,65,.06)}
+input,select,textarea{background:#fff!important;color:#172b43!important;border-color:#dce3eb!important}
 button{border-radius:10px}
-button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
+button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .nv{border-radius:12px}
-.nv.on{background:#82cbaa;color:#152b49}
-.goalbar{color:#dce8f5}
-.count{display:none}
-.sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:14px 0 22px}
+.nv.on{background:#e4f5ed;color:#176b4b}
+.sp-top{background:#101f36;color:#f4f7fb;margin:-20px -16px 22px;padding:22px 16px 24px;border-radius:0 0 22px 22px}
+.sp-top .goalbar{color:#dce8f5}
+.sp-top .count{display:none}
+.sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:14px 0 0}
 .sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:132px;padding:18px;border:0;border-radius:16px;background:#263f60;color:#fff;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
 .sp-preview-card .eyebrow{font-size:.9rem;color:#d0d9e8;font-weight:600}
 .sp-preview-card .big{font-size:clamp(1.35rem,4vw,2rem);font-weight:900;line-height:1.2;color:#fff}
@@ -242,6 +242,11 @@ button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
 .sp-brand{font-size:clamp(1.45rem,4vw,2rem);font-weight:900;letter-spacing:.01em;margin-bottom:4px;color:#fff}
 .sp-tagline{color:#dce8f5;margin:0;font-size:.95rem}
 @media(max-width:480px){.sp-preview-head{gap:8px}.sp-preview-card{padding:13px;min-height:120px}.sp-preview-card .small{font-size:.72rem}}
+/* Bottom navigation uses the same navy as the header. */
+.side{background:#101f36;border-top:1px solid #263f60}
+.nv{color:#dce8f5}
+.nv.on{background:#263f60;color:#8fe0bb}
+.nv:focus-visible{outline:2px solid #8fe0bb;outline-offset:-2px}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -266,6 +271,7 @@ button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
+<div class="sp-top">
 <div class="sp-brand">週間学習プランナー</div>
 <p class="sp-tagline">目標まで、今日の一歩を積み重ねよう。</p>
 <p class="goalbar">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
@@ -281,6 +287,7 @@ button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
     <span class="big">アカウント一覧</span>
     <span class="small">タップして一覧を開く　›</span>
   </button>
+</div>
 </div>
 
 <section id="p0" hidden>
