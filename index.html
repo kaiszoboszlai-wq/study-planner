@@ -2116,3 +2116,102 @@ $("gSug").onclick=function(){ // 最新の成績の得点率から、科目の�
   if(!targets.length){$("gNote").textContent="比率を提案できる科目の成績が、まだありません。";return}
   askConfirm("科目の比率を更新しますか?","各科目の最新の得点率をもとに、低い科目ほど比率(1〜7)を大きくします。","更新する",function(){
     targets.forEach(function(x){var p=latest[x[0]];x[2]=Math.round(p);x[1]=Math.max(1,Math.min(7,Math.round(1+(100-p)/100*6)))});
+    renderSubjects();save();
+    $("gNote").textContent="比率を更新しました:"+targets.map(function(x){return x[0]+" "+x[1]}).join("、")+"(「プラン」の科目の画面で確認できます)";
+  });
+};
+// アプリを開いたときのアニメーション。タップするとすぐ閉じる。動きを減らす設定の端末では短くする。
+(function(){
+  var sp=$("splash"),done=false;
+  var g=(state.goal||"").trim();if(g)$("spGoal").textContent="🎯 "+g;
+  function hide(){if(done)return;done=true;sp.classList.add("out");setTimeout(function(){sp.hidden=true;sp.style.display="none"},600)}
+  var calm=false;try{calm=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){}
+  sp.onclick=hide;
+  setTimeout(hide,calm?500:1900);
+})();
+// Geminiの機能を消したので、残っているかもしれないキーや会話を、この端末から消す
+try{localStorage.removeItem("study-planner-gkey");localStorage.removeItem("study-planner-gmodel")}catch(e){}
+if(state.gchat||state.aiMode||state.chat){delete state.gchat;delete state.aiMode;delete state.chat;save()}
+$("fbCfgSave").onclick=function(){
+  var c=parseFbConfig($("fbCfg").value);
+  if(!c){$("fbOff").hidden=false;$("fbOff").textContent="設定を読み取れませんでした。apiKey と projectId が入っているか確認してください。";return}
+  try{localStorage.setItem(FB_CFG_KEY,JSON.stringify(c))}catch(e){}
+  location.reload();
+};
+$("fbIn").onclick=function(){fbSignIn()};
+$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
+$("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
+$("fbAdd").onclick=function(){fbAddFriend()};
+$("addBtn").onclick=openFriend;
+$("fmClose").onclick=function(){$("fm").hidden=true};
+$("fm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("bellBtn").onclick=function(){openList("req")};
+$("cntFol").onclick=function(){openList("fol")};
+$("cntFr").onclick=function(){openList("fr")};
+$("lmClose").onclick=closeList;
+$("lm").onclick=function(e){if(e.target===this)closeList()};
+$("pmClose").onclick=closeProfile;
+$("tlClose").onclick=function(){$("tlm").hidden=true};
+$("tlm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("pm").onclick=function(e){if(e.target===this)closeProfile()};
+$("shareBtn").onclick=async function(){
+  if(!FB.code)return;
+  var t="学習プランナーで友達になろう!フレンドコード: "+FB.code+"\n"+location.href.split("#")[0];
+  try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(t);openFriend();fbMsg("シェア用の文章をコピーしました。")}catch(e){openFriend()}
+};
+setInterval(fbPoll,60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden){fbPoll();syncPull()}});
+fbInit();
+setInterval(tickAll,1000);
+renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}
+</script>
+
+<script>
+// Header card click: open the app's existing following list. No Firebase/sync logic changed.
+(function(){
+  var card=document.getElementById("followingCard");
+  if(card) card.addEventListener("click",function(){if(typeof openTimeline==="function")openTimeline()});
+  function refreshExamCard(){
+    var src=document.getElementById("days"),dst=document.getElementById("daysCard");
+    if(src&&dst) dst.textContent=src.textContent||"-";
+    var exam=document.getElementById("exam"),date=document.getElementById("examCardDate");
+    if(exam&&date&&exam.value){
+      var p=exam.value.split("-");date.textContent="目標日："+p[0]+"/"+Number(p[1])+"/"+Number(p[2]);
+    } else if(date) date.textContent="目標日を設定してください";
+  }
+  refreshExamCard();
+  var days=document.getElementById("days");
+  if(days&&window.MutationObserver)new MutationObserver(refreshExamCard).observe(days,{childList:true,characterData:true,subtree:true});
+  var exam=document.getElementById("exam");if(exam)exam.addEventListener("change",refreshExamCard);
+})();
+</script>
+
+<script>
+(function(){
+  var KEY="study-planner-appearance-v1";
+  var themes={sky:1,sage:1,lavender:1,peach:1};
+  function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+  function apply(){
+    var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome=["theme","navy","white"].indexOf(v.chrome)>=0?v.chrome:"theme";
+    document.documentElement.setAttribute("data-app-theme",theme);
+    document.documentElement.setAttribute("data-chrome-theme",chrome);
+    document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
+    var sel=document.getElementById("chromeTheme");if(sel)sel.value=chrome;
+    var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
+  }
+  function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}apply()}
+  document.querySelectorAll(".theme-choice").forEach(function(b){b.addEventListener("click",function(){save("theme",b.getAttribute("data-app-theme"))})});
+  var sel=document.getElementById("chromeTheme");if(sel)sel.addEventListener("change",function(){save("chrome",sel.value)});
+  var settingsBtn=document.getElementById("settingsBtn"),settingsModal=document.getElementById("appearanceModal"),settingsClose=document.getElementById("appearanceClose");
+  if(settingsBtn&&settingsModal){settingsBtn.addEventListener("click",function(){settingsModal.hidden=false});settingsModal.addEventListener("click",function(e){if(e.target===settingsModal)settingsModal.hidden=true})}
+  if(settingsClose&&settingsModal)settingsClose.addEventListener("click",function(){settingsModal.hidden=true});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&settingsModal&&!settingsModal.hidden)settingsModal.hidden=true});
+  apply();
+})();
+</script>
+
+</body>
+</html>
