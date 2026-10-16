@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>週間学習プランナー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -305,6 +305,18 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .pl2 .srow i{margin-top:6px}
 .pl2 .srow span{grid-column:2;flex:none;min-width:0;overflow-wrap:anywhere}
 .pl2 .srow span+span{color:var(--sub)}
+
+/* Timeline interactions: comment and like controls */
+.tl-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.tl-actions button{font-size:.88rem;padding:6px 10px;min-height:34px}
+.tl-actions .liked{color:#d6336c;border-color:#d6336c}
+.tl-comments{margin-top:8px;padding:10px;border-radius:10px;background:rgba(127,127,127,.07)}
+.tl-comment{padding:6px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.tl-comment:last-child{border-bottom:0}
+.tl-comment small{display:block;color:var(--sub);font-size:.78rem}
+.tl-comment-form{display:flex;gap:6px;margin-top:8px}
+.tl-comment-form input{flex:1;min-width:0}
+.tl-like-list{margin-top:8px;padding:8px;border-radius:8px;background:rgba(127,127,127,.07)}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1747,45 +1759,109 @@ async function fbPoll(){ // リクエストが来ているか、ときどき確�
   if(state.page===6)renderRank();
 }
 function tlDur(sec){var t=Math.round(sec/60),h=Math.floor(t/60),m=t%60;return (h?"<b>"+h+"</b>時間 ":"")+((m||!h)?"<b>"+m+"</b>分":"")}
-async function openTimeline(){ // フォロー中の友達の学習記録を、新しい順に並べて見せる
+function tlPostKey(it){
+  var raw=String(it.uid||"")+"|"+String(it.t||"")+"|"+String(it.n||"");
+  var h=2166136261;for(var i=0;i<raw.length;i++){h^=raw.charCodeAt(i);h=Math.imul(h,16777619)}
+  return String(it.uid||"").replace(/[^a-zA-Z0-9_-]/g,"").slice(0,80)+"_"+(h>>>0).toString(36);
+}
+async function tlLoadComments(it,wrap){
+  var area=wrap.querySelector(".tl-comments");if(!area)return;
+  area.innerHTML='<div class="note">コメントを読み込み中…</div>';
+  try{
+    var rows=await fList("stats/"+it.uid+"/comments"),prefix=tlPostKey(it)+"_";
+    rows=rows.filter(function(x){return x.id.indexOf(prefix)===0&&x.data&&typeof x.data.text==="string"}).sort(function(a,b){return Number(a.data.at)-Number(b.data.at)}).slice(-30);
+    area.innerHTML="";
+    if(!rows.length){var empty=document.createElement("div");empty.className="note";empty.textContent="まだコメントはありません。";area.appendChild(empty)}
+    for(var i=0;i<rows.length;i++){
+      var row=document.createElement("div");row.className="tl-comment";
+      var name=document.createElement("b");name.textContent=String(rows[i].data.name||"ユーザー").slice(0,30)+"：";
+      var body=document.createElement("span");body.textContent=String(rows[i].data.text).slice(0,300);
+      var small=document.createElement("small");small.textContent=new Date(Number(rows[i].data.at)||Date.now()).toLocaleString("ja-JP");
+      row.appendChild(name);row.appendChild(body);row.appendChild(small);area.appendChild(row);
+    }
+  }catch(e){area.innerHTML='<div class="note">コメントを読み込めませんでした。</div>'}
+}
+async function tlRefreshLikes(it,wrap){
+  var list=wrap.querySelector(".tl-like-list");if(!list)return;
+  list.innerHTML='<div class="note">いいねした人を読み込み中…</div>';
+  try{
+    var rows=await fList("postLikes/"+tlPostKey(it)+"/users");list.innerHTML="";
+    if(!rows.length){list.textContent="まだハートはありません。";return}
+    for(var i=0;i<rows.length;i++){
+      var uid=rows[i].id,prof=null;try{prof=await fGet("profiles/"+uid)}catch(e){}
+      var line=document.createElement("div");line.className="tl-comment";line.textContent=fbNm(prof);list.appendChild(line);
+    }
+  }catch(e){list.textContent="いいねした人を読み込めませんでした。Firebaseのアクセスルールを確認してください。"}
+}
+async function tlBuildActions(it,e){
+  var actions=document.createElement("div");actions.className="tl-actions";
+  var heart=document.createElement("button");heart.type="button";heart.textContent="♡ ハート";
+  var commentsBtn=document.createElement("button");commentsBtn.type="button";commentsBtn.textContent="コメントを見る／書く";
+  actions.appendChild(heart);actions.appendChild(commentsBtn);
+  var comments=document.createElement("div");comments.className="tl-comments";comments.hidden=true;
+  var form=document.createElement("div");form.className="tl-comment-form";
+  var input=document.createElement("input");input.type="text";input.maxLength=300;input.placeholder="コメントを書く（300文字まで）";input.setAttribute("aria-label","コメント");
+  var send=document.createElement("button");send.type="button";send.textContent="送信";form.appendChild(input);form.appendChild(send);comments.appendChild(form);
+  var likeList=null,showLikes=null;
+  if(it.uid===FB.uid){showLikes=document.createElement("button");showLikes.type="button";showLikes.textContent="ハートした人を見る";actions.appendChild(showLikes);likeList=document.createElement("div");likeList.className="tl-like-list";likeList.hidden=true;e.querySelector(".tlbody").appendChild(likeList);showLikes.onclick=async function(){likeList.hidden=!likeList.hidden;if(!likeList.hidden)await tlRefreshLikes(it,e)}}
+  e.querySelector(".tlbody").appendChild(actions);e.querySelector(".tlbody").appendChild(comments);
+  var liked=false;
+  try{liked=!!(await fGet("postLikes/"+tlPostKey(it)+"/users/"+FB.uid))}catch(err){}
+  function paintHeart(){heart.textContent=liked?"♥ ハート済み":"♡ ハート";heart.classList.toggle("liked",liked)}paintHeart();
+  heart.onclick=async function(){
+    if(!FB.uid){heart.textContent="ログインしてください";return}
+    heart.disabled=true;
+    try{
+      var path="postLikes/"+tlPostKey(it)+"/users/"+FB.uid;
+      if(liked){await fDel(path);liked=false}else{await fSet(path,{uid:FB.uid,at:Date.now()});liked=true}
+      paintHeart();
+    }catch(err){heart.textContent="保存できません"}
+    heart.disabled=false;
+  };
+  commentsBtn.onclick=async function(){comments.hidden=!comments.hidden;if(!comments.hidden)await tlLoadComments(it,e)};
+  send.onclick=async function(){
+    var txt=input.value.trim();if(!txt)return;
+    if(!FB.uid){send.textContent="ログインしてください";return}
+    send.disabled=true;
+    try{
+      var key=tlPostKey(it)+"_"+FB.uid.replace(/[^a-zA-Z0-9_-]/g,"").slice(0,80)+"_"+Date.now().toString(36);
+      await fSet("stats/"+it.uid+"/comments/"+key,{uid:FB.uid,name:fbNm(fbMine()),text:txt.slice(0,300),at:Date.now(),postKey:tlPostKey(it)});
+      input.value="";await tlLoadComments(it,e);
+    }catch(err){var msg=document.createElement("div");msg.className="note";msg.textContent="コメントを保存できませんでした。Firebaseのアクセスルールを確認してください。";comments.insertBefore(msg,form)}
+    send.disabled=false;
+  };
+}
+async function openTimeline(){ // 自分とフォロー中の友達の学習記録を、新しい順に表示
   $("tlm").hidden=false;var box=$("tlBody"),pad='<div class="note" style="padding:0 16px">';
-  if(!FB.uid){box.innerHTML=pad+"ログインすると、フォロー中の友達の学習記録がタイムラインで見られます。</div>";return}
+  if(!FB.uid){box.innerHTML=pad+"ログインすると、自分とフォロー中の友達の学習記録がタイムラインで見られます。</div>";return}
   box.innerHTML=pad+"読み込み中…</div>";
-  var ids=await myFollowIds(),items=[];
+  var ids=await myFollowIds();ids=Array.from(new Set([FB.uid].concat(ids))).slice(0,101);var items=[];
   for(var i=0;i<ids.length;i++){
-    var d=null,p=null,uid=ids[i];
-    try{d=await fGet("stats/"+uid)}catch(e){continue} // まだ承認されていない人は入れない
-    try{p=await fGet("profiles/"+uid)}catch(e){}
+    var uid=ids[i],d=null,p=null,isMe=uid===FB.uid;
+    if(isMe){d={feed:Array.isArray(state.feed)?state.feed.slice(-40):[],log:state.log||{}};p=fbMine()}
+    else{try{d=await fGet("stats/"+uid)}catch(e){continue}try{p=await fGet("profiles/"+uid)}catch(e){}}
     var fd=d&&Array.isArray(d.feed)?d.feed.slice(-40):[],have={};
-    fd.forEach(function(x){
-      var t=Number(x&&x.t),s=Number(x&&x.s);
-      if(isFinite(t)&&t>0&&isFinite(s)&&s>=30){items.push({t:t,s:s,n:String(x.n||"").slice(0,30),uid:uid,p:p});have[fmtDate(new Date(t))]=1}
-    });
-    // 時刻つきの記録がまだない日(友達が古い版のとき、など)は、その日の合計を、科目ごとに出す
+    fd.forEach(function(x){var t=Number(x&&x.t),sec=Number(x&&x.s);if(isFinite(t)&&t>0&&isFinite(sec)&&sec>=30){items.push({t:t,s:sec,n:String(x.n||"").slice(0,30),uid:uid,p:p});have[fmtDate(new Date(t))]=1}});
     var lg=cleanLog(d&&d.log);
-    [0,1].forEach(function(back){
-      var day=new Date();day.setHours(0,0,0,0);day.setDate(day.getDate()-back);var key=fmtDate(day);
-      if(have[key]||!lg[key])return;
-      Object.keys(lg[key]).forEach(function(n,k){if(lg[key][n]>=30)items.push({t:day.getTime()+1000*(k+1),s:lg[key][n],n:n,uid:uid,p:p,nt:true})});
-    });
+    [0,1].forEach(function(back){var day=new Date();day.setHours(0,0,0,0);day.setDate(day.getDate()-back);var key=fmtDate(day);if(have[key]||!lg[key])return;Object.keys(lg[key]).forEach(function(n,k){if(lg[key][n]>=30)items.push({t:day.getTime()+1000*(k+1),s:lg[key][n],n:n,uid:uid,p:p,nt:true})})});
   }
   if($("tlm").hidden)return;
-  items.sort(function(a,b){return b.t-a.t});items=items.slice(0,60);
-  box.innerHTML="";
-  if(!items.length){box.innerHTML=pad+"まだ友達の記録がありません。</div>";return}
+  // 同じ投稿の重複を防ぐ
+  var unique={},clean=[];items.forEach(function(it){var k=tlPostKey(it);if(!unique[k]){unique[k]=1;clean.push(it)}});items=clean;
+  items.sort(function(a,b){return b.t-a.t});items=items.slice(0,60);box.innerHTML="";
+  if(!items.length){box.innerHTML=pad+"まだ学習記録がありません。</div>";return}
   var last="",td=fmtDate(new Date()),yd=fmtDate(new Date(Date.now()-86400000));
-  items.forEach(function(it){
-    var dt=new Date(it.t),ds=fmtDate(dt);
+  for(var j=0;j<items.length;j++){
+    var it=items[j],dt=new Date(it.t),ds=fmtDate(dt);
     if(ds!==last){last=ds;var h=document.createElement("div");h.className="tlday";h.textContent=ds===td?"今日":ds===yd?"昨日":(dt.getMonth()+1)+"月"+dt.getDate()+"日";box.appendChild(h)}
     var e=document.createElement("div");e.className="tlpost";
     e.innerHTML='<div class="av"></div><div class="tlbody"><div class="tlhead"><b></b><span class="tltime"></span></div><div class="tlcard"><svg viewBox="0 0 40 52" width="40" height="52" aria-hidden="true"><rect x="4" y="2" width="32" height="48" rx="3" fill="'+colorOf(it.n)+'"/><rect x="4" y="2" width="7" height="48" rx="2" fill="#17232f"/><rect x="14" y="8" width="18" height="14" rx="2" fill="#fff" opacity=".35"/></svg><div><div class="tln"></div><div class="tld"></div></div></div></div>';
     fbPaint(e.querySelector(".av"),it.p&&it.p.icon,it.p&&it.p.color,it.p&&it.p.photo);
-    var nm=e.querySelector("b");nm.textContent=fbNm(it.p);
-    var open=function(){openProfile(it.uid)};nm.onclick=open;e.querySelector(".av").onclick=open;
+    var nm=e.querySelector("b");nm.textContent=fbNm(it.p)+(it.uid===FB.uid?"（あなた）":"");var open=function(id){return function(){openProfile(id)}};nm.onclick=open(it.uid);e.querySelector(".av").onclick=open(it.uid);
     e.querySelector(".tltime").textContent=it.nt?"1日の合計":("0"+dt.getHours()).slice(-2)+":"+("0"+dt.getMinutes()).slice(-2);
-    e.querySelector(".tln").textContent=it.n||"勉強";e.querySelector(".tld").innerHTML=tlDur(it.s);
-    box.appendChild(e);
-  });
+    e.querySelector(".tln").textContent=it.n||"勉強";e.querySelector(".tld").innerHTML=tlDur(it.s);box.appendChild(e);
+    await tlBuildActions(it,e);
+  }
 }
 async function renderRank(){ // 学習記録の画面の下: フォロー中の人(と自分)の、今日の勉強時間ランキング
   var box=$("rank"),hd=$("rankHd");
@@ -2213,5 +2289,12 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 })();
 </script>
 
+<script>
+// Disable pinch-zoom gestures on touch devices while keeping normal scrolling.
+(function(){
+  document.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+  ["gesturestart","gesturechange","gestureend"].forEach(function(name){document.addEventListener(name,function(e){e.preventDefault()},{passive:false})});
+})();
+</script>
 </body>
 </html>
