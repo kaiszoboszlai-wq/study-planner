@@ -217,7 +217,7 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .rkrow .rname{flex:1;min-width:0}
 .rkrow.me{background:var(--accbg);border-radius:8px;padding:6px 8px}
 
-/* Visual refresh: navy header only; content area stays white. App logic is untouched. */
+/* Visual refresh: soft-blue header, white content and bottom navigation. App logic is untouched. */
 :root{--bg:#ffffff;--card:#ffffff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#58b88f;--accbg:#e4f5ed;--done:#9fb0bd;--red:#d62828}
 :root[data-theme="light"],:root[data-theme="dark"]{--bg:#ffffff;--card:#ffffff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#58b88f;--accbg:#e4f5ed;--done:#9fb0bd;--red:#d62828}
 body{background:#ffffff;color:#172b43}
@@ -229,26 +229,26 @@ button{border-radius:10px}
 button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .nv{border-radius:12px}
 .nv.on{background:#e4f5ed;color:#176b4b}
-.sp-top{background:#101f36;color:#f4f7fb;margin:-20px -16px 22px;padding:22px 16px 24px;border-radius:0 0 22px 22px}
-.sp-top .goalbar{color:#dce8f5}
+.sp-top{background:#b9e1f5;color:#17364d;margin:-20px -16px 22px;padding:22px 16px 24px;border-radius:0 0 22px 22px}
+.sp-top .goalbar{color:#315a73}
 .sp-top .count{display:none}
 .sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:14px 0 0}
-.sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:132px;padding:18px;border:0;border-radius:16px;background:#263f60;color:#fff;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
-.sp-preview-card .eyebrow{font-size:.9rem;color:#d0d9e8;font-weight:600}
-.sp-preview-card .big{font-size:clamp(1.35rem,4vw,2rem);font-weight:900;line-height:1.2;color:#fff}
-.sp-preview-card .small{font-size:.8rem;color:#d0d9e8}
+.sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:132px;padding:18px;border:0;border-radius:16px;background:#8fc9e8;color:#17364d;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.sp-preview-card .eyebrow{font-size:.9rem;color:#315a73;font-weight:600}
+.sp-preview-card .big{font-size:clamp(1.35rem,4vw,2rem);font-weight:900;line-height:1.2;color:#17364d}
+.sp-preview-card .small{font-size:.8rem;color:#315a73}
 .sp-preview-card.follow{cursor:pointer;width:100%;font:inherit}
 .sp-preview-card.follow:active{transform:scale(.99)}
-.sp-brand{font-size:clamp(1.45rem,4vw,2rem);font-weight:900;letter-spacing:.01em;margin-bottom:4px;color:#fff}
-.sp-tagline{color:#dce8f5;margin:0;font-size:.95rem}
+.sp-brand{font-size:clamp(1.45rem,4vw,2rem);font-weight:900;letter-spacing:.01em;margin-bottom:4px;color:#17364d}
+.sp-tagline{color:#315a73;margin:0;font-size:.95rem}
 @media(max-width:480px){.sp-preview-head{gap:8px}.sp-preview-card{padding:13px;min-height:120px}.sp-preview-card .small{font-size:.72rem}}
-/* Bottom navigation uses the same navy as the header. */
-.side{background:#101f36;border-top:1px solid #263f60}
-.nv{color:#dce8f5}
-.nv.on{background:#263f60;color:#8fe0bb}
-.nv:focus-visible{outline:2px solid #8fe0bb;outline-offset:-2px}
+/* Bottom navigation is white, with a soft-blue active state. */
+.side{background:#ffffff;border-top:1px solid #dce3eb}
+.nv{color:#617184}
+.nv.on{background:#e5f4fc;color:#347da5}
+.nv:focus-visible{outline:2px solid #8fc9e8;outline-offset:-2px}
 </style>
-<meta name="theme-color" content="#0b6e6e">
+<meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学習プランナー">
