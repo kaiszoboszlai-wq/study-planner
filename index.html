@@ -216,6 +216,32 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .rkrow .rn{width:1.6em;text-align:center;font-weight:700}
 .rkrow .rname{flex:1;min-width:0}
 .rkrow.me{background:var(--accbg);border-radius:8px;padding:6px 8px}
+
+/* Visual refresh: navy + mint theme. Only presentation rules; app logic is untouched. */
+:root{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
+:root[data-theme="light"]{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
+:root[data-theme="dark"]{--bg:#101f36;--card:#1b2d47;--ink:#f4f7fb;--sub:#cad5e5;--line:#344a66;--acc:#82cbaa;--accbg:#263f60;--done:#71859d;--red:#ff9a9a}
+body{background:var(--bg);color:var(--ink)}
+main{max-width:1100px;margin:0 auto}
+section,.tips,.fld,.need,.day,.stat-card,.card{border-radius:16px}
+section{background:var(--card);border-color:var(--line);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+input,select,textarea{background:#12233b!important;color:#f4f7fb!important;border-color:#405570!important}
+button{border-radius:10px}
+button.main{background:#82cbaa;border-color:#82cbaa;color:#152b49}
+.nv{border-radius:12px}
+.nv.on{background:#82cbaa;color:#152b49}
+.goalbar{color:#dce8f5}
+.count{display:none}
+.sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:14px 0 22px}
+.sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:132px;padding:18px;border:0;border-radius:16px;background:#263f60;color:#fff;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.sp-preview-card .eyebrow{font-size:.9rem;color:#d0d9e8;font-weight:600}
+.sp-preview-card .big{font-size:clamp(1.35rem,4vw,2rem);font-weight:900;line-height:1.2;color:#fff}
+.sp-preview-card .small{font-size:.8rem;color:#d0d9e8}
+.sp-preview-card.follow{cursor:pointer;width:100%;font:inherit}
+.sp-preview-card.follow:active{transform:scale(.99)}
+.sp-brand{font-size:clamp(1.45rem,4vw,2rem);font-weight:900;letter-spacing:.01em;margin-bottom:4px;color:#fff}
+.sp-tagline{color:#dce8f5;margin:0;font-size:.95rem}
+@media(max-width:480px){.sp-preview-head{gap:8px}.sp-preview-card{padding:13px;min-height:120px}.sp-preview-card .small{font-size:.72rem}}
 </style>
 <meta name="theme-color" content="#0b6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -240,9 +266,22 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
-<h1>週間学習プランナー</h1>
+<div class="sp-brand">週間学習プランナー</div>
+<p class="sp-tagline">目標まで、今日の一歩を積み重ねよう。</p>
 <p class="goalbar">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
+<div class="sp-preview-head">
+  <div class="sp-preview-card" aria-live="polite">
+    <span class="eyebrow">試験まで</span>
+    <span class="big"><span id="daysCard">-</span>日</span>
+    <span class="small" id="examCardDate">目標日を設定してください</span>
+  </div>
+  <button class="sp-preview-card follow" id="followingCard" type="button" aria-label="フォロー中のアカウント一覧を開く">
+    <span class="eyebrow">フォロー中</span>
+    <span class="big">アカウント一覧</span>
+    <span class="small">タップして一覧を開く　›</span>
+  </button>
+</div>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -1961,6 +2000,34 @@ setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}
+</script>
+
+<script>
+// Header card click: open the app's existing following list. No Firebase/sync logic changed.
+(function(){
+  var card=document.getElementById("followingCard");
+  if(card) card.addEventListener("click",function(){
+    var myNav=document.getElementById("navMy");
+    if(myNav) myNav.click();
+    window.setTimeout(function(){
+      var followButton=document.getElementById("cntFol");
+      if(followButton) followButton.click();
+      else if(typeof openList==="function") openList("fol");
+    },80);
+  });
+  function refreshExamCard(){
+    var src=document.getElementById("days"),dst=document.getElementById("daysCard");
+    if(src&&dst) dst.textContent=src.textContent||"-";
+    var exam=document.getElementById("exam"),date=document.getElementById("examCardDate");
+    if(exam&&date&&exam.value){
+      var p=exam.value.split("-");date.textContent="目標日："+p[0]+"/"+Number(p[1])+"/"+Number(p[2]);
+    } else if(date) date.textContent="目標日を設定してください";
+  }
+  refreshExamCard();
+  var days=document.getElementById("days");
+  if(days&&window.MutationObserver)new MutationObserver(refreshExamCard).observe(days,{childList:true,characterData:true,subtree:true});
+  var exam=document.getElementById("exam");if(exam)exam.addEventListener("change",refreshExamCard);
+})();
 </script>
 </body>
 </html>
