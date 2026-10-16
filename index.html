@@ -247,6 +247,45 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .nv{color:#617184}
 .nv.on{background:#e5f4fc;color:#347da5}
 .nv:focus-visible{outline:2px solid #8fc9e8;outline-offset:-2px}
+
+
+/* Settings button in the top-right of My Page; theme controls live in its dialog. */
+.hbtn{gap:4px}
+#settingsBtn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 42px}
+#appearanceModal .tmbox{max-height:85vh;overflow-y:auto}
+#appearanceModal .theme-settings{margin-bottom:14px}
+
+/* User-selectable color themes. These styles affect colors only; layout and app logic stay intact. */
+.theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.theme-choice{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-align:left;min-width:0}
+.theme-choice b{font-size:.92rem}.theme-choice small{font-size:.75rem;color:var(--sub)}
+.theme-choice.selected{outline:2px solid var(--acc);border-color:var(--acc);background:var(--accbg)}
+.theme-swatches{display:flex;gap:5px;width:100%}.theme-swatches i{display:block;height:22px;flex:1;border-radius:5px;border:1px solid rgba(0,0,0,.07)}
+:root[data-app-theme="sage"]{--bg:#fffdf7;--card:#fffdf7;--ink:#354638;--sub:#6e8068;--line:#e0e7da;--acc:#71956b;--accbg:#eef4ea;--done:#aab7a5;--red:#bd5656}
+:root[data-app-theme="lavender"]{--bg:#fff;--card:#fff;--ink:#3e3157;--sub:#786b8e;--line:#e5dcef;--acc:#8256b5;--accbg:#f0eafb;--done:#b8abc9;--red:#c94f68}
+:root[data-app-theme="peach"]{--bg:#fffcf7;--card:#fffcf7;--ink:#593f32;--sub:#8b7060;--line:#eedfd4;--acc:#b97855;--accbg:#fbece2;--done:#c7b2a4;--red:#c74d4d}
+:root[data-app-theme="sky"]{--bg:#fff;--card:#fff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#347da5;--accbg:#e5f4fc;--done:#9fb0bd;--red:#d62828}
+:root[data-app-theme="sage"] body,:root[data-app-theme="lavender"] body,:root[data-app-theme="peach"] body{background:var(--bg);color:var(--ink)}
+:root[data-app-theme="sage"] main,:root[data-app-theme="sage"] section,:root[data-app-theme="sage"] .card,:root[data-app-theme="sage"] .stat-card,:root[data-app-theme="lavender"] main,:root[data-app-theme="lavender"] section,:root[data-app-theme="lavender"] .card,:root[data-app-theme="lavender"] .stat-card,:root[data-app-theme="peach"] main,:root[data-app-theme="peach"] section,:root[data-app-theme="peach"] .card,:root[data-app-theme="peach"] .stat-card{background:var(--card);color:var(--ink);border-color:var(--line)}
+:root[data-app-theme="sage"] input,:root[data-app-theme="sage"] select,:root[data-app-theme="sage"] textarea,:root[data-app-theme="lavender"] input,:root[data-app-theme="lavender"] select,:root[data-app-theme="lavender"] textarea,:root[data-app-theme="peach"] input,:root[data-app-theme="peach"] select,:root[data-app-theme="peach"] textarea{background:var(--card)!important;color:var(--ink)!important;border-color:var(--line)!important}
+:root[data-app-theme="sage"] button.main{background:#71956b;border-color:#71956b;color:#fff}:root[data-app-theme="lavender"] button.main{background:#8256b5;border-color:#8256b5;color:#fff}:root[data-app-theme="peach"] button.main{background:#b97855;border-color:#b97855;color:#fff}
+:root[data-chrome-theme="navy"] .sp-top{background:#1d2d45;color:#fff}:root[data-chrome-theme="navy"] .sp-top .goalbar,:root[data-chrome-theme="navy"] .sp-tagline{color:#d8e2ef}:root[data-chrome-theme="navy"] .sp-brand{color:#fff}:root[data-chrome-theme="navy"] .side{background:#1d2d45;border-top-color:#30435d}:root[data-chrome-theme="navy"] .nv{color:#d8e2ef}:root[data-chrome-theme="navy"] .nv.on{background:#30435d;color:#fff}
+:root[data-chrome-theme="white"] .sp-top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}:root[data-chrome-theme="white"] .sp-brand,:root[data-chrome-theme="white"] .sp-top .goalbar,:root[data-chrome-theme="white"] .sp-tagline{color:var(--ink)}:root[data-chrome-theme="white"] .sp-preview-card{background:var(--accbg);color:var(--ink);box-shadow:none}:root[data-chrome-theme="white"] .sp-preview-card .eyebrow,:root[data-chrome-theme="white"] .sp-preview-card .big,:root[data-chrome-theme="white"] .sp-preview-card .small{color:var(--ink)}
+:root[data-chrome-theme="theme"] .sp-top{background:var(--theme-header,#B9E1F5);color:var(--theme-header-ink,#17364d)}
+:root[data-app-theme="sage"][data-chrome-theme="theme"]{--theme-header:#d5e8d4;--theme-header-ink:#354638}:root[data-app-theme="lavender"][data-chrome-theme="theme"]{--theme-header:#d8c9f2;--theme-header-ink:#3e3157}:root[data-app-theme="peach"][data-chrome-theme="theme"]{--theme-header:#f4d8c8;--theme-header-ink:#593f32}:root[data-app-theme="sky"][data-chrome-theme="theme"]{--theme-header:#b9e1f5;--theme-header-ink:#17364d}
+:root[data-chrome-theme="theme"] .sp-brand,:root[data-chrome-theme="theme"] .sp-top .goalbar,:root[data-chrome-theme="theme"] .sp-tagline{color:var(--theme-header-ink,#17364d)}
+:root[data-chrome-theme="theme"] .side{background:#fff}:root[data-chrome-theme="theme"] .nv{color:var(--sub)}:root[data-chrome-theme="theme"] .nv.on{background:var(--accbg);color:var(--acc)}
+:root[data-chrome-theme="white"] .side{background:#fff;border-top-color:var(--line)}:root[data-chrome-theme="white"] .nv{color:var(--sub)}:root[data-chrome-theme="white"] .nv.on{background:var(--accbg);color:var(--acc)}
+/* Top summary cards: white background in every theme; exam-day number stays red. */
+.sp-preview-card,
+:root[data-chrome-theme="white"] .sp-preview-card,
+:root[data-chrome-theme="theme"] .sp-preview-card,
+:root[data-chrome-theme="navy"] .sp-preview-card{background:#fff!important;color:var(--ink)!important;box-shadow:0 5px 18px rgba(20,40,65,.07)}
+.sp-preview-card .eyebrow,.sp-preview-card .small{color:var(--sub)!important}
+.sp-preview-card .big{color:var(--ink)!important}
+#daysCard{color:#d62828!important}
+@media(max-width:420px){.theme-options{gap:7px}.theme-choice{padding:9px}}
+
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -282,9 +321,9 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
     <span class="big"><span id="daysCard">-</span>日</span>
     <span class="small" id="examCardDate">目標日を設定してください</span>
   </div>
-  <button class="sp-preview-card follow" id="followingCard" type="button" aria-label="フォロー中のアカウント一覧を開く">
+  <button class="sp-preview-card follow" id="followingCard" type="button" aria-label="友達の学習記録を見る">
     <span class="eyebrow">フォロー中</span>
-    <span class="big">アカウント一覧</span>
+    <span class="big">友達の学習記録を見る</span>
     <span class="small">タップして一覧を開く　›</span>
   </button>
 </div>
@@ -363,7 +402,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div id="glist"></div>
 </section>
 <section id="mypage" hidden>
-<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button></div></div>
+<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.88l.06.06-1.7 2.94-.08-.02a1.7 1.7 0 00-1.8.35l-.06.06h-3.4l-.02-.08a1.7 1.7 0 00-1.2-1.2l-.08-.02-2.94 1.7-.06-.06a1.7 1.7 0 00-1.88-.34l-.08.03-1.7-2.94.06-.06A1.7 1.7 0 005.2 15l-.02-.08v-3.4l.08-.02a1.7 1.7 0 001.2-1.2l.02-.08-1.7-2.94.06-.06a1.7 1.7 0 00.34-1.88l-.03-.08 2.94-1.7.06.06a1.7 1.7 0 001.88.34l.08-.03h3.4l.02.08a1.7 1.7 0 001.2 1.2l.08.02 2.94-1.7.06.06a1.7 1.7 0 001.88.34l.08-.03 1.7 2.94-.06.06a1.7 1.7 0 00-.34 1.88l.03.08v3.4z" transform="translate(-1 -1) scale(1.08)"/></svg></button></div></div>
 <div class="me big"><div class="av" id="meAv"></div><div><b id="meName"></b>
 <div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
 <div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
@@ -440,6 +479,24 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
+</div>
+<div class="tm" id="appearanceModal" hidden role="dialog" aria-modal="true" aria-labelledby="appearanceTitle">
+<div class="tmbox">
+<div class="tmname" id="appearanceTitle">設定</div>
+<h3 class="sh">アプリのデザイン</h3>
+<div class="fld theme-settings">
+  <span class="lb">配色テーマ</span>
+  <p class="note">画面の配置や機能はそのまま、色だけを切り替えます。</p>
+  <div class="theme-options" role="group" aria-label="配色テーマ">
+    <button type="button" class="theme-choice" data-app-theme="sky"><span class="theme-swatches"><i style="background:#B9E1F5"></i><i style="background:#FFFFFF"></i><i style="background:#347DA5"></i></span><b>スカイブルー</b><small>爽やか・清潔感</small></button>
+    <button type="button" class="theme-choice" data-app-theme="sage"><span class="theme-swatches"><i style="background:#D5E8D4"></i><i style="background:#FFFDF7"></i><i style="background:#63805B"></i></span><b>セージグリーン</b><small>落ち着く・自然</small></button>
+    <button type="button" class="theme-choice" data-app-theme="lavender"><span class="theme-swatches"><i style="background:#D8C9F2"></i><i style="background:#FFFFFF"></i><i style="background:#8256B5"></i></span><b>ラベンダー</b><small>柔らかい・上品</small></button>
+    <button type="button" class="theme-choice" data-app-theme="peach"><span class="theme-swatches"><i style="background:#F4D8C8"></i><i style="background:#FFFCF7"></i><i style="background:#B97855"></i></span><b>ピーチ</b><small>温かい・明るい</small></button>
+  </div>
+  <div class="fld"><label>上部ヘッダー・下部メニュー<select id="chromeTheme"><option value="theme">テーマカラーに合わせる</option><option value="navy">ネイビーを使う</option><option value="white">白にする</option></select></label></div>
+</div>
+<div class="actions"><button id="appearanceClose" class="main">完了</button></div>
+</div>
 </div>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
@@ -1529,8 +1586,8 @@ async function syncStart(){ // ログインしたとき: クラウドのほう�
 async function fbSocialSync(){ // 友達に見せる、フォロー中・フォロワーの一覧(idだけ)を保存する
   if(!FB.uid)return;
   try{
-    var fo=await myFollowIds(),vs=(await fList("stats/"+FB.uid+"/viewers")).map(function(x){return x.id});
-    await fSet("social/"+FB.uid,{following:fo.slice(0,200),followers:vs.slice(0,200),updated:Date.now()});
+    var fo=await myFollowIds(),rawVs=(await fList("stats/"+FB.uid+"/viewers")).map(function(x){return x.id}),vs=Array.from(new Set(rawVs.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,200);
+    await fSet("social/"+FB.uid,{following:fo.slice(0,200),followers:vs,updated:Date.now()});
     FB.socialSig=fo.length+"|"+vs.length;
   }catch(e){}
 }
@@ -1593,7 +1650,7 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
   top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
   box.appendChild(top);
-  var ids=function(k){return so&&Array.isArray(so[k])?so[k].filter(function(x){return typeof x==="string"}).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
+  var ids=function(k){return so&&Array.isArray(so[k])?Array.from(new Set(so[k].filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
   var cnt=document.createElement("div");cnt.className="cnt";
   cnt.innerHTML='<button><b>'+(so?fo.length:"-")+'</b>フォロー中</button><i></i><button><b>'+(so?fr.length:"-")+'</b>フォロワー</button>';
   box.appendChild(cnt);
@@ -1603,11 +1660,14 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     lst.innerHTML="";
     if(!so){lst.innerHTML='<div class="note">一覧は、まだ見られません。相手が新しい版のアプリを開くと、見られるようになります。</div>';return}var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
     if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
+    var mine=await myFollowIds();
     for(var i=0;i<list.length;i++){
-      var q=null;try{q=await fGet("profiles/"+list[i])}catch(e){}
-      var row=fbRow(q,list[i]);row.querySelector(".note").textContent=fbSub(q);
-      (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(list[i]);
-      lst.appendChild(row);
+      var targetId=list[i],q=null;try{q=await fGet("profiles/"+targetId)}catch(e){}
+      var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);
+      (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(targetId);
+      var card=document.createElement("div");card.className="fcard";card.appendChild(row);
+      card.appendChild(fbFollowEl(targetId,mine,fbNm(q)));
+      lst.appendChild(card);
     }
   };
   var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
@@ -1673,8 +1733,8 @@ async function fillList(){
   if(listMode===mode){$("lmBody").innerHTML="";$("lmBody").appendChild(out)}
 }
 function openFriend(){fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
-async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid
-  try{var f=await fGet("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}):[]}catch(e){return[]}
+async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
+  try{var f=await fGet("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]}catch(e){return[]}
 }
 async function fbFollowBack(rid){ // 相手に、自分からもフォローリクエストを送る
   try{
@@ -1693,14 +1753,14 @@ function fbFollowEl(rid,ids,name){
   if(FBSENT[rid]){w.className="note";w.textContent=name+"さんにフォローリクエストを送りました";return w}
   if(ids.indexOf(rid)>=0){w.className="note";w.textContent=name+"さんをフォロー中です";return w}
   w.className="actions";
-  var b=document.createElement("button");b.textContent="フォローリクエストを送り返す";
+  var b=document.createElement("button");b.textContent="フォローリクエストを送る";
   b.onclick=function(){b.disabled=true;fbFollowBack(rid)};
   w.appendChild(b);return w;
 }
 async function fillReq(box){
   var uid=FB.uid,mine=await myFollowIds();
   try{
-    var reqs=await fList("requests/"+uid+"/from");
+    var reqs=await fList("requests/"+uid+"/from"),seenReqs=new Set();reqs=reqs.filter(function(x){if(!x||typeof x.id!=="string"||!x.id||x.id===uid||seenReqs.has(x.id))return false;seenReqs.add(x.id);return true});
     if(!reqs.length)box.innerHTML='<div class="note">リクエストは来ていません。</div>';
     for(var i=0;i<reqs.length;i++){
       var rid=reqs[i].id,pr=null;try{pr=await fGet("profiles/"+rid)}catch(e){}
@@ -1719,7 +1779,7 @@ async function fillReq(box){
 async function fillFol(fb){
   var uid=FB.uid;
   try{
-    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).slice(0,100):[];
+    var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid}))).slice(0,100):[];
     if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
     for(var j=0;j<ids.length;j++){
       var id=ids[j],p=null,d=null,state2="ok";
@@ -1754,7 +1814,7 @@ async function fillFol(fb){
 async function fillVie(vb){
   var uid=FB.uid,mine=await myFollowIds();
   try{
-    var vs=await fList("stats/"+uid+"/viewers");
+    var vs=await fList("stats/"+uid+"/viewers"),seenViewers=new Set();vs=vs.filter(function(x){if(!x||typeof x.id!=="string"||!x.id||x.id===uid||seenViewers.has(x.id))return false;seenViewers.add(x.id);return true});
     if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。リクエストを承認すると、ここに入ります。</div>';
     for(var k=0;k<vs.length;k++){
       var vid=vs[k].id,vp=null;try{vp=await fGet("profiles/"+vid)}catch(e){}
@@ -1780,8 +1840,8 @@ async function renderFb(){
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
   $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
-  try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?f.ids.filter(function(x){return typeof x==="string"}).length:0}catch(e){}
-  try{FBN.fr=(await fList("stats/"+uid+"/viewers")).length}catch(e){}
+  try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid})).size:0}catch(e){}
+  try{FBN.fr=new Set((await fList("stats/"+uid+"/viewers")).map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size}catch(e){}
   try{FBN.req=(await fList("requests/"+uid+"/from")).length}catch(e){}
   paintCounts();
   if(FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync(); // フォロー中・フォロワーの一覧が変わったとき(前に保存できなかったときも)、友達に見せる一覧を保存し直す
@@ -2036,5 +2096,30 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
   var exam=document.getElementById("exam");if(exam)exam.addEventListener("change",refreshExamCard);
 })();
 </script>
+
+<script>
+(function(){
+  var KEY="study-planner-appearance-v1";
+  var themes={sky:1,sage:1,lavender:1,peach:1};
+  function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+  function apply(){
+    var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome=["theme","navy","white"].indexOf(v.chrome)>=0?v.chrome:"theme";
+    document.documentElement.setAttribute("data-app-theme",theme);
+    document.documentElement.setAttribute("data-chrome-theme",chrome);
+    document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
+    var sel=document.getElementById("chromeTheme");if(sel)sel.value=chrome;
+    var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
+  }
+  function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}apply()}
+  document.querySelectorAll(".theme-choice").forEach(function(b){b.addEventListener("click",function(){save("theme",b.getAttribute("data-app-theme"))})});
+  var sel=document.getElementById("chromeTheme");if(sel)sel.addEventListener("change",function(){save("chrome",sel.value)});
+  var settingsBtn=document.getElementById("settingsBtn"),settingsModal=document.getElementById("appearanceModal"),settingsClose=document.getElementById("appearanceClose");
+  if(settingsBtn&&settingsModal){settingsBtn.addEventListener("click",function(){settingsModal.hidden=false});settingsModal.addEventListener("click",function(e){if(e.target===settingsModal)settingsModal.hidden=true})}
+  if(settingsClose&&settingsModal)settingsClose.addEventListener("click",function(){settingsModal.hidden=true});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&settingsModal&&!settingsModal.hidden)settingsModal.hidden=true});
+  apply();
+})();
+</script>
+
 </body>
 </html>
