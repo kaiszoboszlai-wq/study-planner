@@ -305,6 +305,23 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .pl2 .srow i{margin-top:6px}
 .pl2 .srow span{grid-column:2;flex:none;min-width:0;overflow-wrap:anywhere}
 .pl2 .srow span+span{color:var(--sub)}
+/* いいね・コメント・メッセージ */
+#pxm .tmbox,#dmm .tmbox{max-height:88vh;overflow-y:auto}
+.tlact{display:flex;gap:20px;margin-top:6px}
+.tlact button{position:relative;display:flex;align-items:center;gap:6px;border:0;background:none;padding:6px 2px;color:var(--sub);font-size:.9rem}
+.tlact svg{width:22px;height:22px}
+.tlact .lk.on{color:var(--acc)}.tlact .lk.on svg{fill:currentColor}
+@keyframes likePop{0%{transform:scale(1)}30%{transform:scale(1.7) rotate(-14deg)}60%{transform:scale(.9) rotate(6deg)}100%{transform:scale(1)}}
+.lk.pop svg{animation:likePop .55s ease}
+.spark{position:absolute;left:12px;top:50%;width:7px;height:7px;margin:-3px 0 0 -3px;border-radius:50%;pointer-events:none;animation:spark .6s ease-out forwards}
+@keyframes spark{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.cm{display:flex;gap:10px;padding:8px 0;align-items:flex-start}.cm .av{width:36px;height:36px;font-size:1.1rem}.cmt{flex:1;min-width:0;overflow-wrap:anywhere}
+.msg{display:flex;flex-direction:column;align-items:flex-start;margin:8px 0}.msg.me{align-items:flex-end}
+.bub{max-width:82%;padding:8px 12px;border-radius:16px;background:rgba(127,127,127,.16);overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me .bub{background:var(--acc);color:var(--bg)}
+.msg small{color:var(--sub);font-size:.7rem;margin:2px 4px}
+#dmBody{max-height:56vh;overflow-y:auto;margin:8px 0}
+.dmrow{cursor:pointer}.dmrow .note.un{color:var(--ink);font-weight:700}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -421,7 +438,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div id="glist"></div>
 </section>
 <section id="mypage" hidden>
-<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="dmBtn" aria-label="メッセージ" hidden><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg><span class="bdg" id="dmBdg" hidden></span></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div class="me big"><div class="av" id="meAv"></div><div><b id="meName"></b>
 <div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
 <div class="note" id="meSub"></div><div class="note" id="meSchool"></div><div class="note" id="meMore"></div></div></div>
@@ -479,6 +496,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div class="tmbox"><div class="tmname" id="tlt">フォロー中のタイムライン</div><div id="tlBody"></div>
 <div class="actions"><button id="tlClose">閉じる</button></div></div>
 </div>
+<div class="tm" id="pxm" hidden role="dialog" aria-modal="true" aria-label="コメント"><div class="tmbox"><div id="pxBody"></div><div class="fld"><div class="rk"><input type="text" id="pxIn" maxlength="300" placeholder="コメントを書く" style="width:100%"><button id="pxSend" class="main">送信</button></div></div><div class="actions"><button id="pxClose">閉じる</button></div></div></div>
 <div class="tm" id="pm" hidden role="dialog" aria-modal="true" aria-label="プロフィール">
 <div class="tmbox"><div id="pmBody"></div>
 <div class="actions"><button id="pmClose">閉じる</button></div></div>
@@ -527,6 +545,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div class="actions"><button id="appearanceClose" class="main">完了</button></div>
 </div>
 </div>
+<div class="tm" id="dmm" hidden role="dialog" aria-modal="true" aria-labelledby="dmT"><div class="tmbox"><div class="hd0"><button id="dmBack" hidden>← 戻る</button><div class="tmname" id="dmT">メッセージ</div></div><div id="dmBody"></div><div class="fld" id="dmForm" hidden><div class="rk"><input type="text" id="dmIn" maxlength="1000" placeholder="メッセージ" style="width:100%"><button id="dmSend" class="main">送信</button></div></div><div class="actions"><button id="dmmClose">閉じる</button></div></div></div>
 <div class="tm" id="cf" hidden role="dialog" aria-modal="true" aria-labelledby="cfmsg">
 <div class="tmbox"><div class="tmname" id="cfmsg"></div><p class="note" id="cfsub"></p>
 <div class="actions"><button id="cfok" class="main">OK</button><button id="cfno">キャンセル</button></div></div>
@@ -1010,7 +1029,7 @@ function setDone(id,on){
 function feedAdd(name,sec){ // 友達のタイムラインに出す、最近の記録(同じ科目を20分以内に続けたら、1つにまとめる)
   if(!(sec>=1))return;state.feed=state.feed||[];
   var now=Date.now(),l=state.feed[state.feed.length-1];
-  if(l&&l.n===name&&now-l.t<20*60*1000){l.s+=sec;l.t=now}else state.feed.push({t:now,n:String(name).slice(0,30),s:sec});
+  if(l&&l.n===name&&now-l.t<20*60*1000){l.s+=sec;l.t=now}else state.feed.push({t:now,c:now,n:String(name).slice(0,30),s:sec});
   if(state.feed.length>60)state.feed=state.feed.slice(-60);
 }
 function feedSub(date,name,sec){ // 記録を取り消したとき、タイムラインの分も減らす
@@ -1503,7 +1522,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-16 v10"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-17 v11"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1592,7 +1611,7 @@ function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=
 async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
-  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),feed:(state.feed||[]).slice(-30).map(function(x){return{t:Math.round(x.t),n:String(x.n).slice(0,30),s:Math.round(x.s)}}),updated:Date.now()};
+  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),feed:(state.feed||[]).slice(-30).map(function(x){return{t:Math.round(x.t),c:Math.round(x.c||x.t),n:String(x.n).slice(0,30),s:Math.round(x.s)}}),updated:Date.now()};
   var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log,st.feed]);
   if(!force&&sig===fbSig)return;
   var base={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},full=Object.assign({},base);
@@ -1645,8 +1664,8 @@ async function fbSocialSync(){ // 友達に見せる、フォロー中・フォ�
 }
 async function fbOnAuth(){
   renderFb();
-  if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
-  try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart()}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=FBN.dm=0;dmStop();paintCounts();return}
+  try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart();dmCheck()}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
 function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
@@ -1702,6 +1721,7 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
   top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
   box.appendChild(top);
+  if(FB.uid&&id!==FB.uid){var dmb=document.createElement("button");dmb.textContent="メッセージ";dmb.onclick=function(){closeProfile();openChat(id,p)};box.appendChild(dmb)}
   var ids=function(k){return so&&Array.isArray(so[k])?Array.from(new Set(so[k].filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
   var cnt=document.createElement("div");cnt.className="cnt";
   cnt.innerHTML='<button><b>'+(so?fo.length:"-")+'</b>フォロー中</button><i></i><button><b>'+(so?fr.length:"-")+'</b>フォロワー</button>';
@@ -1735,16 +1755,17 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   }
 }
 // ---- フォロー数・通知のベル・一覧の画面 ----
-var FBN={fol:0,fr:0,req:0},listMode=null,FBSENT={};
+var FBN={fol:0,fr:0,req:0,dm:0},listMode=null,FBSENT={};
 function paintCounts(){
   $("nFol").textContent=FBN.fol;$("nFr").textContent=FBN.fr;
   var b=$("bellBdg");b.hidden=FBN.req<1;b.textContent=FBN.req>99?"99+":FBN.req;
-  $("navBdg").hidden=FBN.req<1;
+  $("navBdg").hidden=FBN.req<1&&FBN.dm<1;$("dmBdg").hidden=FBN.dm<1;$("dmBdg").textContent=FBN.dm>99?"99+":FBN.dm;
 }
 async function fbPoll(){ // リクエストが来ているか、ときどき確認する
   if(!FB.uid||document.hidden)return;
   try{FBN.req=(await fList("requests/"+FB.uid+"/from")).length;paintCounts()}catch(e){}
   if(state.page===6)renderRank();
+  dmCheck();
 }
 function tlDur(sec){var t=Math.round(sec/60),h=Math.floor(t/60),m=t%60;return (h?"<b>"+h+"</b>時間 ":"")+((m||!h)?"<b>"+m+"</b>分":"")}
 async function openTimeline(){ // フォロー中の友達の学習記録を、新しい順に並べて見せる
@@ -1759,33 +1780,150 @@ async function openTimeline(){ // フォロー中の友達の学習記録を、�
     var fd=d&&Array.isArray(d.feed)?d.feed.slice(-40):[],have={};
     fd.forEach(function(x){
       var t=Number(x&&x.t),s=Number(x&&x.s);
-      if(isFinite(t)&&t>0&&isFinite(s)&&s>=30){items.push({t:t,s:s,n:String(x.n||"").slice(0,30),uid:uid,p:p});have[fmtDate(new Date(t))]=1}
+      if(isFinite(t)&&t>0&&isFinite(s)&&s>=30){items.push({t:t,s:s,c:Number(x.c)||t,n:String(x.n||"").slice(0,30),uid:uid,p:p});have[fmtDate(new Date(t))]=1}
     });
     // 時刻つきの記録がまだない日(友達が古い版のとき、など)は、その日の合計を、科目ごとに出す
     var lg=cleanLog(d&&d.log);
     [0,1].forEach(function(back){
       var day=new Date();day.setHours(0,0,0,0);day.setDate(day.getDate()-back);var key=fmtDate(day);
       if(have[key]||!lg[key])return;
-      Object.keys(lg[key]).forEach(function(n,k){if(lg[key][n]>=30)items.push({t:day.getTime()+1000*(k+1),s:lg[key][n],n:n,uid:uid,p:p,nt:true})});
+      Object.keys(lg[key]).forEach(function(n,k){if(lg[key][n]>=30)items.push({t:day.getTime()+1000*(k+1),s:lg[key][n],c:"d"+key.replace(/-/g,"")+"x"+k,n:n,uid:uid,p:p,nt:true})});
     });
   }
   if($("tlm").hidden)return;
   items.sort(function(a,b){return b.t-a.t});items=items.slice(0,60);
   box.innerHTML="";
   if(!items.length){box.innerHTML=pad+"まだ友達の記録がありません。</div>";return}
-  var last="",td=fmtDate(new Date()),yd=fmtDate(new Date(Date.now()-86400000));
+  var i0=0,last="",td=fmtDate(new Date()),yd=fmtDate(new Date(Date.now()-86400000));
   items.forEach(function(it){
     var dt=new Date(it.t),ds=fmtDate(dt);
     if(ds!==last){last=ds;var h=document.createElement("div");h.className="tlday";h.textContent=ds===td?"今日":ds===yd?"昨日":(dt.getMonth()+1)+"月"+dt.getDate()+"日";box.appendChild(h)}
     var e=document.createElement("div");e.className="tlpost";
-    e.innerHTML='<div class="av"></div><div class="tlbody"><div class="tlhead"><b></b><span class="tltime"></span></div><div class="tlcard"><svg viewBox="0 0 40 52" width="40" height="52" aria-hidden="true"><rect x="4" y="2" width="32" height="48" rx="3" fill="'+colorOf(it.n)+'"/><rect x="4" y="2" width="7" height="48" rx="2" fill="#17232f"/><rect x="14" y="8" width="18" height="14" rx="2" fill="#fff" opacity=".35"/></svg><div><div class="tln"></div><div class="tld"></div></div></div></div>';
+    e.innerHTML='<div class="av"></div><div class="tlbody"><div class="tlhead"><b></b><span class="tltime"></span></div><div class="tlcard"><svg viewBox="0 0 40 52" width="40" height="52" aria-hidden="true"><rect x="4" y="2" width="32" height="48" rx="3" fill="'+colorOf(it.n)+'"/><rect x="4" y="2" width="7" height="48" rx="2" fill="#17232f"/><rect x="14" y="8" width="18" height="14" rx="2" fill="#fff" opacity=".35"/></svg><div><div class="tln"></div><div class="tld"></div></div></div><div class="tlact"><button class="cb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 3.9 11.5 8.5 8.5 0 0 1 12.4 3H12a8.5 8.5 0 0 1 9 8.5z"/></svg><span>コメント</span></button><button class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.3a2 2 0 0 0 2-1.7l1.4-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg><span>いいね!</span></button></div></div>';
     fbPaint(e.querySelector(".av"),it.p&&it.p.icon,it.p&&it.p.color,it.p&&it.p.photo);
     var nm=e.querySelector("b");nm.textContent=fbNm(it.p);
     var open=function(){openProfile(it.uid)};nm.onclick=open;e.querySelector(".av").onclick=open;
     e.querySelector(".tltime").textContent=it.nt?"1日の合計":("0"+dt.getHours()).slice(-2)+":"+("0"+dt.getMinutes()).slice(-2);
     e.querySelector(".tln").textContent=it.n||"勉強";e.querySelector(".tld").innerHTML=tlDur(it.s);
+    var pid=it.uid+"_"+it.c,lk=e.querySelector(".lk");tlRows[pid]=e;
+    e.querySelector(".cb").onclick=function(){openPost(pid,it)};
+    lk.onclick=function(){pxLike(pid,e,lk)};
+    lk.querySelector("span").onclick=function(ev){if((px[pid]||{likes:[]}).likes.length){ev.stopPropagation();openPost(pid,it)}};
+    if(i0++<30)pxLoad(pid).then(function(o){px[pid]=o;pxPaint(e,pid)});
     box.appendChild(e);
   });
+}
+var px={},tlRows={},pxCur=null;
+function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+async function pxLoad(pid){var a=await Promise.all([fList("posts/"+pid+"/likes").catch(function(){return[]}),fList("posts/"+pid+"/comments").catch(function(){return[]})]);return{likes:a[0],cms:a[1]}}
+function pxPaint(e,pid){ // 件数と、自分がいいねしているかを、行に出す
+  var o=px[pid]||{likes:[],cms:[]},lk=e.querySelector(".lk");
+  lk.classList.toggle("on",o.likes.some(function(l){return l.id===FB.uid}));
+  lk.querySelector("span").textContent=o.likes.length||"いいね!";e.querySelector(".cb span").textContent=o.cms.length||"コメント";
+}
+function likeFx(b){ // いいねを押したときの、はじけるアニメーション
+  b.classList.remove("pop");void b.offsetWidth;b.classList.add("pop");
+  for(var i=0;i<8;i++){var sp=document.createElement("i"),a=i/8*6.283;sp.className="spark";sp.style.setProperty("--dx",Math.cos(a)*28+"px");sp.style.setProperty("--dy",Math.sin(a)*28+"px");sp.style.background=["#ff6b6b","#ffd43b","#4dabf7","#69db7c"][i%4];sp.addEventListener("animationend",function(){this.remove()});b.appendChild(sp)}
+}
+async function pxLike(pid,e,lk){
+  var o=px[pid]=px[pid]||{likes:[],cms:[]},mine=o.likes.some(function(l){return l.id===FB.uid});
+  try{
+    if(mine){await fDel("posts/"+pid+"/likes/"+FB.uid);o.likes=o.likes.filter(function(l){return l.id!==FB.uid})}
+    else{likeFx(lk);await fSet("posts/"+pid+"/likes/"+FB.uid,{at:Date.now()});o.likes.push({id:FB.uid,data:{at:Date.now()}})}
+  }catch(x){askConfirm("いいねできませんでした","フォローが承認されている人にだけ、いいねできます。","OK")}
+  pxPaint(e,pid);
+}
+async function openPost(pid,it){ // コメントと、いいねした人の一覧(だれでも見られる)
+  pxCur={pid:pid,it:it};$("pxm").hidden=false;$("pxBody").innerHTML='<div class="note">読み込み中…</div>';
+  px[pid]=await pxLoad(pid);pxRender();
+}
+async function pxRender(){
+  if(!pxCur||$("pxm").hidden)return;
+  var pid=pxCur.pid,o=px[pid],ids={},pr={};
+  o.likes.forEach(function(l){ids[l.id]=1});o.cms.forEach(function(c){if(c.data&&typeof c.data.uid==="string")ids[c.data.uid]=1});
+  await Promise.all(Object.keys(ids).map(function(u){return fGet("profiles/"+u).then(function(p){pr[u]=p},function(){})}));
+  if(!pxCur||pxCur.pid!==pid)return;
+  var box=$("pxBody");box.innerHTML='<div class="tmname"></div><div class="tld"></div><h3 class="sh">いいね</h3><div class="note" id="pxL"></div><h3 class="sh">コメント</h3><div id="pxC"></div>';
+  box.querySelector(".tmname").textContent=pxCur.it.n||"勉強";box.querySelector(".tld").innerHTML=tlDur(pxCur.it.s);
+  $("pxL").textContent=o.likes.length?o.likes.map(function(l){return fbNm(pr[l.id])}).join("、"):"まだいません";
+  var C=$("pxC");if(!o.cms.length)C.innerHTML='<div class="note">まだありません。</div>';
+  o.cms.slice().sort(function(a,b){return (a.data.at||0)-(b.data.at||0)}).forEach(function(c){
+    var u=c.data.uid,tm=new Date(c.data.at||0),e=document.createElement("div");e.className="cm";
+    e.innerHTML='<div class="av"></div><div class="cmt"><b></b> <small class="note"></small><div class="tx"></div></div>';
+    fbPaint(e.querySelector(".av"),pr[u]&&pr[u].icon,pr[u]&&pr[u].color,pr[u]&&pr[u].photo);
+    e.querySelector("b").textContent=fbNm(pr[u]);e.querySelector("small").textContent=(tm.getMonth()+1)+"/"+tm.getDate()+" "+("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2);
+    e.querySelector(".tx").textContent=String(c.data.text||"").slice(0,300);
+    if(u===FB.uid||pid.split("_")[0]===FB.uid){var d=document.createElement("button");d.textContent="削除";d.onclick=async function(){try{await fDel("posts/"+pid+"/comments/"+c.id);o.cms=o.cms.filter(function(x){return x.id!==c.id});pxRender();if(tlRows[pid])pxPaint(tlRows[pid],pid)}catch(x){}};e.appendChild(d)}
+    C.appendChild(e);
+  });
+}
+async function pxSend(){
+  var t=$("pxIn").value.trim();if(!t||!pxCur||!FB.uid)return;
+  var pid=pxCur.pid,id=rid(),d={uid:FB.uid,text:t.slice(0,300),at:Date.now()};
+  try{await fSet("posts/"+pid+"/comments/"+id,d);$("pxIn").value="";px[pid].cms.push({id:id,data:d});pxRender();if(tlRows[pid])pxPaint(tlRows[pid],pid)}
+  catch(e){askConfirm("コメントできませんでした","フォローが承認されている人にだけ、コメントできます。","OK")}
+}
+// ---- メッセージ(DM)。2人の組ごとに dm/(小さいuid_大きいuid) を作る。相手が読むと「既読」が出る ----
+var dmCur=null,dmTimer=null;
+function dmId(a,b){return a<b?a+"_"+b:b+"_"+a}
+async function fQ(path,field,n){var r=await FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,path),FB.Fs.orderBy(field,"desc"),FB.Fs.limit(n))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function fMem(uid){var r=await FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,"dm"),FB.Fs.where("members","array-contains",uid))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function dmCheck(){ // 未読のある会話の数(メッセージボタンの数字)
+  if(!FB.uid||document.hidden)return;
+  try{var cs=await fMem(FB.uid),n=0,seen=state.dmSeen||{};cs.forEach(function(c){var d=c.data;if(d.lastFrom&&d.lastFrom!==FB.uid&&(d.updated||0)>(seen[c.id]||0))n++});FBN.dm=n;paintCounts()}catch(e){}
+}
+function dmStop(){dmCur=null;clearInterval(dmTimer)}
+async function openDmList(){
+  dmStop();$("dmm").hidden=false;$("dmBack").hidden=true;$("dmForm").hidden=true;$("dmT").textContent="メッセージ";
+  var box=$("dmBody");box.innerHTML='<div class="note">読み込み中…</div>';
+  var cs=[];try{cs=await fMem(FB.uid)}catch(e){}
+  if(dmCur||$("dmm").hidden)return;
+  cs.sort(function(a,b){return (b.data.updated||0)-(a.data.updated||0)});box.innerHTML="";
+  if(!cs.length){box.innerHTML='<div class="note">まだメッセージはありません。友達のプロフィールから送れます。</div>';return}
+  var seen=state.dmSeen||{};
+  for(var i=0;i<cs.length;i++){
+    var d=cs[i].data,other=(d.members||[]).filter(function(x){return x!==FB.uid})[0],p=null;if(!other)continue;
+    try{p=await fGet("profiles/"+other)}catch(e){}
+    var row=fbRow(p,other),un=d.lastFrom!==FB.uid&&(d.updated||0)>(seen[cs[i].id]||0),nt=row.querySelector(".note");
+    row.classList.add("dmrow");row.querySelector(".av").onclick=null;row.querySelector("b").onclick=null;
+    nt.textContent=(un?"● ":"")+String(d.last||"").slice(0,60);if(un)nt.classList.add("un");
+    (function(o,pp){row.onclick=function(){openChat(o,pp)}})(other,p);
+    box.appendChild(row);
+  }
+}
+async function openChat(other,p){
+  var cid=dmId(FB.uid,other);dmStop();dmCur={cid:cid,other:other,p:p||null};var c=dmCur;
+  $("dmm").hidden=false;$("dmBack").hidden=false;$("dmForm").hidden=false;$("dmBody").innerHTML='<div class="note">読み込み中…</div>';
+  if(!p){try{c.p=await fGet("profiles/"+other)}catch(e){}}
+  $("dmT").textContent=fbNm(c.p);
+  await dmLoad(true);if(dmCur===c)dmTimer=setInterval(function(){dmLoad(false)},4000);
+}
+async function dmLoad(first){
+  var c=dmCur;if(!c)return;var msgs=[],rd=0;
+  try{msgs=(await fQ("dm/"+c.cid+"/messages","at",100)).reverse()}catch(e){}
+  try{var r=await fGet("dm/"+c.cid+"/reads/"+c.other);rd=r&&Number(r.at)||0}catch(e){}
+  if(dmCur!==c)return;
+  var box=$("dmBody"),bottom=first||box.scrollTop+box.clientHeight>=box.scrollHeight-40;box.innerHTML="";
+  if(!msgs.length)box.innerHTML='<div class="note">メッセージを送ってみましょう。</div>';
+  msgs.forEach(function(m){
+    var d=m.data,me=d.from===FB.uid,tm=new Date(d.at||0),e=document.createElement("div");e.className="msg"+(me?" me":"");
+    e.innerHTML='<div class="bub"></div><small></small>';e.querySelector(".bub").textContent=String(d.text||"").slice(0,1000);
+    e.querySelector("small").textContent=("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2)+(me&&(d.at||0)<=rd?"  既読":"");
+    box.appendChild(e);
+  });
+  if(bottom)box.scrollTop=box.scrollHeight;
+  var last=msgs[msgs.length-1];state.dmSeen=state.dmSeen||{};
+  if(first||(last&&last.data.from!==FB.uid&&(last.data.at||0)>(state.dmSeen[c.cid]||0))){ // 開いて読んだ印(相手の画面に「既読」が出る)
+    state.dmSeen[c.cid]=Date.now();save();fSet("dm/"+c.cid+"/reads/"+FB.uid,{at:Date.now()}).catch(function(){});dmCheck();
+  }
+}
+async function dmSend(){
+  var t=$("dmIn").value.trim(),c=dmCur;if(!t||!c)return;var now=Date.now();
+  try{
+    await fSet("dm/"+c.cid,{members:[FB.uid,c.other].sort(),updated:now,last:t.slice(0,100),lastFrom:FB.uid});
+    await fSet("dm/"+c.cid+"/messages/"+rid(),{from:FB.uid,text:t.slice(0,1000),at:now});
+    $("dmIn").value="";await dmLoad(true);
+  }catch(e){askConfirm("送れませんでした","お互いのどちらかがフォローを承認しているときだけ、メッセージを送れます。","OK")}
 }
 async function renderRank(){ // 学習記録の画面の下: フォロー中の人(と自分)の、今日の勉強時間ランキング
   var box=$("rank"),hd=$("rankHd");
@@ -1923,13 +2061,13 @@ async function renderFb(){
   var cl=inClaudeEnv(),cfg=fbConfig();
   var off=$("fbOff");
   off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
-  $("cntRow").hidden=true;$("bellBtn").hidden=true;$("addBtn").hidden=true;$("shareBtn").hidden=true;$("fbLogout").hidden=true;
+  $("cntRow").hidden=true;$("bellBtn").hidden=true;$("dmBtn").hidden=true;$("addBtn").hidden=true;$("shareBtn").hidden=true;$("fbLogout").hidden=true;
   if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
   if(!cfg){$("fbSetup").hidden=false;return}
   if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
   if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
   if(!FB.uid){$("fbOutBox").hidden=false;return}
-  $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
+  $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("dmBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
   $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
@@ -2151,6 +2289,16 @@ $("cntFr").onclick=function(){openList("fr")};
 $("lmClose").onclick=closeList;
 $("lm").onclick=function(e){if(e.target===this)closeList()};
 $("pmClose").onclick=closeProfile;
+$("dmBtn").onclick=openDmList;
+$("dmBack").onclick=openDmList;
+$("dmmClose").onclick=function(){$("dmm").hidden=true;dmStop()};
+$("dmm").onclick=function(e){if(e.target===this){this.hidden=true;dmStop()}};
+$("dmSend").onclick=dmSend;
+$("dmIn").onkeydown=function(e){if(e.key==="Enter"&&!e.isComposing){e.preventDefault();dmSend()}};
+$("pxSend").onclick=pxSend;
+$("pxIn").onkeydown=function(e){if(e.key==="Enter"&&!e.isComposing){e.preventDefault();pxSend()}};
+$("pxClose").onclick=function(){$("pxm").hidden=true;pxCur=null};
+$("pxm").onclick=function(e){if(e.target===this){this.hidden=true;pxCur=null}};
 $("tlClose").onclick=function(){$("tlm").hidden=true};
 $("tlm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("pm").onclick=function(e){if(e.target===this)closeProfile()};
@@ -2207,4 +2355,11 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
   var sel=document.getElementById("chromeTheme");if(sel)sel.addEventListener("change",function(){save("chrome",sel.value)});
   var settingsBtn=document.getElementById("settingsBtn"),settingsModal=document.getElementById("appearanceModal"),settingsClose=document.getElementById("appearanceClose");
   if(settingsBtn&&settingsModal){settingsBtn.addEventListener("click",function(){settingsModal.hidden=false});settingsModal.addEventListener("click",function(e){if(e.target===settingsModal)settingsModal.hidden=true})}
-  if(settingsClose&&settingsModal)settingsClose.addEventL
+  if(settingsClose&&settingsModal)settingsClose.addEventListener("click",function(){settingsModal.hidden=true});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&settingsModal&&!settingsModal.hidden)settingsModal.hidden=true});
+  apply();
+})();
+</script>
+
+</body>
+</html>
