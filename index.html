@@ -286,6 +286,19 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 #daysCard{color:#d62828!important}
 @media(max-width:420px){.theme-options{gap:7px}.theme-choice{padding:9px}}
 
+/* タイムライン(フォロー中の友達の学習記録) */
+#tlm .tmbox{max-height:88vh;overflow-y:auto;padding-left:0;padding-right:0}
+#tlm .tmname,#tlm .actions{margin-left:16px;margin-right:16px}
+.tlday{padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--sub)}
+.tlpost{display:flex;gap:12px;padding:14px 16px;border-top:1px solid var(--line)}
+.tlpost .av{width:48px;height:48px;font-size:1.5rem;cursor:pointer}
+.tlbody{flex:1;min-width:0}
+.tlhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tlhead b{cursor:pointer}
+.tltime{color:var(--sub);font-size:.85rem}
+.tlcard{display:flex;align-items:center;gap:14px;margin-top:8px;padding:14px 16px;border-radius:16px;background:rgba(127,127,127,.12)}
+.tln{font-weight:700;overflow-wrap:anywhere}
+.tld{font-size:.95rem}.tld b{font-size:1.5rem;margin:0 1px}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -324,7 +337,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
   <button class="sp-preview-card follow" id="followingCard" type="button" aria-label="友達の学習記録を見る">
     <span class="eyebrow">フォロー中</span>
     <span class="big">友達の学習記録を見る</span>
-    <span class="small">タップして一覧を開く　›</span>
+    <span class="small">タイムラインで見る　›</span>
   </button>
 </div>
 </div>
@@ -402,23 +415,11 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div id="glist"></div>
 </section>
 <section id="mypage" hidden>
-<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.88l.06.06-1.7 2.94-.08-.02a1.7 1.7 0 00-1.8.35l-.06.06h-3.4l-.02-.08a1.7 1.7 0 00-1.2-1.2l-.08-.02-2.94 1.7-.06-.06a1.7 1.7 0 00-1.88-.34l-.08.03-1.7-2.94.06-.06A1.7 1.7 0 005.2 15l-.02-.08v-3.4l.08-.02a1.7 1.7 0 001.2-1.2l.02-.08-1.7-2.94.06-.06a1.7 1.7 0 00.34-1.88l-.03-.08 2.94-1.7.06.06a1.7 1.7 0 001.88.34l.08-.03h3.4l.02.08a1.7 1.7 0 001.2 1.2l.08.02 2.94-1.7.06.06a1.7 1.7 0 001.88.34l.08-.03 1.7 2.94-.06.06a1.7 1.7 0 00-.34 1.88l.03.08v3.4z" transform="translate(-1 -1) scale(1.08)"/></svg></button></div></div>
+<div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="bellBtn" aria-label="フォローリクエストの通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/></svg><span class="bdg" id="bellBdg" hidden></span></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div class="me big"><div class="av" id="meAv"></div><div><b id="meName"></b>
 <div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
-<div class="note" id="meSub"></div><div class="note" id="meSchool"></div></div></div>
-<div class="actions" id="pfView"><button id="pfEditBtn">編集</button><button id="shareBtn" hidden>シェア</button></div>
-<div id="pfEdit">
-<div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
-<div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
-<input type="file" id="pfPhoto" accept="image/*" style="display:none">
-<p class="err" id="pfNote"></p></div>
-<div class="fld"><span class="lb">テーマの色</span><div class="icons" id="colorPick"></div></div>
-<div class="fld"><label>名前<input type="text" id="pfName" maxlength="20" placeholder="例 たろう"></label></div>
-<div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
-<div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
-<div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
-<div class="actions"><button id="pfDone" class="main">完了</button></div>
-</div>
+<div class="note" id="meSub"></div><div class="note" id="meSchool"></div><div class="note" id="meMore"></div></div></div>
+<div class="actions" id="pfView"><button id="shareBtn" hidden>シェア</button></div>
 <h3 class="sh">アカウント・フレンド</h3>
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
@@ -431,7 +432,6 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 </div>
 <div id="fbOn" hidden>
 <div class="note" id="fbMail"></div>
-<div class="actions"><button id="fbLogout">ログアウト</button></div>
 </div>
 <p class="note" id="appVer"></p>
 </section>
@@ -469,6 +469,10 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div class="tmbox"><div class="tmname" id="lmt"></div><div id="lmBody"></div>
 <div class="actions"><button id="lmClose">閉じる</button></div></div>
 </div>
+<div class="tm" id="tlm" hidden role="dialog" aria-modal="true" aria-labelledby="tlt">
+<div class="tmbox"><div class="tmname" id="tlt">フォロー中のタイムライン</div><div id="tlBody"></div>
+<div class="actions"><button id="tlClose">閉じる</button></div></div>
+</div>
 <div class="tm" id="pm" hidden role="dialog" aria-modal="true" aria-label="プロフィール">
 <div class="tmbox"><div id="pmBody"></div>
 <div class="actions"><button id="pmClose">閉じる</button></div></div>
@@ -483,6 +487,23 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 <div class="tm" id="appearanceModal" hidden role="dialog" aria-modal="true" aria-labelledby="appearanceTitle">
 <div class="tmbox">
 <div class="tmname" id="appearanceTitle">設定</div>
+<h3 class="sh">プロフィール</h3>
+<div id="pfEdit">
+<div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
+<div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
+<input type="file" id="pfPhoto" accept="image/*" style="display:none">
+<p class="err" id="pfNote"></p></div>
+<div class="fld"><span class="lb">テーマの色</span><div class="icons" id="colorPick"></div></div>
+<div class="fld"><label>名前<input type="text" id="pfName" maxlength="20" placeholder="例 たろう"></label></div>
+<div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
+<div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
+<div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
+<div class="fld"><label>高校名<input type="text" id="pfHigh" maxlength="30" placeholder="例 ○○高校"></label></div>
+<div class="fld"><label>出身校(中学校など)<input type="text" id="pfOrigin" maxlength="30" placeholder="例 ○○中学校"></label></div>
+<div class="fld"><label>性別<select id="pfGender"><option value="">未設定</option><option>男性</option><option>女性</option><option>その他</option><option>回答しない</option></select></label></div>
+<div class="fld"><label>生まれた年<input type="number" id="pfBY" min="1900" max="2100" placeholder="例 2008"></label></div>
+<div class="fld"><label>誕生日<span class="pair"><input type="number" id="pfBM" min="1" max="12" placeholder="月"><span>月</span><input type="number" id="pfBD" min="1" max="31" placeholder="日"><span>日</span></span></label></div>
+</div>
 <h3 class="sh">アプリのデザイン</h3>
 <div class="fld theme-settings">
   <span class="lb">配色テーマ</span>
@@ -495,6 +516,8 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
   </div>
   <div class="fld"><label>上部ヘッダー・下部メニュー<select id="chromeTheme"><option value="theme">テーマカラーに合わせる</option><option value="navy">ネイビーを使う</option><option value="white">白にする</option></select></label></div>
 </div>
+<h3 class="sh">アカウント</h3>
+<div class="actions"><button id="fbLogout" class="dng" hidden>ログアウト</button></div>
 <div class="actions"><button id="appearanceClose" class="main">完了</button></div>
 </div>
 </div>
@@ -978,16 +1001,27 @@ function setDone(id,on){
   }
   save();
 }
+function feedAdd(name,sec){ // 友達のタイムラインに出す、最近の記録(同じ科目を20分以内に続けたら、1つにまとめる)
+  if(!(sec>=1))return;state.feed=state.feed||[];
+  var now=Date.now(),l=state.feed[state.feed.length-1];
+  if(l&&l.n===name&&now-l.t<20*60*1000){l.s+=sec;l.t=now}else state.feed.push({t:now,n:String(name).slice(0,30),s:sec});
+  if(state.feed.length>60)state.feed=state.feed.slice(-60);
+}
+function feedSub(date,name,sec){ // 記録を取り消したとき、タイムラインの分も減らす
+  var f=state.feed||[];
+  for(var i=f.length-1;i>=0&&sec>0.5;i--){var x=f[i];if(x.n!==name||fmtDate(new Date(x.t))!==date)continue;var tk=Math.min(x.s,sec);x.s-=tk;sec-=tk}
+  state.feed=f.filter(function(x){return x.s>=1});
+}
 function logAdd(name,sec,id,kind){ // id/kind: どの項目の、計測(t)か完了(c)か。巻き戻しに使う
   if(!(sec>0))return;
   var d=fmtDate(new Date());
   state.log=state.log||{};state.log[d]=state.log[d]||{};
-  state.log[d][name]=(state.log[d][name]||0)+sec;
+  state.log[d][name]=(state.log[d][name]||0)+sec;feedAdd(name,sec);
   if(id){state.contrib=state.contrib||{};(state.contrib[id]=state.contrib[id]||[]).push({date:d,name:name,sec:sec,k:kind})}
 }
 function subLog(date,name,sec){ // 取り消せた分(秒)を返す
   var d=state.log&&state.log[date];if(!d||!d[name])return 0;
-  var take=Math.min(d[name],sec);d[name]-=take;
+  var take=Math.min(d[name],sec);d[name]-=take;feedSub(date,name,take);
   if(d[name]<=0.5)delete d[name];
   if(!Object.keys(d).length)delete state.log[date];
   return take;
@@ -1016,6 +1050,7 @@ function rollback(id,kind){
 }
 // 記録の削除。match(日付)が真の日の記録を、グラフ・内訳の元データごと消す。
 function deleteRecords(match){
+  state.feed=(state.feed||[]).filter(function(x){return !match(fmtDate(new Date(x.t)))});
   Object.keys(state.log||{}).forEach(function(d){if(match(d))delete state.log[d]});
   Object.keys(state.contrib||{}).forEach(function(id){
     var keep=state.contrib[id].filter(function(e){return !match(e.date)});
@@ -1086,6 +1121,7 @@ function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:�
 // ---- 記録の手入力(右上の「記録」ボタン)と、一覧・1件ずつの削除(グラフの枠を押す) ----
 var mrLimit=15,mrSig="";
 function delRecord(date,name){ // その日の、その科目の記録を消す
+  state.feed=(state.feed||[]).filter(function(x){return !(x.n===name&&fmtDate(new Date(x.t))===date)});
   if(state.log&&state.log[date]){delete state.log[date][name];if(!Object.keys(state.log[date]).length)delete state.log[date]}
   Object.keys(state.contrib||{}).forEach(function(id){
     var keep=state.contrib[id].filter(function(e){return !(e.date===date&&e.name===name)});
@@ -1154,7 +1190,7 @@ function addRecord(){
   if(!(sec>0)){err.textContent="勉強した時間を入れてください。";return}
   if(sec>24*3600){err.textContent="1回の記録は、24時間までです。";return}
   err.textContent="";
-  state.log=state.log||{};state.log[date]=state.log[date]||{};state.log[date][name]=(state.log[date][name]||0)+sec;
+  state.log=state.log||{};state.log[date]=state.log[date]||{};state.log[date][name]=(state.log[date][name]||0)+sec;if(date===fmtDate(new Date()))feedAdd(name,sec);
   $("mrH").value="";$("mrM").value="";$("mrSubj").value="";save();$("mrm").hidden=true;renderStats();
 }
 function renderPies(bs,L){
@@ -1408,17 +1444,21 @@ function saveGrade(){
 var ICONS=["📚","✏️","🎯","🔥","🌟","🚀","🐱","🐶","🍀","🎧","☕","🌙"];
 var COLORS=["#0b6e6e","#e03131","#1971c2","#9c36b5","#f08c00","#2f9e44","#d6336c","#495057"];
 var pfEditing=null; // プロフィールの入力枠を出すか。初めて(まだ何も設定していない)ときだけ最初から出す
+function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生日の表示(友達には出さない。この端末と、同期した自分の端末だけ)
+  var b="";
+  if(p.bY&&p.bM&&p.bD)b=p.bY+"年"+p.bM+"月"+p.bD+"日生まれ";else if(p.bY)b=p.bY+"年生まれ";else if(p.bM&&p.bD)b="誕生日 "+p.bM+"月"+p.bD+"日";
+  return [p.gender||"",p.high?"🏫 "+p.high:"",p.origin?"出身校 "+p.origin:"",b].filter(Boolean).join("・");
+}
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
-  if(pfEditing===null)pfEditing=!(p.set||p.name||p.school||p.photo||p.grade||p.age);
-  $("pfEdit").hidden=!pfEditing;$("pfView").hidden=pfEditing;
   var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
   if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
   $("pfPhotoDel").hidden=!p.photo;
   $("meName").textContent=p.name||"名前は未設定です";
   $("meSub").textContent=[p.grade,p.age?p.age+"歳":""].filter(Boolean).join("・");
   $("meSchool").textContent=p.school?"🎓 "+p.school:"";
+  $("meMore").textContent=pfMore(p);
   var ip=$("iconPick");ip.innerHTML="";
   ICONS.forEach(function(ic){
     var b=document.createElement("button");b.textContent=ic;b.className=(ic===p.icon&&!p.photo)?"on":"";b.setAttribute("aria-label","アイコン "+ic);
@@ -1433,6 +1473,12 @@ function renderMy(){
   $("pfGrade").value=p.grade||"";
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
+  if(document.activeElement!==$("pfHigh"))$("pfHigh").value=p.high||"";
+  if(document.activeElement!==$("pfOrigin"))$("pfOrigin").value=p.origin||"";
+  $("pfGender").value=p.gender||"";
+  if(document.activeElement!==$("pfBY"))$("pfBY").value=p.bY||"";
+  if(document.activeElement!==$("pfBM"))$("pfBM").value=p.bM||"";
+  if(document.activeElement!==$("pfBD"))$("pfBD").value=p.bD||"";
 }
 
 // ===== Googleでログイン・フレンド(Firebaseを使う) =====
@@ -1451,7 +1497,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-16 v8"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-16 v9"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1540,8 +1586,8 @@ function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=
 async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
-  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),updated:Date.now()};
-  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log]);
+  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),feed:(state.feed||[]).slice(-30).map(function(x){return{t:Math.round(x.t),n:String(x.n).slice(0,30),s:Math.round(x.s)}}),updated:Date.now()};
+  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log,st.feed]);
   if(!force&&sig===fbSig)return;
   var base={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},full=Object.assign({},base);
   if(me.photo)full.photo=me.photo;if(me.grade)full.grade=me.grade;if(me.school)full.school=me.school;
@@ -1694,6 +1740,39 @@ async function fbPoll(){ // リクエストが来ているか、ときどき確�
   try{FBN.req=(await fList("requests/"+FB.uid+"/from")).length;paintCounts()}catch(e){}
   if(state.page===6)renderRank();
 }
+function tlDur(sec){var t=Math.round(sec/60),h=Math.floor(t/60),m=t%60;return (h?"<b>"+h+"</b>時間 ":"")+((m||!h)?"<b>"+m+"</b>分":"")}
+async function openTimeline(){ // フォロー中の友達の学習記録を、新しい順に並べて見せる
+  $("tlm").hidden=false;var box=$("tlBody"),pad='<div class="note" style="padding:0 16px">';
+  if(!FB.uid){box.innerHTML=pad+"ログインすると、フォロー中の友達の学習記録がタイムラインで見られます。</div>";return}
+  box.innerHTML=pad+"読み込み中…</div>";
+  var ids=await myFollowIds(),items=[];
+  for(var i=0;i<ids.length;i++){
+    var d=null,p=null,uid=ids[i];
+    try{d=await fGet("stats/"+uid)}catch(e){continue} // まだ承認されていない人は入れない
+    try{p=await fGet("profiles/"+uid)}catch(e){}
+    (d&&Array.isArray(d.feed)?d.feed.slice(-40):[]).forEach(function(x){
+      var t=Number(x&&x.t),s=Number(x&&x.s);
+      if(isFinite(t)&&t>0&&isFinite(s)&&s>=30)items.push({t:t,s:s,n:String(x.n||"").slice(0,30),uid:uid,p:p});
+    });
+  }
+  if($("tlm").hidden)return;
+  items.sort(function(a,b){return b.t-a.t});items=items.slice(0,60);
+  box.innerHTML="";
+  if(!items.length){box.innerHTML=pad+"まだ友達の記録がありません。</div>";return}
+  var last="",td=fmtDate(new Date()),yd=fmtDate(new Date(Date.now()-86400000));
+  items.forEach(function(it){
+    var dt=new Date(it.t),ds=fmtDate(dt);
+    if(ds!==last){last=ds;var h=document.createElement("div");h.className="tlday";h.textContent=ds===td?"今日":ds===yd?"昨日":(dt.getMonth()+1)+"月"+dt.getDate()+"日";box.appendChild(h)}
+    var e=document.createElement("div");e.className="tlpost";
+    e.innerHTML='<div class="av"></div><div class="tlbody"><div class="tlhead"><b></b><span class="tltime"></span></div><div class="tlcard"><svg viewBox="0 0 40 52" width="40" height="52" aria-hidden="true"><rect x="4" y="2" width="32" height="48" rx="3" fill="'+colorOf(it.n)+'"/><rect x="4" y="2" width="7" height="48" rx="2" fill="#17232f"/><rect x="14" y="8" width="18" height="14" rx="2" fill="#fff" opacity=".35"/></svg><div><div class="tln"></div><div class="tld"></div></div></div></div>';
+    fbPaint(e.querySelector(".av"),it.p&&it.p.icon,it.p&&it.p.color,it.p&&it.p.photo);
+    var nm=e.querySelector("b");nm.textContent=fbNm(it.p);
+    var open=function(){openProfile(it.uid)};nm.onclick=open;e.querySelector(".av").onclick=open;
+    e.querySelector(".tltime").textContent=("0"+dt.getHours()).slice(-2)+":"+("0"+dt.getMinutes()).slice(-2);
+    e.querySelector(".tln").textContent=it.n||"勉強";e.querySelector(".tld").innerHTML=tlDur(it.s);
+    box.appendChild(e);
+  });
+}
 async function renderRank(){ // 学習記録の画面の下: フォロー中の人(と自分)の、今日の勉強時間ランキング
   var box=$("rank"),hd=$("rankHd");
   if(!FB.uid){box.innerHTML="";hd.hidden=true;return}
@@ -1830,13 +1909,13 @@ async function renderFb(){
   var cl=inClaudeEnv(),cfg=fbConfig();
   var off=$("fbOff");
   off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
-  $("cntRow").hidden=true;$("bellBtn").hidden=true;$("addBtn").hidden=true;$("shareBtn").hidden=true;
+  $("cntRow").hidden=true;$("bellBtn").hidden=true;$("addBtn").hidden=true;$("shareBtn").hidden=true;$("fbLogout").hidden=true;
   if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
   if(!cfg){$("fbSetup").hidden=false;return}
   if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
   if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
   if(!FB.uid){$("fbOutBox").hidden=false;return}
-  $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("addBtn").hidden=false;$("shareBtn").hidden=!FB.code;
+  $("fbOn").hidden=false;$("cntRow").hidden=false;$("bellBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
   $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
@@ -1929,12 +2008,17 @@ $("emsave").onclick=saveEdit;
 $("emdel").onclick=deleteEdit;
 $("emcancel").onclick=closeEdit;
 $("em").onclick=function(e){if(e.target===this)closeEdit()};
-$("pfEditBtn").onclick=function(){pfEditing=true;renderMy()};
-$("pfDone").onclick=function(){pfEditing=false;state.profile.set=true;save();renderMy()};
 $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
 $("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
+function pfSet(k,v){state.profile[k]=v;save();$("meMore").textContent=pfMore(state.profile)}
+$("pfHigh").oninput=function(){pfSet("high",this.value.slice(0,30))};
+$("pfOrigin").oninput=function(){pfSet("origin",this.value.slice(0,30))};
+$("pfGender").onchange=function(){pfSet("gender",this.value)};
+$("pfBY").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bY",v>=1900&&v<=new Date().getFullYear()?String(v):"")};
+$("pfBM").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bM",v>=1&&v<=12?String(v):"")};
+$("pfBD").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bD",v>=1&&v<=31?String(v):"")};
 $("altPlan").onclick=function(){
   if(!state.plan||!state.plan.length)return;
   state.planStyle=((state.planStyle||0)+1)%PLAN_STYLES.length;
@@ -2041,7 +2125,7 @@ $("fbCfgSave").onclick=function(){
   location.reload();
 };
 $("fbIn").onclick=function(){fbSignIn()};
-$("fbLogout").onclick=function(){if(FB.Au)FB.Au.signOut(FB.auth)};
+$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
 $("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
 $("fbAdd").onclick=function(){fbAddFriend()};
 $("addBtn").onclick=openFriend;
@@ -2053,6 +2137,8 @@ $("cntFr").onclick=function(){openList("fr")};
 $("lmClose").onclick=closeList;
 $("lm").onclick=function(e){if(e.target===this)closeList()};
 $("pmClose").onclick=closeProfile;
+$("tlClose").onclick=function(){$("tlm").hidden=true};
+$("tlm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("pm").onclick=function(e){if(e.target===this)closeProfile()};
 $("shareBtn").onclick=async function(){
   if(!FB.code)return;
@@ -2073,15 +2159,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 // Header card click: open the app's existing following list. No Firebase/sync logic changed.
 (function(){
   var card=document.getElementById("followingCard");
-  if(card) card.addEventListener("click",function(){
-    var myNav=document.getElementById("navMy");
-    if(myNav) myNav.click();
-    window.setTimeout(function(){
-      var followButton=document.getElementById("cntFol");
-      if(followButton) followButton.click();
-      else if(typeof openList==="function") openList("fol");
-    },80);
-  });
+  if(card) card.addEventListener("click",function(){if(typeof openTimeline==="function")openTimeline()});
   function refreshExamCard(){
     var src=document.getElementById("days"),dst=document.getElementById("daysCard");
     if(src&&dst) dst.textContent=src.textContent||"-";
