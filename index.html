@@ -443,9 +443,11 @@ var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
 var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
-function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}}
+var SYNC_SKIP=["timer","page","planPage","updatedAt","dataAt"],lastData="";
+function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
+function load(){try{var s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}lastData=syncData()}
 function store(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function save(){state.updatedAt=Date.now();store();if(typeof fbSchedule==="function")fbSchedule()}
+function save(){state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now()}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule()}
 
 var $=function(id){return document.getElementById(id)};
 
@@ -1346,7 +1348,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-15 v6"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-15 v7"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1406,7 +1408,7 @@ function genCode(){ // 紛らわしい文字(0 O 1 I)を除いた8文字
   (window.crypto||crypto).getRandomValues(a);
   for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o;
 }
-function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS)}}
+function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS),grade:String(p.grade||"").slice(0,10),school:String(p.school||"").slice(0,40)}}
 // 友達に見せる写真は、96×96の小さなJPEG(photoS)。古い写真(photoSがまだない)は、ここで作る。
 function ensureSmallPhoto(){
   var p=state.profile||{};
@@ -1436,24 +1438,59 @@ async function fbPublish(force){ // プロフィールと、目標・学習記�
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
   var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),updated:Date.now()};
-  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,FB.code,st.goal,st.log]);
+  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log]);
   if(!force&&sig===fbSig)return;
+  var base={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},full=Object.assign({},base);
+  if(me.photo)full.photo=me.photo;if(me.grade)full.grade=me.grade;if(me.school)full.school=me.school;
+  var noGs=Object.assign({},full);delete noGs.grade;delete noGs.school;
   try{
-    var prof={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},photoNg=false;
-    if(me.photo)prof.photo=me.photo; // 写真がないときは、photoの項目そのものを送らない
-    try{await fSet("profiles/"+FB.uid,prof)}
-    catch(e){ // 写真の項目がルールで断られたときは、写真なしで保存し直す(ほかの項目は保存する)
-      if(!me.photo)throw e;
-      delete prof.photo;await fSet("profiles/"+FB.uid,prof);photoNg=true;
-    }
+    var saved=false,tries=[full,noGs,base];
+    for(var i=0;i<tries.length&&!saved;i++){try{await fSet("profiles/"+FB.uid,tries[i]);saved=true}catch(e){}} // ルールが新しい項目を断ったときは、項目を減らして保存し直す
+    if(!saved)throw new Error("profile");
     await fSet("stats/"+FB.uid,st);
-    fbSig=sig;FB.err=photoNg?"写真だけ保存できませんでした。Firebaseの「ルール」で、profilesのphotoの項目を許可してください。":"";
-  }catch(e){} // 保存できなかったときは、画面には何も出さない(次の保存のときに、もう一度ためす)
+    fbSig=sig;FB.err="";
+  }catch(e){}
+}
+// ---- 別の端末との同期: 自分だけが読み書きできる privateData/(自分のuid) に、データを丸ごと預ける ----
+var syncTimer=null,syncSig="";
+function isBlank(){return !state.plan&&!(state.goal||"").trim()&&!Object.keys(state.log||{}).length&&!(state.exams||[]).length} // まだ何も入れていない端末は、預けない(別の端末のデータを上書きしないため)
+function syncSchedule(){if(!FB.uid||!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPush,4000)}
+async function syncPush(){
+  if(!FB.uid||!FB.syncReady)return;
+  clearTimeout(syncTimer);syncTimer=null;
+  var d=syncData();if(d===syncSig||isBlank())return;
+  if(!state.dataAt){state.dataAt=Date.now();store()}
+  try{await fSet("privateData/"+FB.uid,{data:d,dataAt:state.dataAt,saved:Date.now()});syncSig=d}catch(e){}
+}
+function syncApply(r){ // 別の端末のほうが新しい: その内容をこの端末に入れて、開き直す
+  try{
+    var o=JSON.parse(r.data);o.timer=state.timer;o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
+    localStorage.setItem(KEY,JSON.stringify(o));location.reload();return true;
+  }catch(e){return false}
+}
+async function syncPull(){ // 画面にもどったとき、別の端末のほうが新しければ取り込む
+  if(!FB.uid||!FB.syncReady)return;
+  if(syncTimer)await syncPush();
+  var r=null;try{r=await fGet("privateData/"+FB.uid)}catch(e){return}
+  if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0))syncApply(r);
+}
+async function syncStart(){ // ログインしたとき: クラウドのほうが新しければ取り込む。なければ、この端末のデータを預ける
+  var r=null;
+  try{r=await fGet("privateData/"+FB.uid)}catch(e){return} // 読めなかったときは、上書きしないように、同期を始めない
+  if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0)){if(syncApply(r))return}
+  FB.syncReady=true;await syncPush();
+}
+async function fbSocialSync(){ // 友達に見せる、フォロー中・フォロワーの一覧(idだけ)を保存する
+  if(!FB.uid)return;
+  try{
+    var fo=await myFollowIds(),vs=(await fList("stats/"+FB.uid+"/viewers")).map(function(x){return x.id});
+    await fSet("social/"+FB.uid,{following:fo.slice(0,200),followers:vs.slice(0,200),updated:Date.now()});
+  }catch(e){}
 }
 async function fbOnAuth(){
   renderFb();
-  if(!FB.uid){FB.code="";fbSig="";FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
-  try{await fbEnsure();await fbPublish(true)}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=0;paintCounts();return}
+  try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart()}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
 function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
@@ -1489,19 +1526,42 @@ function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと
   r.querySelector(".av").onclick=open;r.querySelector("b").onclick=open;
   return r;
 }
-async function openProfile(id){ // 他の人のプロフィール(名前・アイコン・目標・学習記録)
+var pmStack=[],pmCur=null;
+function closeProfile(){$("pm").hidden=true;pmStack=[];pmCur=null}
+function fbSub(q){return [q&&typeof q.grade==="string"?q.grade.slice(0,10):"",q&&typeof q.school==="string"&&q.school?"🎓 "+q.school.slice(0,40):""].filter(Boolean).join("・")}
+async function openProfile(id,push){ // 他の人のプロフィール: アイコン・名前・学年・志望校・フォロー中・フォロワー。つながっている人だけ、目標と学習記録も見られる
+  if($("pm").hidden)pmStack=[];else if(push&&pmCur)pmStack.push(pmCur);
+  pmCur=id;
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
-  var p=null,d=null,st="ok";
+  var p=null,d=null,so=null,st="ok";
   try{p=await fGet("profiles/"+id)}catch(e){}
+  try{so=await fGet("social/"+id)}catch(e){}
   try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
-  if($("pm").hidden)return;
+  if($("pm").hidden||pmCur!==id)return;
   box.innerHTML="";
+  if(pmStack.length){var bk=document.createElement("button");bk.textContent="← 戻る";bk.onclick=function(){openProfile(pmStack.pop())};box.appendChild(bk)}
   var top=document.createElement("div");top.className="me big";
-  top.innerHTML='<div class="av pav"></div><div><b></b></div>';
+  top.innerHTML='<div class="av pav"></div><div><b></b><div class="note"></div></div>';
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-  top.querySelector("b").textContent=(p&&typeof p.name==="string"&&p.name.slice(0,20))||"名前がわからない人";
+  top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
   box.appendChild(top);
+  var ids=function(k){return so&&Array.isArray(so[k])?so[k].filter(function(x){return typeof x==="string"}).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
+  var cnt=document.createElement("div");cnt.className="cnt";
+  cnt.innerHTML='<button><b>'+fo.length+'</b>フォロー中</button><i></i><button><b>'+fr.length+'</b>フォロワー</button>';
+  box.appendChild(cnt);
   var body=document.createElement("div");box.appendChild(body);
+  var lst=document.createElement("div");box.appendChild(lst);
+  var show=async function(list,title){
+    lst.innerHTML="";var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
+    if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
+    for(var i=0;i<list.length;i++){
+      var q=null;try{q=await fGet("profiles/"+list[i])}catch(e){}
+      var row=fbRow(q,list[i]);row.querySelector(".note").textContent=fbSub(q);
+      (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(list[i]);
+      lst.appendChild(row);
+    }
+  };
+  var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
   if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
   else if(st==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
   else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
@@ -1513,7 +1573,6 @@ async function openProfile(id){ // 他の人のプロフィール(名前・ア�
     body.appendChild(s);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
   }
 }
-
 // ---- フォロー数・通知のベル・一覧の画面 ----
 var FBN={fol:0,fr:0,req:0},listMode=null,FBSENT={};
 function paintCounts(){
@@ -1554,7 +1613,7 @@ async function renderRank(){ // 学習記録の画面の下: フォロー中の�
     box.appendChild(e);
   });
 }
-function fbAfter(){renderFb();fillList()}
+function fbAfter(){fbSocialSync();renderFb();fillList()}
 function openList(m){listMode=m;$("lmt").textContent={fol:"フォロー中",fr:"フォロワー",req:"フォローリクエスト"}[m];$("lm").hidden=false;fillList()}
 function closeList(){listMode=null;$("lm").hidden=true}
 async function fillList(){
@@ -1691,7 +1750,7 @@ async function fbAddFriend(){
     var pn=null;try{pn=await fGet("profiles/"+c.uid)}catch(e){}
     $("fbAddCode").value="";fbMsg(fbNm(pn)+"さんにフォローリクエストを送りました。");
   }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
-  renderFb();
+  fbSocialSync();renderFb();
 }
 
 // ===== イベント =====
@@ -1883,8 +1942,8 @@ $("cntFol").onclick=function(){openList("fol")};
 $("cntFr").onclick=function(){openList("fr")};
 $("lmClose").onclick=closeList;
 $("lm").onclick=function(e){if(e.target===this)closeList()};
-$("pmClose").onclick=function(){$("pm").hidden=true};
-$("pm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("pmClose").onclick=closeProfile;
+$("pm").onclick=function(e){if(e.target===this)closeProfile()};
 $("shareBtn").onclick=async function(){
   if(!FB.code)return;
   var t="学習プランナーで友達になろう!フレンドコード: "+FB.code+"\n"+location.href.split("#")[0];
@@ -1892,7 +1951,7 @@ $("shareBtn").onclick=async function(){
   try{await navigator.clipboard.writeText(t);openFriend();fbMsg("シェア用の文章をコピーしました。")}catch(e){openFriend()}
 };
 setInterval(fbPoll,60000);
-document.addEventListener("visibilitychange",function(){if(!document.hidden)fbPoll()});
+document.addEventListener("visibilitychange",function(){if(!document.hidden){fbPoll();syncPull()}});
 fbInit();
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
