@@ -364,7 +364,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </nav>
 <main>
 <div class="sp-top">
-<button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
+<button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">Study Planner</div>
 <p class="goalbar">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
@@ -519,8 +519,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
 <div class="fld"><span class="lb">あなたのフレンドコード</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
-<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
-<div class="fld"><span class="lb">または、友達のコードでフォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
+<div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
 </div>
@@ -2055,34 +2054,6 @@ async function renderFb(){
   paintCounts();
   if(FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync(); // フォロー中・フォロワーの一覧が変わったとき(前に保存できなかったときも)、友達に見せる一覧を保存し直す
 }
-async function fbSearchUsers(){
-  var term=$("fbUserSearch").value.trim().toLocaleLowerCase();
-  var box=$("fbUserResults");box.innerHTML="";
-  if(!term){box.innerHTML='<div class="note">ユーザー名を入力してください。</div>';return}
-  if(!FB.uid){box.innerHTML='<div class="note">先にGoogleでログインしてください。</div>';return}
-  box.innerHTML='<div class="note">検索中…</div>';
-  try{
-    var users=await fList("profiles"),matches=users.filter(function(x){
-      var n=x&&x.data&&typeof x.data.name==="string"?x.data.name.trim().toLocaleLowerCase():"";
-      return n&&n.indexOf(term)!==-1&&x.id!==FB.uid;
-    }).slice(0,20);
-    box.innerHTML="";
-    if(!matches.length){box.innerHTML='<div class="note">該当するユーザーが見つかりませんでした。</div>';return}
-    var mine=await myFollowIds();
-    matches.forEach(function(x){
-      var pr=x.data||{},row=document.createElement("div");row.className="fcard";
-      row.appendChild(fbRow(pr,x.id));
-      var action=document.createElement("div");action.className="actions";
-      var b=document.createElement("button");
-      if(mine.indexOf(x.id)>=0){b.textContent="フォロー中 / リクエスト済み";b.disabled=true}
-      else{b.textContent="フォローリクエストを送る";b.onclick=async function(){b.disabled=true;await fbFollowBack(x.id);fbMsg(fbNm(pr)+"さんにフォローリクエストを送りました。");fbSearchUsers()}}
-      action.appendChild(b);row.appendChild(action);
-      var prof=row.querySelector(".av");if(prof)prof.onclick=function(){openProfile(x.id,true)};
-      var name=row.querySelector("b");if(name)name.onclick=function(){openProfile(x.id,true)};
-      box.appendChild(row);
-    });
-  }catch(e){box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
-}
 async function fbAddFriend(){
   var code=$("fbAddCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(code.length!==8){fbMsg("コードは8文字です。");return}
@@ -2286,8 +2257,6 @@ $("fbIn").onclick=function(){fbSignIn()};
 $("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
 $("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
 $("fbAdd").onclick=function(){fbAddFriend()};
-$("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
-$("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
 $("fmClose").onclick=function(){$("fm").hidden=true};
 $("fm").onclick=function(e){if(e.target===this)this.hidden=true};
