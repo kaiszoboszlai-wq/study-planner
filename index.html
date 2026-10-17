@@ -74,8 +74,10 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .fbrow{display:flex;align-items:center;gap:8px;padding:6px 0}
 .fbrow>div:nth-child(2){flex:1;min-width:0}
 .fbrow button{padding:4px 10px}
-.fbcode{font-size:1.4rem;letter-spacing:.12em;font-weight:700}
-.fbin{width:150px;min-width:0;text-transform:uppercase}
+.fbin{width:100%;min-width:0;flex:1;text-transform:none;box-sizing:border-box}
+.rk{display:flex;align-items:center;gap:8px}
+.rk .fbin{flex:1;min-width:0}
+.rk button{flex:none}
 .dot{width:12px;height:12px;border-radius:3px;flex:none}
 .srow{display:flex;align-items:center;gap:8px;padding:4px 0}
 .srow i{width:12px;height:12px;border-radius:3px;flex:none}
@@ -339,6 +341,17 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 .live{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2fbf71;margin-left:7px;vertical-align:middle;animation:livePulse 1.4s ease-out infinite}
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(47,191,113,.6)}100%{box-shadow:0 0 0 9px rgba(47,191,113,0)}}
 .sp-t{font-family:"Manrope","Inter","Helvetica Neue",Arial,sans-serif;font-weight:800;letter-spacing:-.035em}
+/* Mobile header compact layout: reduce the top area and keep the title on one line. */
+@media(max-width:480px){
+  .sp-top{padding:11px 8px 12px;margin:-20px -16px 12px;border-radius:0 0 12px 12px}
+  .sp-brand{font-size:clamp(1rem,5vw,1.3rem);line-height:1.15;letter-spacing:-.02em;white-space:nowrap;margin:4px 0 3px}
+  .sp-top .goalbar{font-size:.75rem;line-height:1.25;margin:3px 0}
+  .sp-preview-head{gap:6px;margin:7px 0 0}
+  .sp-preview-card{min-height:68px;padding:8px;gap:4px;border-radius:10px}
+  .sp-preview-card .eyebrow{font-size:.68rem}
+  .sp-preview-card .big{font-size:clamp(1rem,4.2vw,1.3rem);line-height:1.1}
+  .sp-preview-card .small{font-size:.65rem;line-height:1.2}
+}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -364,7 +377,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </nav>
 <main>
 <div class="sp-top">
-<button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
+<button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">Study Planner</div>
 <p class="goalbar">🎯 <span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
@@ -518,8 +531,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </div>
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
-<div class="fld"><span class="lb">あなたのフレンドコード</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
-<div class="fld"><span class="lb">友達のコードで、フォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
+<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
 </div>
@@ -2046,7 +2058,7 @@ async function renderFb(){
   if(!FB.uid){$("fbOutBox").hidden=false;return}
   $("fbOn").hidden=false;$("cntRow").hidden=false;$("planeBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
-  $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+  $("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
   try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid})).size:0}catch(e){}
   try{FBN.fr=new Set((await fList("stats/"+uid+"/viewers")).map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size}catch(e){}
@@ -2054,23 +2066,34 @@ async function renderFb(){
   paintCounts();
   if(FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync(); // フォロー中・フォロワーの一覧が変わったとき(前に保存できなかったときも)、友達に見せる一覧を保存し直す
 }
-async function fbAddFriend(){
-  var code=$("fbAddCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
-  if(code.length!==8){fbMsg("コードは8文字です。");return}
+async function fbSearchUsers(){
+  var term=$("fbUserSearch").value.trim().toLocaleLowerCase();
+  var box=$("fbUserResults");box.innerHTML="";
+  if(!term){box.innerHTML='<div class="note">ユーザー名を入力してください。</div>';return}
+  if(!FB.uid){box.innerHTML='<div class="note">先にGoogleでログインしてください。</div>';return}
+  box.innerHTML='<div class="note">検索中…</div>';
   try{
-    var c=await fGet("codes/"+code);
-    if(!c||typeof c.uid!=="string"){fbMsg("そのコードは見つかりません。");return}
-    if(c.uid===FB.uid){fbMsg("それは、あなた自身のコードです。");return}
-    var f=await fGet("follows/"+FB.uid),ids=(f&&Array.isArray(f.ids))?f.ids.slice(0,100):[];
-    if(ids.indexOf(c.uid)>=0){fbMsg("すでにフォローしています。");return}
-    await fSet("requests/"+c.uid+"/from/"+FB.uid,{at:Date.now()});
-    ids.push(c.uid);await fSet("follows/"+FB.uid,{ids:ids});
-    var pn=null;try{pn=await fGet("profiles/"+c.uid)}catch(e){}
-    $("fbAddCode").value="";fbMsg(fbNm(pn)+"さんにフォローリクエストを送りました。");
-  }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
-  renderFb();
+    var users=await fList("profiles"),matches=users.filter(function(x){
+      var n=x&&x.data&&typeof x.data.name==="string"?x.data.name.trim().toLocaleLowerCase():"";
+      return n&&n.indexOf(term)!==-1&&x.id!==FB.uid;
+    }).slice(0,20);
+    box.innerHTML="";
+    if(!matches.length){box.innerHTML='<div class="note">該当するユーザーが見つかりませんでした。</div>';return}
+    var mine=await myFollowIds();
+    matches.forEach(function(x){
+      var pr=x.data||{},row=document.createElement("div");row.className="fcard";
+      row.appendChild(fbRow(pr,x.id));
+      var action=document.createElement("div");action.className="actions";
+      var b=document.createElement("button");
+      if(mine.indexOf(x.id)>=0){b.textContent="フォロー中 / リクエスト済み";b.disabled=true}
+      else{b.textContent="フォローリクエストを送る";b.onclick=async function(){b.disabled=true;await fbFollowBack(x.id);fbMsg(fbNm(pr)+"さんにフォローリクエストを送りました。");fbSearchUsers()}}
+      action.appendChild(b);row.appendChild(action);
+      var prof=row.querySelector(".av");if(prof)prof.onclick=function(){openProfile(x.id,true)};
+      var name=row.querySelector("b");if(name)name.onclick=function(){openProfile(x.id,true)};
+      box.appendChild(row);
+    });
+  }catch(e){box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
 }
-
 // ===== イベント =====
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
@@ -2255,8 +2278,8 @@ $("fbCfgSave").onclick=function(){
 };
 $("fbIn").onclick=function(){fbSignIn()};
 $("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
-$("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
-$("fbAdd").onclick=function(){fbAddFriend()};
+$("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
+$("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
 $("fmClose").onclick=function(){$("fm").hidden=true};
 $("fm").onclick=function(e){if(e.target===this)this.hidden=true};
