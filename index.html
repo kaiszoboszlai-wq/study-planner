@@ -74,8 +74,7 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .fbrow{display:flex;align-items:center;gap:8px;padding:6px 0}
 .fbrow>div:nth-child(2){flex:1;min-width:0}
 .fbrow button{padding:4px 10px}
-.fbcode{font-size:1.4rem;letter-spacing:.12em;font-weight:700}
-.fbin{width:150px;min-width:0;text-transform:uppercase}
+.fbin{width:100%;min-width:0;flex:1;text-transform:none;box-sizing:border-box}
 .dot{width:12px;height:12px;border-radius:3px;flex:none}
 .srow{display:flex;align-items:center;gap:8px;padding:4px 0}
 .srow i{width:12px;height:12px;border-radius:3px;flex:none}
@@ -518,9 +517,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </div>
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
-<div class="fld"><span class="lb">あなたのフレンドコード</span><div class="rk"><span class="fbcode" id="fbCode"></span><button id="fbCopy">コピー</button></div></div>
 <div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
-<div class="fld"><span class="lb">または、友達のコードでフォローをリクエスト</span><div class="rk"><input type="text" id="fbAddCode" class="fbin" maxlength="8" placeholder="8文字のコード" autocomplete="off" aria-label="友達のコード"><button id="fbAdd" class="main">リクエスト</button></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
 </div>
@@ -1521,7 +1518,7 @@ function renderMy(){
 // ログインとデータの保存は、Googleの「Firebase」が担当する。Claudeで公開したページからは外に接続できないので、
 // GitHub Pagesなどに置いたファイルで動く。firebaseConfig(公開してよい設定)は、下の FIREBASE_CONFIG に貼るか、
 // マイページの入力欄に貼る。
-// 守りかた: フレンドコードを知っている人が「リクエスト」を送り、本人が「承認」した人だけが、記録を読める。
+// 守りかた: フォローリクエストを本人が承認した人だけが、記録を読める。
 //   承認した人(フォロワー)には、全員に、名前・アイコン(写真は小さくしたもの)・色・目標・学習記録が見える(公開の選択はなし)。
 //   メールアドレス・Googleの本名・学年・年齢・志望校・成績は、公開しない。
 var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの、公開してよい値。守っているのは、Firestoreの「ルール」)
@@ -1608,7 +1605,7 @@ function ensureSmallPhoto(){
     im.src=p.photo;
   });
 }
-async function fbEnsure(){ // 初めてのログインで、フレンドコードを作る
+async function fbEnsure(){ // プロフィール同期に必要な内部IDを準備する
   var p=await fGet("profiles/"+FB.uid);
   if(p&&p.code){FB.code=p.code;return}
   for(var i=0;i<8;i++){
@@ -1676,7 +1673,7 @@ async function fbSocialSync(){ // 友達に見せる、フォロー中・フォ�
 async function fbOnAuth(){
   renderFb();
   if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=FBN.dm=0;dmStop();paintCounts();return}
-  try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart();dmCheck()}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart();dmCheck()}catch(e){FB.err="プロフィールを準備できませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
 function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
@@ -1941,7 +1938,7 @@ async function fillList(){
   if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
   if(listMode===mode){$("lmBody").innerHTML="";$("lmBody").appendChild(out)}
 }
-function openFriend(){fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
+function openFriend(){fbMsg("");$("fm").hidden=false} // ユーザー名検索で友達を追加
 async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
   try{var f=await fGet("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]}catch(e){return[]}
 }
@@ -1989,7 +1986,7 @@ async function fillFol(fb){
   var uid=FB.uid;
   try{
     var f=await fGet("follows/"+uid),ids=(f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid}))).slice(0,100):[];
-    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
+    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のユーザー名を検索してフォローしましょう。</div>';
     for(var j=0;j<ids.length;j++){
       var id=ids[j],p=null,d=null,state2="ok";
       try{p=await fGet("profiles/"+id)}catch(e){}
@@ -2047,7 +2044,7 @@ async function renderFb(){
   if(!FB.uid){$("fbOutBox").hidden=false;return}
   $("fbOn").hidden=false;$("cntRow").hidden=false;$("planeBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
-  $("fbCode").textContent=FB.code||"…";$("fbMsg").textContent=FB.msg||"";
+  $("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
   try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid})).size:0}catch(e){}
   try{FBN.fr=new Set((await fList("stats/"+uid+"/viewers")).map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size}catch(e){}
@@ -2083,93 +2080,6 @@ async function fbSearchUsers(){
     });
   }catch(e){box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
 }
-async function fbAddFriend(){
-  var code=$("fbAddCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
-  if(code.length!==8){fbMsg("コードは8文字です。");return}
-  try{
-    var c=await fGet("codes/"+code);
-    if(!c||typeof c.uid!=="string"){fbMsg("そのコードは見つかりません。");return}
-    if(c.uid===FB.uid){fbMsg("それは、あなた自身のコードです。");return}
-    var f=await fGet("follows/"+FB.uid),ids=(f&&Array.isArray(f.ids))?f.ids.slice(0,100):[];
-    if(ids.indexOf(c.uid)>=0){fbMsg("すでにフォローしています。");return}
-    await fSet("requests/"+c.uid+"/from/"+FB.uid,{at:Date.now()});
-    ids.push(c.uid);await fSet("follows/"+FB.uid,{ids:ids});
-    var pn=null;try{pn=await fGet("profiles/"+c.uid)}catch(e){}
-    $("fbAddCode").value="";fbMsg(fbNm(pn)+"さんにフォローリクエストを送りました。");
-  }catch(e){fbMsg("リクエストできませんでした。通信の状態を確認してください。")}
-  renderFb();
-}
-
-// ===== イベント =====
-load();
-if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
-ensureIds();
-rollForward();
-state.page=state.plan?3:((state.goal||"").trim()?1:0); // アプリを開いたときは「プラン」から。計画がまだなければ、設定の途中から
-if(state.page===3&&!state.plan)state.page=1;
-$("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
-$("exam").onchange=function(){state.exam=this.value;save();countdown();calcNeed()};
-$("wd").oninput=function(){state.wd=Number(this.value)||0;save()};
-$("we").oninput=function(){state.we=Number(this.value)||0;save()};
-$("rwd").oninput=function(){state.rwd=this.value;save();calcNeed()};
-$("rwe").oninput=function(){state.rwe=this.value;save();calcNeed()};
-$("tot").oninput=function(){state.tot=this.value;save();calcNeed()};
-$("add").onclick=function(){ // 新しい科目には、まだ使っていない色を自動で割り当てる
-  var used={};state.subjects.forEach(function(x){used[colorOf(x[0])]=1});
-  var c=PALETTE.filter(function(p){return !used[p]})[0]||"#8b98a5";
-  state.subjColors=state.subjColors||{};state.subjColors["新しい科目"]=c;
-  state.subjects.push(["新しい科目",3]);renderSubjects();save();
-};
-$("navStats").onclick=function(){showPage(4)};
-$("navPlan").onclick=function(){ // プランは、最後に開いていたステップに戻る
-  var pp=typeof state.planPage==="number"?state.planPage:(state.back||1);
-  if(pp>3||(pp===3&&!state.plan))pp=1;
-  showPage(pp);
-};
-Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){
-  b.onclick=function(){sMode=b.getAttribute("data-m");sSel=-1;renderStats()};
-});
-$("n0").onclick=function(){
-  var g=$("goal").value.trim();
-  if(!g||!$("exam").value){$("goalErr").hidden=false;return}
-  state.goal=g;var to=goalBack!==null?goalBack:1;goalBack=null;save();showPage(to===0?1:to);
-};
-$("goalEdit").onclick=function(){goalBack=state.page===0?null:state.page;showPage(0)};
-$("navMy").onclick=function(){showPage(5)};
-$("n1").onclick=function(){showPage(2)};
-$("back2").onclick=function(){showPage(1)};
-$("back3").onclick=function(){showPage(1)};
-$("make").onclick=function(){if(makePlan())showPage(3)};
-$("reset").onclick=function(){
-  askConfirm("本当にリセットしますか?","チェックと計測が消え、その分の学習記録も元に戻ります。","リセットする",function(){
-    pauseTimer();
-    (state.plan||[]).forEach(function(day){day.blocks.forEach(function(x){rollback(x.id)})});
-    state.done={};state.spent={};state.credit={};closeTimer();save();renderPlan();
-  });
-};
-$("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
-$("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
-$("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
-$("tmtoggle").onclick=function(){toggleTimer(openId)};
-$("tmReset").onclick=function(){
-  if(openId===null)return;var id=openId;
-  askConfirm("このタイマーをリセットしますか?","計測した時間が0分になり、その分の学習記録も元に戻ります。","リセットする",function(){resetTimer(id)});
-};
-$("adjM10").onclick=function(){adjustSpent(openId,-600)};
-$("adjP10").onclick=function(){adjustSpent(openId,600)};
-$("adjP30").onclick=function(){adjustSpent(openId,1800)};
-$("tmSet").onclick=function(){var v=Number($("tmMin").value);if(!(v>=0))return;adjustSpent(openId,Math.round(v*60-elapsed(openId)))};
-$("tmdone").onclick=function(){if(running(openId))pauseTimer();setDone(openId,true);closeTimer();renderPlan()};
-$("tmclose").onclick=closeTimer;
-$("tm").onclick=function(e){if(e.target===this)closeTimer()};
-$("emsave").onclick=saveEdit;
-$("emdel").onclick=deleteEdit;
-$("emcancel").onclick=closeEdit;
-$("em").onclick=function(e){if(e.target===this)closeEdit()};
-$("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
-$("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
-$("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
-$("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
 function pfSet(k,v){state.profile[k]=v;save();$("meMore").textContent=pfMore(state.profile)}
 $("pfHigh").oninput=function(){pfSet("high",this.value.slice(0,30))};
 $("pfOrigin").oninput=function(){pfSet("origin",this.value.slice(0,30))};
@@ -2284,8 +2194,6 @@ $("fbCfgSave").onclick=function(){
 };
 $("fbIn").onclick=function(){fbSignIn()};
 $("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
-$("fbCopy").onclick=function(){try{navigator.clipboard.writeText(FB.code);fbMsg("コピーしました。")}catch(e){fbMsg("コードを長押しして、コピーしてください。")}};
-$("fbAdd").onclick=function(){fbAddFriend()};
 $("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
 $("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
@@ -2311,10 +2219,9 @@ $("tlClose").onclick=function(){$("tlm").hidden=true};
 $("tlm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("pm").onclick=function(e){if(e.target===this)closeProfile()};
 $("shareBtn").onclick=async function(){
-  if(!FB.code)return;
-  var t="学習プランナーで友達になろう!フレンドコード: "+FB.code+"\n"+location.href.split("#")[0];
+  var t="学習プランナーを使ってみてください!\n"+location.href.split("#")[0];
   try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==="AbortError")return}
-  try{await navigator.clipboard.writeText(t);openFriend();fbMsg("シェア用の文章をコピーしました。")}catch(e){openFriend()}
+  try{await navigator.clipboard.writeText(t);fbMsg("シェア用のリンクをコピーしました。")}catch(e){fbMsg("リンクをコピーできませんでした。")}
 };
 setInterval(fbPoll,60000);
 setInterval(function(){if(state.timer&&FB.uid)fbPublish(true)},60000); // 勉強中の印を、1分ごとに更新
