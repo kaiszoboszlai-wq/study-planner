@@ -487,6 +487,7 @@ input,select,textarea,button{font-family:var(--app-font)}
 <div class="actions"><button id="n0" class="main">完了</button></div>
 </section>
 <section id="p1">
+<p id="weekSetupNotice" class="plan-assurance" role="status" hidden></p>
 <p class="step">ステップ 2 / 4</p>
 <h2>条件</h2>
 <div class="row">
@@ -511,6 +512,7 @@ input,select,textarea,button{font-family:var(--app-font)}
 <button id="back2">戻る</button>
 <button id="make" class="main">完了</button>
 </div>
+<p id="planMakeError" class="err" role="alert" hidden></p>
 <p class="note">比率(1〜7)が大きいほど、勉強時間を多く割り当てます。</p>
 </section>
 
@@ -847,23 +849,16 @@ function allocDay(h,subs,target,style){
 }
 
 function makePlan(){
-  var subs=activeSubs();
-  if(!subs.length)return false;
-  // 今日から7日間(試験日以降は含めない)。土日は休日、それ以外は平日の時間
-  var today=new Date();today.setHours(0,0,0,0);
-  var end=new Date(state.exam+"T00:00:00");
-  var plan=[];
-  for(var i=0;i<7;i++){
-    var dt=new Date(today);dt.setDate(today.getDate()+i);
-    if(!isNaN(end.getTime())&&dt>=end)break;
-    var g=dt.getDay();
-    plan.push({date:fmtDate(dt),h:(g===0||g===6)?state.we:state.wd,blocks:[]});
-  }
-  var total=plan.reduce(function(a,x){return a+x.h},0);
-  var target=makeTargets(subs,total);
-  plan.forEach(function(day){allocDay(day.h,subs,target).forEach(function(b){b.id=newId();day.blocks.push(b)})});
-  pauseTimer();if(!state.start)state.start=fmtDate(new Date());state.planStyle=0;state.plan=plan;state.done={};state.spent={};state.credit={};closeTimer();
-  $("plan").scrollLeft=0;save();renderPlan();
+  $("planMakeError").hidden=true;
+  if(!activeSubs().length){$("planMakeError").hidden=false;$("planMakeError").textContent="科目を1つ以上設定してください。";return false}
+  var today=fmtDate(new Date());
+  if(state.exam&&state.exam<=today){$("weekSetupNotice").hidden=false;$("weekSetupNotice").textContent="上部の目標の「変更」から、試験日を明日以降に更新してください。";$("planMakeError").hidden=false;$("planMakeError").textContent=$("weekSetupNotice").textContent;return false}
+  pauseTimer();
+  var c=planConfig(),carry=state.weekSetupPending&&state.carry!==false?(state.weekCarry||[]):[];
+  var plan=buildPlanCandidate(c,0,carry);if(!plan.length)return false;
+  if(!state.start)state.start=today;
+  state.plan=plan;state.planStyle=0;state.planCycleStart=today;state.planDaySeen=today;state.weekSetupPending=false;state.weekCarry=[];
+  selectedPlanDate=today;closeTimer();save();renderPlan();showWeeklySetupStatus();
   return true;
 }
 
@@ -884,43 +879,70 @@ function regenCore(d,h){
 }
 function regenDay(d,h){regenCore(d,h);save();renderPlan()}
 
-// 日付が変わったら、計画を「今日から7日間」にずらす。
-// 過去の日の未完了の項目は、残り時間(計測した分を引く)を翌日以降に繰り越す。
+// 7日間を1つの期間として管理する。表示日数を毎日先へ延長しない。
+function planWeekEnd(){
+  var start=state.planCycleStart||(state.plan&&state.plan[0]&&state.plan[0].date);
+  if(!start)return "";var end=new Date(start+"T00:00:00");end.setDate(end.getDate()+7);return fmtDate(end);
+}
+function remainingWeekItems(days){
+  var items=[];
+  if(state.carry===false)return items;
+  days.forEach(function(day){if(day.carryProcessed)return;day.blocks.forEach(function(x){
+    if(state.done[x.id])return;
+    var h=Math.round(Math.max(0,x.h-elapsed(x.id)/3600)*2)/2;
+    if(h>=0.5)items.push({name:x.name,h:h});
+  })});return items;
+}
+function appendWeekCarry(plan,items){
+  var queue=items.map(function(x){return {name:x.name,h:Number(x.h)}}).filter(function(x){return x.name&&x.h>0}),touched=[];
+  plan.forEach(function(day){
+    var kept=day.blocks.filter(keepPlannedBlock).reduce(function(n,x){return n+x.h},0),left=Math.max(0,day.h-kept);
+    while(queue.length&&left>=0.5){
+      var first=queue[0],h=Math.min(first.h,left);
+      day.blocks.push({id:newId(),name:first.name,h:h,manual:true,carried:true});
+      if(touched.indexOf(day)<0)touched.push(day);first.h-=h;left-=h;if(first.h<0.001)queue.shift();
+    }
+  });
+  // 繰り越しきれない分も捨てず、期間の最後の日へ残す。
+  if(queue.length&&plan.length){var last=plan[plan.length-1];queue.forEach(function(x){last.blocks.push({id:newId(),name:x.name,h:x.h,manual:true,carried:true})});
+    last.h=Math.max(last.h,last.blocks.filter(keepPlannedBlock).reduce(function(n,x){return n+x.h},0));if(touched.indexOf(last)<0)touched.push(last);queue=[];
+  }
+  return {remaining:queue,touched:touched};
+}
+function fillWeeklySetup(){
+  ["exam","wd","we","tot","rwd","rwe"].forEach(function(k){$(k).value=state[k]});
+  renderSubjects();showCarry();calcNeed();
+}
+function showWeeklySetupStatus(){
+  var notice=$("weekSetupNotice"),pending=!!state.weekSetupPending,today=fmtDate(new Date());
+  notice.hidden=!pending;$("make").textContent=pending?"次の1週間を開始":"完了";
+  if(pending)notice.textContent=state.exam&&state.exam<=today?"試験日になりました。次の計画を作る場合は、上部の目標の「変更」から試験日を更新してください。学習記録は保存されています。":"1週間お疲れさまでした。前回の時間・比率を表示しています。科目の配分も確認して、次の1週間を始めましょう。";
+}
 function rollForward(){
   if(!state.plan||!state.plan.length)return false;
   var today=fmtDate(new Date());
-  if(state.plan[0].date>=today)return false;
-  pauseTimer();
-  var past=state.plan.filter(function(day){return day.date<today});
-  var rest=state.plan.filter(function(day){return day.date>=today});
-  var carry=[];
-  past.forEach(function(day){day.blocks.forEach(function(x){
-    if(state.carry!==false&&!state.done[x.id]){var rem=Math.round((x.h-(state.spent[x.id]||0)/3600)*2)/2;if(rem>=0.5)carry.push({name:x.name,h:rem})} // 繰り越しがオフのときは、できなかった分は引き継がない
-    delete state.done[x.id];delete state.spent[x.id];delete state.credit[x.id];if(state.contrib)delete state.contrib[x.id];
-  })});
-  var end=new Date(state.exam+"T00:00:00"),map={},t0=new Date(),plan=[];
-  t0.setHours(0,0,0,0);rest.forEach(function(d){map[d.date]=d});
-  for(var i=0;i<7;i++){
-    var dt=new Date(t0);dt.setDate(t0.getDate()+i);
-    if(!isNaN(end.getTime())&&dt>=end)break;
-    var ds=fmtDate(dt),g=dt.getDay();
-    plan.push(map[ds]||{date:ds,h:(g===0||g===6)?state.we:state.wd,blocks:[],fresh:true});
+  if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;
+  if(state.weekSetupPending||state.planDaySeen===today)return false;
+  var end=planWeekEnd(),past=state.plan.filter(function(day){return day.date<today&&!day.carryProcessed});
+  if((end&&today>=end)||(state.exam&&today>=state.exam)){
+    pauseTimer();state.weekCarry=(state.weekCarry||[]).concat(remainingWeekItems(past));past.forEach(function(d){d.carryProcessed=true});
+    state.weekSetupPending=true;state.planDaySeen=today;state.planPage=1;save();return true;
   }
-  state.plan=plan;
-  var touched={};
-  plan.forEach(function(day,d){
-    if(day.fresh){delete day.fresh;touched[d]=true}
-    var used=0;
-    while(carry.length&&(used===0||used+carry[0].h<=day.h+0.001)){
-      var c=carry.shift();day.blocks.push({id:newId(),name:c.name,h:c.h,manual:true,carried:true});used+=c.h;touched[d]=true;
-      if(!(day.h>0))break;
-    }
-  });
-  if(carry.length&&plan.length){var last=plan[plan.length-1];carry.forEach(function(c){last.blocks.push({id:newId(),name:c.name,h:c.h,manual:true,carried:true})})}
-  plan.forEach(function(day,d){if(touched[d])regenCore(d,day.h)});
-  save();return true;
+  if(past.length){
+    pauseTimer();var carry=remainingWeekItems(past);past.forEach(function(d){d.carryProcessed=true});
+    var future=state.plan.filter(function(d){return d.date>=today});
+    var appended=appendWeekCarry(future,carry);state.weekCarry=(state.weekCarry||[]).concat(appended.remaining);
+    appended.touched.forEach(function(d){regenCore(state.plan.indexOf(d),d.h)});
+  }
+  state.planDaySeen=today;save();return true;
 }
-function rollAndRender(){if(rollForward())renderPlan()}
+function rollAndRender(){
+  if(!rollForward())return;
+  if(state.weekSetupPending){closePlanDialogs();closeTimer();fillWeeklySetup();showPage(1)}
+  else if(state.plan.some(function(day){return day.date===fmtDate(new Date())})){selectedPlanDate=fmtDate(new Date())}
+  renderPlan();
+}
+
 function showCarry(){ // 繰り越しのオン・オフ
   $("carryOn").checked=state.carry!==false;
   $("setupCarry").checked=state.carry!==false;
@@ -932,7 +954,7 @@ function renderPlan(){
   var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
   if(!state.plan.length){box.innerHTML='<div class="note">試験日が今日以前になっています。先の日付にしてください。</div>';return}
   var all=0,ok=0,per={},todayStr=fmtDate(new Date());
-  if(!state.plan.some(function(day){return day.date===selectedPlanDate}))selectedPlanDate=state.plan[0].date;
+  if(!state.plan.some(function(day){return day.date===selectedPlanDate}))selectedPlanDate=state.plan.some(function(day){return day.date===todayStr})?todayStr:state.plan[0].date;
   var tabs=$("planDates");tabs.innerHTML="";
   state.plan.forEach(function(day,d){
     var dt=new Date(day.date+"T00:00:00"),tab=document.createElement("button");tab.className="plan-date";
@@ -980,7 +1002,7 @@ function renderPlan(){
 }
 
 // ===== プラン表示・確定前の候補（下書きは保存・同期しない） =====
-var planCandidate=null,planCandidateConfig=null,planCandidateStyle=0,planCandidateBase="",planDialogFocus=null;
+var planCandidate=null,planCandidateConfig=null,planCandidateStyle=0,planCandidateBase="",planDialogFocus=null,planCandidateResetWeek=false;
 function updatePlanProgress(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-plan-summary]"),function(el){
     var day=(state.plan||[]).filter(function(d){return d.date===el.dataset.planSummary})[0];if(!day)return;
@@ -1031,19 +1053,22 @@ function readPlanDraft(){
 }
 function keepPlannedBlock(x){return !!(x.manual||state.done[x.id]||elapsed(x.id)>0||running(x.id))}
 function planBaseSignature(){return JSON.stringify([state.plan,state.done,FB.uid])}
-function buildPlanCandidate(c,style){
+function buildPlanCandidate(c,style,carry,cycleStart){
   var today=new Date();today.setHours(0,0,0,0);var old={};(state.plan||[]).forEach(function(d){old[d.date]=d});
-  var plan=[],subs=c.subjects.filter(function(s){return String(s[0]).trim()});
+  var plan=[],subs=c.subjects.filter(function(s){return String(s[0]).trim()}),base=cycleStart?new Date(cycleStart+"T00:00:00"):today;
   for(var i=0;i<7;i++){
-    var dt=new Date(today);dt.setDate(dt.getDate()+i);var date=fmtDate(dt),prior=old[date];
+    var dt=new Date(base);dt.setDate(dt.getDate()+i);var date=fmtDate(dt),prior=old[date];
+    if(date<fmtDate(today)){if(prior)plan.push(Object.assign({},prior,{blocks:prior.blocks.map(function(x){return Object.assign({},x)})}));continue}
     var kept=prior?prior.blocks.filter(keepPlannedBlock).map(function(x){return Object.assign({},x)}):[];
     if(c.exam&&date>=c.exam&&!kept.length)continue;
     var keptHours=kept.reduce(function(n,x){return n+x.h},0),hours=(dt.getDay()===0||dt.getDay()===6)?c.we:c.wd;
     plan.push({date:date,h:Math.max(hours,keptHours),blocks:kept});
   }
+  if(carry&&carry.length)appendWeekCarry(plan,carry);
   var target=makeTargets(subs,plan.reduce(function(n,d){return n+d.h},0));
   plan.forEach(function(d){d.blocks.forEach(function(x){subs.forEach(function(sub,i){if(sub[0]===x.name)target[i]-=x.h})})});
   plan.forEach(function(day){
+    if(day.date<fmtDate(today))return;
     var left=Math.max(0,day.h-day.blocks.reduce(function(n,x){return n+x.h},0)),made=[];
     while(left>0.00001&&subs.length){
       var batch=allocDay(left,subs,target,style),used=batch.reduce(function(n,x){return n+x.h},0);if(used<=0)break;
@@ -1055,12 +1080,13 @@ function buildPlanCandidate(c,style){
   return plan;
 }
 function openPlanCandidate(fromDraft){
+  planCandidateResetWeek=!!fromDraft;
   try{planCandidateConfig=fromDraft?readPlanDraft():planConfig()}catch(e){$("planDraftError").textContent=e.message;return}
   planCandidateStyle=fromDraft?0:((state.planStyle||0)+1)%PLAN_STYLES.length;
   generatePlanPreview();
 }
 function generatePlanPreview(){
-  planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(planCandidateConfig,planCandidateStyle);
+  planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(planCandidateConfig,planCandidateStyle,null,planCandidateResetWeek?null:state.planCycleStart);
   var body=$("planPreviewBody");body.innerHTML="";
   $("planPreviewNote").textContent="繰り越し："+(planCandidateConfig.carry?"オン":"オフ")+"。提案："+PLAN_STYLES[planCandidateStyle].n+"。計測済み・完了済み・手動の項目は残しています。採用するまで現在の計画は変わりません。";
   planCandidate.forEach(function(day){
@@ -1074,10 +1100,11 @@ function anotherPlanCandidate(){if(!planCandidateConfig)return;planCandidateStyl
 function adoptPlanCandidate(){
   if(!planCandidate||!planCandidateConfig)return;
   var ids=new Set();planCandidate.forEach(function(d){d.blocks.forEach(function(b){ids.add(b.id)})});
-  if(planCandidateBase!==planBaseSignature()||(state.plan||[]).some(function(d){return d.blocks.some(function(b){return keepPlannedBlock(b)&&!ids.has(b.id)})})){
+  if(planCandidateBase!==planBaseSignature()||(state.plan||[]).some(function(d){return d.blocks.some(function(b){return d.date>=fmtDate(new Date())&&keepPlannedBlock(b)&&!ids.has(b.id)})})){
     generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
   }
   var c=planCandidateConfig;state.plan=planCandidate;state.planStyle=planCandidateStyle;
+  if(planCandidateResetWeek||!state.planCycleStart)state.planCycleStart=fmtDate(new Date());state.planDaySeen=fmtDate(new Date());state.weekSetupPending=false;state.weekCarry=[];
   ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){state[k]=c[k]});
   if(!state.start)state.start=fmtDate(new Date());
   // done / spent / credit / contrib / log と実行中のタイマーはそのまま保持する。
@@ -1155,7 +1182,7 @@ function updateTimer(){
 }
 function tickAll(){
   if(state.timer)todayBar();
-  if(state.plan&&state.plan.length&&state.plan[0].date<fmtDate(new Date()))rollAndRender();
+  if(state.plan&&state.plan.length&&!state.weekSetupPending&&state.planDaySeen!==fmtDate(new Date()))rollAndRender();
   if(state.timer){
     var id=state.timer.id;
     Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){el.textContent=spText(id)});
@@ -1545,6 +1572,8 @@ function renderStats(){
 
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
 function showPage(n){
+  if(n===3&&state.weekSetupPending)n=1;
+  showWeeklySetupStatus();
   state.page=n;save();
   var map={0:"p0",1:"p1",2:"p2",3:"planbox",4:"stats",5:"mypage",6:"today",7:"grades"};
   Object.keys(map).forEach(function(k){$(map[k]).hidden=Number(k)!==n});
@@ -1785,7 +1814,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-19 v21"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v22"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2446,7 +2475,7 @@ load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
 ensureIds();
 rollForward();
-state.page=state.plan?3:((state.goal||"").trim()?1:0); // アプリを開いたときは「プラン」から。計画がまだなければ、設定の途中から
+state.page=state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)); // アプリを開いたときは「プラン」から。計画がまだなければ、設定の途中から
 if(state.page===3&&!state.plan)state.page=1;
 $("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
 $("exam").onchange=function(){state.exam=this.value;save();countdown();calcNeed()};
@@ -2513,7 +2542,7 @@ $("pfBY").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bY",
 $("pfBM").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bM",v>=1&&v<=12?String(v):"")};
 $("pfBD").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bD",v>=1&&v<=31?String(v):"")};
 $("altPlan").onclick=function(){openPlanCandidate(false)};
-$("planSettingsOpen").onclick=function(){showCarry();openPlanDialog("planSettings")};
+$("planSettingsOpen").onclick=function(){if(state.weekSetupPending){fillWeeklySetup();showPage(1);return}showCarry();openPlanDialog("planSettings")};
 $("draftPreview").onclick=function(){openPlanCandidate(true)};
 $("draftAdd").onclick=function(){addDraftSubject("",1)};
 $("draftCalc").onclick=calculateDraftHours;
