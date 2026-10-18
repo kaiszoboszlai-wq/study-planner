@@ -118,6 +118,9 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .tcard.on .item span{color:var(--done);text-decoration:line-through}
 .rk{display:flex;align-items:center;gap:6px}
 .rk input{width:90px;min-width:0}
+#fm .friend-user-search{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%}
+#fbUserSearch{width:100%;min-width:0;min-height:52px;padding:12px 14px;font:inherit;font-size:18px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;box-sizing:border-box;-webkit-appearance:none;appearance:none}
+#fbUserSearchBtn{min-height:52px;padding:12px 18px;font-size:16px}
 .gmr{display:grid;grid-template-columns:1fr 62px 12px 62px 32px;gap:6px;align-items:center;margin:6px 0}
 .gmr input{min-width:0;padding:6px 4px}
 .gmr button{padding:4px 0}
@@ -531,7 +534,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </div>
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
-<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
+<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk friend-user-search"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
 </div>
@@ -1544,7 +1547,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-18 v15"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-18 v16"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2029,7 +2032,10 @@ async function fillList(){
   $("lmBody").innerHTML="";$("lmBody").appendChild(out);
   if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
 }
-function openFriend(){fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
+var friendSearchRequest=0;
+function resetFriendSearch(){friendSearchRequest++;$("fbUserSearch").value="";$("fbUserResults").innerHTML=""}
+function closeFriend(){$("fm").hidden=true;resetFriendSearch()}
+function openFriend(){resetFriendSearch();fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
 async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
   try{var f=await profileRead("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]}catch(e){return[]}
 }
@@ -2166,6 +2172,8 @@ async function renderFb(){
   if(FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync(); // フォロー中・フォロワーの一覧が変わったとき(前に保存できなかったときも)、友達に見せる一覧を保存し直す
 }
 async function fbSearchUsers(){
+  var request=++friendSearchRequest,uid=FB.uid;
+  var active=function(){return request===friendSearchRequest&&!$("fm").hidden&&FB.uid===uid};
   var term=$("fbUserSearch").value.trim().toLocaleLowerCase();
   var box=$("fbUserResults");box.innerHTML="";
   if(!term){box.innerHTML='<div class="note">ユーザー名を入力してください。</div>';return}
@@ -2176,22 +2184,24 @@ async function fbSearchUsers(){
       var n=x&&x.data&&typeof x.data.name==="string"?x.data.name.trim().toLocaleLowerCase():"";
       return n&&n.indexOf(term)!==-1&&x.id!==FB.uid;
     }).slice(0,20);
+    if(!active())return;
     box.innerHTML="";
     if(!matches.length){box.innerHTML='<div class="note">該当するユーザーが見つかりませんでした。</div>';return}
     var mine=await myFollowIds();
+    if(!active())return;
     matches.forEach(function(x){
       var pr=x.data||{},row=document.createElement("div");row.className="fcard";
       row.appendChild(fbRow(pr,x.id));
       var action=document.createElement("div");action.className="actions";
       var b=document.createElement("button");
       if(mine.indexOf(x.id)>=0){b.textContent="フォロー中 / リクエスト済み";b.disabled=true}
-      else{b.textContent="フォローリクエストを送る";b.onclick=async function(){b.disabled=true;await fbFollowBack(x.id);fbMsg(fbNm(pr)+"さんにフォローリクエストを送りました。");fbSearchUsers()}}
+      else{b.textContent="フォローリクエストを送る";b.onclick=async function(){b.disabled=true;await fbFollowBack(x.id);if(!active())return;fbMsg(fbNm(pr)+"さんにフォローリクエストを送りました。");fbSearchUsers()}}
       action.appendChild(b);row.appendChild(action);
       var prof=row.querySelector(".av");if(prof)prof.onclick=function(){openProfile(x.id,true)};
       var name=row.querySelector("b");if(name)name.onclick=function(){openProfile(x.id,true)};
       box.appendChild(row);
     });
-  }catch(e){box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
+  }catch(e){if(!active())return;box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
 }
 // ===== イベント =====
 load();
@@ -2380,8 +2390,8 @@ $("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","�
 $("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
 $("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
-$("fmClose").onclick=function(){$("fm").hidden=true};
-$("fm").onclick=function(e){if(e.target===this)this.hidden=true};
+$("fmClose").onclick=closeFriend;
+$("fm").onclick=function(e){if(e.target===this)closeFriend()};
 $("planeBtn").onclick=function(){openInbox("dm")};
 Array.prototype.forEach.call($("inboxTabs").querySelectorAll("button"),function(b){b.onclick=function(){setInboxTab(b.getAttribute("data-t"))}});
 $("cntFol").onclick=function(){openList("fol")};
