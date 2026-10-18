@@ -1017,6 +1017,13 @@ function tickAll(){
   if(state.plan&&state.plan.length&&state.plan[0].date<fmtDate(new Date()))rollAndRender();
   if(state.timer){
     var id=state.timer.id;
+    // 計測中も60秒ごとに学習記録へ反映し、クラウドへ自動保存する。
+    // 計測開始時刻を進め、加算済みの時間が一時停止時に二重計上されないようにする。
+    var now=Date.now(),part=(now-state.timer.start)/1000;
+    if(part>=60){
+      var xb0=findBlock(id);
+      if(xb0){logAdd(xb0.name,part,id,"t");state.spent[id]=(state.spent[id]||0)+part;state.timer.start=now;save()}
+    }
     Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){setSp(el,id)});
     if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}beep();var xb=findBlock(id);notifyDone(xb?xb.name:"")}
   }
