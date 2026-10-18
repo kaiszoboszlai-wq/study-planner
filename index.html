@@ -954,7 +954,7 @@ function setSp(el,id){ // 「残り」の表示。超過は赤い札、計測中
   if(over){var p=document.createElement("span");p.className="overpill";p.textContent="超過";el.appendChild(p)}
 }
 function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
-function pauseTimer(){if(state.timer){var x=findBlock(state.timer.id);if(x)logAdd(x.name,(Date.now()-state.timer.start)/1000,state.timer.id,"t");state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save()}}
+function pauseTimer(){if(state.timer){var x=findBlock(state.timer.id);if(x)logAdd(x.name,(Date.now()-state.timer.start)/1000,state.timer.id,"t");state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save();if(state.page===4)renderStats()}}
 var AC=null; // 時間になったときの音。画面を操作した時点で使えるようにしておく
 function unlockAudio(){try{if(!AC){var C=window.AudioContext||window.webkitAudioContext;AC=new C()}if(AC.state==="suspended")AC.resume()}catch(e){}}
 function beep(){try{if(!AC)return;var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=0.15;o.start();o.stop(AC.currentTime+0.7)}catch(e){}}
