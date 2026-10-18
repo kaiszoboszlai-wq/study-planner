@@ -1544,7 +1544,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-18 v13"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-18 v14"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1572,9 +1572,37 @@ function parseFbConfig(text){ // firebaseConfig の貼り付け(JSでもJSONで�
   return{apiKey:String(o.apiKey),authDomain:String(o.authDomain||o.projectId+".firebaseapp.com"),projectId:String(o.projectId),appId:String(o.appId||""),storageBucket:String(o.storageBucket||""),messagingSenderId:String(o.messagingSenderId||""),databaseId:String(o.databaseId||"")};
 }
 // ---- Firestore(データの置き場)の読み書き。テストでは、ここを差し替える ----
-async function fGet(path){var r=await FB.Fs.getDoc(FB.Fs.doc(FB.db,path));return r.exists()?r.data():null}
-async function fSet(path,data){await FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data)}
-async function fDel(path){await FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path))}
+// 閲覧用データを、この画面を開いている間だけ最大60秒保持する。
+// 読み取り自体は毎回行い、承認の変更や最新の記録を確認する。
+var profileCache=new Map(),profileCacheOwner=null,profileCacheEpoch=0;
+function profileCacheReset(){profileCache.clear();profileCacheOwner=FB.uid;profileCacheEpoch++}
+function profileCacheKey(path){return /^(profiles|social|stats)\/[^/]+$/.test(path)}
+function profileCached(path){
+  if(profileCacheOwner!==FB.uid)profileCacheReset();
+  var item=profileCache.get(path);
+  if(!FB.uid||!item)return null;
+  if(Date.now()-item.at>=60000){profileCache.delete(path);return null}
+  return item;
+}
+function profileCacheDrop(path){
+  profileCache.delete(path);
+  // 承認を解除した場合も、対応する学習記録を残さない。
+  if(/^stats\/[^/]+\/viewers\//.test(path))profileCache.delete(path.split("/").slice(0,2).join("/"));
+}
+async function fGet(path){
+  if(profileCacheOwner!==FB.uid)profileCacheReset();
+  var owner=FB.uid,epoch=profileCacheEpoch,cacheable=profileCacheKey(path);
+  try{
+    var r=await FB.Fs.getDoc(FB.Fs.doc(FB.db,path)),value=r.exists()?r.data():null;
+    if(cacheable&&owner&&FB.uid===owner&&profileCacheEpoch===epoch){
+      profileCache.delete(path);profileCache.set(path,{value:value,at:Date.now()});
+      while(profileCache.size>150)profileCache.delete(profileCache.keys().next().value);
+    }
+    return value;
+  }catch(e){if(FB.uid===owner&&profileCacheEpoch===epoch)profileCache.delete(path);throw e}
+}
+async function fSet(path,data){await FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data);profileCacheDrop(path)}
+async function fDel(path){await FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path));profileCacheDrop(path)}
 async function fList(path){var r=await FB.Fs.getDocs(FB.Fs.collection(FB.db,path)),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
 async function fbInit(){
   var cfg=fbConfig();
@@ -1685,6 +1713,7 @@ async function fbSocialSync(){ // 友達に見せる、フォロー中・フォ�
   }catch(e){}
 }
 async function fbOnAuth(){
+  if(profileCacheOwner!==FB.uid){profileCacheReset();closeProfile()}
   renderFb();
   if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=FBN.dm=0;dmStop();paintCounts();return}
   try{await fbEnsure();await fbPublish(true);await fbSocialSync();await syncStart();dmCheck()}catch(e){FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
@@ -1740,13 +1769,15 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
   var request=++pmRequest,viewer=FB.uid;
   var active=function(){return !$("pm").hidden&&pmCur===id&&pmRequest===request&&FB.uid===viewer};
-  var p=null,d=null,so=null,st="loading",socialState="loading";
+  var cachedP=profileCached("profiles/"+id),cachedD=profileCached("stats/"+id),cachedSo=profileCached("social/"+id);
+  var p=cachedP?cachedP.value:null,d=cachedD?cachedD.value:null,so=cachedSo?cachedSo.value:null;
+  var st=cachedD?"ok":"loading",socialState=cachedSo?"ok":"loading";
   box.innerHTML="";
   if(pmStack.length){var bk=document.createElement("button");bk.textContent="← 戻る";bk.onclick=function(){openProfile(pmStack.pop())};box.appendChild(bk)}
   var top=document.createElement("div");top.className="me big";
   top.innerHTML='<div class="av pav"></div><div><b></b><div class="note"></div></div>';
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-  top.querySelector("b").textContent="読み込み中…";top.querySelector(".note").textContent="";
+  top.querySelector("b").textContent=cachedP?fbNm(p):"読み込み中…";top.querySelector(".note").textContent=fbSub(p);
   box.appendChild(top);
   if(FB.uid&&id!==FB.uid){var dmb=document.createElement("button");dmb.textContent="メッセージ";dmb.onclick=function(){closeProfile();openChat(id,p)};box.appendChild(dmb)}
   var ids=function(k){return so&&Array.isArray(so[k])?Array.from(new Set(so[k].filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
@@ -1793,6 +1824,8 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   }
   }
   paintStats();
+  var freshness=document.createElement("div");freshness.className="note";
+  freshness.textContent=cachedD?"前回取得した学習記録を表示しています。最新情報を確認中…":"";body.before(freshness);
   // 互いに独立して表示する。social の通信不良で学習記録を止めない。
   await Promise.all([
     profileRead("profiles/"+id).then(function(value){
@@ -1803,12 +1836,12 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     profileRead("social/"+id).then(function(value){
       if(!active())return;so=value;socialState="ok";fo=ids("following");fr=ids("followers");
       cb[0].querySelector("b").textContent=so?fo.length:"-";cb[1].querySelector("b").textContent=so?fr.length:"-";
-      lst.innerHTML="";
+      if(!listRequest)lst.innerHTML="";
     }).catch(function(){if(active()){socialState="err";retry.hidden=false;lst.innerHTML='<div class="note">フォロー情報を読み込めませんでした。</div>'}}),
     profileRead("stats/"+id).then(function(value){
-      if(!active())return;d=value;st="ok";paintStats();
+      if(!active())return;d=value;st="ok";freshness.textContent="";paintStats();
     }).catch(function(e){
-      if(!active())return;st=(e&&e.code==="permission-denied")?"wait":"err";paintStats();if(st==="err")retry.hidden=false;
+      if(!active())return;freshness.textContent="";st=(e&&e.code==="permission-denied")?"wait":"err";paintStats();if(st==="err")retry.hidden=false;
     })
   ]);
 
