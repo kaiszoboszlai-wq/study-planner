@@ -356,6 +356,51 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
   .sp-preview-card .small{font-size:.65rem;line-height:1.2}
   #daysCard{font-size:1.8rem!important;font-weight:900;line-height:1.05}
 }
+
+/* プランページだけのレイアウト。既存のテーマ色とナビゲーションを共有する。 */
+#planbox{padding:22px;background:var(--card);color:var(--ink)}
+.plan-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+#planbox .plan-heading h2{font-size:clamp(1.4rem,4vw,1.9rem);margin:0}
+#planSettingsOpen{padding:10px 14px;white-space:nowrap;color:var(--ink);background:var(--accbg);border-color:var(--line)}
+.plan-dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--accbg);margin-bottom:24px}
+.plan-date{border:0;background:transparent;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:10px;color:var(--sub)}
+.plan-date b{font-size:1.35rem;color:inherit}.plan-date small{font-size:.75rem}
+.plan-date[aria-selected="true"]{background:var(--ink);color:var(--card)}
+.plan-date.drop-target{outline:2px dashed var(--acc);outline-offset:-2px}
+#planbox .days{display:block;overflow:visible;padding:0;scroll-snap-type:none}
+#planbox .day{width:100%;padding:0;border:0;background:transparent}
+#planbox .day[hidden]{display:none}
+#planbox .day h3{font-size:1.25rem;margin:0 0 16px;display:flex;align-items:center;gap:10px}
+#planbox .today{background:var(--accbg);color:var(--acc);border-radius:20px;padding:2px 10px;font-size:.8rem}
+.plan-summary{display:grid;grid-template-columns:1fr 1fr;gap:16px;border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--card);box-shadow:0 4px 14px rgba(20,40,65,.04);margin-bottom:14px}
+.plan-summary .metric+ .metric{border-left:1px solid var(--line);padding-left:20px}
+.plan-summary small{display:block;color:var(--sub)}.plan-summary strong{display:block;font-size:clamp(1.3rem,4vw,1.8rem);line-height:1.4}
+.plan-meter{grid-column:1/-1;height:9px;background:var(--line);border-radius:20px;overflow:hidden}.plan-meter span{display:block;height:100%;background:var(--acc);border-radius:20px;transition:width .2s}
+.plan-hours{margin:0 0 18px;color:var(--sub);font-size:.8rem}.plan-hours summary{cursor:pointer}.plan-hours .dh{padding-top:10px}
+#planbox .blk{border:1px solid var(--line);border-radius:13px;background:var(--card);margin:10px 0;padding:12px 12px 12px 14px;gap:10px;min-height:86px;box-shadow:0 3px 10px rgba(20,40,65,.025)}
+#planbox .blk .item span{font-size:1.05rem;font-weight:700;overflow-wrap:anywhere}
+#planbox .blk .item .duration{font-size:.85rem;font-weight:400;color:var(--sub)}
+#planbox .blk input[type=checkbox]{width:23px;height:23px;flex:none;accent-color:var(--acc)}
+#planbox .blk .play{background:var(--accbg);color:var(--acc);border:0;width:42px;height:42px}
+#planbox .blk .edit{border:0;background:transparent;color:var(--sub);width:32px}
+#planbox .addb{min-height:46px;border-style:solid;color:var(--acc);margin:8px 0 12px}
+.plan-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;font-size:.8rem;color:var(--sub)}
+.plan-foot .fld{margin:0}.plan-foot button{font-size:.8rem}
+.plan-dialog{align-items:center;padding:16px;z-index:12}
+.plan-dialog .tmbox{border:1px solid var(--line);border-radius:20px;max-height:90dvh;overflow-y:auto;max-width:620px;padding:24px;color:var(--ink);background:var(--card)}
+.plan-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.plan-dialog h2{font-size:1.4rem;margin:0}.plan-dialog-head button{border:0;font-size:1.5rem;padding:0 8px}
+.plan-choice{display:flex;align-items:center;gap:14px;width:100%;padding:20px 16px;margin:14px 0;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.plan-choice .choice-icon{background:var(--accbg);color:var(--acc);border-radius:50%;width:44px;height:44px;display:grid;place-items:center;font-size:1.5rem;flex:none}
+.plan-choice .choice-copy{flex:1;min-width:0}.plan-choice b{display:block}.plan-choice small{display:block;color:var(--sub);font-size:.85rem;line-height:1.6;margin-top:5px}
+.plan-assurance{background:var(--accbg);padding:14px;border-radius:12px;font-size:.82rem;margin-top:16px;color:var(--ink)}
+.plan-cancel{width:100%;margin-top:18px;min-height:44px}
+.plan-dialog .actions button{min-height:44px}.plan-dialog .actions{position:sticky;bottom:-24px;background:var(--card);padding:12px 0;margin:0}
+.plan-preview-day{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}.plan-preview-day h3{margin:0 0 8px;font-size:.95rem}
+.plan-preview-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.9rem}.plan-preview-row span:first-child{overflow-wrap:anywhere}.plan-preview-row small{color:var(--sub);white-space:nowrap}
+.draft-subject{display:grid;grid-template-columns:minmax(0,1fr) 64px 40px;gap:8px;margin:8px 0}.draft-subject input{min-width:0}
+#planDraftError{color:var(--red)}
+@media(max-width:480px){#planbox{padding:14px}.plan-heading{gap:6px}#planSettingsOpen{padding:8px;font-size:.8rem}.plan-date b{font-size:1.15rem}.plan-summary{padding:15px;gap:12px}.plan-summary .metric+ .metric{padding-left:12px}#planbox .blk{padding-right:7px;gap:7px}.plan-dialog .tmbox{padding:18px}.plan-choice{padding:16px 12px;gap:10px}.plan-choice .choice-icon{width:36px;height:36px}.plan-dialog .actions{bottom:-18px}}
+
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -436,13 +481,11 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </section>
 
 <section id="planbox" hidden>
-<p class="step">ステップ 4 / 4</p>
-<h2>今日から7日間の計画</h2>
-<div class="actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>再生ボタンで計測開始、一時停止ボタンで一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動(その分、日ごとの勉強時間も変わります)</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
-<div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を、翌日に繰り越す</label>
-</div>
+<div class="plan-heading"><h2>今週のプラン</h2><button id="planSettingsOpen">⚙ プラン設定</button></div>
+<div id="planDates" class="plan-dates" role="tablist" aria-label="計画の日付"></div>
 <div id="plan" class="days"></div>
+<div class="plan-foot"><div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を翌日に繰り越す</label></div><button id="tipsShow">使い方</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すとタイマー、▶で計測を開始します</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>「この日の予定時間を変更」で時間を調整できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
@@ -608,6 +651,25 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </div>
 </main>
 </div>
+
+<div class="tm plan-dialog" id="planSettings" hidden role="dialog" aria-modal="true" aria-labelledby="planSettingsTitle"><div class="tmbox">
+<div class="plan-dialog-head"><h2 id="planSettingsTitle">プラン設定</h2><button data-plan-close="planSettings" aria-label="閉じる">×</button></div><p class="note">計画をどう変更しますか？</p>
+<button class="plan-choice" id="back3"><span class="choice-icon" aria-hidden="true">☷</span><span class="choice-copy"><b>計画を最初から立て直す</b><small>勉強時間・科目・配分を見直して、新しい計画を作ります。</small></span><span aria-hidden="true">›</span></button>
+<button class="plan-choice" id="altPlan"><span class="choice-icon" aria-hidden="true">⇄</span><span class="choice-copy"><b>別の計画を提案する</b><small>今の条件を使って、組み合わせや順番を変えた計画の候補を表示します。</small></span><span aria-hidden="true">›</span></button>
+<div class="plan-assurance">✓ 学習記録・計測時間は消えません。<br>新しい計画を採用するまで、今の計画を残します。</div><button class="plan-cancel" data-plan-close="planSettings">キャンセル</button>
+</div></div>
+<div class="tm plan-dialog" id="planDraft" hidden role="dialog" aria-modal="true" aria-labelledby="planDraftTitle"><div class="tmbox">
+<div class="plan-dialog-head"><h2 id="planDraftTitle">計画を立て直す</h2><button data-plan-close="planDraft" aria-label="閉じる">×</button></div>
+<p class="note">今の設定をもとに変更できます。まだ現在の計画には反映されません。</p>
+<label>目標<input id="draftGoal" type="text" maxlength="60"></label><label>試験日<input id="draftExam" type="date"></label>
+<div class="row"><label>1週間の目標時間<input id="draftTotal" type="number" min="0" step="0.5"></label><label>平日：休日の比率<span class="pair"><input id="draftRwd" type="number" min="0.5" step="0.5"><span>：</span><input id="draftRwe" type="number" min="0.5" step="0.5"></span></label></div>
+<button id="draftCalc">目標時間と比率から計算</button><div class="row"><label>平日の時間<input id="draftWd" type="number" min="0" max="16" step="0.5"></label><label>休日の時間<input id="draftWe" type="number" min="0" max="16" step="0.5"></label></div>
+<h3 class="sh">科目・教材と配分（1〜7）</h3><div id="draftSubjects"></div><button id="draftAdd">＋ 科目を追加</button><p class="note">計測済み・完了済み・手動で追加した項目は残します。残す項目が設定時間を超える日は、その分の時間を確保します。</p><p id="planDraftError" role="alert"></p>
+<div class="actions"><button id="draftPreview" class="main">候補を見る</button><button data-plan-close="planDraft">キャンセル</button></div></div></div>
+<div class="tm plan-dialog" id="planPreview" hidden role="dialog" aria-modal="true" aria-labelledby="planPreviewTitle"><div class="tmbox">
+<div class="plan-dialog-head"><h2 id="planPreviewTitle">新しい計画の候補</h2><button data-plan-close="planPreview" aria-label="閉じる">×</button></div><p class="note" id="planPreviewNote"></p><div id="planPreviewBody"></div>
+<div class="actions"><button id="planAdopt" class="main">この計画にする</button><button id="planAgain">もう一度提案</button><button data-plan-close="planPreview">キャンセル</button></div></div></div>
+
 <script>
 // ===== 設定(ここを直せば初期値が変わる) =====
 var DEFAULT_SUBJECTS=[["数学",5],["物理",4],["化学",4],["英語",4],["国語",2],["社会",2]];
@@ -711,10 +773,10 @@ function dropState(id){if(running(id))pauseTimer();rollback(id);delete state.don
 function makeTargets(subs,total){var wsum=subs.reduce(function(a,s){return a+s[1]},0)||1;return subs.map(function(s){return total*s[1]/wsum})}
 // 計画の案。「別の計画を提案」で、順番に切り替わる(コマの長さ・1日の科目数・選び方がちがう)
 var PLAN_STYLES=[{n:"標準",avg:2,max:3},{n:"まんべんなく",avg:1,max:2},{n:"集中型",avg:3,max:4},{n:"ランダム",avg:2,max:3,rnd:true}];
-function allocDay(h,subs,target){
+function allocDay(h,subs,target,style){
   var out=[];
   if(h<=0||!subs.length)return out;
-  var st=PLAN_STYLES[state.planStyle||0]||PLAN_STYLES[0];
+  var st=PLAN_STYLES[style===undefined?(state.planStyle||0):style]||PLAN_STYLES[0];
   var noise=subs.map(function(){return st.rnd?Math.random()*1.5:0});
   var tv=function(i){return target[i]+noise[i]};
   var k=Math.max(1,Math.min(subs.length,Math.floor(h/MIN_SESSION),Math.round(h/st.avg)));
@@ -812,14 +874,25 @@ function rollAndRender(){if(rollForward())renderPlan()}
 function showCarry(){ // 繰り越しのオン・オフ
   $("carryOn").checked=state.carry!==false;
 }
+var selectedPlanDate=null;
 function renderPlan(){
   showCarry();
   if(!state.plan)return;
   var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
   if(!state.plan.length){box.innerHTML='<div class="note">試験日が今日以前になっています。先の日付にしてください。</div>';return}
   var all=0,ok=0,per={},todayStr=fmtDate(new Date());
+  if(!state.plan.some(function(day){return day.date===selectedPlanDate}))selectedPlanDate=state.plan[0].date;
+  var tabs=$("planDates");tabs.innerHTML="";
   state.plan.forEach(function(day,d){
-    var el=document.createElement("div");el.className="day";
+    var dt=new Date(day.date+"T00:00:00"),tab=document.createElement("button");tab.className="plan-date";
+    tab.setAttribute("role","tab");tab.setAttribute("aria-selected",day.date===selectedPlanDate?"true":"false");tab.setAttribute("aria-controls","plan-day-"+d);tab.setAttribute("aria-label",dayLabel(day.date));tab.dataset.planDay=d;
+    tab.innerHTML='<small></small><b></b>';tab.querySelector("small").textContent=DAYS[dt.getDay()];tab.querySelector("b").textContent=dt.getDate();
+    tab.onclick=function(){selectedPlanDate=day.date;renderPlan()};
+    tab.onkeydown=function(e){if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();var next=(d+(e.key==="ArrowRight"?1:-1)+state.plan.length)%state.plan.length;selectedPlanDate=state.plan[next].date;renderPlan();$("planDates").children[next].focus()}};
+    tabs.appendChild(tab);
+  });
+  state.plan.forEach(function(day,d){
+    var el=document.createElement("div");el.className="day";el.id="plan-day-"+d;el.hidden=day.date!==selectedPlanDate;el.setAttribute("role","tabpanel");
     var head=document.createElement("h3");head.textContent=dayLabel(day.date);
     if(day.date===todayStr){var t=document.createElement("em");t.className="today";t.textContent="今日";head.appendChild(t)}
     el.appendChild(head);
@@ -827,7 +900,10 @@ function renderPlan(){
     dh.innerHTML='<span>勉強時間</span><input type="number" min="0" max="16" step="0.5" aria-label="この日の勉強時間"><span>時間</span>';
     var inp=dh.querySelector("input");inp.value=day.h;
     inp.onchange=function(){regenDay(d,inp.value)};
-    el.appendChild(dh);
+    var summary=document.createElement("div");summary.className="plan-summary";summary.dataset.planSummary=day.date;
+    summary.innerHTML='<div class="metric"><small>予定</small><strong class="plan-total"></strong></div><div class="metric"><small>完了</small><strong class="plan-percent"></strong><small class="plan-measured"></small></div><div class="plan-meter" role="progressbar" aria-label="計測時間による進捗" aria-valuemin="0" aria-valuemax="100"><span></span></div>';
+    el.appendChild(summary);
+    var hours=document.createElement("details");hours.className="plan-hours";hours.innerHTML='<summary>この日の予定時間を変更</summary>';hours.appendChild(dh);el.appendChild(hours);
     day.blocks.forEach(function(x){
       var id=x.id,on=!!state.done[id],run=running(id);
       all+=x.h;if(on)ok+=x.h;
@@ -835,7 +911,8 @@ function renderPlan(){
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
-      b.querySelector("span").textContent=x.name+" "+hm(x.h)+(x.carried?"(繰り越し)":"");
+      b.querySelector("span").textContent=x.name;
+      var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+(x.carried?"（繰り越し）":"");b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
       b.querySelector(".sp").textContent=spText(id);
       var pb=b.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -852,7 +929,115 @@ function renderPlan(){
     box.appendChild(el);
   });
   box.scrollLeft=sl;
+  updatePlanProgress();
   renderToday();
+}
+
+// ===== プラン表示・確定前の候補（下書きは保存・同期しない） =====
+var planCandidate=null,planCandidateConfig=null,planCandidateStyle=0,planCandidateBase="",planDialogFocus=null;
+function updatePlanProgress(){
+  Array.prototype.forEach.call(document.querySelectorAll("[data-plan-summary]"),function(el){
+    var day=(state.plan||[]).filter(function(d){return d.date===el.dataset.planSummary})[0];if(!day)return;
+    var hours=day.blocks.reduce(function(n,b){return n+Number(b.h||0)},0);
+    var seconds=day.blocks.reduce(function(n,b){return n+Math.max(0,elapsed(b.id))},0);
+    var percent=hours>0?Math.floor(seconds/(hours*3600)*100):0;
+    el.querySelector(".plan-total").textContent=hm(hours);
+    el.querySelector(".plan-percent").textContent=percent+"%";
+    el.querySelector(".plan-measured").textContent="計測 "+fmtH(seconds);
+    var meter=el.querySelector(".plan-meter");meter.setAttribute("aria-valuenow",Math.min(100,percent));meter.setAttribute("aria-valuetext",percent+"パーセント");meter.querySelector("span").style.width=Math.min(100,percent)+"%";
+  });
+}
+function openPlanDialog(id){
+  if(!["planSettings","planDraft","planPreview"].some(function(k){return !$(k).hidden}))planDialogFocus=document.activeElement;
+  ["planSettings","planDraft","planPreview"].forEach(function(k){$(k).hidden=k!==id});
+  var first=$(id).querySelector("button,input");if(first)first.focus();
+}
+function closePlanDialogs(){
+  ["planSettings","planDraft","planPreview"].forEach(function(id){$(id).hidden=true});
+  planCandidate=null;planCandidateConfig=null;
+  if(planDialogFocus&&planDialogFocus.isConnected)planDialogFocus.focus();
+}
+function planConfig(){return {goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,subjects:state.subjects.map(function(s){return s.slice()})}}
+function addDraftSubject(name,weight){
+  var row=document.createElement("div");row.className="draft-subject";
+  row.innerHTML='<input type="text" maxlength="30" aria-label="科目・教材名" placeholder="科目・教材名"><input type="number" min="1" max="7" aria-label="配分"><button aria-label="科目を削除">×</button>';
+  row.children[0].value=name;row.children[1].value=weight;row.children[2].onclick=function(){row.remove()};$("draftSubjects").appendChild(row);
+}
+function openPlanDraft(){
+  var c=planConfig();$("draftGoal").value=c.goal;$("draftExam").value=c.exam;$("draftTotal").value=c.tot;$("draftWd").value=c.wd;$("draftWe").value=c.we;$("draftRwd").value=c.rwd;$("draftRwe").value=c.rwe;
+  $("draftSubjects").innerHTML="";c.subjects.forEach(function(s){addDraftSubject(s[0],s[1])});$("planDraftError").textContent="";openPlanDialog("planDraft");
+}
+function calculateDraftHours(){
+  var t=Number($("draftTotal").value),a=Number($("draftRwd").value),b=Number($("draftRwe").value);
+  if(!(t>0&&a>0&&b>0)){$("planDraftError").textContent="目標時間と比率に0より大きい数を入力してください。";return}
+  var wd=Math.ceil(t/(5+2*b/a)*2)/2,we=Math.ceil(wd*b/a*2)/2;
+  if(wd>16||we>16){$("planDraftError").textContent="1日16時間以内になるよう目標時間や比率を見直してください。";return}
+  $("draftWd").value=wd;$("draftWe").value=we;$("planDraftError").textContent="";
+}
+function readPlanDraft(){
+  var c=planConfig();c.goal=$("draftGoal").value.trim();c.exam=$("draftExam").value;c.tot=$("draftTotal").value;
+  c.wd=Number($("draftWd").value);c.we=Number($("draftWe").value);c.rwd=Number($("draftRwd").value);c.rwe=Number($("draftRwe").value);
+  c.subjects=Array.prototype.map.call($("draftSubjects").children,function(r){return [r.children[0].value.trim(),Number(r.children[1].value)]}).filter(function(s){return s[0]});
+  if(!c.goal||!c.exam||c.exam<=fmtDate(new Date()))throw new Error("目標と、明日以降の試験日を設定してください。");
+  if(!c.subjects.length||c.subjects.some(function(s){return !isFinite(s[1])||s[1]<1||s[1]>7}))throw new Error("科目を1つ以上、配分を1〜7で設定してください。");
+  if(new Set(c.subjects.map(function(s){return s[0]})).size!==c.subjects.length)throw new Error("同じ名前の科目は1つにまとめてください。");
+  if(![c.wd,c.we].every(function(h){return isFinite(h)&&h>=0&&h<=16})||!(c.rwd>0&&c.rwe>0)||!isFinite(Number(c.tot))||Number(c.tot)<0)throw new Error("勉強時間は0〜16時間、比率は0より大きい数で入力してください。");
+  return c;
+}
+function keepPlannedBlock(x){return !!(x.manual||state.done[x.id]||elapsed(x.id)>0||running(x.id))}
+function planBaseSignature(){return JSON.stringify([state.plan,state.done,FB.uid])}
+function buildPlanCandidate(c,style){
+  var today=new Date();today.setHours(0,0,0,0);var old={};(state.plan||[]).forEach(function(d){old[d.date]=d});
+  var plan=[],subs=c.subjects.filter(function(s){return String(s[0]).trim()});
+  for(var i=0;i<7;i++){
+    var dt=new Date(today);dt.setDate(dt.getDate()+i);var date=fmtDate(dt),prior=old[date];
+    var kept=prior?prior.blocks.filter(keepPlannedBlock).map(function(x){return Object.assign({},x)}):[];
+    if(c.exam&&date>=c.exam&&!kept.length)continue;
+    var keptHours=kept.reduce(function(n,x){return n+x.h},0),hours=(dt.getDay()===0||dt.getDay()===6)?c.we:c.wd;
+    plan.push({date:date,h:Math.max(hours,keptHours),blocks:kept});
+  }
+  var target=makeTargets(subs,plan.reduce(function(n,d){return n+d.h},0));
+  plan.forEach(function(d){d.blocks.forEach(function(x){subs.forEach(function(sub,i){if(sub[0]===x.name)target[i]-=x.h})})});
+  plan.forEach(function(day){
+    var left=Math.max(0,day.h-day.blocks.reduce(function(n,x){return n+x.h},0)),made=[];
+    while(left>0.00001&&subs.length){
+      var batch=allocDay(left,subs,target,style),used=batch.reduce(function(n,x){return n+x.h},0);if(used<=0)break;
+      batch.forEach(function(x){x.id=newId();made.push(x)});left-=used;
+    }
+    if(made.length>1){var shift=style%made.length;made=made.slice(shift).concat(made.slice(0,shift))}
+    day.blocks=day.blocks.concat(made);
+  });
+  return plan;
+}
+function openPlanCandidate(fromDraft){
+  try{planCandidateConfig=fromDraft?readPlanDraft():planConfig()}catch(e){$("planDraftError").textContent=e.message;return}
+  planCandidateStyle=fromDraft?0:((state.planStyle||0)+1)%PLAN_STYLES.length;
+  generatePlanPreview();
+}
+function generatePlanPreview(){
+  planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(planCandidateConfig,planCandidateStyle);
+  var body=$("planPreviewBody");body.innerHTML="";
+  $("planPreviewNote").textContent="提案："+PLAN_STYLES[planCandidateStyle].n+"。計測済み・完了済み・手動の項目は残しています。採用するまで現在の計画は変わりません。";
+  planCandidate.forEach(function(day){
+    var el=document.createElement("div");el.className="plan-preview-day";var title=document.createElement("h3");title.textContent=dayLabel(day.date)+" · "+hm(day.blocks.reduce(function(n,b){return n+b.h},0));el.appendChild(title);
+    if(!day.blocks.length){var none=document.createElement("small");none.textContent="予定なし";el.appendChild(none)}
+    day.blocks.forEach(function(b){var row=document.createElement("div");row.className="plan-preview-row";var name=document.createElement("span"),time=document.createElement("small");name.textContent=b.name+(findBlock(b.id)?"（引き継ぎ）":"");time.textContent=hm(b.h);row.appendChild(name);row.appendChild(time);el.appendChild(row)});body.appendChild(el);
+  });
+  $("planAdopt").disabled=!planCandidate.length;openPlanDialog("planPreview");
+}
+function anotherPlanCandidate(){if(!planCandidateConfig)return;planCandidateStyle=(planCandidateStyle+1)%PLAN_STYLES.length;generatePlanPreview()}
+function adoptPlanCandidate(){
+  if(!planCandidate||!planCandidateConfig)return;
+  var ids=new Set();planCandidate.forEach(function(d){d.blocks.forEach(function(b){ids.add(b.id)})});
+  if(planCandidateBase!==planBaseSignature()||(state.plan||[]).some(function(d){return d.blocks.some(function(b){return keepPlannedBlock(b)&&!ids.has(b.id)})})){
+    generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
+  }
+  var c=planCandidateConfig;state.plan=planCandidate;state.planStyle=planCandidateStyle;
+  ["goal","exam","tot","wd","we","rwd","rwe","subjects"].forEach(function(k){state[k]=c[k]});
+  if(!state.start)state.start=fmtDate(new Date());
+  // done / spent / credit / contrib / log と実行中のタイマーはそのまま保持する。
+  ["goal","exam","tot","wd","we","rwd","rwe"].forEach(function(k){$(k).value=state[k]});
+  closePlanDialogs();save();renderSubjects();countdown();calcNeed();renderPlan();showPage(3);
 }
 
 // ===== タイマー(ストップウォッチ) =====
@@ -932,6 +1117,7 @@ function tickAll(){
     if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}beep();var xb=findBlock(id);notifyDone(xb?xb.name:"")}
   }
   updateTimer();
+  if(state.page===3)updatePlanProgress();
   if(state.page===4&&state.timer)renderStats();
 }
 
@@ -974,7 +1160,7 @@ function deleteEdit(){
 // ===== 長押ししてドラッグ → 別の日へ移動 =====
 // 項目を約0.5秒押したままにするとドラッグ開始。カードの端に寄せると横にスクロールする。
 var lp=null,drag=null,justDragged=false;
-function dayUnder(x,y){var el=document.elementFromPoint(x,y);return el&&el.closest?el.closest(".day"):null}
+function dayUnder(x,y){var el=document.elementFromPoint(x,y);if(!el||!el.closest)return null;var tab=el.closest("[data-plan-day]");return tab?$("plan").children[Number(tab.dataset.planDay)]:el.closest(".day")}
 function bindDrag(row,id){
   row.addEventListener("contextmenu",function(e){e.preventDefault()});
   row.addEventListener("pointerdown",function(e){
@@ -999,6 +1185,7 @@ function dragLoop(){
   drag.ghost.style.left=(drag.x-drag.dx)+"px";drag.ghost.style.top=(drag.y-drag.dy)+"px";
   var d=dayUnder(drag.x,drag.y);
   if(d!==drag.over){if(drag.over)drag.over.classList.remove("over");if(d)d.classList.add("over");drag.over=d}
+  Array.prototype.forEach.call($("planDates").children,function(tab,i){tab.classList.toggle("drop-target",d===$("plan").children[i])});
   drag.raf=requestAnimationFrame(dragLoop);
 }
 // 項目を別の日へ移す。移動先に同じ科目の項目があれば、時間を足して1つに合わせる(どちらも完了していないとき)。
@@ -1024,6 +1211,7 @@ function endDrag(cancel){
   d.ghost.remove();d.row.classList.remove("dragging");
   Array.prototype.forEach.call(document.querySelectorAll(".day.over"),function(el){el.classList.remove("over")});
   $("plan").style.scrollSnapType="";
+  Array.prototype.forEach.call($("planDates").children,function(tab){tab.classList.remove("drop-target")});
   justDragged=true;setTimeout(function(){justDragged=false},400);
   if(!cancel&&d.over){
     var nd=Array.prototype.indexOf.call($("plan").children,d.over),l=locate(d.id);
@@ -1547,7 +1735,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-18 v16"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v17"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2241,15 +2429,8 @@ $("goalEdit").onclick=function(){goalBack=state.page===0?null:state.page;showPag
 $("navMy").onclick=function(){showPage(5)};
 $("n1").onclick=function(){showPage(2)};
 $("back2").onclick=function(){showPage(1)};
-$("back3").onclick=function(){showPage(1)};
+$("back3").onclick=openPlanDraft;
 $("make").onclick=function(){if(makePlan())showPage(3)};
-$("reset").onclick=function(){
-  askConfirm("本当にリセットしますか?","チェックと計測が消え、その分の学習記録も元に戻ります。","リセットする",function(){
-    pauseTimer();
-    (state.plan||[]).forEach(function(day){day.blocks.forEach(function(x){rollback(x.id)})});
-    state.done={};state.spent={};state.credit={};closeTimer();save();renderPlan();
-  });
-};
 $("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
@@ -2280,12 +2461,20 @@ $("pfGender").onchange=function(){pfSet("gender",this.value)};
 $("pfBY").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bY",v>=1900&&v<=new Date().getFullYear()?String(v):"")};
 $("pfBM").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bM",v>=1&&v<=12?String(v):"")};
 $("pfBD").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bD",v>=1&&v<=31?String(v):"")};
-$("altPlan").onclick=function(){
-  if(!state.plan||!state.plan.length)return;
-  state.planStyle=((state.planStyle||0)+1)%PLAN_STYLES.length;
-  state.plan.forEach(function(day,d){regenCore(d,day.h)});
-  save();renderPlan();
-};
+$("altPlan").onclick=function(){openPlanCandidate(false)};
+$("planSettingsOpen").onclick=function(){openPlanDialog("planSettings")};
+$("draftPreview").onclick=function(){openPlanCandidate(true)};
+$("draftAdd").onclick=function(){addDraftSubject("",1)};
+$("draftCalc").onclick=calculateDraftHours;
+$("planAdopt").onclick=adoptPlanCandidate;
+$("planAgain").onclick=anotherPlanCandidate;
+Array.prototype.forEach.call(document.querySelectorAll("[data-plan-close]"),function(b){b.onclick=closePlanDialogs});
+["planSettings","planDraft","planPreview"].forEach(function(id){$(id).onclick=function(e){if(e.target===this)closePlanDialogs()}});
+document.addEventListener("keydown",function(e){
+ var modal=["planSettings","planDraft","planPreview"].map($).filter(function(el){return !el.hidden})[0];if(!modal)return;
+ if(e.key==="Escape"){e.preventDefault();closePlanDialogs()}
+ if(e.key==="Tab"){var items=Array.prototype.filter.call(modal.querySelectorAll("button,input,select"),function(el){return !el.disabled&&el.getClientRects().length}),first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
+});
 $("carryOn").onchange=function(){state.carry=this.checked;save();showCarry()};
 $("tipsOk").onclick=function(){$("tips").hidden=true};
 $("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
