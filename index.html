@@ -1727,16 +1727,33 @@ function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと
 var pmStack=[],pmCur=null;
 function closeProfile(){$("pm").hidden=true;pmStack=[];pmCur=null}
 function fbSub(q){return [q&&typeof q.grade==="string"?q.grade.slice(0,10):"",q&&typeof q.school==="string"&&q.school?"🎓 "+q.school.slice(0,40):""].filter(Boolean).join("・")}
+function fbWithTimeout(promise,ms){ // 読み込みが終わらない場合も、画面を「読み込み中」のままにしない
+  return new Promise(function(resolve,reject){
+    var done=false,t=setTimeout(function(){if(!done){done=true;reject(new Error("read-timeout"))}},ms);
+    Promise.resolve(promise).then(function(v){if(done)return;done=true;clearTimeout(t);resolve(v)},function(e){if(done)return;done=true;clearTimeout(t);reject(e)});
+  });
+}
 async function openProfile(id,push){ // 他の人のプロフィール: アイコン・名前・学年・志望校・フォロー中・フォロワー。つながっている人だけ、目標と学習記録も見られる
   if($("pm").hidden)pmStack=[];else if(push&&pmCur)pmStack.push(pmCur);
   pmCur=id;
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
-  var p=null,d=null,so=null,st="ok";
-  try{p=await fGet("profiles/"+id)}catch(e){}
-  try{so=await fGet("social/"+id)}catch(e){}
-  try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
+  var p=null,d=null,so=null,st="ok",loadErrors=[],loadNotice=null,retry=null;
+  // 3件のデータ取得を順番待ちにせず同時に開始。各取得は失敗しても他の情報を表示する。
+  var results=await Promise.all([
+    fbWithTimeout(fGet("profiles/"+id),12000).then(function(v){p=v},function(e){loadErrors.push(e);}),
+    fbWithTimeout(fGet("social/"+id),12000).then(function(v){so=v},function(e){loadErrors.push(e);}),
+    fbWithTimeout(fGet("stats/"+id),12000).then(function(v){d=v},function(e){st=(e&&e.code==="permission-denied")?"wait":"err";loadErrors.push(e);})
+  ]);
   if($("pm").hidden||pmCur!==id)return;
+  if(loadErrors.length){
+    var timedOut=loadErrors.some(function(e){return e&&e.message==="read-timeout"});
+    loadNotice=document.createElement("div");loadNotice.className="note";loadNotice.style.padding="12px";
+    loadNotice.textContent=timedOut?"読み込みに時間がかかっています。もう一度お試しください。":"一部の情報を読み込めませんでした。フォローの承認状況やデータベースの権限設定を確認してください。";
+    retry=document.createElement("button");retry.textContent="再読み込み";retry.onclick=function(){openProfile(id)};
+    // 取得できた情報も表示できるよう、エラーが起きたときも下のプロフィール描画は続ける。
+  }
   box.innerHTML="";
+  if(loadNotice){box.appendChild(loadNotice);box.appendChild(retry)}
   if(pmStack.length){var bk=document.createElement("button");bk.textContent="← 戻る";bk.onclick=function(){openProfile(pmStack.pop())};box.appendChild(bk)}
   var top=document.createElement("div");top.className="me big";
   top.innerHTML='<div class="av pav"></div><div><b></b><div class="note"></div></div>';
@@ -1754,9 +1771,16 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     lst.innerHTML="";
     if(!so){lst.innerHTML='<div class="note">一覧は、まだ見られません。相手が新しい版のアプリを開くと、見られるようになります。</div>';return}var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
     if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
-    var mine=await myFollowIds();
+    var mine=[];try{mine=await fbWithTimeout(myFollowIds(),10000)}catch(e){}
+    // 一人ずつ順番に取得せず、10人ずつ並行取得して待ち時間と同時アクセス数を抑える。
+    var profs=[];
+    for(var start=0;start<list.length;start+=10){
+      var batch=list.slice(start,start+10);
+      var got=await Promise.all(batch.map(function(targetId){return fbWithTimeout(fGet("profiles/"+targetId),10000).then(function(q){return q},function(){return null})}));
+      profs=profs.concat(got);
+    }
     for(var i=0;i<list.length;i++){
-      var targetId=list[i],q=null;try{q=await fGet("profiles/"+targetId)}catch(e){}
+      var targetId=list[i],q=profs[i];
       var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);
       (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(targetId);
       var card=document.createElement("div");card.className="fcard";card.appendChild(row);
