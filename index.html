@@ -1544,7 +1544,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-17 v12"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-18 v13"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1724,24 +1724,29 @@ function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと
   r.querySelector(".av").onclick=open;r.querySelector("b").onclick=open;
   return r;
 }
-var pmStack=[],pmCur=null;
-function closeProfile(){$("pm").hidden=true;pmStack=[];pmCur=null}
+// プロフィール閲覧だけに待ち時間の上限を設ける。保存・同期処理には影響させない。
+function profileRead(path){
+  return new Promise(function(resolve,reject){
+    var timer=setTimeout(function(){var e=new Error("読み込みがタイムアウトしました");e.code="deadline-exceeded";reject(e)},12000);
+    Promise.resolve().then(function(){return fGet(path)}).then(function(v){clearTimeout(timer);resolve(v)},function(e){clearTimeout(timer);reject(e)});
+  });
+}
+var pmStack=[],pmCur=null,pmRequest=0;
+function closeProfile(){$("pm").hidden=true;pmStack=[];pmCur=null;pmRequest++}
 function fbSub(q){return [q&&typeof q.grade==="string"?q.grade.slice(0,10):"",q&&typeof q.school==="string"&&q.school?"🎓 "+q.school.slice(0,40):""].filter(Boolean).join("・")}
 async function openProfile(id,push){ // 他の人のプロフィール: アイコン・名前・学年・志望校・フォロー中・フォロワー。つながっている人だけ、目標と学習記録も見られる
   if($("pm").hidden)pmStack=[];else if(push&&pmCur)pmStack.push(pmCur);
   pmCur=id;
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
-  var p=null,d=null,so=null,st="ok";
-  try{p=await fGet("profiles/"+id)}catch(e){}
-  try{so=await fGet("social/"+id)}catch(e){}
-  try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
-  if($("pm").hidden||pmCur!==id)return;
+  var request=++pmRequest,viewer=FB.uid;
+  var active=function(){return !$("pm").hidden&&pmCur===id&&pmRequest===request&&FB.uid===viewer};
+  var p=null,d=null,so=null,st="loading",socialState="loading";
   box.innerHTML="";
   if(pmStack.length){var bk=document.createElement("button");bk.textContent="← 戻る";bk.onclick=function(){openProfile(pmStack.pop())};box.appendChild(bk)}
   var top=document.createElement("div");top.className="me big";
   top.innerHTML='<div class="av pav"></div><div><b></b><div class="note"></div></div>';
   fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-  top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
+  top.querySelector("b").textContent="読み込み中…";top.querySelector(".note").textContent="";
   box.appendChild(top);
   if(FB.uid&&id!==FB.uid){var dmb=document.createElement("button");dmb.textContent="メッセージ";dmb.onclick=function(){closeProfile();openChat(id,p)};box.appendChild(dmb)}
   var ids=function(k){return so&&Array.isArray(so[k])?Array.from(new Set(so[k].filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]},fo=ids("following"),fr=ids("followers");
@@ -1750,13 +1755,19 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   box.appendChild(cnt);
   var body=document.createElement("div");box.appendChild(body);
   var lst=document.createElement("div");box.appendChild(lst);
+  var listRequest=0;
   var show=async function(list,title){
+    var currentList=++listRequest;
     lst.innerHTML="";
+    if(socialState==="loading"){lst.innerHTML='<div class="note">読み込み中…</div>';return}
+    if(socialState==="err"){lst.innerHTML='<div class="note">一覧を読み込めませんでした。再読み込みしてください。</div>';return}
     if(!so){lst.innerHTML='<div class="note">一覧は、まだ見られません。相手が新しい版のアプリを開くと、見られるようになります。</div>';return}var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
     if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
-    var mine=await myFollowIds();
+    var mine=[];try{var follows=await profileRead("follows/"+viewer);mine=follows&&Array.isArray(follows.ids)?follows.ids:[]}catch(e){}
+    var profiles=await Promise.all(list.map(function(uid){return profileRead("profiles/"+uid).catch(function(){return null})}));
+    if(!active()||currentList!==listRequest)return;
     for(var i=0;i<list.length;i++){
-      var targetId=list[i],q=null;try{q=await fGet("profiles/"+targetId)}catch(e){}
+      var targetId=list[i],q=profiles[i];
       var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);
       (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(targetId);
       var card=document.createElement("div");card.className="fcard";card.appendChild(row);
@@ -1765,7 +1776,12 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     }
   };
   var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
-  if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
+  var retry=document.createElement("button");retry.textContent="再読み込み";retry.hidden=true;
+  retry.onclick=function(){openProfile(id)};box.appendChild(retry);
+  function paintStats(){
+  body.innerHTML="";
+  if(st==="loading")body.innerHTML='<div class="note">学習記録を読み込み中…</div>';
+  else if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
   else if(st==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
   else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
   else{
@@ -1775,6 +1791,27 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];s.appendChild(c)});
     body.appendChild(s);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
   }
+  }
+  paintStats();
+  // 互いに独立して表示する。social の通信不良で学習記録を止めない。
+  await Promise.all([
+    profileRead("profiles/"+id).then(function(value){
+      if(!active())return;p=value;
+      fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
+      top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
+    }).catch(function(){if(active()){top.querySelector("b").textContent="プロフィールを読み込めませんでした。";retry.hidden=false}}),
+    profileRead("social/"+id).then(function(value){
+      if(!active())return;so=value;socialState="ok";fo=ids("following");fr=ids("followers");
+      cb[0].querySelector("b").textContent=so?fo.length:"-";cb[1].querySelector("b").textContent=so?fr.length:"-";
+      lst.innerHTML="";
+    }).catch(function(){if(active()){socialState="err";retry.hidden=false;lst.innerHTML='<div class="note">フォロー情報を読み込めませんでした。</div>'}}),
+    profileRead("stats/"+id).then(function(value){
+      if(!active())return;d=value;st="ok";paintStats();
+    }).catch(function(e){
+      if(!active())return;st=(e&&e.code==="permission-denied")?"wait":"err";paintStats();if(st==="err")retry.hidden=false;
+    })
+  ]);
+
 }
 // ---- フォロー数・通知のベル・一覧の画面 ----
 var FBN={fol:0,fr:0,req:0,dm:0},listMode=null,FBSENT={};
