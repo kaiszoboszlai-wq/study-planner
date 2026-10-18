@@ -356,9 +356,10 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 
 /* プランページだけのレイアウト。既存のテーマ色とナビゲーションを共有する。 */
 #planbox{padding:22px;background:var(--card);color:var(--ink)}
-.plan-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.plan-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 #planbox .plan-heading h2{font-size:clamp(1.4rem,4vw,1.9rem);margin:0}
 #planSettingsOpen{display:inline-flex;align-items:center;gap:7px;padding:10px 14px;white-space:nowrap;color:var(--ink);background:var(--accbg);border-color:var(--line)}
+.plan-header-actions{display:flex;align-items:center;gap:8px;margin-left:auto}.plan-help{display:grid;place-items:center;width:38px;height:38px;padding:7px;flex:none;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:50%}.plan-help svg{width:22px;height:22px;display:block}
 #planSettingsOpen svg{display:block;width:18px;height:18px;flex:none}
 .plan-dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--accbg);margin-bottom:16px}
 .plan-date{border:0;background:transparent;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:10px;color:var(--sub)}
@@ -396,7 +397,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 .plan-dialog .actions button{min-height:44px}.plan-dialog .actions{position:sticky;bottom:-24px;background:var(--card);padding:12px 0;margin:0}
 .plan-preview-day{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}.plan-preview-day h3{margin:0 0 8px;font-size:.95rem}
 .plan-preview-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.9rem}.plan-preview-row span:first-child{overflow-wrap:anywhere}.plan-preview-row small{color:var(--sub);white-space:nowrap}
-.draft-subject{display:grid;grid-template-columns:minmax(0,1fr) 64px 40px;gap:8px;margin:8px 0}.draft-subject input{min-width:0}
+.draft-subject{display:grid;grid-template-columns:38px minmax(0,1fr) 56px 36px;gap:8px;margin:8px 0}.draft-subject input{min-width:0}.draft-subject input[type=color]{width:38px;min-height:40px;padding:3px;border:1px solid var(--line);border-radius:8px}
 #planDraftError{color:var(--red)}
 @media(max-width:480px){#planbox{padding:14px}.plan-heading{gap:6px}#planSettingsOpen{padding:8px;font-size:.8rem}.plan-date b{font-size:1.15rem}.plan-summary{padding:12px;gap:8px}.plan-summary .metric+ .metric{padding-left:12px}#planbox .blk{padding-right:7px;gap:7px}.plan-dialog .tmbox{padding:18px}.plan-choice{padding:16px 12px;gap:10px}.plan-choice .choice-icon{width:36px;height:36px}.plan-dialog .actions{bottom:-18px}}
 
@@ -405,6 +406,14 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 :root{--app-font:"Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans JP",sans-serif}
 h1,h2,h3,h4,h5,h6,b,strong{font-weight:600}
 input,select,textarea,button{font-family:var(--app-font)}
+
+
+#em .tmbox{max-height:88dvh;overflow-y:auto}
+.edit-duration{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:16px 0}
+.edit-duration output{font-size:1.1rem;font-weight:600;color:var(--ink)}
+#emh{grid-column:1/-1;width:100%;height:36px;margin:0;accent-color:var(--acc);touch-action:pan-y;cursor:pointer}
+.edit-range-labels{grid-column:1/-1;display:flex;justify-content:space-between;color:var(--sub);font-size:.78rem}.edit-duration .note{grid-column:1/-1;margin:0}
+.edit-color{display:flex;align-items:center;gap:14px}#emcolor{width:54px;height:40px;padding:3px;border:1px solid var(--line);border-radius:8px}
 
 </style>
 <meta name="theme-color" content="#b9e1f5">
@@ -487,10 +496,9 @@ input,select,textarea,button{font-family:var(--app-font)}
 </section>
 
 <section id="planbox" hidden>
-<div class="plan-heading"><h2>今週のプラン</h2><button id="planSettingsOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.3-1.5.9-2.3-.6-2.5 4.3 1.7 1.7v1.8L2.6 15l2.5 4.3 2.3-.6 1.5.9.6 2.4h5l.6-2.4 1.5-.9 2.3.6 2.5-4.3-1.7-1.6v-1.8l1.7-1.7-2.5-4.3-2.3.6-1.5-.9L14.5 3z"/><circle cx="12" cy="12.5" r="3.2"/></svg><span>プラン設定</span></button></div>
+<div class="plan-heading"><h2>今週のプラン</h2><div class="plan-header-actions"><button id="planSettingsOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.3-1.5.9-2.3-.6-2.5 4.3 1.7 1.7v1.8L2.6 15l2.5 4.3 2.3-.6 1.5.9.6 2.4h5l.6-2.4 1.5-.9 2.3.6 2.5-4.3-1.7-1.6v-1.8l1.7-1.7-2.5-4.3-2.3.6-1.5-.9L14.5 3z"/><circle cx="12" cy="12.5" r="3.2"/></svg><span>プラン設定</span></button><button id="tipsShow" class="plan-help" aria-label="使い方" title="使い方" aria-expanded="false" aria-controls="tips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.8-2.5 2-2.5 3.8"/><path d="M12 16.8h.01"/></svg></button></div></div>
 <div id="planDates" class="plan-dates" role="tablist" aria-label="計画の日付"></div>
 <div id="plan" class="days"></div>
-<div class="plan-foot"><button id="tipsShow">使い方</button></div>
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すとタイマー、▶で計測を開始します</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
@@ -650,7 +658,8 @@ input,select,textarea,button{font-family:var(--app-font)}
 <div class="tmbox">
 <div class="tmname" id="emtitle">項目を追加</div>
 <label>科目<input type="text" id="emname" list="subjlist"></label><datalist id="subjlist"></datalist>
-<label>時間<input type="number" id="emh" min="0.5" max="16" step="0.5"></label>
+<div class="edit-duration"><label for="emh">予定時間</label><output id="emDuration" for="emh"></output><input type="range" id="emh" min="0.5" max="16" step="0.5"><div class="edit-range-labels"><span>30分</span><span>16時間</span></div><p class="note">スライドして30分刻みで調整できます。</p></div>
+<label class="edit-color">色<input type="color" id="emcolor" aria-label="科目・教材の色"></label><p class="note">同じ名前の科目・教材にもこの色を使います。</p>
 <label>日付<select id="emday"></select></label>
 <div class="actions"><button id="emsave" class="main">保存</button><button id="emdel">削除</button><button id="emcancel">キャンセル</button></div>
 </div>
@@ -668,7 +677,6 @@ input,select,textarea,button{font-family:var(--app-font)}
 <div class="tm plan-dialog" id="planDraft" hidden role="dialog" aria-modal="true" aria-labelledby="planDraftTitle"><div class="tmbox">
 <div class="plan-dialog-head"><h2 id="planDraftTitle">計画を立て直す</h2><button data-plan-close="planDraft" aria-label="閉じる">×</button></div>
 <p class="note">今の設定をもとに変更できます。まだ現在の計画には反映されません。</p>
-<label>目標<input id="draftGoal" type="text" maxlength="60"></label><label>試験日<input id="draftExam" type="date"></label>
 <div class="row"><label>1週間の目標時間<input id="draftTotal" type="number" min="0" step="0.5"></label><label>平日：休日の比率<span class="pair"><input id="draftRwd" type="number" min="0.5" step="0.5"><span>：</span><input id="draftRwe" type="number" min="0.5" step="0.5"></span></label></div>
 <button id="draftCalc">目標時間と比率から計算</button><div class="row"><label>平日の時間<input id="draftWd" type="number" min="0" max="16" step="0.5"></label><label>休日の時間<input id="draftWe" type="number" min="0" max="16" step="0.5"></label></div>
 <div class="carry-setting"><label class="chk"><input type="checkbox" id="draftCarry" checked><span>未完了の予定を翌日に繰り越す</span></label><p class="note">オンにすると、翌日に未完了の残り時間を引き継ぎます。オフにしても、すでに繰り越した予定や学習記録は消えません。</p></div>
@@ -976,14 +984,14 @@ function closePlanDialogs(){
   planCandidate=null;planCandidateConfig=null;
   if(planDialogFocus&&planDialogFocus.isConnected)planDialogFocus.focus();
 }
-function planConfig(){return {goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjects:state.subjects.map(function(s){return s.slice()})}}
+function planConfig(){return {goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjColors:Object.assign({},state.subjColors||{}),subjects:state.subjects.map(function(s){return s.slice()})}}
 function addDraftSubject(name,weight){
   var row=document.createElement("div");row.className="draft-subject";
-  row.innerHTML='<input type="text" maxlength="30" aria-label="科目・教材名" placeholder="科目・教材名"><input type="number" min="1" max="7" aria-label="配分"><button aria-label="科目を削除">×</button>';
-  row.children[0].value=name;row.children[1].value=weight;row.children[2].onclick=function(){row.remove()};$("draftSubjects").appendChild(row);
+  row.innerHTML='<input type="color" aria-label="科目・教材の色"><input type="text" maxlength="30" aria-label="科目・教材名" placeholder="科目・教材名"><input type="number" min="1" max="7" aria-label="配分"><button aria-label="科目を削除">×</button>';
+  row.children[0].value=colorOf(name);row.children[1].value=name;row.children[2].value=weight;row.children[3].onclick=function(){row.remove()};$("draftSubjects").appendChild(row);
 }
 function openPlanDraft(){
-  var c=planConfig();$("draftGoal").value=c.goal;$("draftExam").value=c.exam;$("draftTotal").value=c.tot;$("draftWd").value=c.wd;$("draftWe").value=c.we;$("draftRwd").value=c.rwd;$("draftRwe").value=c.rwe;$("draftCarry").checked=c.carry;
+  var c=planConfig();$("draftTotal").value=c.tot;$("draftWd").value=c.wd;$("draftWe").value=c.we;$("draftRwd").value=c.rwd;$("draftRwe").value=c.rwe;$("draftCarry").checked=c.carry;
   $("draftSubjects").innerHTML="";c.subjects.forEach(function(s){addDraftSubject(s[0],s[1])});$("planDraftError").textContent="";openPlanDialog("planDraft");
 }
 function calculateDraftHours(){
@@ -994,10 +1002,9 @@ function calculateDraftHours(){
   $("draftWd").value=wd;$("draftWe").value=we;$("planDraftError").textContent="";
 }
 function readPlanDraft(){
-  var c=planConfig();c.goal=$("draftGoal").value.trim();c.exam=$("draftExam").value;c.tot=$("draftTotal").value;c.carry=$("draftCarry").checked;
+  var c=planConfig();c.tot=$("draftTotal").value;c.carry=$("draftCarry").checked;
   c.wd=Number($("draftWd").value);c.we=Number($("draftWe").value);c.rwd=Number($("draftRwd").value);c.rwe=Number($("draftRwe").value);
-  c.subjects=Array.prototype.map.call($("draftSubjects").children,function(r){return [r.children[0].value.trim(),Number(r.children[1].value)]}).filter(function(s){return s[0]});
-  if(!c.goal||!c.exam||c.exam<=fmtDate(new Date()))throw new Error("目標と、明日以降の試験日を設定してください。");
+  c.subjects=Array.prototype.map.call($("draftSubjects").children,function(r){var name=r.children[1].value.trim();if(name)c.subjColors[name]=r.children[0].value;return [name,Number(r.children[2].value)]}).filter(function(s){return s[0]});
   if(!c.subjects.length||c.subjects.some(function(s){return !isFinite(s[1])||s[1]<1||s[1]>7}))throw new Error("科目を1つ以上、配分を1〜7で設定してください。");
   if(new Set(c.subjects.map(function(s){return s[0]})).size!==c.subjects.length)throw new Error("同じ名前の科目は1つにまとめてください。");
   if(![c.wd,c.we].every(function(h){return isFinite(h)&&h>=0&&h<=16})||!(c.rwd>0&&c.rwe>0)||!isFinite(Number(c.tot))||Number(c.tot)<0)throw new Error("勉強時間は0〜16時間、比率は0より大きい数で入力してください。");
@@ -1052,7 +1059,7 @@ function adoptPlanCandidate(){
     generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
   }
   var c=planCandidateConfig;state.plan=planCandidate;state.planStyle=planCandidateStyle;
-  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry"].forEach(function(k){state[k]=c[k]});
+  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){state[k]=c[k]});
   if(!state.start)state.start=fmtDate(new Date());
   // done / spent / credit / contrib / log と実行中のタイマーはそのまま保持する。
   ["goal","exam","tot","wd","we","rwd","rwe"].forEach(function(k){$(k).value=state[k]});
@@ -1148,6 +1155,8 @@ function openEdit(id,d){
   $("emtitle").textContent=id?"項目を編集・他の日へ移動":"項目を追加";
   $("emname").value=l?l.x.name:"";
   $("emh").value=l?l.x.h:1;
+  $("emcolor").value=colorOf(l?l.x.name:"");
+  updateEditDuration();
   var sel=$("emday");sel.innerHTML="";
   state.plan.forEach(function(day,i){var o=document.createElement("option");o.value=i;o.textContent=dayLabel(day.date);sel.appendChild(o)});
   sel.value=edit.day;
@@ -1156,8 +1165,10 @@ function openEdit(id,d){
   activeSubs().forEach(function(s){var o=document.createElement("option");o.value=s[0];dl.appendChild(o)});
   $("em").hidden=false;
 }
+function updateEditDuration(){var h=Number($("emh").value);$("emDuration").textContent=hm(h);$("emh").setAttribute("aria-valuetext",hm(h))}
 function closeEdit(){edit=null;$("em").hidden=true}
 function saveEdit(){
+  if(!edit)return;
   var name=$("emname").value.trim(),h=Number($("emh").value),nd=Number($("emday").value);
   if(!name||!(h>0))return;
   h=Math.min(16,h);
@@ -1168,7 +1179,8 @@ function saveEdit(){
   }else{
     state.plan[nd].blocks.push({id:newId(),name:name,h:h,manual:true});
   }
-  save();closeEdit();renderPlan();
+  state.subjColors=state.subjColors||{};state.subjColors[name]=$("emcolor").value;
+  save();closeEdit();renderSubjects();renderPlan();
 }
 function deleteEdit(){
   var l=edit&&edit.id?locate(edit.id):null;
@@ -1522,7 +1534,7 @@ function showPage(n){
   $("navGrades").classList.toggle("on",n===7);$("navMy").classList.toggle("on",n===5);
   if(n===0){$("goal").value=state.goal||"";$("exam").value=state.exam||"";$("goalErr").hidden=true}
   showGoal();
-  $("tips").hidden=true;
+  $("tips").hidden=true;$("tipsShow").setAttribute("aria-expanded","false");
   if(n===4)renderStats();
   if(n===5)renderMy();
   if(n===6)renderToday();
@@ -1754,7 +1766,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-19 v19"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v20"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2465,6 +2477,7 @@ $("tmSet").onclick=function(){var v=Number($("tmMin").value);if(!(v>=0))return;a
 $("tmdone").onclick=function(){if(running(openId))pauseTimer();setDone(openId,true);closeTimer();renderPlan()};
 $("tmclose").onclick=closeTimer;
 $("tm").onclick=function(e){if(e.target===this)closeTimer()};
+$("emh").oninput=updateEditDuration;
 $("emsave").onclick=saveEdit;
 $("emdel").onclick=deleteEdit;
 $("emcancel").onclick=closeEdit;
@@ -2495,8 +2508,8 @@ document.addEventListener("keydown",function(e){
  if(e.key==="Tab"){var items=Array.prototype.filter.call(modal.querySelectorAll("button,input,select"),function(el){return !el.disabled&&el.getClientRects().length}),first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
 });
 $("carryOn").onchange=$("setupCarry").onchange=function(){state.carry=this.checked;save();showCarry()};
-$("tipsOk").onclick=function(){$("tips").hidden=true};
-$("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
+$("tipsOk").onclick=function(){$("tips").hidden=true;$("tipsShow").setAttribute("aria-expanded","false");$("tipsShow").focus()};
+$("tipsShow").onclick=function(){$("tips").hidden=!$("tips").hidden;this.setAttribute("aria-expanded",String(!$("tips").hidden));if(!$("tips").hidden)$("tips").scrollIntoView({block:"nearest"})};
 $("sug").onclick=function(){
   var box=$("wmrows");box.innerHTML="";
   state.subjects.forEach(function(s,i){
