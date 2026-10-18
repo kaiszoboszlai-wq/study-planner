@@ -264,7 +264,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .theme-choice b{font-size:.92rem}.theme-choice small{font-size:.75rem;color:var(--sub)}
 .theme-choice.selected{outline:2px solid var(--acc);border-color:var(--acc);background:var(--accbg)}
 .theme-swatches{display:flex;gap:5px;width:100%}.theme-swatches i{display:block;height:22px;flex:1;border-radius:5px;border:1px solid rgba(0,0,0,.07)}
-:root[data-app-theme="sage"]{--bg:#fffdf7;--card:#fffdf7;--ink:#354638;--sub:#6e8068;--line:#e0e7da;--acc:#71956b;--accbg:#eef4ea;--done:#aab7a5;--red:#bd5656}
+:root[data-app-theme="sage"]{--bg:#f4f6f0;--card:#fbfcf8;--ink:#354638;--sub:#6e8068;--line:#e0e7da;--acc:#71956b;--accbg:#eef4ea;--done:#aab7a5;--red:#bd5656}
 :root[data-app-theme="lavender"]{--bg:#fff;--card:#fff;--ink:#3e3157;--sub:#786b8e;--line:#e5dcef;--acc:#8256b5;--accbg:#f0eafb;--done:#b8abc9;--red:#c94f68}
 :root[data-app-theme="peach"]{--bg:#fffcf7;--card:#fffcf7;--ink:#593f32;--sub:#8b7060;--line:#eedfd4;--acc:#b97855;--accbg:#fbece2;--done:#c7b2a4;--red:#c74d4d}
 :root[data-app-theme="sky"]{--bg:#fff;--card:#fff;--ink:#172b43;--sub:#617184;--line:#dce3eb;--acc:#347da5;--accbg:#e5f4fc;--done:#9fb0bd;--red:#d62828}
@@ -353,6 +353,86 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
   .sp-preview-card .small{font-size:.65rem;line-height:1.2}
   #daysCard{font-size:1.8rem!important;font-weight:900;line-height:1.05}
 }
+/* ===== 新しいデザイン: やわらかい丸いカード(どのテーマの色でも使える) ===== */
+main{padding-top:18px}
+.mh h2{font-size:2rem;letter-spacing:.01em}
+section{border-radius:24px;box-shadow:0 6px 22px rgba(60,80,55,.07)}
+.pic{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--accbg);color:var(--acc);flex:none;font-style:normal}
+/* プランの上のボタン(2列) */
+.planacts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 16px}
+.planacts button{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 12px;border-radius:18px;background:var(--card);border:1px solid var(--line);box-shadow:0 3px 12px rgba(60,80,55,.07);font-size:.95rem;color:var(--ink)}
+.planacts button svg{width:30px;height:30px;flex:none}
+.planacts button span{flex:1;min-width:0}
+.planacts button::after{content:"›";color:var(--sub);font-size:1.5rem;line-height:1}
+/* チェックの箱 */
+.chk input[type=checkbox],.blk input[type=checkbox],.tcard input[type=checkbox]{-webkit-appearance:none;appearance:none;width:26px;height:26px;border:2px solid var(--sub);border-radius:8px;background-color:var(--card);flex:none;margin:0;display:inline-block}
+.chk input[type=checkbox]:checked,.blk input[type=checkbox]:checked,.tcard input[type=checkbox]:checked{background-color:var(--acc);border-color:var(--acc);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");background-size:75%;background-repeat:no-repeat;background-position:center}
+/* 1日のカード */
+.day{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 6px 20px rgba(60,80,55,.08)}
+.day h3{font-size:1.45rem;font-weight:900;margin:0 0 10px}
+.dh{font-size:1rem;gap:10px;margin-bottom:12px}
+.dh input{width:110px;border-radius:14px;padding:12px 14px;font-size:1.1rem}
+/* 項目のカード */
+.blk{background:var(--card);border:1px solid var(--line);border-left-width:6px;border-radius:18px;padding:12px 12px 12px 14px;margin:10px 0;box-shadow:0 3px 12px rgba(60,80,55,.07);gap:12px}
+.blk+.blk{box-shadow:0 3px 12px rgba(60,80,55,.07)}
+.day .blk{padding-top:12px;padding-bottom:12px}
+.blk.on span{text-decoration:none;color:var(--ink)}
+.item{padding:2px 4px;gap:1px}
+.item span{font-weight:700;font-size:1.02rem;line-height:1.4}
+.dur{font-size:.95rem;color:var(--ink)}
+.item .sp{font-size:.82rem;color:var(--acc)}
+.overpill{display:inline-block;margin-left:8px;padding:1px 10px;border-radius:999px;background:#fbe3e3;color:#b04040;font-size:.78rem;font-weight:700}
+.rundot{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--acc);animation:rundot 1.2s ease-in-out infinite}
+@keyframes rundot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+/* 再生・一時停止・「…」のボタン */
+.ib{width:52px;height:52px}
+.tcard .ib{width:52px;height:52px}
+.ib.play{background:rgba(127,127,127,.14);border:0;color:var(--ink)}
+.ib.play.running{background:var(--acc);color:#fff}
+.ib.play svg{width:22px;height:22px}
+.ib.edit{background:var(--card);border:1px solid var(--line);color:var(--sub)}
+.addb{border-radius:18px;border:2px dashed var(--line);background:transparent;color:var(--sub);padding:14px}
+/* 学習記録 */
+.pillbtn{display:flex;align-items:center;gap:8px;border-radius:999px;padding:12px 20px;font-size:1rem}
+.sum3{gap:10px;margin:14px 0;text-align:left}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 3px 12px rgba(60,80,55,.06);min-width:0}
+.scT{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.scT .pic{width:34px;height:34px}
+.scT small{display:inline;font-size:.9rem;color:var(--sub)}
+.sv{font-size:.8rem;white-space:nowrap}
+.sv b{font-size:1.45rem;margin:0 1px}
+.seg{max-width:none;border-radius:999px;background:var(--card);padding:0}
+.seg button{padding:12px;font-size:1.05rem}
+.seg button.on{background:var(--acc);color:#fff}
+.chartcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:14px;margin-top:14px;box-shadow:0 4px 16px rgba(60,80,55,.07)}
+.chead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chead b{font-size:1.3rem}
+#schart svg{background:transparent}
+.slegbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px 8px;margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:16px}
+.lgi{display:flex;gap:8px;align-items:flex-start}
+.lgi i{width:20px;height:20px;border-radius:50%;flex:none;margin-top:3px}
+.ln{font-size:.9rem;overflow-wrap:anywhere}
+.lt{font-size:.85rem;color:var(--sub)}
+/* マイページ */
+#mypage .sh{font-size:1.2rem;font-weight:900;margin:20px 4px 8px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 5px 18px rgba(60,80,55,.07);margin-bottom:16px}
+.pcard .me.big{margin-bottom:14px;gap:18px}
+.pcard .me.big .av{width:104px;height:104px;font-size:3rem}
+#meName{font-size:1.8rem;font-weight:900}
+.cnt{gap:0;margin-top:6px}
+.cnt button{display:flex;flex-direction:column;align-items:flex-start;padding:0 18px 0 0;font-size:.9rem}
+.cnt button b{font-size:1.7rem;margin:0}
+.cnt i{margin:0 18px 0 0;height:46px}
+.prow{display:flex;align-items:center;gap:12px;padding:6px 0}
+.prow .pic{width:46px;height:46px}
+.prow:has(.ptx:empty){display:none}
+.ptx{flex:1;min-width:0;overflow-wrap:anywhere;font-size:1.02rem}
+#pfView{border-top:1px solid var(--line);padding-top:14px;margin-top:10px}
+#pfView:not(:has(button:not([hidden]))){display:none}
+#shareBtn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 22px;border:2px solid var(--acc);color:var(--ink);background:transparent;font-size:1.05rem}
+.icard{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:10px 0;box-shadow:0 3px 12px rgba(60,80,55,.06)}
+.icard small{display:block;color:var(--sub);font-size:.8rem}
+#appVer,#fbMail{white-space:pre-line;overflow-wrap:anywhere}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -435,17 +515,17 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 <section id="planbox" hidden>
 <p class="step">ステップ 4 / 4</p>
 <h2>今日から7日間の計画</h2>
-<div class="actions"><button id="altPlan">別の計画を提案</button><button id="reset">リセット</button><button id="back3">条件・科目を直す</button><button id="tipsShow">使い方</button></div>
+<div class="planacts"><button id="altPlan"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#6d9a78"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><span>別の計画を提案</span></button><button id="reset"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#4a8bc2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><span>リセット</span></button><button id="back3"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#d19a5c"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></svg><span>条件・科目を直す</span></button><button id="tipsShow"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:#8e6bc4"><path d="M2 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H2zM22 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h8z"/></svg><span>使い方</span></button></div>
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>項目の名前を押す → 大きなタイマーが開きます</li><li>再生ボタンで計測開始、一時停止ボタンで一時停止</li><li>項目を長押ししてドラッグ → 別の日へ移動(その分、日ごとの勉強時間も変わります)</li><li>⋯ で編集・削除、左のチェックで完了</li><li>日ごとの勉強時間の数字を直すと、その日の項目を作り直します</li><li>できなかった項目は、「繰り越す」がオンのとき、翌日以降に自動で繰り越されます</li><li>「条件・科目を直す」で完了すると、計画は作り直されます</li><li>「リセット」は、チェックと計測を消して、その分の学習記録も戻します</li></ul><button id="tipsOk" class="main">わかった</button></div>
 <div class="fld"><label class="chk"><input type="checkbox" id="carryOn" checked>できなかった項目を、翌日に繰り越す</label>
 </div>
 <div id="plan" class="days"></div>
 </section>
 <section id="stats" hidden>
-<div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
-<div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
+<div class="mh"><h2>学習記録</h2><button class="main pillbtn" id="mrOpen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>記録</button></div>
+<div class="sum3"><div class="sc"><div class="scT"><i class="pic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><small>今日</small></div><span class="sv" id="sToday"></span></div><div class="sc"><div class="scT"><i class="pic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></i><small>今月</small></div><span class="sv" id="sMonth"></span></div><div class="sc"><div class="scT"><i class="pic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg></i><small>累計</small></div><span class="sv" id="sAll"></span></div></div>
 <div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
-<div id="schart"></div>
+<div class="chartcard"><div class="chead"><i class="pic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></i><b id="chLabel"></b><em class="today" id="chToday">今日</em></div><div id="schart"></div><div class="slegbox" id="sleg" hidden></div><button class="addb" id="mrOpen2">＋ 記録を追加</button></div>
 
 <div class="pies" id="pies"></div>
 </section>
@@ -467,10 +547,14 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 </section>
 <section id="mypage" hidden>
 <div class="mh"><h2>マイページ</h2><div class="hbtn"><button class="bell" id="addBtn" aria-label="友達を追加" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M19 8v6M16 11h6"/></svg></button><button class="bell" id="settingsBtn" aria-label="設定を開く" title="設定"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="pcard">
 <div class="me big"><div class="av" id="meAv"></div><div><b id="meName"></b>
-<div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
-<div class="note" id="meSub"></div><div class="note" id="meSchool"></div><div class="note" id="meMore"></div></div></div>
-<div class="actions" id="pfView"><button id="shareBtn" hidden>シェア</button></div>
+<div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div></div></div>
+<div class="prow"><i class="pic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></i><span class="ptx" id="meSub"></span></div>
+<div class="prow"><i class="pic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg></i><span class="ptx" id="meSchool"></span></div>
+<div class="prow"><i class="pic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/><path d="M12 9v2"/></svg></i><span class="ptx" id="meMore"></span></div>
+<div class="actions" id="pfView"><button id="shareBtn" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>シェア</button></div>
+</div>
 <h3 class="sh">アカウント・フレンド</h3>
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
@@ -482,9 +566,9 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 <div class="actions"><button id="fbIn" class="main">Googleでログイン</button></div>
 </div>
 <div id="fbOn" hidden>
-<div class="note" id="fbMail"></div>
+<div class="icard"><i class="pic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></i><div><small>アカウント</small><div id="fbMail"></div></div></div>
 </div>
-<p class="note" id="appVer"></p>
+<div class="icard"><i class="pic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></i><div><small>アプリの版・このアドレス</small><div id="appVer"></div></div></div>
 </section>
 <div class="tm" id="gm" hidden role="dialog" aria-modal="true" aria-labelledby="gmt">
 <div class="tmbox"><div class="tmname" id="gmt">成績を追加</div>
@@ -831,10 +915,10 @@ function renderPlan(){
       per[x.name]=(per[x.name]||0)+x.h;
       var b=document.createElement("div");b.className="blk"+(on?" on":"");
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
-      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
-      b.querySelector("span").textContent=x.name+" "+hm(x.h)+(x.carried?"(繰り越し)":"");
-      b.querySelector(".sp").textContent=spText(id);
-      var pb=b.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
+      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="dur"></small><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
+      b.querySelector("span").textContent=x.name;b.querySelector(".dur").textContent=hm(x.h)+(x.carried?"(繰り越し)":"");
+      setSp(b.querySelector(".sp"),id);
+      var pb=b.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.classList.toggle("running",run);pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
       b.querySelector(".item").onclick=function(){if(justDragged)return;openTimer(id)};
       bindDrag(b,id);
@@ -861,6 +945,14 @@ function running(id){return !!(state.timer&&state.timer.id===id)}
 function elapsed(id){return (state.spent[id]||0)+(running(id)?(Date.now()-state.timer.start)/1000:0)}
 function remain(id){var x=findBlock(id);return x?x.h*3600-elapsed(id):0}
 function fmtR(sec){return sec>=0?fmtT(Math.ceil(sec)):"+"+fmtT(Math.floor(-sec))+" 超過"} // 残り時間(カウントダウン)。過ぎたら「+ ○ 超過」
+function setSp(el,id){ // 「残り」の表示。超過は赤い札、計測中は小さな点で出す
+  var t=spText(id),run=false,over=false;el.textContent="";
+  if(t.indexOf("● ")===0){run=true;t=t.slice(2)}
+  if(/ 超過$/.test(t)){over=true;t=t.replace(/ 超過$/,"")}
+  if(run){var d=document.createElement("i");d.className="rundot";el.appendChild(d)}
+  el.appendChild(document.createTextNode(t));
+  if(over){var p=document.createElement("span");p.className="overpill";p.textContent="超過";el.appendChild(p)}
+}
 function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
 function pauseTimer(){if(state.timer){var x=findBlock(state.timer.id);if(x)logAdd(x.name,(Date.now()-state.timer.start)/1000,state.timer.id,"t");state.spent[state.timer.id]=elapsed(state.timer.id);state.timer=null;save()}}
 var AC=null; // 時間になったときの音。画面を操作した時点で使えるようにしておく
@@ -925,7 +1017,7 @@ function tickAll(){
   if(state.plan&&state.plan.length&&state.plan[0].date<fmtDate(new Date()))rollAndRender();
   if(state.timer){
     var id=state.timer.id;
-    Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){el.textContent=spText(id)});
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){setSp(el,id)});
     if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}beep();var xb=findBlock(id);notifyDone(xb?xb.name:"")}
   }
   updateTimer();
@@ -1288,8 +1380,8 @@ function renderStats(){
     var sum=0;Object.keys(L[d]).forEach(function(n){sum+=L[d][n]});
     tot+=sum;if(d.slice(0,7)===ym)mon+=sum;if(d===today)tdy=sum;
   });
-  $("sToday").textContent=fmtH(tdy);
-  $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
+  $("sToday").innerHTML=tlDur(tdy);
+  $("sMonth").innerHTML=tlDur(mon);$("sAll").innerHTML=tlDur(tot);
   Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
 
   var bs=buckets(L,sMode);
@@ -1297,6 +1389,10 @@ function renderStats(){
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
   $("schart").innerHTML=barSvg(bs,sSel);
+  var cd=new Date();$("chLabel").textContent=sMode==="d"?(cd.getMonth()+1)+"月"+cd.getDate()+"日("+DAYS[cd.getDay()]+")":bs[0].label+" 〜 "+bs[bs.length-1].label;$("chToday").hidden=sMode!=="d";
+  var tt={},lg=$("sleg");bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){tt[n]=(tt[n]||0)+b.parts[n]})});lg.innerHTML="";
+  Object.keys(tt).sort(function(a,b){return tt[b]-tt[a]}).forEach(function(n){var e=document.createElement("div");e.className="lgi";e.innerHTML='<i></i><div><div class="ln"></div><div class="lt"></div></div>';e.querySelector("i").style.background=colorOf(n);e.querySelector(".ln").textContent=n;e.querySelector(".lt").textContent=fmtDur(tt[n]);lg.appendChild(e)});
+  lg.hidden=!lg.firstChild;
 
   renderPies(bs,L);
   renderRecords();
@@ -1340,10 +1436,10 @@ function renderToday(){
     tot+=x.h;
     var c=document.createElement("div");c.className="tcard"+(on?" on":"");
     c.style.borderLeft="8px solid "+colorOf(x.name);
-    c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button>';
-    c.querySelector("span").textContent=x.name+" "+hm(x.h)+(x.carried?"(繰り越し)":"");
-    c.querySelector(".sp").textContent=spText(id);
-    var pb=c.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
+    c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="dur"></small><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button>';
+    c.querySelector("span").textContent=x.name;c.querySelector(".dur").textContent=hm(x.h)+(x.carried?"(繰り越し)":"");
+    setSp(c.querySelector(".sp"),id);
+    var pb=c.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.classList.toggle("running",run);pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
     c.querySelector(".item").onclick=function(){openTimer(id)};
     pb.onclick=function(){var was=running(id);toggleTimer(id);if(!was)openTimer(id)};
@@ -1494,7 +1590,7 @@ var pfEditing=null; // プロフィールの入力枠を出すか。初めて(�
 function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生日の表示(友達には出さない。この端末と、同期した自分の端末だけ)
   var b="";
   if(p.bY&&p.bM&&p.bD)b=p.bY+"年"+p.bM+"月"+p.bD+"日生まれ";else if(p.bY)b=p.bY+"年生まれ";else if(p.bM&&p.bD)b="誕生日 "+p.bM+"月"+p.bD+"日";
-  return [p.gender||"",p.high?"🏫 "+p.high:"",p.origin?"出身校 "+p.origin:"",b].filter(Boolean).join("・");
+  return [p.gender||"",p.high||"",p.origin?"出身校 "+p.origin:"",b].filter(Boolean).join("・");
 }
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
@@ -1504,7 +1600,7 @@ function renderMy(){
   $("pfPhotoDel").hidden=!p.photo;
   $("meName").textContent=p.name||"名前は未設定です";
   $("meSub").textContent=[p.grade,p.age?p.age+"歳":""].filter(Boolean).join("・");
-  $("meSchool").textContent=p.school?"🎓 "+p.school:"";
+  $("meSchool").textContent=p.school||"";
   $("meMore").textContent=pfMore(p);
   var ip=$("iconPick");ip.innerHTML="";
   ICONS.forEach(function(ic){
@@ -1544,7 +1640,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-17 v12"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-17 v13"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1726,34 +1822,17 @@ function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと
 }
 var pmStack=[],pmCur=null;
 function closeProfile(){$("pm").hidden=true;pmStack=[];pmCur=null}
-function fbSub(q){return [q&&typeof q.grade==="string"?q.grade.slice(0,10):"",q&&typeof q.school==="string"&&q.school?"🎓 "+q.school.slice(0,40):""].filter(Boolean).join("・")}
-function fbWithTimeout(promise,ms){ // 読み込みが終わらない場合も、画面を「読み込み中」のままにしない
-  return new Promise(function(resolve,reject){
-    var done=false,t=setTimeout(function(){if(!done){done=true;reject(new Error("read-timeout"))}},ms);
-    Promise.resolve(promise).then(function(v){if(done)return;done=true;clearTimeout(t);resolve(v)},function(e){if(done)return;done=true;clearTimeout(t);reject(e)});
-  });
-}
+function fbSub(q){return [q&&typeof q.grade==="string"?q.grade.slice(0,10):"",q&&typeof q.school==="string"&&q.school?q.school.slice(0,40):""].filter(Boolean).join("・")}
 async function openProfile(id,push){ // 他の人のプロフィール: アイコン・名前・学年・志望校・フォロー中・フォロワー。つながっている人だけ、目標と学習記録も見られる
   if($("pm").hidden)pmStack=[];else if(push&&pmCur)pmStack.push(pmCur);
   pmCur=id;
   var box=$("pmBody");box.innerHTML='<div class="note">読み込み中…</div>';$("pm").hidden=false;
-  var p=null,d=null,so=null,st="ok",loadErrors=[],loadNotice=null,retry=null;
-  // 3件のデータ取得を順番待ちにせず同時に開始。各取得は失敗しても他の情報を表示する。
-  var results=await Promise.all([
-    fbWithTimeout(fGet("profiles/"+id),12000).then(function(v){p=v},function(e){loadErrors.push(e);}),
-    fbWithTimeout(fGet("social/"+id),12000).then(function(v){so=v},function(e){loadErrors.push(e);}),
-    fbWithTimeout(fGet("stats/"+id),12000).then(function(v){d=v},function(e){st=(e&&e.code==="permission-denied")?"wait":"err";loadErrors.push(e);})
-  ]);
+  var p=null,d=null,so=null,st="ok";
+  try{p=await fGet("profiles/"+id)}catch(e){}
+  try{so=await fGet("social/"+id)}catch(e){}
+  try{d=await fGet("stats/"+id)}catch(e){st=(e&&e.code==="permission-denied")?"wait":"err"}
   if($("pm").hidden||pmCur!==id)return;
-  if(loadErrors.length){
-    var timedOut=loadErrors.some(function(e){return e&&e.message==="read-timeout"});
-    loadNotice=document.createElement("div");loadNotice.className="note";loadNotice.style.padding="12px";
-    loadNotice.textContent=timedOut?"読み込みに時間がかかっています。もう一度お試しください。":"一部の情報を読み込めませんでした。フォローの承認状況やデータベースの権限設定を確認してください。";
-    retry=document.createElement("button");retry.textContent="再読み込み";retry.onclick=function(){openProfile(id)};
-    // 取得できた情報も表示できるよう、エラーが起きたときも下のプロフィール描画は続ける。
-  }
   box.innerHTML="";
-  if(loadNotice){box.appendChild(loadNotice);box.appendChild(retry)}
   if(pmStack.length){var bk=document.createElement("button");bk.textContent="← 戻る";bk.onclick=function(){openProfile(pmStack.pop())};box.appendChild(bk)}
   var top=document.createElement("div");top.className="me big";
   top.innerHTML='<div class="av pav"></div><div><b></b><div class="note"></div></div>';
@@ -1771,16 +1850,9 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     lst.innerHTML="";
     if(!so){lst.innerHTML='<div class="note">一覧は、まだ見られません。相手が新しい版のアプリを開くと、見られるようになります。</div>';return}var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
     if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
-    var mine=[];try{mine=await fbWithTimeout(myFollowIds(),10000)}catch(e){}
-    // 一人ずつ順番に取得せず、10人ずつ並行取得して待ち時間と同時アクセス数を抑える。
-    var profs=[];
-    for(var start=0;start<list.length;start+=10){
-      var batch=list.slice(start,start+10);
-      var got=await Promise.all(batch.map(function(targetId){return fbWithTimeout(fGet("profiles/"+targetId),10000).then(function(q){return q},function(){return null})}));
-      profs=profs.concat(got);
-    }
+    var mine=await myFollowIds();
     for(var i=0;i<list.length;i++){
-      var targetId=list[i],q=profs[i];
+      var targetId=list[i],q=null;try{q=await fGet("profiles/"+targetId)}catch(e){}
       var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);
       (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(targetId);
       var card=document.createElement("div");card.className="fcard";card.appendChild(row);
@@ -2070,7 +2142,7 @@ async function fillVie(vb){
   }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
 }
 async function renderFb(){
-  $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
+  $("appVer").textContent=APP_VERSION+"\n"+location.host;
   var cl=inClaudeEnv(),cfg=fbConfig();
   var off=$("fbOff");
   off.hidden=true;$("fbSetup").hidden=true;$("fbOutBox").hidden=true;$("fbOn").hidden=true;
@@ -2187,7 +2259,7 @@ $("em").onclick=function(e){if(e.target===this)closeEdit()};
 $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
-$("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
+$("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value};
 function pfSet(k,v){state.profile[k]=v;save();$("meMore").textContent=pfMore(state.profile)}
 $("pfHigh").oninput=function(){pfSet("high",this.value.slice(0,30))};
 $("pfOrigin").oninput=function(){pfSet("origin",this.value.slice(0,30))};
@@ -2247,6 +2319,7 @@ $("pfPhoto").onchange=function(){ // 選んだ写真を、正方形に切り抜�
   rd.readAsDataURL(f);
 };
 $("mrOpen").onclick=openMr;
+$("mrOpen2").onclick=openMr;
 $("mrAdd").onclick=addRecord;
 $("mrNo").onclick=function(){$("mrm").hidden=true};
 $("mrm").onclick=function(e){if(e.target===this)this.hidden=true};
@@ -2369,7 +2442,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
   var themes={sky:1,sage:1,lavender:1,peach:1};
   function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
   function apply(){
-    var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome=["theme","navy","white"].indexOf(v.chrome)>=0?v.chrome:"theme";
+    var v=read(),theme=themes[v.theme]?v.theme:"sage",chrome=["theme","navy","white"].indexOf(v.chrome)>=0?v.chrome:"theme";
     document.documentElement.setAttribute("data-app-theme",theme);
     document.documentElement.setAttribute("data-chrome-theme",chrome);
     document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
