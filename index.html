@@ -424,6 +424,12 @@ input,select,textarea,button{font-family:var(--app-font)}
 @keyframes studyIconShine{to{transform:translateX(100%)}}
 @media(prefers-reduced-motion:reduce){.sp-icon-frame{animation:none;opacity:1;transform:none}.sp-icon-frame::after{display:none;animation:none}}
 
+/* 成績は科目名の下に、点数・満点・偏差値を並べる。 */
+.gmr{grid-template-columns:minmax(0,1fr) 32px;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+#gm .tmbox{max-height:85vh;overflow-y:auto}
+.gm-values{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gm-values label{min-width:0;font-size:.8rem}
+.gr .gl{flex-wrap:wrap}.gr .gl span{overflow-wrap:anywhere}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -539,7 +545,7 @@ input,select,textarea,button{font-family:var(--app-font)}
 </section>
 <section id="grades" hidden>
 <h2>模試・テストの成績</h2>
-<div class="actions"><button id="gAdd" class="main">成績を追加</button><button id="gSug">最新の成績から比率を提案</button></div>
+<div class="actions"><button id="gAdd" class="main">成績を追加</button></div>
 <p class="note" id="gNote"></p>
 <div class="chips" id="gchips"></div>
 <div class="gc" id="gchart"></div>
@@ -572,7 +578,7 @@ input,select,textarea,button{font-family:var(--app-font)}
 <div class="fld"><label>名前(模試・テスト)<input type="text" id="gmName" maxlength="30" placeholder="例 前期中間テスト"></label></div>
 <div class="fld"><label>日付<input type="date" id="gmDate"></label></div>
 <div class="fld"><span class="lb">順位(任意)</span><div class="rk"><input type="number" id="gmRank" min="1" placeholder="例 28" aria-label="順位"><span>位 /</span><input type="number" id="gmOf" min="1" placeholder="例 120" aria-label="何人中"><span>人中</span></div></div>
-<div class="lb">科目ごとの点数 / 満点(科目名は自由に変えられます。点数を入れた科目だけ記録します)</div>
+<div class="lb">科目ごとの点数・満点・偏差値（科目名は変更できます。点数か偏差値を入れた科目を記録します）</div>
 <div id="gmRows"></div>
 <div class="actions"><button id="gmAddRow">＋ 科目を追加</button></div>
 <p class="err" id="gmErr"></p>
@@ -631,7 +637,6 @@ input,select,textarea,button{font-family:var(--app-font)}
 <div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
 <div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
 <div class="fld"><label>高校名<input type="text" id="pfHigh" maxlength="30" placeholder="例 ○○高校"></label></div>
-<div class="fld"><label>出身校(中学校など)<input type="text" id="pfOrigin" maxlength="30" placeholder="例 ○○中学校"></label></div>
 <div class="fld"><label>性別<select id="pfGender"><option value="">未設定</option><option>男性</option><option>女性</option><option>その他</option><option>回答しない</option></select></label></div>
 <div class="fld"><label>生まれた年<input type="number" id="pfBY" min="1900" max="2100" placeholder="例 2008"></label></div>
 <div class="fld"><label>誕生日<span class="pair"><input type="number" id="pfBM" min="1" max="12" placeholder="月"><span>月</span><input type="number" id="pfBD" min="1" max="31" placeholder="日"><span>日</span></span></label></div>
@@ -646,8 +651,7 @@ input,select,textarea,button{font-family:var(--app-font)}
     <button type="button" class="theme-choice" data-app-theme="lavender"><span class="theme-swatches"><i style="background:#D8C9F2"></i><i style="background:#FFFFFF"></i><i style="background:#8256B5"></i></span><b>ラベンダー</b><small>柔らかい・上品</small></button>
     <button type="button" class="theme-choice" data-app-theme="peach"><span class="theme-swatches"><i style="background:#F4D8C8"></i><i style="background:#FFFCF7"></i><i style="background:#B97855"></i></span><b>ピーチ</b><small>温かい・明るい</small></button>
   </div>
-  <div class="fld"><label>上部ヘッダー・下部メニュー<select id="chromeTheme"><option value="theme">テーマカラーに合わせる</option><option value="navy">ネイビーを使う</option><option value="white">白にする</option></select></label></div>
-</div>
+  </div>
 <h3 class="sh">アカウント</h3>
 <div class="actions"><button id="fbLogout" class="dng" hidden>ログアウト</button></div>
 <div class="actions"><button id="appearanceClose" class="main">完了</button></div>
@@ -1637,7 +1641,7 @@ function gColor(nm){ // プランで色を決めた科目はその色。ない�
   var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
   return PALETTE[h%PALETTE.length];
 }
-// state.exams = [{id, date, name, rank, sc:{科目:{s:点数, m:満点}}}]。グラフは点数(s)。比率の提案では 得点率(%)=s/m×100 も使う
+// 成績の科目データは {s:点数, m:満点, d:偏差値(任意)}。点数が未入力なら s は null。
 var gSel="all",gEdit=null,gmRows=[];
 function gSorted(){return (state.exams||[]).slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0})}
 function gPct(o){return o.m>0?o.s/o.m*100:0}
@@ -1647,14 +1651,14 @@ function gLine(recs,sel){ // 点数の折れ線グラフ(縦軸は、表示し�
   var names=[];
   last.forEach(function(e){Object.keys(e.sc).forEach(function(k){if(names.indexOf(k)<0)names.push(k)})});
   var show=names.filter(function(nm){return sel==="all"||sel===nm}),top=0;
-  last.forEach(function(e){show.forEach(function(nm){if(e.sc[nm])top=Math.max(top,e.sc[nm].m,e.sc[nm].s)})});
+  last.forEach(function(e){show.forEach(function(nm){if(e.sc[nm]&&e.sc[nm].s!=null)top=Math.max(top,e.sc[nm].m,e.sc[nm].s)})});
   top=top>0?Math.ceil(top/10)*10:100;
   var step=top<=50?10:top<=100?25:top<=200?50:top<=500?100:200;
   var X=function(i){return ml+(n>1?pw*i/(n-1):pw/2)},Y=function(v){return mt+ph-v/top*ph};
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="点数のグラフ">';
   for(var v=0;v<=top+1e-9;v+=step)svg+='<line class="gl0" x1="'+ml+'" x2="'+(W-mr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="ax" x="'+(ml-6)+'" y="'+(Y(v)+3)+'" text-anchor="end">'+v+'</text>';
   show.forEach(function(nm){
-    var pts=[];last.forEach(function(e,i){if(e.sc[nm])pts.push({x:X(i),y:Y(e.sc[nm].s),p:e.sc[nm].s})});
+    var pts=[];last.forEach(function(e,i){if(e.sc[nm]&&e.sc[nm].s!=null)pts.push({x:X(i),y:Y(e.sc[nm].s),p:e.sc[nm].s})});
     if(!pts.length)return;
     if(pts.length>1)svg+='<polyline fill="none" stroke-width="2.5" style="stroke:'+gColor(nm)+'" points="'+pts.map(function(q){return q.x+","+q.y}).join(" ")+'"/>';
     pts.forEach(function(q){
@@ -1687,7 +1691,7 @@ function renderGrades(){
     var b=document.createElement("button");b.textContent=nm==="all"?"すべて":nm;b.className=gSel===nm?"on":"";
     b.onclick=function(){gSel=nm;renderGrades()};chips.appendChild(b);
   });
-  var hasPct=recs.some(function(e){return Object.keys(e.sc).length>0});
+  var hasPct=recs.some(function(e){return Object.keys(e.sc).some(function(nm){return e.sc[nm].s!=null})});
   $("gchart").innerHTML=hasPct?gLine(recs,gSel):'<div class="note">成績を追加すると、点数のグラフが出ます。</div>';
   $("grank").innerHTML=gRank(recs);
   var box=$("glist");box.innerHTML="";
@@ -1699,12 +1703,12 @@ function renderGrades(){
     var rows=card.querySelector(".rows");
     Object.keys(e.sc).forEach(function(nm){
       var p=e.sc[nm].s,prev=null;
-      for(var j=idx-1;j>=0;j--){if(recs[j].sc[nm]){prev=recs[j].sc[nm].s;break}}
+      for(var j=idx-1;j>=0;j--){if(recs[j].sc[nm]&&recs[j].sc[nm].s!=null){prev=recs[j].sc[nm].s;break}}
       var r=document.createElement("div");r.className="gl";r.innerHTML="<i></i><span></span><span></span><span></span>";
       r.querySelector("i").style.background=gColor(nm);
       var sp=r.querySelectorAll("span");sp[0].textContent=nm;
-      sp[1].textContent=e.sc[nm].s+" / "+e.sc[nm].m+"点";
-      if(prev!==null){var df=Math.round((p-prev)*10)/10;sp[2].textContent=(df>0?"▲+":df<0?"▼":"±")+df+"点";sp[2].className=df>0?"up":df<0?"dn":""}
+      sp[1].textContent=(p!=null?p+" / "+e.sc[nm].m+"点":"")+(e.sc[nm].d!=null?(p!=null?" ・ ":"")+"偏差値 "+e.sc[nm].d:"");
+      if(p!=null&&prev!==null){var df=Math.round((p-prev)*10)/10;sp[2].textContent=(df>0?"▲+":df<0?"▼":"±")+df+"点";sp[2].className=df>0?"up":df<0?"dn":""}
       rows.appendChild(r);
     });
     card.querySelector(".ed").onclick=function(){openGrade(e.id)};
@@ -1712,13 +1716,13 @@ function renderGrades(){
   });
   if(!recs.length)box.innerHTML='<div class="note">まだ成績がありません。「成績を追加」から入れてみましょう。</div>';
 }
-function addGmRow(name,s,m){ // 成績の入力欄に、科目の行を1つ足す(科目名は自由)
+function addGmRow(name,s,m,d){
   var r=document.createElement("div");r.className="gmr";
-  r.innerHTML='<input type="text" maxlength="12" placeholder="科目名" aria-label="科目名"><input type="number" min="0" placeholder="点数" aria-label="点数"><span>/</span><input type="number" min="1" placeholder="満点" aria-label="満点"><button aria-label="この科目を削除">×</button>';
+  r.innerHTML='<input type="text" maxlength="12" placeholder="科目名" aria-label="科目名"><button type="button" aria-label="この科目を削除">×</button><div class="gm-values"><label>点数<input type="number" min="0" step="any" placeholder="点数" aria-label="点数"></label><label>満点<input type="number" min="1" step="any" placeholder="満点" aria-label="満点"></label><label>偏差値<input type="number" min="0" step="0.1" placeholder="任意" aria-label="偏差値"></label></div>';
   var ins=r.querySelectorAll("input");
-  ins[0].value=name;ins[1].value=s;ins[2].value=m;
-  var o={n:ins[0],s:ins[1],m:ins[2]};gmRows.push(o);
-  r.querySelector("button").onclick=function(){gmRows=gmRows.filter(function(x){return x!==o});if(r.parentNode)r.parentNode.removeChild(r)};
+  ins[0].value=name;ins[1].value=s==null?"":s;ins[2].value=m==null?100:m;ins[3].value=d==null?"":d;
+  var o={n:ins[0],s:ins[1],m:ins[2],d:ins[3]};gmRows.push(o);
+  r.querySelector("button").onclick=function(){gmRows=gmRows.filter(function(x){return x!==o});r.remove()};
   $("gmRows").appendChild(r);
 }
 function openGrade(id){
@@ -1729,7 +1733,7 @@ function openGrade(id){
   $("gmRank").value=e&&e.rank>0?e.rank:"";$("gmOf").value=e&&e.of>0?e.of:"";
   $("gmErr").textContent="";
   $("gmRows").innerHTML="";gmRows=[];
-  if(e){Object.keys(e.sc).forEach(function(nm){addGmRow(nm,e.sc[nm].s,e.sc[nm].m)})}
+  if(e){Object.keys(e.sc).forEach(function(nm){addGmRow(nm,e.sc[nm].s,e.sc[nm].m,e.sc[nm].d)})}
   else{ // 新しく追加するときは、前回の成績の科目を出発点にする(プランの科目とは別。自由に直せる)
     var recs=gSorted(),prev=recs.length?recs[recs.length-1]:null;
     if(prev&&Object.keys(prev.sc).length)Object.keys(prev.sc).forEach(function(nm){addGmRow(nm,"",prev.sc[nm].m)});
@@ -1739,16 +1743,20 @@ function openGrade(id){
 }
 function saveGrade(){
   var name=$("gmName").value.trim(),date=$("gmDate").value,rank=Math.round(Number($("gmRank").value))||0,of=Math.round(Number($("gmOf").value))||0,sc={},dup=false;
+  var invalid=false;
   gmRows.forEach(function(r){
-    var nm=r.n.value.trim(),m=Number(r.m.value),sv=Number(r.s.value);
-    if(!nm||r.s.value==="")return;
+    var nm=r.n.value.trim(),m=Number(r.m.value),sv=Number(r.s.value),dv=Number(r.d.value),hasScore=r.s.value!=="",hasD=r.d.value!=="";
+    if(!nm||(!hasScore&&!hasD))return;
     if(sc[nm])dup=true;
-    if(m>0&&sv>=0)sc[nm]={s:Math.min(sv,m*10),m:m};
+    if((hasScore&&(!(m>0)||!isFinite(m)||!isFinite(sv)||sv<0))||(hasD&&(!isFinite(dv)||dv<0))){invalid=true;return}
+    sc[nm]={s:hasScore?Math.min(sv,m*10):null,m:m>0?m:100};
+    if(hasD)sc[nm].d=dv;
   });
+  if(invalid){$("gmErr").textContent="点数・偏差値は0以上、満点は0より大きい数で入力してください。";return}
   if(!name||!date){$("gmErr").textContent="名前と日付を入れてください。";return}
   if(dup){$("gmErr").textContent="同じ科目名が2つあります。";return}
   if(rank>0&&of>0&&rank>of){$("gmErr").textContent="順位は、人数以内の数字にしてください。";return}
-  if(!Object.keys(sc).length&&!(rank>0)){$("gmErr").textContent="点数か順位を、1つ以上入れてください。";return}
+  if(!Object.keys(sc).length&&!(rank>0)){$("gmErr").textContent="点数・偏差値・順位のいずれかを、1つ以上入れてください。";return}
   var rec={id:gEdit||newId(),date:date,name:name.slice(0,30),rank:rank>0?rank:0,of:(rank>0&&of>0)?of:0,sc:sc};
   state.exams=(state.exams||[]).filter(function(x){return x.id!==rec.id});
   state.exams.push(rec);save();$("gm").hidden=true;renderGrades();
@@ -1764,7 +1772,7 @@ var pfEditing=null; // プロフィールの入力枠を出すか。初めて(�
 function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生日の表示(友達には出さない。この端末と、同期した自分の端末だけ)
   var b="";
   if(p.bY&&p.bM&&p.bD)b=p.bY+"年"+p.bM+"月"+p.bD+"日生まれ";else if(p.bY)b=p.bY+"年生まれ";else if(p.bM&&p.bD)b="誕生日 "+p.bM+"月"+p.bD+"日";
-  return [p.gender||"",p.high?"🏫 "+p.high:"",p.origin?"出身校 "+p.origin:"",b].filter(Boolean).join("・");
+  return [p.gender||"",p.high?"🏫 "+p.high:"",b].filter(Boolean).join("・");
 }
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
@@ -1791,7 +1799,6 @@ function renderMy(){
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
   if(document.activeElement!==$("pfHigh"))$("pfHigh").value=p.high||"";
-  if(document.activeElement!==$("pfOrigin"))$("pfOrigin").value=p.origin||"";
   $("pfGender").value=p.gender||"";
   if(document.activeElement!==$("pfBY"))$("pfBY").value=p.bY||"";
   if(document.activeElement!==$("pfBM"))$("pfBM").value=p.bM||"";
@@ -1814,7 +1821,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-19 v22"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v23"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1977,7 +1984,7 @@ async function syncStart(){ // ログインしたとき: クラウドのほう�
 async function fbSocialSync(){ // 友達に見せる、フォロー中・フォロワーの一覧(idだけ)を保存する
   if(!FB.uid)return;
   try{
-    var fo=await myFollowIds(),rawVs=(await fList("stats/"+FB.uid+"/viewers")).map(function(x){return x.id}),vs=Array.from(new Set(rawVs.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,200);
+    var fo=await acceptedFollowIds(),rawVs=(await fList("stats/"+FB.uid+"/viewers")).map(function(x){return x.id}),vs=Array.from(new Set(rawVs.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,200);
     await fSet("social/"+FB.uid,{following:fo.slice(0,200),followers:vs,updated:Date.now()});
     FB.socialSig=fo.length+"|"+vs.length;
   }catch(e){}
@@ -2289,8 +2296,9 @@ async function dmSend(){
   }catch(e){askConfirm("送れませんでした","お互いのどちらかがフォローを承認しているときだけ、メッセージを送れます。","OK")}
 }
 function fbAfter(){renderFb();fillList();if(inboxTab==="req"&&!$("dmm").hidden)renderInboxReq()}
-function openList(m){listMode=m;$("lmt").textContent={fol:"フォロー中",fr:"フォロワー",req:"フォローリクエスト"}[m];$("lm").hidden=false;fillList()}
-function closeList(){listMode=null;$("lm").hidden=true}
+var listFolSession=null;
+function openList(m){listFolSession=null;listMode=m;$("lmt").textContent={fol:"フォロー中",fr:"フォロワー",req:"フォローリクエスト"}[m];$("lm").hidden=false;fillList()}
+function closeList(){listFolSession=null;listMode=null;$("lm").hidden=true}
 async function fillList(){
   if(!listMode||!FB.uid)return;
   var mode=listMode,out=document.createElement("div");
@@ -2305,6 +2313,12 @@ function closeFriend(){$("fm").hidden=true;resetFriendSearch()}
 function openFriend(){resetFriendSearch();fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
 async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
   try{var f=await profileRead("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]}catch(e){return[]}
+}
+async function acceptedFollowIds(ids){
+  var uid=FB.uid;if(!uid)return [];
+  if(!ids)ids=await myFollowIds();
+  var rows=await Promise.all(ids.map(async function(id){try{return await profileRead("stats/"+id+"/viewers/"+uid)?id:null}catch(e){return null}}));
+  return FB.uid===uid?rows.filter(Boolean):[];
 }
 async function fbFollowBack(rid){ // 相手に、自分からもフォローリクエストを送る
   try{
@@ -2353,48 +2367,42 @@ async function fillReq(box){
 async function fillFol(fb){
   var uid=FB.uid;
   try{
-    var f=await profileRead("follows/"+uid),ids=(f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid}))).slice(0,100):[];
-    fb.innerHTML="";
-    if(!ids.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達のコードを入れて、リクエストしましょう。</div>';
-    await Promise.all(ids.map(async function(id){
-      var cached=profileCached("profiles/"+id),p=cached?cached.value:null,d=null,state2="loading";
+    var ids=await myFollowIds();
+    if(FB.uid!==uid||listMode!=="fol"||!fb.isConnected)return;
+    if(!listFolSession)listFolSession=ids.slice();
+    ids.forEach(function(id){if(listFolSession.indexOf(id)<0)listFolSession.push(id)});
+    var snapshot=listFolSession.slice();fb.innerHTML="";
+    if(!snapshot.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達を検索して、リクエストしましょう。</div>';
+    await Promise.all(snapshot.map(async function(id){
+      var cached=profileCached("profiles/"+id),p=cached?cached.value:null,d=null,approved=false,removed=ids.indexOf(id)<0;
       var card=document.createElement("div");card.className="fcard";
-      var hd=fbRow(p,id),un=document.createElement("button");un.textContent="解除";
+      var hd=fbRow(p,id),un=document.createElement("button");
       if(!cached)hd.querySelector("b").textContent="読み込み中…";
-      (function(id){un.onclick=function(){
-        askConfirm("フォローをやめますか?","この人の記録は、見られなくなります。","やめる",async function(){
-          try{var f2=await fGet("follows/"+uid),a2=((f2&&f2.ids)||[]).filter(function(x){return x!==id});await fSet("follows/"+uid,{ids:a2})}catch(e){}
-          try{await fDel("requests/"+id+"/from/"+uid)}catch(e){}
-          try{await fDel("stats/"+id+"/viewers/"+uid)}catch(e){}
-          fbAfter();
-        });
-      }})(id);
       hd.appendChild(un);card.appendChild(hd);
-      var body=document.createElement("div");card.appendChild(body);fb.appendChild(card);
+      var body=document.createElement("div");body.className="note";card.appendChild(body);fb.appendChild(card);
       function paint(){
-      body.innerHTML="";
-      if(state2==="loading")body.innerHTML='<div class="note">学習記録を読み込み中…</div>';
-      else if(state2==="wait")body.innerHTML='<div class="note">承認待ちです。相手が承認すると、記録が見られます。</div>';
-      else if(state2==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
-      else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
-      else{
-        var L=cleanLog(d.log),sm=sumsOf(L);
-        if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
-        var st=document.createElement("div");st.className="fstat";
-        [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];st.appendChild(c)});
-        body.appendChild(st);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
+        un.textContent=removed?"フォローリクエストを送る":approved?"フォロー中":"承認待ち";
+        hd.querySelector(".note").textContent=p&&typeof p.grade==="string"?p.grade.slice(0,10):"";
+        body.textContent=d&&d.goal?"🎯 "+String(d.goal).slice(0,60):"";
       }
-      }
+      un.onclick=function(){
+        if(removed){un.disabled=true;fbFollowBack(id);return}
+        askConfirm("フォローをやめますか？","この人の記録は、見られなくなります。","フォローをやめる",async function(){
+          un.disabled=true;
+          try{
+            var f=await fGet("follows/"+uid),next=((f&&f.ids)||[]).filter(function(x){return x!==id});
+            await fSet("follows/"+uid,{ids:next});
+          }catch(e){un.disabled=false;fbMsg("フォローをやめられませんでした。通信の状態を確認してください。");return}
+          await Promise.all([fDel("requests/"+id+"/from/"+uid).catch(function(){}),fDel("stats/"+id+"/viewers/"+uid).catch(function(){})]);
+          delete FBSENT[id];profileCacheDrop("stats/"+id);removed=true;approved=false;d=null;un.disabled=false;paint();
+          renderFb();
+        });
+      };
       paint();
       await Promise.all([
-        profileRead("profiles/"+id).then(function(value){
-          if(FB.uid!==uid)return;p=value;
-          fbPaint(hd.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-          hd.querySelector("b").textContent=fbNm(p);
-        }).catch(function(){if(FB.uid===uid)hd.querySelector("b").textContent="プロフィールを読み込めませんでした。"}),
-        profileRead("stats/"+id).then(function(value){
-          if(FB.uid!==uid)return;d=value;state2="ok";paint();
-        }).catch(function(e){if(FB.uid===uid){state2=e&&e.code==="permission-denied"?"wait":"err";paint()}})
+        profileRead("profiles/"+id).then(function(value){if(FB.uid!==uid)return;p=value;fbPaint(hd.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);hd.querySelector("b").textContent=fbNm(p);paint()}).catch(function(){if(FB.uid===uid)hd.querySelector("b").textContent="プロフィールを読み込めませんでした。"}),
+        !removed?profileRead("stats/"+id).then(function(value){if(FB.uid===uid&&!removed){d=value;paint()}}).catch(function(){}):Promise.resolve(),
+        !removed?profileRead("stats/"+id+"/viewers/"+uid).then(function(value){if(FB.uid===uid&&!removed){approved=!!value;paint()}}).catch(function(){}):Promise.resolve()
       ]);
     }));
   }catch(e){fb.innerHTML='<div class="note">読み込めませんでした。</div>'}
@@ -2432,7 +2440,7 @@ async function renderFb(){
   $("fbMail").textContent=(FB.user&&FB.user.email?FB.user.email:"")+(FB.err?"  "+FB.err:"");
   $("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
-  try{var f=await fGet("follows/"+uid);FBN.fol=(f&&Array.isArray(f.ids))?new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid})).size:0}catch(e){}
+  try{var approved=await acceptedFollowIds();if(FB.uid!==uid)return;FBN.fol=approved.length}catch(e){}
   try{FBN.fr=new Set((await fList("stats/"+uid+"/viewers")).map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size}catch(e){}
   try{FBN.req=(await fList("requests/"+uid+"/from")).length}catch(e){}
   paintCounts();
@@ -2536,7 +2544,6 @@ $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0
 $("pfSchool").oninput=function(){state.profile.school=this.value.slice(0,40);save();$("meSchool").textContent=this.value?"🎓 "+this.value:""};
 function pfSet(k,v){state.profile[k]=v;save();$("meMore").textContent=pfMore(state.profile)}
 $("pfHigh").oninput=function(){pfSet("high",this.value.slice(0,30))};
-$("pfOrigin").oninput=function(){pfSet("origin",this.value.slice(0,30))};
 $("pfGender").onchange=function(){pfSet("gender",this.value)};
 $("pfBY").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bY",v>=1900&&v<=new Date().getFullYear()?String(v):"")};
 $("pfBM").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bM",v>=1&&v<=12?String(v):"")};
@@ -2625,17 +2632,6 @@ $("gmDel").onclick=function(){
   var id=gEdit;
   askConfirm("この成績を削除しますか?",e.name,"削除する",function(){state.exams=state.exams.filter(function(x){return x.id!==id});save();$("gm").hidden=true;renderGrades()});
 };
-$("gSug").onclick=function(){ // 最新の成績の得点率から、科目の比率を提案
-  var recs=gSorted(),latest={},from={};
-  recs.forEach(function(e){Object.keys(e.sc).forEach(function(nm){latest[nm]=gPct(e.sc[nm]);from[nm]=e.name})});
-  var targets=state.subjects.filter(function(x){return latest[x[0]]!==undefined});
-  if(!targets.length){$("gNote").textContent="比率を提案できる科目の成績が、まだありません。";return}
-  askConfirm("科目の比率を更新しますか?","各科目の最新の得点率をもとに、低い科目ほど比率(1〜7)を大きくします。","更新する",function(){
-    targets.forEach(function(x){var p=latest[x[0]];x[2]=Math.round(p);x[1]=Math.max(1,Math.min(7,Math.round(1+(100-p)/100*6)))});
-    renderSubjects();save();
-    $("gNote").textContent="比率を更新しました:"+targets.map(function(x){return x[0]+" "+x[1]}).join("、")+"(「プラン」の科目の画面で確認できます)";
-  });
-};
 // アプリを開いたときのアニメーション。タップするとすぐ閉じる。動きを減らす設定の端末では短くする。
 (function(){
   var sp=$("splash"),done=false;
@@ -2723,7 +2719,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
   var themes={sky:1,sage:1,lavender:1,peach:1};
   function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
   function apply(){
-    var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome=["theme","navy","white"].indexOf(v.chrome)>=0?v.chrome:"theme";
+    var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome="theme";
     document.documentElement.setAttribute("data-app-theme",theme);
     document.documentElement.setAttribute("data-chrome-theme",chrome);
     document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
