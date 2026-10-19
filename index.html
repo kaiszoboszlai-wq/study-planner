@@ -564,7 +564,7 @@ button.follow-action:disabled{opacity:.6}
 </section>
 <section id="today" hidden>
 <div class="today-heading"><h2>今日</h2><span id="tdTitle"></span></div>
-<div id="tdSummary" class="today-summary"><div><small>今日の計測時間</small><strong id="tdMeasured">0分</strong></div><div><small>達成率</small><strong id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
+<div id="tdSummary" class="today-summary"><div><small>今日の計測時間</small><strong id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><small>達成率</small><strong id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
 <div class="note" id="tdSum"></div>
 <div id="tdList"></div>
 <div class="actions"><button id="tdPlan">今日から7日間のプランを見る</button></div>
@@ -1705,7 +1705,7 @@ function todayBar(){
   var td=fmtDate(new Date()),day=(state.plan||[]).filter(function(y){return y.date===td})[0],hours=0,seconds=0;
   (day?day.blocks:[]).forEach(function(x){hours+=Number(x.h)||0;seconds+=Math.max(0,elapsed(x.id))});
   var percent=hours>0?Math.floor(seconds/(hours*3600)*100):0;
-  $("tdMeasured").textContent=fmtH(seconds);$("tdPercent").textContent=percent+"%";$("tdBar").style.width=Math.min(100,percent)+"%";$("tdMeter").setAttribute("aria-valuenow",Math.min(100,percent));$("tdMeter").setAttribute("aria-valuetext",percent+"パーセント");
+  $("tdPlanned").textContent="予定合計 "+hm(hours);$("tdMeasured").textContent=fmtH(seconds);$("tdPercent").textContent=percent+"%";$("tdBar").style.width=Math.min(100,percent)+"%";$("tdMeter").setAttribute("aria-valuenow",Math.min(100,percent));$("tdMeter").setAttribute("aria-valuetext",percent+"パーセント");
   document.querySelectorAll("[data-today-block]").forEach(function(card){var id=card.dataset.todayBlock,x=findBlock(id);if(!x)return;var e=Math.max(0,elapsed(id)),p=x.h>0?Math.floor(e/(x.h*3600)*100):0,run=running(id);card.classList.toggle("is-running",run);card.querySelector(".today-detail").textContent="計測 "+fmtH(e)+" / 予定 "+hm(x.h);card.querySelector(".today-progress i").style.width=Math.min(100,p)+"%";card.querySelector(".today-block-percent").textContent=p+"%";var play=card.querySelector(".play");play.innerHTML=run?IC_PAUSE:IC_PLAY;play.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");card.querySelector(".today-running-label").textContent=run?"計測中":""});
 }
 
@@ -1896,7 +1896,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-19 v26"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v27"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
