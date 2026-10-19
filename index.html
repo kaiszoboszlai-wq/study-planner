@@ -456,6 +456,7 @@ button.follow-action:disabled{opacity:.6}
 #clockEditPanel .actions{justify-content:center;gap:8px}#clockEditPanel button{min-height:44px}
 #tm .tmbox{max-height:94dvh;overflow-y:auto}#tmbox .adj{margin:12px 0 4px}
 @media(max-width:360px){#today .tcard{gap:7px;padding-left:8px;padding-right:8px}.today-detail{font-size:.75rem}}
+.request-profile-details{display:grid;grid-template-columns:3em minmax(0,1fr);gap:5px 10px;margin:10px 0;font-size:.85rem;text-align:left}.request-profile-details dt{color:var(--sub)}.request-profile-details dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.request-profile-details .request-profile-legacy{grid-column:1/-1;font-size:.78rem;color:var(--sub);margin-top:4px}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -645,6 +646,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
 <div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk friend-user-search"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
+<p class="note">リクエスト先には、学年・目標・高校名が表示されます。</p>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
 </div>
@@ -1896,7 +1898,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-19 v27"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-19 v28"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1984,7 +1986,7 @@ function genCode(){ // 紛らわしい文字(0 O 1 I)を除いた8文字
   (window.crypto||crypto).getRandomValues(a);
   for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o;
 }
-function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS),grade:String(p.grade||"").slice(0,10),school:String(p.school||"").slice(0,40)}}
+function fbMine(){var p=state.profile||{};return{name:String(p.name||"名無し").slice(0,20),icon:goodIcon(p.icon)||"📚",color:goodColor(p.color),photo:goodPhoto(p.photoS),grade:String(p.grade||"").slice(0,10),school:String(p.school||"").slice(0,40),high:String(p.high||"").slice(0,30)}}
 // 友達に見せる写真は、96×96の小さなJPEG(photoS)。古い写真(photoSがまだない)は、ここで作る。
 function ensureSmallPhoto(){
   var p=state.profile||{};
@@ -2013,8 +2015,8 @@ function fbSchedule(){if(!FB.uid||!FB.code)return;clearTimeout(fbTimer);fbTimer=
 async function fbPublish(force){ // プロフィールと、目標・学習記録を、保存する(承認した人は全員、見られる)
   if(!FB.uid||!FB.code)return;
   await ensureSmallPhoto();
-  var me=fbMine(),st={share:true,goal:String(state.goal||"").slice(0,60),log:trimLog(),live:state.timer?{n:String((findBlock(state.timer.id)||{}).name||"").slice(0,30),at:Date.now()}:null,updated:Date.now()};
-  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,FB.code,st.goal,st.log,!!state.timer]);
+  var me=fbMine(),st={share:true,grade:me.grade,high:me.high,goal:String(state.goal||"").slice(0,60),log:trimLog(),live:state.timer?{n:String((findBlock(state.timer.id)||{}).name||"").slice(0,30),at:Date.now()}:null,updated:Date.now()};
+  var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,me.high,FB.code,st.goal,st.log,!!state.timer]);
   if(!force&&sig===fbSig)return;
   var base={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},full=Object.assign({},base);
   if(me.photo)full.photo=me.photo;if(me.grade)full.grade=me.grade;if(me.school)full.school=me.school;
@@ -2136,6 +2138,12 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   var cnt=document.createElement("div");cnt.className="cnt";
   cnt.innerHTML='<button><b>'+(so?fo.length:"-")+'</b>フォロー中</button><i></i><button><b>'+(so?fr.length:"-")+'</b>フォロワー</button>';
   box.appendChild(cnt);
+  var sharedProfile=null,profileInfo=document.createElement("div");box.appendChild(profileInfo);
+  function paintProfileInfo(){
+    var old=sharedProfile||{},current={};
+    ["grade","goal","high"].forEach(function(k){current[k]=d&&typeof d[k]==="string"?d[k]:k==="grade"&&p&&typeof p.grade==="string"?p.grade:old[k]||""});
+    profileInfo.replaceChildren(requestProfileDetails(p,{profile:current}));
+  }
   var body=document.createElement("div");box.appendChild(body);
   var lst=document.createElement("div");box.appendChild(lst);
   var listRequest=0;
@@ -2162,14 +2170,14 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   var retry=document.createElement("button");retry.textContent="再読み込み";retry.hidden=true;
   retry.onclick=function(){openProfile(id)};box.appendChild(retry);
   function paintStats(){
+  paintProfileInfo();
   body.innerHTML="";
   if(st==="loading")body.innerHTML='<div class="note">学習記録を読み込み中…</div>';
-  else if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、目標と学習記録が見られます。</div>';
+  else if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、学習記録が見られます。</div>';
   else if(st==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
   else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
   else{
     var L=cleanLog(d.log),sm=sumsOf(L);
-    if(d.goal){var g=document.createElement("div");g.className="note";g.textContent="🎯 "+String(d.goal).slice(0,60);body.appendChild(g)}
     var s=document.createElement("div");s.className="fstat";
     [["今日",fmtH(sm.tdy)],["今月",fmtH(sm.mon)],["累計",fmtH(sm.tot)]].forEach(function(a){var c=document.createElement("div");c.innerHTML="<small></small><b></b>";c.querySelector("small").textContent=a[0];c.querySelector("b").textContent=a[1];s.appendChild(c)});
     body.appendChild(s);var ch=document.createElement("div");ch.innerHTML=mini7(L);body.appendChild(ch);
@@ -2180,10 +2188,11 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   freshness.textContent=cachedD?"前回取得した学習記録を表示しています。最新情報を確認中…":"";body.before(freshness);
   // 互いに独立して表示する。social の通信不良で学習記録を止めない。
   await Promise.all([
+    (viewer&&id!==viewer?profileRead("stats/"+viewer+"/viewers/"+id):Promise.resolve(null)).then(function(value){if(!active())return;sharedProfile=value&&value.profile||null;paintProfileInfo()}).catch(function(){}),
     profileRead("profiles/"+id).then(function(value){
       if(!active())return;p=value;
       fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-      top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);
+      top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);paintProfileInfo();
     }).catch(function(){if(active()){top.querySelector("b").textContent="プロフィールを読み込めませんでした。";retry.hidden=false}}),
     profileRead("social/"+id).then(function(value){
       if(!active())return;so=value;socialState="ok";fo=ids("following");fr=ids("followers");
@@ -2404,11 +2413,27 @@ async function acceptedFollowIds(ids){
   var rows=await Promise.all(ids.map(async function(id){try{return await profileRead("stats/"+id+"/viewers/"+uid)?id:null}catch(e){return null}}));
   return FB.uid===uid?rows.filter(Boolean):[];
 }
+// 承認前の相手には、リクエストに添えた3項目だけを渡す。学習記録の読み取り権限は変えない。
+function followRequestProfile(){
+  var p=state.profile||{};
+  return {grade:String(p.grade||"").slice(0,10),goal:String(state.goal||"").slice(0,60),high:String(p.high||"").slice(0,30)};
+}
+function requestSharedProfile(prof,request){
+  var shared=request&&request.profile&&typeof request.profile==="object"?request.profile:{};
+  var text=function(value,max){return typeof value==="string"?value.slice(0,max):""};
+  return {grade:text(shared.grade,10)||text(prof&&prof.grade,10),goal:text(shared.goal,60),high:text(shared.high,30)};
+}
+function requestProfileDetails(prof,request){
+  var shared=requestSharedProfile(prof,request),list=document.createElement("dl");list.className="request-profile-details";
+  [["学年",shared.grade],["目標",shared.goal],["高校",shared.high]].forEach(function(pair){var label=document.createElement("dt"),value=document.createElement("dd");label.textContent=pair[0];value.textContent=pair[1]||"未設定";list.append(label,value)});
+  if(!request||!request.profile){var note=document.createElement("dd");note.className="request-profile-legacy";note.textContent="以前のリクエストには目標・高校の情報がありません。再送後に表示されます。";list.appendChild(note)}
+  return list;
+}
 async function fbFollowBack(rid){ // 相手に、自分からもフォローリクエストを送る
   try{
     var f=await fGet("follows/"+FB.uid),ids=(f&&Array.isArray(f.ids))?f.ids.slice(0,100):[];
     if(ids.indexOf(rid)<0){
-      await fSet("requests/"+rid+"/from/"+FB.uid,{at:Date.now()});
+      await fSet("requests/"+rid+"/from/"+FB.uid,{at:Date.now(),profile:followRequestProfile()});
       ids.push(rid);await fSet("follows/"+FB.uid,{ids:ids});
       FBSENT[rid]=true;
     }
@@ -2440,11 +2465,11 @@ async function fillReq(box){
       var ok=document.createElement("button");ok.className="main";ok.textContent="承認";
       var no=document.createElement("button");no.textContent="拒否";
       (function(rid){
-        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now()});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}fbAfter()};
+        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now(),profile:requestSharedProfile(pr,item.data)});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}fbAfter()};
         no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}fbAfter()};
       })(rid);
       row.appendChild(ok);row.appendChild(no);
-      var card=document.createElement("div");card.className="fcard";card.appendChild(row);card.appendChild(fbFollowEl(rid,mine,fbNm(pr)));slots[index].replaceWith(card);
+      var card=document.createElement("div");card.className="fcard";card.appendChild(row);card.appendChild(requestProfileDetails(pr,item.data));card.appendChild(fbFollowEl(rid,mine,fbNm(pr)));slots[index].replaceWith(card);
     }));
   }catch(e){box.innerHTML='<div class="note">読み込めませんでした。</div>'}
 }
@@ -2467,7 +2492,7 @@ async function fillFol(fb){
       function paint(){
         un.textContent=removed?"フォロー":approved?"フォロー中":"承認待ち";un.classList.toggle("follow-action",removed);
         hd.querySelector(".note").textContent=p&&typeof p.grade==="string"?p.grade.slice(0,10):"";
-        body.textContent=d&&d.goal?"🎯 "+String(d.goal).slice(0,60):"";
+        body.replaceChildren();if(!removed)body.appendChild(requestProfileDetails(p,{profile:d||{}}));
       }
       un.onclick=function(){
         if(removed){un.disabled=true;fbFollowBack(id);return}
@@ -2505,7 +2530,7 @@ async function fillVie(vb){
       var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
       (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}fbAfter()}})(vid);
       vr.appendChild(rv);
-      var card=document.createElement("div");card.className="fcard";card.appendChild(vr);card.appendChild(fbFollowEl(vid,mine,fbNm(vp)));slots[index].replaceWith(card);
+      var card=document.createElement("div");card.className="fcard";card.appendChild(vr);card.appendChild(requestProfileDetails(vp,{profile:item.data&&item.data.profile||{}}));card.appendChild(fbFollowEl(vid,mine,fbNm(vp)));slots[index].replaceWith(card);
     }));
   }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
 }
