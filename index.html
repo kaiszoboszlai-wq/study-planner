@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>study planner</title>
 <style>
+.save-status{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-height:25px;margin:0 0 8px;color:var(--sub);font-size:.75rem;flex-wrap:wrap}.save-status:has(#saveStatusText:empty){display:none}.save-status button,.read-error button{font:inherit;padding:5px 9px;min-height:30px;white-space:nowrap}.save-status.has-error{color:var(--red)}.read-error{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.read-error span{flex:1 1 150px}
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17232f;--sub:#5b6b7a;--line:#d9e0e6;--acc:#0b6e6e;--accbg:#dff1f0;--done:#9fb0bd;--red:#d62828;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--card:#18232d;--ink:#e8eef3;--sub:#93a4b3;--line:#2a3a47;--acc:#5fc4bf;--accbg:#173a3a;--done:#5d7080;--red:#ff6b6b}}
@@ -491,6 +492,7 @@ button.follow-action:disabled{opacity:.6}
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
 <div class="sp-top">
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
@@ -645,7 +647,7 @@ button.follow-action:disabled{opacity:.6}
 </div>
 <div class="tm" id="fm" hidden role="dialog" aria-modal="true" aria-labelledby="fmt">
 <div class="tmbox"><div class="tmname" id="fmt">友達を追加</div>
-<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk friend-user-search"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><div id="fbUserResults"></div></div>
+<div class="fld"><span class="lb">ユーザー名で検索してフォロー</span><div class="rk friend-user-search"><input type="search" id="fbUserSearch" class="fbin" maxlength="20" placeholder="ユーザー名の先頭を入力" autocomplete="off" aria-label="ユーザー名"><button id="fbUserSearchBtn" class="main">検索</button></div><p class="note">先頭が一致する名前を20件ずつ表示します。英字は大文字・小文字を区別します。</p><div id="fbUserResults"></div></div>
 <p class="note">リクエスト先には、学年・目標・高校名が表示されます。</p>
 <p class="note" id="fbMsg"></p>
 <div class="actions"><button id="fmClose">閉じる</button></div></div>
@@ -761,7 +763,7 @@ function ownsCurrentData(uid){return !!uid&&uid===dataOwner&&uid===FB.uid}
 var SYNC_SKIP=["timer","page","planPage","updatedAt","dataAt"],lastData="";
 function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
 function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);}catch(e){}lastData=syncData()}
-function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));}catch(e){}}
+function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
 function switchAccountData(uid){
   uid=uid||null;
   if(dataOwner===uid){try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}return false}
@@ -774,6 +776,7 @@ function switchAccountData(uid){
   if(legacyUnclaimed){try{localStorage.setItem(KEY+":legacy-archived","1")}catch(e){}legacyUnclaimed=false}
   var saved=readAccount(uid);accountNeedsCloud=!!uid&&!saved;
   state=Object.assign(JSON.parse(initialState),saved||{});dataOwner=uid;
+  saveHealth={localSaved:!!saved,localError:null,cloudError:null,writeError:null,pending:!!uid,synced:false};
   try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}
   lastData=syncData();ensureIds();rollForward();fillWeeklySetup();countdown();renderPlan();
   showPage(state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)));
@@ -782,6 +785,33 @@ function switchAccountData(uid){
 function save(){state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now()}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule()}
 
 var $=function(id){return document.getElementById(id)};
+var saveHealth={localSaved:false,localError:null,cloudError:null,writeError:null,pending:false,synced:false};
+function errorKind(e){var code=String(e&&e.code||"").replace(/^firestore\//,"");if(code==="permission-denied")return "permission";if(code==="unauthenticated")return "auth";if(code==="deadline-exceeded")return "timeout";if(code==="unavailable"||code==="network-request-failed"||code==="auth/network-request-failed"||navigator.onLine===false)return "network";if(code==="failed-precondition")return "setup";return "other"}
+function readErrorMessage(e){var k=errorKind(e);return k==="permission"?"この情報を閲覧する権限がありません。":k==="auth"?"ログインし直してください。":k==="timeout"?"読み込みに時間がかかっています。":k==="network"?"通信できませんでした。接続を確認してください。":k==="setup"?"この情報を取得する準備が完了していません。":"読み込めませんでした。"}
+function showReadError(box,e,retry,append){
+  var row=document.createElement("div");row.className="note read-error";row.setAttribute("role","alert");var label=document.createElement("span");label.textContent=readErrorMessage(e);row.appendChild(label);
+  if(retry){var b=document.createElement("button");b.type="button";b.textContent="再試行";b.onclick=function(){b.disabled=true;Promise.resolve().then(retry).catch(function(err){if(row.isConnected){showReadError(row,err,retry);b.remove()}})};row.appendChild(b)}
+  if(!append)box.replaceChildren();box.appendChild(row);return row;
+}
+function paintSaveStatus(){
+  var el=document.getElementById("saveStatusText"),button=document.getElementById("saveRetry"),box=document.getElementById("saveStatus");if(!el||!saveHealth)return;
+  if(document.hidden)return;
+  var h=saveHealth,err=h.localError||h.cloudError||h.writeError,label="";
+  if(h.localError)label="保存できませんでした（この端末）。";
+  else if(h.cloudError||h.writeError){var k=errorKind(h.cloudError||h.writeError);label="保存できませんでした（クラウド）。"+(k==="permission"?"保存権限がありません。":k==="auth"?"ログインし直してください。":k==="network"||k==="timeout"?"通信を確認してください。":"再試行してください。")}
+  else if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
+  else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
+  if(el.textContent!==label)el.textContent=label;box.classList.toggle("has-error",!!err);button.hidden=!err;
+}
+async function retrySaving(){
+  if(!store())return;if(!ownsCurrentData(FB.uid))return;
+  if(!FB.syncReady){await fbOnAuth();return}
+  var failed=saveHealth.writeError;
+  if(failed&&failed.retry&&!/^(privateData|profiles)\//.test(failed.path)&&failed.path!=="stats/"+FB.uid){try{await failed.retry()}catch(e){return}}
+  await syncPush();await fbPublish(true);
+  if(!saveHealth.cloudError&&!saveHealth.writeError)paintSaveStatus();
+}
+function limitRead(task){return new Promise(function(resolve,reject){var timer=setTimeout(function(){var e=new Error("timeout");e.code="deadline-exceeded";reject(e)},12000);Promise.resolve(task).then(function(v){clearTimeout(timer);resolve(v)},function(e){clearTimeout(timer);reject(e)})})}
 
 // ページの拡大操作を抑え、1本指のスクロールと通常のタップは残す。
 (function(){
@@ -993,8 +1023,8 @@ function rollForward(){
   }
   state.planDaySeen=today;save();return true;
 }
-function rollAndRender(){
-  if(!rollForward())return;
+function rollAndRender(force){
+  if(!rollForward()&&!force)return;
   if(state.weekSetupPending){closePlanDialogs();closeTimer();fillWeeklySetup();showPage(1)}
   else if(state.plan.some(function(day){return day.date===fmtDate(new Date())})){selectedPlanDate=fmtDate(new Date())}
   renderPlan();
@@ -1285,17 +1315,20 @@ function updateTimer(){
     $("clockEditPreview").textContent="計測時間を "+fmtT(e)+" に変更";
   }
 }
+var backgroundPlanDirty=false;
 function tickAll(){
-  if(state.timer||state.page===6)todayBar();
-  if(state.plan&&state.plan.length&&!state.weekSetupPending&&state.planDaySeen!==fmtDate(new Date()))rollAndRender();
+  var visible=!document.hidden;
+  if(visible&&state.page===6)todayBar();
+  if(state.plan&&state.plan.length&&!state.weekSetupPending&&state.planDaySeen!==fmtDate(new Date())){if(visible)rollAndRender();else backgroundPlanDirty=rollForward()||backgroundPlanDirty}
   if(state.timer){
     var id=state.timer.id;
-    Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){el.textContent=spText(id)});
+    if(visible&&state.page===3)Array.prototype.forEach.call(document.querySelectorAll('[data-sp="'+id+'"]'),function(el){var text=spText(id);if(el.textContent!==text)el.textContent=text});
     if(remain(id)<=0&&notified!==id){notified=id;try{if(navigator.vibrate)navigator.vibrate([300,100,300])}catch(e){}beep();var xb=findBlock(id);notifyDone(xb?xb.name:"")}
   }
-  updateTimer();
+  if(!visible)return;
+  if(!$('tm').hidden)updateTimer();
   if(state.page===3)updatePlanProgress();
-  if(state.page===4&&state.timer)renderStats();
+  if(state.page===4&&state.timer)updateStatsLive();
 }
 
 // ===== 項目の追加・編集・他の日への移動 =====
@@ -1626,11 +1659,11 @@ function addRecord(){
   state.log=state.log||{};state.log[date]=state.log[date]||{};state.log[date][name]=(state.log[date][name]||0)+sec;
   $("mrH").value="";$("mrM").value="";$("mrSubj").value="";save();$("mrm").hidden=true;renderStats();
 }
-function renderPies(bs,L){
+function renderPies(bs,L,targetBox){
   var per={},sum=0;
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){per[n]=(per[n]||0)+b.parts[n];sum+=b.parts[n]})});
   var names=Object.keys(per).sort(function(a,b){return per[b]-per[a]});
-  var box=$("pies");box.innerHTML="";
+  var box=targetBox||$("pies");box.innerHTML="";
   // 1つ目: 勉強した時間配分(表示している期間)
   var rng={d:"直近7日",w:"直近8週",m:"直近6か月"}[sMode],c1=document.createElement("div");c1.className="pie";
   c1.innerHTML='<div class="pt"></div><div class="pg"></div><div class="pl2"></div>';
@@ -1693,6 +1726,25 @@ function renderStats(){
 
   renderPies(bs,L);
   renderRecords();
+  statsLiveKey=statsTickKey();
+}
+var statsLiveKey="";
+function statsTickKey(){return fmtDate(new Date())+"|"+sMode+"|"+sSel+"|"+(state.timer?state.timer.id+"/"+Math.round(elapsed(state.timer.id)/60):"")}
+function setTextIfChanged(el,text){if(el&&el.textContent!==text)el.textContent=text}
+function patchStatsElement(current,next,keepAttributes){
+  if(current.nodeType===3){if(current.nodeValue!==next.nodeValue)current.nodeValue=next.nodeValue;return}
+  if(!keepAttributes){Array.from(current.attributes||[]).forEach(function(a){if(!next.hasAttribute(a.name))current.removeAttribute(a.name)});
+  Array.from(next.attributes||[]).forEach(function(a){if(current.getAttribute(a.name)!==a.value)current.setAttribute(a.name,a.value)})}
+  var old=Array.from(current.childNodes),fresh=Array.from(next.childNodes);
+  if(old.length!==fresh.length||old.some(function(n,i){return n.nodeType!==fresh[i].nodeType||n.nodeName!==fresh[i].nodeName})){current.replaceChildren.apply(current,fresh);return}
+  old.forEach(function(n,i){patchStatsElement(n,fresh[i])});
+}
+function updateStatsLive(){
+  var key=statsTickKey();if(key===statsLiveKey)return;statsLiveKey=key;
+  var L=logData(),sum=sumsOf(L),bs=buckets(L,sMode);
+  setTextIfChanged($("sToday"),fmtH(sum.tdy));setTextIfChanged($("sMonth"),fmtH(sum.mon));setTextIfChanged($("sAll"),fmtH(sum.tot));
+  var chart=document.createElement("div");chart.innerHTML=barSvg(bs,sSel);patchStatsElement($("schart"),chart,true);
+  var pies=document.createElement("div");renderPies(bs,L,pies);patchStatsElement($("pies"),pies,true);
 }
 
 // ===== ページ切り替え(1:条件 → 2:科目と重み → 3:計画) =====
@@ -1929,7 +1981,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-20 v32"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-20 v33"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -1979,7 +2031,7 @@ async function fGet(path){
   if(profileCacheOwner!==FB.uid)profileCacheReset();
   var owner=FB.uid,epoch=profileCacheEpoch,cacheable=profileCacheKey(path);
   try{
-    var r=await FB.Fs.getDoc(FB.Fs.doc(FB.db,path)),value=r.exists()?r.data():null;
+    var r=await limitRead(FB.Fs.getDoc(FB.Fs.doc(FB.db,path))),value=r.exists()?r.data():null;
     if(cacheable&&owner&&FB.uid===owner&&profileCacheEpoch===epoch){
       profileCache.delete(path);profileCache.set(path,{value:value,at:Date.now()});
       while(profileCache.size>150)profileCache.delete(profileCache.keys().next().value);
@@ -1987,9 +2039,10 @@ async function fGet(path){
     return value;
   }catch(e){if(FB.uid===owner&&profileCacheEpoch===epoch)profileCache.delete(path);throw e}
 }
-async function fSet(path,data){await FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data);profileCacheDrop(path)}
-async function fDel(path){await FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path));profileCacheDrop(path)}
-async function fList(path){var r=await FB.Fs.getDocs(FB.Fs.collection(FB.db,path)),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function cloudWrite(task,path){var uid=FB.uid,epoch=authEpoch;try{await task();profileCacheDrop(path);if(ownsCurrentData(uid)&&epoch===authEpoch&&saveHealth.writeError&&saveHealth.writeError.path===path){saveHealth.writeError=null;paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.writeError={code:e.code,path:path,retry:function(){if(ownsCurrentData(uid)&&epoch===authEpoch)return cloudWrite(task,path)}};paintSaveStatus()}throw e}}
+async function fSet(path,data){return cloudWrite(function(){return FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data)},path)}
+async function fDel(path){return cloudWrite(function(){return FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path))},path)}
+async function fList(path){var r=await limitRead(FB.Fs.getDocs(FB.Fs.collection(FB.db,path))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
 async function fbInit(){
   var cfg=fbConfig();
   if(!cfg||inClaudeEnv()){renderFb();return}
@@ -2000,7 +2053,7 @@ async function fbInit(){
     FB.Au=m[1];FB.Fs=m[2];FB.auth=FB.Au.getAuth(app);FB.db=cfg.databaseId?FB.Fs.getFirestore(app,cfg.databaseId):FB.Fs.getFirestore(app);FB.loaded=true; // データベースのIDが (default) 以外のときは、IDを指定する
     try{await FB.Au.getRedirectResult(FB.auth)}catch(e){}
     FB.Au.onAuthStateChanged(FB.auth,function(u){FB.user=u;FB.uid=u?u.uid:null;fbOnAuth()});
-  }catch(e){FB.err="Firebaseを読み込めませんでした。通信の状態を確認してください。"}
+  }catch(e){FB.initError=e;FB.err="Firebaseを読み込めませんでした。通信の状態を確認してください。"}
   renderFb();
 }
 var FB_AUTH_ERR={"auth/unauthorized-domain":"このサイトのアドレス("+location.hostname+")が、Firebaseの「承認済みドメイン」に入っていません。","auth/operation-not-allowed":"FirebaseでGoogleでのログインがオンになっていません。","auth/network-request-failed":"通信できませんでした。通信の状態を確認してください。","auth/web-storage-unsupported":"このブラウザでは、ログインできません。SafariかChromeで、プライベートブラウズをオフにして開いてください。","auth/internal-error":"ログインの途中でエラーになりました。LINEなどのアプリの中ではなく、SafariかChromeで開いてください。"};
@@ -2097,38 +2150,45 @@ function followerProfileDetails(prof,shared,data){
   ["grade","goal","high"].forEach(function(k,i){if(!Object.prototype.hasOwnProperty.call(values,k))cells[i].textContent="更新待ち"});return list;
 }
 // ---- 別の端末との同期: 自分だけが読み書きできる privateData/(自分のuid) に、データを丸ごと預ける ----
-var syncTimer=null,syncSig="";
+var syncTimer=null,syncSig="",syncFlight=null;
 function isBlank(){return !state.plan&&!(state.goal||"").trim()&&!Object.keys(state.log||{}).length&&!(state.exams||[]).length} // まだ何も入れていない端末は、預けない(別の端末のデータを上書きしないため)
-function syncSchedule(){if(!ownsCurrentData(FB.uid)||!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPush,4000)}
+function syncSchedule(){if(!ownsCurrentData(FB.uid))return;if(syncData()!==syncSig&&!isBlank()){saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus()}if(!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPush,4000)}
 async function syncPush(){
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady)return;
   clearTimeout(syncTimer);syncTimer=null;
-  var d=syncData();if(d===syncSig||isBlank())return;
-  if(!state.dataAt){state.dataAt=Date.now();store()}
-  try{await fSet("privateData/"+uid,{data:d,dataAt:state.dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch)syncSig=d}catch(e){}
+  if(syncFlight&&syncFlight.uid===uid&&syncFlight.epoch===epoch)return syncFlight.promise;
+  var d=syncData();if(d===syncSig||isBlank()){paintSaveStatus();return}
+  if(!state.dataAt){state.dataAt=Date.now();store()}var dataAt=state.dataAt;
+  saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus();
+  var flight={uid:uid,epoch:epoch,promise:null};syncFlight=flight;
+  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null}})();
+  return flight.promise;
 }
 function syncApply(r){ // 別の端末のほうが新しい: その内容をこの端末に入れて、開き直す
   try{
     var o=JSON.parse(r.data);o.timer=state.timer;o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
     if(!ownsCurrentData(FB.uid))return false;
     localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));location.reload();return true;
-  }catch(e){return false}
+  }catch(e){saveHealth.localError=e;paintSaveStatus();return false}
 }
 async function syncPull(){ // 画面にもどったとき、別の端末のほうが新しければ取り込む
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady)return;
   if(syncTimer)await syncPush();
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
-  var r=null;try{r=await fGet("privateData/"+uid)}catch(e){return}
+  var r=null;try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return}
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
   if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0))syncApply(r);
+  else{saveHealth.cloudError=null;paintSaveStatus()}
 }
 async function syncStart(){ // ログインしたとき: クラウドのほうが新しければ取り込む。なければ、この端末のデータを預ける
   var uid=FB.uid,epoch=authEpoch,r=null;if(!ownsCurrentData(uid))return false;
-  try{r=await fGet("privateData/"+uid)}catch(e){return false} // 読めなかったときは、上書きしないように、同期を始めない
+  try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return false} // 読めなかったときは、上書きしないように、同期を始めない
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return false;
   var needsCloud=accountNeedsCloud;accountNeedsCloud=false;
   if(r&&typeof r.data==="string"&&(needsCloud||(Number(r.dataAt)||0)>(state.dataAt||0))){if(syncApply(r))return true}
-  FB.syncReady=true;await syncPush();
+  FB.syncReady=true;saveHealth.cloudError=null;
+  if(r&&r.data===syncData()){syncSig=syncData();saveHealth.pending=false;saveHealth.synced=true}else if(isBlank()){saveHealth.pending=false;saveHealth.synced=false}
+  paintSaveStatus();await syncPush();
 }
 async function fbSocialSync(){ // 友達に見せる、フォロー中・フォロワーの一覧(idだけ)を保存する
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid))return;
@@ -2236,30 +2296,24 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     var currentList=++listRequest;
     lst.innerHTML="";
     if(socialState==="loading"){lst.innerHTML='<div class="note">読み込み中…</div>';return}
-    if(socialState==="err"){lst.innerHTML='<div class="note">一覧を読み込めませんでした。再読み込みしてください。</div>';return}
+    if(socialState==="err"){showReadError(lst,socialError,function(){openProfile(id)});return}
     if(!so){lst.innerHTML='<div class="note">一覧は、まだ見られません。相手が新しい版のアプリを開くと、見られるようになります。</div>';return}var h=document.createElement("h3");h.className="sh";h.textContent=title;lst.appendChild(h);
     if(!list.length){lst.insertAdjacentHTML("beforeend",'<div class="note">いません。</div>');return}
-    var mine=[];try{var follows=await profileRead("follows/"+viewer);mine=follows&&Array.isArray(follows.ids)?follows.ids:[]}catch(e){}
-    var profiles=await Promise.all(list.map(function(uid){return profileRead("profiles/"+uid).catch(function(){return null})}));
+    var mineTask=myFollowIds();
     if(!active()||currentList!==listRequest)return;
-    for(var i=0;i<list.length;i++){
-      var targetId=list[i],q=profiles[i];
-      var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);
-      (function(x){var o=function(){openProfile(x,true)};row.querySelector(".av").onclick=o;row.querySelector("b").onclick=o})(targetId);
-      var card=document.createElement("div");card.className="fcard";card.appendChild(row);
-      card.appendChild(fbFollowEl(targetId,mine,fbNm(q)));
-      lst.appendChild(card);
-    }
+    var cards=list.map(function(targetId){var card=document.createElement("div");card.className="fcard";var row=fbRow(null,targetId);row.querySelector("b").textContent="読み込み中…";card.appendChild(row);lst.appendChild(card);return card});
+    await Promise.all(list.map(async function(targetId,i){try{var q=await profileRead("profiles/"+targetId);if(!active()||currentList!==listRequest)return;var row=fbRow(q,targetId);row.querySelector(".note").textContent=fbSub(q);cards[i].replaceChildren(row);mineTask.then(function(mine){if(active()&&currentList===listRequest)cards[i].appendChild(fbFollowEl(targetId,mine,fbNm(q)))})}catch(e){if(active()&&currentList===listRequest)showReadError(cards[i],e,function(){show(list,title)})}}));
   };
   var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
-  var retry=document.createElement("button");retry.textContent="再読み込み";retry.hidden=true;
+  var socialError=null,statsError=null;
+  var retry=document.createElement("button");retry.textContent="再試行";retry.hidden=true;
   retry.onclick=function(){openProfile(id)};box.appendChild(retry);
   function paintStats(){
   paintProfileInfo();
   body.innerHTML="";
   if(st==="loading")body.innerHTML='<div class="note">学習記録を読み込み中…</div>';
   else if(st==="wait")body.innerHTML='<div class="note">フォローが承認されると、学習記録が見られます。</div>';
-  else if(st==="err")body.innerHTML='<div class="note">読み込めませんでした。</div>';
+  else if(st==="err")showReadError(body,statsError,function(){openProfile(id)});
   else if(!d||d.share!==true)body.innerHTML='<div class="note">学習記録は、まだありません。</div>';
   else{
     var L=cleanLog(d.log),sm=sumsOf(L);
@@ -2278,16 +2332,16 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
       if(!active())return;p=value;
       fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
       top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);paintProfileInfo();
-    }).catch(function(){if(active()){top.querySelector("b").textContent="プロフィールを読み込めませんでした。";retry.hidden=false}}),
+    }).catch(function(e){if(active()){showReadError(top.querySelector(".note"),e,function(){openProfile(id)});top.querySelector("b").textContent=cachedP?fbNm(p):"プロフィール"}}),
     profileRead("social/"+id).then(function(value){
       if(!active())return;so=value;socialState="ok";fo=ids("following");fr=ids("followers");
       cb[0].querySelector("b").textContent=so?fo.length:"-";cb[1].querySelector("b").textContent=so?fr.length:"-";
       if(!listRequest)lst.innerHTML="";
-    }).catch(function(){if(active()){socialState="err";retry.hidden=false;lst.innerHTML='<div class="note">フォロー情報を読み込めませんでした。</div>'}}),
+    }).catch(function(e){if(active()){socialState="err";socialError=e;showReadError(lst,e,function(){openProfile(id)})}}),
     profileRead("stats/"+id).then(function(value){
       if(!active())return;d=value;st="ok";freshness.textContent="";paintStats();
     }).catch(function(e){
-      if(!active())return;freshness.textContent="";st=(e&&e.code==="permission-denied")?"wait":"err";paintStats();if(st==="err")retry.hidden=false;
+      if(!active())return;freshness.textContent="";statsError=e;st=errorKind(e)==="permission"?"wait":"err";paintStats();
     })
   ]);
 
@@ -2314,33 +2368,25 @@ var IC_CMT='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="
 var px={},pxCur=null;
 function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function rankPid(uid){return uid+"_"+fmtDate(new Date()).replace(/-/g,"")} // コメントの置き場: posts/(uid_日付)/comments
-async function rankRows(){
-  var td=fmtDate(new Date()),ids=await myFollowIds(),me=fbMine(),Lg=logData(),mine=0;
-  Object.keys(Lg[td]||{}).forEach(function(n){mine+=Lg[td][n]});
-  var rows=[{me:true,uid:FB.uid,name:me.name,icon:me.icon,color:me.color,photo:me.photo,s:mine,live:!!state.timer}];
-  var friends=await Promise.all(ids.map(async function(id){
-    // 人ごと・プロフィールと記録を同時に取得し、通信待ちを積み上げない。
-    var result=await Promise.all([
-      profileRead("profiles/"+id).catch(function(){return null}),
-      profileRead("stats/"+id).then(function(d){return {data:d}},function(){return null})
-    ]);
-    if(!result[1])return null; // 承認されていない人は入れない
-    var p=result[0],d=result[1].data,l=cleanLog(d&&d.log),s=0;
-    Object.keys(l[td]||{}).forEach(function(n){s+=l[td][n]});
-    return {uid:id,name:fbNm(p),icon:p&&p.icon,color:p&&p.color,photo:p&&p.photo,s:s,live:!!(d&&d.live&&Date.now()-Number(d.live.at)<150000)};
-  }));
-  rows=rows.concat(friends.filter(Boolean));
-  rows.sort(function(a,b){return b.s-a.s});
-  return rows;
+async function rankRows(onRows,onError){
+  var uid=FB.uid,td=fmtDate(new Date()),me=fbMine(),Lg=logData(),mine=0;Object.keys(Lg[td]||{}).forEach(function(n){mine+=Lg[td][n]});
+  var rows=[{me:true,uid:uid,name:me.name,icon:me.icon,color:me.color,photo:me.photo,s:mine,live:!!state.timer}];
+  function emit(final){if(onRows&&FB.uid===uid)onRows(rows.slice().sort(function(a,b){return b.s-a.s}),final)}emit(false);
+  var ids=await myFollowIds(true);if(FB.uid!==uid)return [];
+  await Promise.all(ids.map(async function(id){
+    var p=null,row=null;
+    var profile=profileRead("profiles/"+id).then(function(value){p=value;if(row){row.name=fbNm(p);row.icon=p&&p.icon;row.color=p&&p.color;row.photo=p&&p.photo;emit(false)}},function(e){if(onError)onError(e)});
+    try{var d=await profileRead("stats/"+id);if(FB.uid!==uid)return;var l=cleanLog(d&&d.log),seconds=0;Object.keys(l[td]||{}).forEach(function(n){seconds+=l[td][n]});row={uid:id,name:p?fbNm(p):"読み込み中…",icon:p&&p.icon,color:p&&p.color,photo:p&&p.photo,s:seconds,live:!!(d&&d.live&&Date.now()-Number(d.live.at)<150000)};rows.push(row);emit(false)}catch(e){if(errorKind(e)!=="permission"&&onError)onError(e)}
+    await profile;if(row&&row.name==="読み込み中…"){row.name=fbNm(p);emit(false)}
+  }));emit(true);return rows.sort(function(a,b){return b.s-a.s});
 }
 var rankHistory={key:"",positions:{},trends:{}};
-function rankPaint(box,rows){
+function rankPaint(box,rows,partial){
   var historyKey=String(FB.uid||"")+"/"+fmtDate(new Date());
   if(rankHistory.key!==historyKey)rankHistory={key:historyKey,positions:{},trends:{}};
   var positions={},place=0;
-  rows.forEach(function(r){if(r.s<60)return;var next=++place,prev=rankHistory.positions[r.uid];positions[r.uid]=next;if(prev!=null&&prev!==next)rankHistory.trends[r.uid]=next<prev?"up":"down"});
-  Object.keys(rankHistory.trends).forEach(function(id){if(positions[id]==null)delete rankHistory.trends[id]});
-  rankHistory.positions=positions;
+  rows.forEach(function(r){if(r.s<60)return;var next=++place,prev=rankHistory.positions[r.uid];positions[r.uid]=next;if(!partial&&prev!=null&&prev!==next)rankHistory.trends[r.uid]=next<prev?"up":"down"});
+  if(!partial){Object.keys(rankHistory.trends).forEach(function(id){if(positions[id]==null)delete rankHistory.trends[id]});rankHistory.positions=positions;}
   box.innerHTML="";var pos=0;
   rows.forEach(function(r){
     var e=document.createElement("div"),pid=rankPid(r.uid),on=r.s>=60;e.className="rkrow"+(r.me?" me":"");e.setAttribute("data-pid",pid);
@@ -2356,51 +2402,44 @@ function rankPaint(box,rows){
     e.querySelector("b").textContent=on?fmtDur(r.s):"0分";
     e.querySelector(".rcm").onclick=function(){openPost(pid,{n:(r.me?"あなた":r.name+"さん")+"の今日",s:r.s})};
     box.appendChild(e);
-    fList("posts/"+pid+"/comments").then(function(l){e.querySelector(".rcm i").textContent=l.length||""},function(){});
+    if(!document.hidden)profileRead("posts/"+pid+"/comments",fList).then(function(l){if(e.isConnected)e.querySelector(".rcm i").textContent=l.length||""},function(){});
   });
 }
 // ---- 今日の勉強時間ランキングの画面(ヘッダーのカードを押すと開く) ----
 var rankRequest=0;
 async function rankLoad(){
-  var box=$("tlBody"),request=++rankRequest,uid=FB.uid;
-  if(!FB.uid){box.innerHTML='<div class="note" style="padding:0 16px">ログインすると、フォロー中の人の今日の勉強時間ランキングが見られます。</div>';return}
-  var rows=await rankRows();
-  if($("tlm").hidden||request!==rankRequest||FB.uid!==uid)return;
-  rankPaint(box,rows);
+  if(document.hidden)return;
+  var box=$("tlBody"),request=++rankRequest,uid=FB.uid,errors=[],latest=[];
+  var active=function(){return !document.hidden&&!$("tlm").hidden&&request===rankRequest&&FB.uid===uid};
+  if(!uid){box.innerHTML='<div class="note" style="padding:0 16px">ログインすると、フォロー中の人の今日の勉強時間ランキングが見られます。</div>';return}
+  function paint(rows,final){if(!active())return;latest=rows;rankPaint(box,rows,!final);errors.forEach(function(e){showReadError(box,e,rankLoad,true)})}
+  try{await rankRows(paint,function(e){if(!active())return;if(!errors.some(function(old){return errorKind(old)===errorKind(e)}))errors.push(e);paint(latest,false)})}catch(e){if(active())showReadError(box,e,rankLoad,true)}
 }
 function renderRank(){if(!$("tlm").hidden)rankLoad()}
 function openRanking(){$("tlm").hidden=false;$("tlBody").innerHTML='<div class="note" style="padding:0 16px">読み込み中…</div>';rankLoad()}
 // ---- コメント(ランキングの人の「今日」に付ける。見るのはログインしている人なら誰でも) ----
-async function pxLoad(pid){return{cms:await fList("posts/"+pid+"/comments").catch(function(){return[]})}}
+async function pxLoad(pid){return {cms:await profileRead("posts/"+pid+"/comments",fList)}}
 function pxCount(pid){var el=document.querySelector('.rkrow[data-pid="'+pid+'"] .rcm i'),o=px[pid];if(el&&o)el.textContent=o.cms.length||""}
 async function openPost(pid,it){
-  pxCur={pid:pid,it:it};$("pxm").hidden=false;$("pxBody").innerHTML='<div class="note">読み込み中…</div>';
-  px[pid]=await pxLoad(pid);pxRender();
+  var uid=FB.uid,c={pid:pid,it:it};pxCur=c;$("pxm").hidden=false;$("pxBody").innerHTML='<div class="note">読み込み中…</div>';$("pxSend").disabled=true;
+  try{var loaded=await pxLoad(pid);if(pxCur!==c||uid!==FB.uid||$("pxm").hidden)return;px[pid]=loaded;$("pxSend").disabled=false;pxRender()}catch(e){if(pxCur===c&&uid===FB.uid)showReadError($("pxBody"),e,function(){openPost(pid,it)})}
 }
 async function pxRender(){
-  if(!pxCur||$("pxm").hidden)return;
-  var pid=pxCur.pid,o=px[pid],ids={},pr={};
-  o.cms.forEach(function(c){if(c.data&&typeof c.data.uid==="string")ids[c.data.uid]=1});
-  await Promise.all(Object.keys(ids).map(function(u){return fGet("profiles/"+u).then(function(p){pr[u]=p},function(){})}));
-  if(!pxCur||pxCur.pid!==pid)return;
+  if(!pxCur||$("pxm").hidden)return;var c=pxCur,uid=FB.uid,pid=c.pid,o=px[pid];if(!o)return;
   var box=$("pxBody");box.innerHTML='<div class="tmname"></div><div class="note"></div><h3 class="sh">コメント</h3><div id="pxC"></div>';
-  box.querySelector(".tmname").textContent=pxCur.it.n||"コメント";box.querySelector(".note").textContent="今日の勉強時間 "+fmtDur(pxCur.it.s||0);
+  box.querySelector(".tmname").textContent=c.it.n||"コメント";box.querySelector(".note").textContent="今日の勉強時間 "+fmtDur(c.it.s||0);
   var C=$("pxC");if(!o.cms.length)C.innerHTML='<div class="note">まだありません。</div>';
-  o.cms.slice().sort(function(a,b){return (a.data.at||0)-(b.data.at||0)}).forEach(function(c){
-    var u=c.data.uid,tm=new Date(c.data.at||0),e=document.createElement("div");e.className="cm";
-    e.innerHTML='<div class="av"></div><div class="cmt"><b></b> <small class="note"></small><div class="tx"></div></div>';
-    fbPaint(e.querySelector(".av"),pr[u]&&pr[u].icon,pr[u]&&pr[u].color,pr[u]&&pr[u].photo);
-    e.querySelector("b").textContent=fbNm(pr[u]);e.querySelector("small").textContent=(tm.getMonth()+1)+"/"+tm.getDate()+" "+("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2);
-    e.querySelector(".tx").textContent=String(c.data.text||"").slice(0,300);
-    if(u===FB.uid||pid.split("_")[0]===FB.uid){var d=document.createElement("button");d.textContent="削除";d.onclick=async function(){try{await fDel("posts/"+pid+"/comments/"+c.id);o.cms=o.cms.filter(function(x){return x.id!==c.id});pxRender();pxCount(pid)}catch(x){}};e.appendChild(d)}
-    C.appendChild(e);
-  });
+  await Promise.all(o.cms.slice().sort(function(a,b){return (a.data.at||0)-(b.data.at||0)}).map(async function(comment){
+    var u=comment.data.uid,tm=new Date(comment.data.at||0),e=document.createElement("div");e.className="cm";e.innerHTML='<div class="av"></div><div class="cmt"><b></b> <small class="note"></small><div class="tx"></div></div>';e.querySelector("b").textContent="読み込み中…";e.querySelector("small").textContent=(tm.getMonth()+1)+"/"+tm.getDate()+" "+("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2);e.querySelector(".tx").textContent=String(comment.data.text||"").slice(0,300);C.appendChild(e);
+    if(u===uid||pid.split("_")[0]===uid){var d=document.createElement("button");d.textContent="削除";d.onclick=async function(){try{await fDel("posts/"+pid+"/comments/"+comment.id);o.cms=o.cms.filter(function(x){return x.id!==comment.id});pxRender();pxCount(pid)}catch(err){showReadError(e,err,function(){d.click()},true)}};e.appendChild(d)}
+    try{var profile=await profileRead("profiles/"+u);if(pxCur!==c||uid!==FB.uid||!e.isConnected)return;fbPaint(e.querySelector(".av"),profile&&profile.icon,profile&&profile.color,profile&&profile.photo);e.querySelector("b").textContent=fbNm(profile)}catch(err){if(pxCur===c&&uid===FB.uid&&e.isConnected){e.querySelector("b").textContent="プロフィール";showReadError(e,err,pxRender,true)}}
+  }));
 }
 async function pxSend(){
   var t=$("pxIn").value.trim();if(!t||!pxCur||!FB.uid)return;
   var pid=pxCur.pid,id=rid(),d={uid:FB.uid,text:t.slice(0,300),at:Date.now()};
   try{await fSet("posts/"+pid+"/comments/"+id,d);$("pxIn").value="";px[pid].cms.push({id:id,data:d});pxRender();pxCount(pid)}
-  catch(e){askConfirm("コメントできませんでした","フォローが承認されている人にだけ、コメントできます。","OK")}
+  catch(e){askConfirm("コメントできませんでした",errorKind(e)==="permission"?"フォローが承認されている人にだけ、コメントできます。":readErrorMessage(e),"OK")}
 }
 // ---- 紙飛行機ボタンの画面: 「メッセージ」と「通知(フォローリクエスト)」 ----
 var inboxTab="req",dmCur=null,dmTimer=null;
@@ -2410,61 +2449,66 @@ function setInboxTab(t){openInbox(t)}
 async function renderInboxReq(){
   dmStop();inboxPaint(true);$("dmBack").hidden=true;$("dmForm").hidden=true;$("dmT").textContent="通知";
   var box=$("dmBody"),out=document.createElement("div");box.innerHTML='<div class="note">読み込み中…</div>';
-  await fillReq(out);
-  if(inboxTab!=="req"||$("dmm").hidden)return;box.innerHTML="";box.appendChild(out);
+  box.replaceChildren(out);await fillReq(out);
 }
 // ---- メッセージ(DM)。2人の組ごとに dm/(小さいuid_大きいuid) を作る。相手が読むと「既読」が出る ----
 function dmId(a,b){return a<b?a+"_"+b:b+"_"+a}
-async function fQ(path,field,n){var r=await FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,path),FB.Fs.orderBy(field,"desc"),FB.Fs.limit(n))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
-async function fMem(uid){var r=await FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,"dm"),FB.Fs.where("members","array-contains",uid))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function fQ(path,field,n){var r=await limitRead(FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,path),FB.Fs.orderBy(field,"desc"),FB.Fs.limit(n)))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
+async function fMem(uid){var r=await limitRead(FB.Fs.getDocs(FB.Fs.query(FB.Fs.collection(FB.db,"dm"),FB.Fs.where("members","array-contains",uid)))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
 async function dmCheck(){ // 未読のある会話の数(紙飛行機の数字)
   if(!FB.uid||document.hidden)return;
   try{var cs=await fMem(FB.uid),n=0,seen=state.dmSeen||{};cs.forEach(function(c){var d=c.data;if(d.lastFrom&&d.lastFrom!==FB.uid&&(d.updated||0)>(seen[c.id]||0))n++});FBN.dm=n;paintCounts()}catch(e){}
 }
 function dmStop(){dmCur=null;clearInterval(dmTimer)}
+var dmListRequest=0;
 async function openDmList(){
+  var uid=FB.uid,request=++dmListRequest;
   inboxTab="dm";dmStop();$("dmm").hidden=false;inboxPaint(true);$("dmBack").hidden=true;$("dmForm").hidden=true;$("dmT").textContent="メッセージ";
-  var box=$("dmBody");box.innerHTML='<div class="note">読み込み中…</div>';
-  var cs=[];try{cs=await fMem(FB.uid)}catch(e){}
-  if(dmCur||$("dmm").hidden||inboxTab!=="dm")return;
-  cs.sort(function(a,b){return (b.data.updated||0)-(a.data.updated||0)});box.innerHTML="";
-  if(!cs.length){box.innerHTML='<div class="note">まだメッセージはありません。友達のプロフィールから送れます。</div>';return}
-  var seen=state.dmSeen||{};
-  for(var i=0;i<cs.length;i++){
-    var d=cs[i].data,other=(d.members||[]).filter(function(x){return x!==FB.uid})[0],p=null;if(!other)continue;
-    try{p=await fGet("profiles/"+other)}catch(e){}
-    var row=fbRow(p,other),un=d.lastFrom!==FB.uid&&(d.updated||0)>(seen[cs[i].id]||0),nt=row.querySelector(".note");
-    row.classList.add("dmrow");row.querySelector(".av").onclick=null;row.querySelector("b").onclick=null;
-    nt.textContent=(un?"● ":"")+String(d.last||"").slice(0,60);if(un)nt.classList.add("un");
-    (function(o,pp){row.onclick=function(){openChat(o,pp)}})(other,p);
-    box.appendChild(row);
-  }
+  var box=$("dmBody"),active=function(){return uid===FB.uid&&request===dmListRequest&&!dmCur&&!$("dmm").hidden&&inboxTab==="dm"};box.innerHTML='<div class="note">読み込み中…</div>';
+  try{
+    var cs=await fMem(uid);if(!active())return;
+    cs.sort(function(a,b){return (b.data.updated||0)-(a.data.updated||0)});box.innerHTML="";
+    if(!cs.length){box.innerHTML='<div class="note">まだメッセージはありません。友達のプロフィールから送れます。</div>';return}
+    var seen=state.dmSeen||{};
+    await Promise.all(cs.map(async function(c){
+      var d=c.data,other=(d.members||[]).filter(function(x){return x!==uid})[0];if(!other)return;
+      var cached=profileCached("profiles/"+other),profile=cached?cached.value:null,row=fbRow(profile,other),un=d.lastFrom!==uid&&(d.updated||0)>(seen[c.id]||0);
+      row.classList.add("dmrow");row.querySelector(".av").onclick=null;row.querySelector("b").onclick=null;
+      if(!profile)row.querySelector("b").textContent="読み込み中…";
+      row.querySelector(".note").textContent=(un?"● ":"")+String(d.last||"").slice(0,60);row.querySelector(".note").classList.toggle("un",un);
+      row.onclick=function(){openChat(other,profile)};box.appendChild(row);
+      async function readProfile(){try{var value=await profileRead("profiles/"+other);if(!active()||!row.isConnected)return;profile=value;fbPaint(row.querySelector(".av"),value&&value.icon,value&&value.color,value&&value.photo);row.querySelector("b").textContent=fbNm(value);var old=row.querySelector(".read-error");if(old)old.remove()}catch(e){if(active()&&row.isConnected){row.querySelector("b").textContent=profile?fbNm(profile):"プロフィール";var old=row.querySelector(".read-error");if(old)old.remove();var err=showReadError(row,e,readProfile,true);err.onclick=function(event){event.stopPropagation()}}}}
+      await readProfile();
+    }));
+  }catch(e){if(active())showReadError(box,e,openDmList)}
 }
 async function openChat(other,p){
-  var cid=dmId(FB.uid,other);dmStop();dmCur={cid:cid,other:other,p:p||null};var c=dmCur;
-  $("dmm").hidden=false;inboxPaint(false);$("dmBack").hidden=false;$("dmForm").hidden=false;$("dmBody").innerHTML='<div class="note">読み込み中…</div>';
-  if(!p){try{c.p=await fGet("profiles/"+other)}catch(e){}}
-  $("dmT").textContent=fbNm(c.p);
-  await dmLoad(true);if(dmCur===c)dmTimer=setInterval(function(){dmLoad(false)},4000);
+  var uid=FB.uid,cid=dmId(uid,other);dmStop();dmCur={cid:cid,other:other,p:p||null,uid:uid,busy:false};var c=dmCur;
+  $("dmm").hidden=false;inboxPaint(false);$("dmBack").hidden=false;$("dmForm").hidden=false;$("dmBody").innerHTML='<div class="note">読み込み中…</div>';$("dmT").textContent=p?fbNm(p):"メッセージ";
+  // プロフィールの応答を待たずに本文を取得する。
+  if(!p)profileRead("profiles/"+other).then(function(value){if(dmCur!==c||uid!==FB.uid)return;c.p=value;$("dmT").textContent=fbNm(value)}).catch(function(e){if(dmCur===c&&uid===FB.uid)showReadError($("dmBody"),e,function(){openChat(other)},true)});
+  await dmLoad(true);if(dmCur===c)dmTimer=setInterval(function(){if(!document.hidden)dmLoad(false)},4000);
 }
 async function dmLoad(first){
-  var c=dmCur;if(!c)return;var msgs=[],rd=0;
-  try{msgs=(await fQ("dm/"+c.cid+"/messages","at",100)).reverse()}catch(e){}
-  try{var r=await fGet("dm/"+c.cid+"/reads/"+c.other);rd=r&&Number(r.at)||0}catch(e){}
-  if(dmCur!==c)return;
-  var box=$("dmBody"),bottom=first||box.scrollTop+box.clientHeight>=box.scrollHeight-40;box.innerHTML="";
-  if(!msgs.length)box.innerHTML='<div class="note">メッセージを送ってみましょう。</div>';
-  msgs.forEach(function(m){
-    var d=m.data,me=d.from===FB.uid,tm=new Date(d.at||0),e=document.createElement("div");e.className="msg"+(me?" me":"");
-    e.innerHTML='<div class="bub"></div><small></small>';e.querySelector(".bub").textContent=String(d.text||"").slice(0,1000);
-    e.querySelector("small").textContent=("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2)+(me&&(d.at||0)<=rd?"  既読":"");
-    box.appendChild(e);
-  });
-  if(bottom)box.scrollTop=box.scrollHeight;
-  var last=msgs[msgs.length-1];state.dmSeen=state.dmSeen||{};
-  if(first||(last&&last.data.from!==FB.uid&&(last.data.at||0)>(state.dmSeen[c.cid]||0))){ // 開いて読んだ印(相手の画面に「既読」が出る)
-    state.dmSeen[c.cid]=Date.now();save();fSet("dm/"+c.cid+"/reads/"+FB.uid,{at:Date.now()}).catch(function(){});dmCheck();
-  }
+  var c=dmCur;if(!c||c.busy||document.hidden)return;c.busy=true;
+  var uid=FB.uid,active=function(){return dmCur===c&&FB.uid===uid&&!$("dmm").hidden},box=$("dmBody");
+  // 既読の取得が遅くても、本文を先に表示する。
+  var receiptTask=fGet("dm/"+c.cid+"/reads/"+c.other).then(function(r){return {at:r&&Number(r.at)||0}},function(error){return {error:error}});
+  try{
+    var msgs=(await fQ("dm/"+c.cid+"/messages","at",100)).reverse();if(!active())return;
+    var sig=JSON.stringify(msgs),bottom=first||box.scrollTop+box.clientHeight>=box.scrollHeight-40;
+    if(first||c.messageSig!==sig||box.querySelector(".read-error")){
+      c.messageSig=sig;box.innerHTML="";
+      if(!msgs.length)box.innerHTML='<div class="note">メッセージを送ってみましょう。</div>';
+      msgs.forEach(function(m){var d=m.data,me=d.from===uid,tm=new Date(d.at||0),e=document.createElement("div");e.className="msg"+(me?" me":"");e.innerHTML='<div class="bub"></div><small></small>';e.querySelector(".bub").textContent=String(d.text||"").slice(0,1000);var small=e.querySelector("small");small.dataset.at=String(d.at||0);small.dataset.mine=me?"1":"0";small.dataset.time=("0"+tm.getHours()).slice(-2)+":"+("0"+tm.getMinutes()).slice(-2);small.textContent=small.dataset.time;box.appendChild(e)});
+      if(bottom)box.scrollTop=box.scrollHeight;
+    }
+    var last=msgs[msgs.length-1];state.dmSeen=state.dmSeen||{};
+    if(first||(last&&last.data.from!==uid&&(last.data.at||0)>(state.dmSeen[c.cid]||0))){state.dmSeen[c.cid]=Date.now();save();fSet("dm/"+c.cid+"/reads/"+uid,{at:Date.now()}).catch(function(){});dmCheck()}
+    var receipt=await receiptTask;if(!active())return;
+    if(receipt.error)showReadError(box,receipt.error,function(){dmLoad(true)},true);
+    else box.querySelectorAll("small[data-at]").forEach(function(el){setTextIfChanged(el,el.dataset.time+(el.dataset.mine==="1"&&Number(el.dataset.at)<=receipt.at?"  既読":""))});
+  }catch(e){if(active())showReadError(box,e,function(){dmLoad(true)},!first)}finally{c.busy=false}
 }
 async function dmSend(){
   var t=$("dmIn").value.trim(),c=dmCur;if(!t||!c)return;var now=Date.now();
@@ -2472,7 +2516,7 @@ async function dmSend(){
     await fSet("dm/"+c.cid,{members:[FB.uid,c.other].sort(),updated:now,last:t.slice(0,100),lastFrom:FB.uid});
     await fSet("dm/"+c.cid+"/messages/"+rid(),{from:FB.uid,text:t.slice(0,1000),at:now});
     $("dmIn").value="";await dmLoad(true);
-  }catch(e){askConfirm("送れませんでした","お互いのどちらかがフォローを承認しているときだけ、メッセージを送れます。","OK")}
+  }catch(e){askConfirm("送れませんでした",errorKind(e)==="permission"?"お互いのどちらかがフォローを承認しているときだけ、メッセージを送れます。":readErrorMessage(e),"OK")}
 }
 function fbAfter(){renderFb();fillList();if(inboxTab==="req"&&!$("dmm").hidden)renderInboxReq()}
 var listFolSession=null;
@@ -2487,16 +2531,16 @@ async function fillList(){
   if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
 }
 var friendSearchRequest=0;
-function resetFriendSearch(){friendSearchRequest++;$("fbUserSearch").value="";$("fbUserResults").innerHTML=""}
+function resetFriendSearch(){friendSearchState=null;friendSearchRequest++;$("fbUserSearch").value="";$("fbUserResults").innerHTML=""}
 function closeFriend(){$("fm").hidden=true;resetFriendSearch()}
 function openFriend(){resetFriendSearch();fbMsg("");$("fm").hidden=false} // 友達追加の画面(自分のコードと、友達のコードの入力)
-async function myFollowIds(){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
-  try{var f=await profileRead("follows/"+FB.uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==FB.uid}))).slice(0,100):[]}catch(e){return[]}
+async function myFollowIds(strict){ // 自分がフォローしている(リクエスト中を含む)人のid。重複と自分自身を除く
+  try{var uid=FB.uid,f=await profileRead("follows/"+uid);return (f&&Array.isArray(f.ids))?Array.from(new Set(f.ids.filter(function(x){return typeof x==="string"&&x&&x!==uid}))).slice(0,100):[]}catch(e){if(strict)throw e;return[]}
 }
 async function acceptedFollowIds(ids){
   var uid=FB.uid;if(!uid)return [];
-  if(!ids)ids=await myFollowIds();
-  var rows=await Promise.all(ids.map(async function(id){try{return await profileRead("stats/"+id+"/viewers/"+uid)?id:null}catch(e){return null}}));
+  if(!ids)ids=await myFollowIds(true);
+  var rows=await Promise.all(ids.map(async function(id){try{return await profileRead("stats/"+id+"/viewers/"+uid)?id:null}catch(e){if(errorKind(e)!=="permission")throw e;return null}}));
   return FB.uid===uid?rows.filter(Boolean):[];
 }
 // 承認前の相手には、リクエストに添えた3項目だけを渡す。学習記録の読み取り権限は変えない。
@@ -2563,7 +2607,7 @@ async function fillReq(box){
     if(!reqs.length)box.innerHTML='<div class="note">リクエストは来ていません。</div>';
     var slots=reqs.map(function(){var slot=document.createElement("div");slot.className="fcard";slot.innerHTML='<div class="note">読み込み中…</div>';box.appendChild(slot);return slot});
     await Promise.all(reqs.map(async function(item,index){
-      var rid=item.id,pr=null;try{pr=await profileRead("profiles/"+rid)}catch(e){}
+      var rid=item.id,pr=null;
       if(FB.uid!==uid)return;
       var row=fbRow(pr,rid);row.querySelector(".note").textContent="あなたの記録を見たいそうです";
       var ok=document.createElement("button");ok.className="main";ok.textContent="承認";
@@ -2574,13 +2618,15 @@ async function fillReq(box){
       })(rid);
       row.appendChild(ok);row.appendChild(no);
       var card=document.createElement("div");card.className="fcard";card.appendChild(row);card.appendChild(requestProfileDetails(pr,item.data));slots[index].replaceWith(card);minePromise.then(function(mine){if(FB.uid===uid&&card.isConnected)card.appendChild(fbFollowEl(rid,mine,fbNm(pr)))});
+      row.querySelector("b").textContent="読み込み中…";
+      try{pr=await profileRead("profiles/"+rid);if(FB.uid!==uid||!card.isConnected)return;fbPaint(row.querySelector(".av"),pr&&pr.icon,pr&&pr.color,pr&&pr.photo);row.querySelector("b").textContent=fbNm(pr);var detail=card.querySelector(".request-profile-details");if(detail)detail.replaceWith(requestProfileDetails(pr,item.data))}catch(e){if(FB.uid===uid&&card.isConnected){row.querySelector("b").textContent="プロフィール";showReadError(card,e,function(){fillReq(box)},true)}}
     }));
-  }catch(e){box.innerHTML='<div class="note">読み込めませんでした。</div>'}
+  }catch(e){if(FB.uid===uid)showReadError(box,e,function(){fillReq(box)})}
 }
 async function fillFol(fb){
   var uid=FB.uid;
   try{
-    var ids=await myFollowIds();
+    var ids=await myFollowIds(true);
     if(FB.uid!==uid||listMode!=="fol"||!fb.isConnected)return;
     if(!listFolSession)listFolSession=ids.slice();
     ids.forEach(function(id){if(listFolSession.indexOf(id)<0)listFolSession.push(id)});
@@ -2615,12 +2661,12 @@ async function fillFol(fb){
       };
       paint();
       await Promise.all([
-        profileRead("profiles/"+id).then(function(value){if(FB.uid!==uid)return;p=value;fbPaint(hd.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);hd.querySelector("b").textContent=fbNm(p);paint()}).catch(function(){if(FB.uid===uid)hd.querySelector("b").textContent="プロフィールを読み込めませんでした。"}),
-        !removed?profileRead("stats/"+id).then(function(value){if(FB.uid===uid&&!removed){d=value;paint()}}).catch(function(e){if(FB.uid===uid&&!removed){d=null;paint()}}):Promise.resolve(),
+        profileRead("profiles/"+id).then(function(value){if(FB.uid!==uid)return;p=value;fbPaint(hd.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);hd.querySelector("b").textContent=fbNm(p);paint()}).catch(function(e){if(FB.uid===uid&&card.isConnected){hd.querySelector("b").textContent=cached?fbNm(p):"プロフィール";showReadError(card,e,function(){fillFol(fb)},true)}}),
+        !removed?profileRead("stats/"+id).then(function(value){if(FB.uid===uid&&!removed){d=value;paint()}}).catch(function(e){if(FB.uid===uid&&!removed){d=null;paint();if(errorKind(e)!=="permission"&&card.isConnected)showReadError(card,e,function(){fillFol(fb)},true)}}):Promise.resolve(),
         !removed?profileRead("stats/"+id+"/viewers/"+uid).then(function(value){if(FB.uid===uid&&!removed){approved=!!value;paint()}}).catch(function(){}):Promise.resolve()
       ]);
     }));
-  }catch(e){fb.innerHTML='<div class="note">読み込めませんでした。</div>'}
+  }catch(e){if(FB.uid===uid)showReadError(fb,e,function(){fillFol(fb)})}
 }
 async function fillVie(vb){
   var uid=FB.uid;
@@ -2632,18 +2678,20 @@ async function fillVie(vb){
     if(!vs.length)vb.innerHTML='<div class="note">まだ誰もいません。リクエストを承認すると、ここに入ります。</div>';
     var slots=vs.map(function(){var slot=document.createElement("div");slot.className="fcard";slot.innerHTML='<div class="note">読み込み中…</div>';vb.appendChild(slot);return slot});
     await Promise.all(vs.map(async function(item,index){
-      var vid=item.id,vp=null;try{vp=await profileRead("profiles/"+vid)}catch(e){}
+      var vid=item.id,vp=null;
       if(FB.uid!==uid)return;
       var vr=fbRow(vp,vid),rv=document.createElement("button");rv.textContent="解除";
       (function(vid){rv.onclick=async function(){try{await fDel("stats/"+uid+"/viewers/"+vid)}catch(e){}fbAfter()}})(vid);
       vr.appendChild(rv);
-      var card=document.createElement("div");card.className="fcard friend-compact";card.appendChild(vr);var shared=item.data&&item.data.profile||{},details=followerProfileDetails(vp,shared,null);vr.insertBefore(details,rv);slots[index].replaceWith(card);
+      var card=document.createElement("div");card.className="fcard friend-compact";card.appendChild(vr);var shared=item.data&&item.data.profile||{},liveData=null,details=followerProfileDetails(vp,shared,null);vr.insertBefore(details,rv);slots[index].replaceWith(card);
       minePromise.then(function(mine){
         if(FB.uid!==uid||!card.isConnected)return;vr.children[1].appendChild(fbFollowEl(vid,mine,fbNm(vp)));
-        if(mine.indexOf(vid)>=0)profileRead("stats/"+vid).then(function(data){if(FB.uid!==uid||!card.isConnected)return;var fresh=followerProfileDetails(vp,shared,data);details.replaceWith(fresh);details=fresh}).catch(function(){});
+        if(mine.indexOf(vid)>=0)profileRead("stats/"+vid).then(function(data){if(FB.uid!==uid||!card.isConnected)return;liveData=data;var fresh=followerProfileDetails(vp,shared,data);details.replaceWith(fresh);details=fresh}).catch(function(){});
       });
+      vr.querySelector("b").textContent="読み込み中…";
+      try{vp=await profileRead("profiles/"+vid);if(FB.uid!==uid||!card.isConnected)return;fbPaint(vr.querySelector(".av"),vp&&vp.icon,vp&&vp.color,vp&&vp.photo);vr.querySelector("b").textContent=fbNm(vp);var fresh=followerProfileDetails(vp,shared,liveData);details.replaceWith(fresh);details=fresh}catch(e){if(FB.uid===uid&&card.isConnected){vr.querySelector("b").textContent="プロフィール";showReadError(card,e,function(){fillVie(vb)},true)}}
     }));
-  }catch(e){vb.innerHTML='<div class="note">読み込めませんでした。</div>'}
+  }catch(e){if(FB.uid===uid)showReadError(vb,e,function(){fillVie(vb)})}
 }
 async function renderFb(){
   $("appVer").textContent="アプリの版: "+APP_VERSION+" / このアドレス: "+location.host;
@@ -2653,7 +2701,7 @@ async function renderFb(){
   $("cntRow").hidden=true;$("planeBtn").hidden=true;$("addBtn").hidden=true;$("shareBtn").hidden=true;$("fbLogout").hidden=true;
   if(cl){off.hidden=false;off.textContent="Claudeで開いたこのページでは、Googleでのログインは使えません。GitHub Pagesなどに置いたファイルで開くと、使えます。";return}
   if(!cfg){$("fbSetup").hidden=false;return}
-  if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";return}
+  if(!FB.loaded){off.hidden=false;off.textContent=FB.err||"読み込み中…";if(FB.initError)showReadError(off,FB.initError,fbInit);return}
   if(FB.err&&!FB.uid){off.hidden=false;off.textContent=FB.err}
   if(!FB.uid){$("fbOutBox").hidden=false;return}
   $("fbOn").hidden=false;$("cntRow").hidden=false;$("planeBtn").hidden=false;$("addBtn").hidden=false;$("fbLogout").hidden=false;$("shareBtn").hidden=!FB.code;
@@ -2661,43 +2709,44 @@ async function renderFb(){
   $("fbMsg").textContent=FB.msg||"";
   var uid=FB.uid;
   paintCounts();
+  if(document.hidden)return;
+  var errors=[],status=document.getElementById("fbReadStatus");if(!status){status=document.createElement("div");status.id="fbReadStatus";$("fbOn").appendChild(status)}status.replaceChildren();
+  function failed(e){if(FB.uid!==uid||document.hidden)return;if(!errors.some(function(old){return errorKind(old)===errorKind(e)})){errors.push(e);showReadError(status,e,renderFb,true)}}
   await Promise.all([
-    acceptedFollowIds().then(function(ids){if(FB.uid===uid){FBN.fol=ids.length;paintCounts()}}).catch(function(){}),
-    profileRead("stats/"+uid+"/viewers",fList).then(function(vs){if(FB.uid===uid){FBN.fr=new Set(vs.map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size;paintCounts()}}).catch(function(){}),
-    profileRead("requests/"+uid+"/from",fList).then(function(reqs){if(FB.uid===uid){FBN.req=reqs.length;paintCounts()}}).catch(function(){})
+    acceptedFollowIds().then(function(ids){if(FB.uid===uid&&!document.hidden){FBN.fol=ids.length;paintCounts()}}).catch(failed),
+    profileRead("stats/"+uid+"/viewers",fList).then(function(vs){if(FB.uid===uid&&!document.hidden){FBN.fr=new Set(vs.map(function(x){return x.id}).filter(function(x){return typeof x==="string"&&x&&x!==uid})).size;paintCounts()}}).catch(failed),
+    profileRead("requests/"+uid+"/from",fList).then(function(reqs){if(FB.uid===uid&&!document.hidden){FBN.req=reqs.length;paintCounts()}}).catch(failed)
   ]);
-  if(FB.uid===uid&&FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync();
+  if(FB.uid===uid&&!document.hidden&&!errors.length&&FB.socialSig!==FBN.fol+"|"+FBN.fr)fbSocialSync();
 
 }
-async function fbSearchUsers(){
-  var request=++friendSearchRequest,uid=FB.uid;
-  var active=function(){return request===friendSearchRequest&&!$("fm").hidden&&FB.uid===uid};
-  var term=$("fbUserSearch").value.trim().toLocaleLowerCase();
-  var box=$("fbUserResults");box.innerHTML="";
+function prefixUpper(term){var chars=Array.from(term);while(chars.length){var n=chars.pop().codePointAt(0);if(n<0x10ffff)return chars.join("")+String.fromCodePoint(n+1)}return null}
+async function fSearchNames(term,cursor){
+  var fs=FB.Fs,parts=[fs.orderBy("name"),fs.where("name",">=",term)],upper=prefixUpper(term);if(upper)parts.push(fs.where("name","<",upper));if(cursor)parts.push(fs.startAfter(cursor));parts.push(fs.limit(21));
+  var snap=await limitRead(fs.getDocs(fs.query.apply(fs,[fs.collection(FB.db,"profiles")].concat(parts)))),docs=[];snap.forEach(function(d){docs.push(d)});
+  var visible=docs.filter(function(d){return d.id!==FB.uid}).slice(0,20),last=visible[visible.length-1]||docs[docs.length-1];
+  return {users:visible.map(function(d){return {id:d.id,data:d.data()}}),cursor:last||null,more:docs.length===21};
+}
+var friendSearchState=null;
+async function fbSearchUsers(more){
+  var append=more===true,request=++friendSearchRequest,uid=FB.uid,term=$("fbUserSearch").value.trim(),box=$("fbUserResults");
+  var active=function(){return request===friendSearchRequest&&!$("fm").hidden&&FB.uid===uid&&$("fbUserSearch").value.trim()===term};
+  if(!append){box.innerHTML="";friendSearchState={term:term,cursor:null,ids:new Set(),mine:[],count:0}}var search=friendSearchState;
+  if(!search||search.term!==term)return;
   if(!term){box.innerHTML='<div class="note">ユーザー名を入力してください。</div>';return}
-  if(!FB.uid){box.innerHTML='<div class="note">先にGoogleでログインしてください。</div>';return}
-  box.innerHTML='<div class="note">検索中…</div>';
+  if(!uid){box.innerHTML='<div class="note">先にGoogleでログインしてください。</div>';return}
+  box.querySelectorAll(".search-footer").forEach(function(el){el.remove()});var footer=document.createElement("div");footer.className="note search-footer";footer.textContent="検索中…";box.appendChild(footer);
+  // 検索とフォロー情報は独立して表示する。
+  var mineError=null,mineTask=myFollowIds(true).then(function(ids){if(active()){search.mine=ids;box.querySelectorAll("[data-follow-uid]").forEach(function(button){if(ids.indexOf(button.dataset.followUid)>=0)button.replaceWith(makeFollowButton(button.dataset.followUid,ids))})}},function(e){mineError=e;if(active())showReadError(footer,e,function(){fbSearchUsers(append)})});
   try{
-    var initial=await Promise.all([profileRead("profiles",fList),myFollowIds()]),users=initial[0],matches=users.filter(function(x){
-      var n=x&&x.data&&typeof x.data.name==="string"?x.data.name.trim().toLocaleLowerCase():"";
-      return n&&n.indexOf(term)!==-1&&x.id!==FB.uid;
-    }).slice(0,20);
-    if(!active())return;
-    box.innerHTML="";
-    if(!matches.length){box.innerHTML='<div class="note">該当するユーザーが見つかりませんでした。</div>';return}
-    var mine=initial[1];
-    if(!active())return;
-    matches.forEach(function(x){
-      var pr=x.data||{},row=document.createElement("div");row.className="fcard";
-      row.appendChild(fbRow(pr,x.id));
-      var action=document.createElement("div");action.className="actions";
-      var b=makeFollowButton(x.id,mine);
-      action.appendChild(b);row.appendChild(action);
-      var prof=row.querySelector(".av");if(prof)prof.onclick=function(){openProfile(x.id,true)};
-      var name=row.querySelector("b");if(name)name.onclick=function(){openProfile(x.id,true)};
-      box.appendChild(row);
-    });
-  }catch(e){if(!active())return;box.innerHTML='<div class="note">検索できませんでした。FirebaseのFirestoreルールで、profilesの一覧読み取りが許可されているか確認してください。</div>'}
+    var page=await fSearchNames(term,append?search.cursor:null);if(!active())return;
+    page.users.forEach(function(x){if(search.ids.has(x.id)||x.id===uid)return;search.ids.add(x.id);search.count++;var pr=x.data||{},row=document.createElement("div");row.className="fcard";row.appendChild(fbRow(pr,x.id));var action=document.createElement("div");action.className="actions";action.appendChild(makeFollowButton(x.id,search.mine));row.appendChild(action);box.insertBefore(row,footer)});
+    search.cursor=page.cursor;footer.textContent="";
+    if(!search.count)footer.textContent="該当するユーザーが見つかりませんでした。";
+    if(page.more){var b=document.createElement("button");b.type="button";b.textContent="もっと見る";b.onclick=function(){b.disabled=true;fbSearchUsers(true)};footer.appendChild(b)}
+    await mineTask;
+    if(mineError&&active())showReadError(footer,mineError,function(){fbSearchUsers(append)},true);
+  }catch(e){if(active())showReadError(footer,e,function(){fbSearchUsers(append)})}
 }
 // ===== イベント =====
 load();
@@ -2903,10 +2952,13 @@ $("shareBtn").onclick=async function(){
   try{await navigator.clipboard.writeText(t);openFriend();fbMsg("シェア用の文章をコピーしました。")}catch(e){openFriend()}
 };
 setInterval(fbPoll,60000);
-setInterval(function(){if(state.timer&&FB.uid)fbPublish(true)},60000); // 勉強中の印を、1分ごとに更新
-setInterval(function(){if(!$("tlm").hidden)rankLoad()},20000); // ランキングを開いている間は、20秒ごとに更新
-document.addEventListener("visibilitychange",function(){if(!document.hidden){fbPoll();syncPull()}});
+setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
+setInterval(function(){if(!document.hidden&&!$("tlm").hidden)rankLoad()},20000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden){if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
 fbInit();
+$("saveRetry").onclick=retrySaving;
+window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
+window.addEventListener("offline",function(){if(ownsCurrentData(FB.uid)&&syncData()!==syncSig){saveHealth.pending=true;paintSaveStatus()}});
 setInterval(tickAll,1000);
 renderSubjects();countdown();calcNeed();renderPlan();showPage(state.page);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)rollAndRender()});
@@ -2946,7 +2998,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
     var sel=document.getElementById("chromeTheme");if(sel)sel.value=chrome;
     var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
   }
-  function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}apply()}
+  function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){saveHealth.localError=e;paintSaveStatus()}apply()}
   document.querySelectorAll(".theme-choice").forEach(function(b){b.addEventListener("click",function(){save("theme",b.getAttribute("data-app-theme"))})});
   var sel=document.getElementById("chromeTheme");if(sel)sel.addEventListener("change",function(){save("chrome",sel.value)});
   var settingsBtn=document.getElementById("settingsBtn"),settingsModal=document.getElementById("appearanceModal"),settingsClose=document.getElementById("appearanceClose");
