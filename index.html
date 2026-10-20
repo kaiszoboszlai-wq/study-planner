@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>study planner</title>
 <style>
+.save-status[hidden]{display:none}
+.active-timer{position:sticky;top:6px;z-index:6;display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:0 0 8px;background:var(--accbg);border:1px solid var(--line);border-radius:10px;color:var(--ink);text-align:left;font-size:.8rem}.active-timer[hidden]{display:none}.active-timer-dot{width:7px;height:7px;background:var(--acc);border-radius:50%;flex:none}.active-timer-link{margin-left:auto;white-space:nowrap;color:var(--acc);font-size:.75rem}#activeTimerText{min-width:0;overflow-wrap:anywhere}.timer-reading-label{text-align:center;font-size:.85rem;color:var(--sub);margin-top:10px}.timer-elapsed{text-align:center;font-size:1rem;font-weight:600;margin:8px 0}.timer-end-notice{padding:9px;border-radius:8px;background:var(--accbg);color:var(--ink);font-size:.85rem}#timerUndo{display:flex;align-items:center;justify-content:center;gap:8px}#timerUndo[hidden]{display:none}#idleReviewModal{z-index:42}.clock-step-buttons{justify-content:center}.clock-step-buttons button{min-width:80px}
 .save-status{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-height:25px;margin:0 0 8px;color:var(--sub);font-size:.75rem;flex-wrap:wrap}.save-status:has(#saveStatusText:empty){display:none}.save-status button,.read-error button{font:inherit;padding:5px 9px;min-height:30px;white-space:nowrap}.save-status.has-error{color:var(--red)}.read-error{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.read-error span{flex:1 1 150px}
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17232f;--sub:#5b6b7a;--line:#d9e0e6;--acc:#0b6e6e;--accbg:#dff1f0;--done:#9fb0bd;--red:#d62828;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -233,13 +235,13 @@ button{border-radius:10px}
 button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .nv{border-radius:12px}
 .nv.on{background:#e4f5ed;color:#176b4b}
-.sp-top{background:#b9e1f5;color:#17364d;margin:-20px -16px 22px;padding:22px 16px 24px;border-radius:0 0 22px 22px}
+.sp-top{background:#b9e1f5;color:#17364d;margin:-20px -16px 14px;padding:14px 16px 16px;border-radius:0 0 16px 16px}
 .sp-top .goalbar{color:#315a73}
 .sp-top .count{display:none}
-.sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:14px 0 0}
-.sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;min-height:132px;padding:18px;border:0;border-radius:16px;background:#8fc9e8;color:#17364d;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.sp-preview-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:9px 0 0}
+.sp-preview-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-height:88px;padding:10px 12px;border:0;border-radius:16px;background:#8fc9e8;color:#17364d;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.12)}
 .sp-preview-card .eyebrow{font-size:.9rem;color:#315a73;font-weight:600}
-.sp-preview-card .big{font-size:clamp(1.35rem,4vw,2rem);font-weight:600;line-height:1.2;color:#17364d}
+.sp-preview-card .big{font-size:clamp(1.05rem,2.8vw,1.4rem);font-weight:600;line-height:1.2;color:#17364d}
 .sp-preview-card .small{font-size:.8rem;color:#315a73}
 .sp-preview-card.follow{cursor:pointer;width:100%;font:inherit}
 .sp-preview-card.follow:active{transform:scale(.99)}
@@ -328,7 +330,7 @@ button.main{background:#58b88f;border-color:#58b88f;color:#102d25}
 .dmrow{cursor:pointer}.dmrow .note.un{color:var(--ink);font-weight:600}
 /* ヘッダーのタイトル(Study Planner)と、紙飛行機ボタン */
 .sp-top{position:relative;background:#f6eedc}
-.sp-brand{font-family:var(--app-font);font-weight:600;font-size:clamp(2.2rem,11vw,3.1rem);letter-spacing:-.035em;line-height:1.1;text-align:center;color:#2a2f2f;margin:8px 0 6px}
+.sp-brand{font-family:var(--app-font);font-weight:600;font-size:clamp(1.4rem,3vw,1.85rem);letter-spacing:-.025em;line-height:1.15;text-align:center;color:#2a2f2f;margin:4px 0}
 .sp-tagline{text-align:center;color:#5a6060}
 .sp-top .goalbar{color:#4a5252}
 .plane{position:absolute;top:10px;right:10px;width:44px;height:44px;padding:0;border:0;background:transparent;color:#2a2f2f;border-radius:50%;display:flex;align-items:center;justify-content:center}
@@ -344,15 +346,15 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 .sp-t{font-family:var(--app-font);font-weight:600;letter-spacing:-.035em}
 /* Mobile header compact layout: reduce the top area and keep the title on one line. */
 @media(max-width:480px){
-  .sp-top{padding:11px 8px 12px;margin:-20px -16px 12px;border-radius:0 0 12px 12px}
-  .sp-brand{font-size:clamp(1rem,5vw,1.3rem);line-height:1.15;letter-spacing:-.02em;white-space:nowrap;margin:4px 0 3px}
+  .sp-top{padding:8px 8px 10px;margin:-20px -16px 10px;border-radius:0 0 12px 12px}
+  .sp-brand{font-size:clamp(1rem,4.8vw,1.2rem);line-height:1.15;letter-spacing:-.02em;white-space:nowrap;margin:4px 0 3px}
   .sp-top .goalbar{font-size:.75rem;line-height:1.25;margin:3px 0}
   .sp-preview-head{gap:6px;margin:7px 0 0}
-  .sp-preview-card{min-height:68px;padding:8px;gap:4px;border-radius:10px}
+  .sp-preview-card{min-height:60px;padding:7px;gap:3px;border-radius:10px}
   .sp-preview-card .eyebrow{font-size:.68rem}
   .sp-preview-card .big{font-size:clamp(1rem,4.2vw,1.3rem);line-height:1.1}
   .sp-preview-card .small{font-size:.65rem;line-height:1.2}
-  #daysCard{font-size:1.8rem!important;font-weight:600;line-height:1.05}
+  #daysCard{font-size:1.55rem!important;font-weight:600;line-height:1.05}
 }
 
 /* プランページだけのレイアウト。既存のテーマ色とナビゲーションを共有する。 */
@@ -372,10 +374,10 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 #planbox .day[hidden]{display:none}
 #planbox .day h3{font-size:1.15rem;margin:0 0 12px;display:flex;align-items:center;gap:10px}
 #planbox .today{background:var(--accbg);color:var(--acc);border-radius:20px;padding:2px 10px;font-size:.8rem}
-.plan-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--card);box-shadow:0 4px 14px rgba(20,40,65,.04);margin-bottom:12px}
-.plan-summary .metric+ .metric{border-left:1px solid var(--line);padding-left:16px}
-.plan-summary small{display:block;color:var(--sub);font-size:.8rem}.plan-summary strong{display:block;font-size:clamp(1.2rem,3.6vw,1.55rem);line-height:1.3}
-.plan-meter{grid-column:1/-1;height:7px;background:var(--line);border-radius:20px;overflow:hidden}.plan-meter span{display:block;height:100%;background:var(--acc);border-radius:20px;transition:width .2s}
+.plan-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px;border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:var(--card);box-shadow:0 4px 14px rgba(20,40,65,.04);margin-bottom:9px}
+.plan-summary .metric+ .metric{border-left:1px solid var(--line);padding-left:12px}
+.plan-summary small{display:block;color:var(--sub);font-size:.8rem}.plan-summary strong{display:block;font-size:clamp(1.1rem,3.2vw,1.35rem);line-height:1.25}
+.plan-meter{grid-column:1/-1;height:6px;background:var(--line);border-radius:20px;overflow:hidden}.plan-meter span{display:block;height:100%;background:var(--acc);border-radius:20px;transition:width .2s}
 #planbox .blk{border:1px solid var(--line);border-radius:13px;background:var(--card);margin:10px 0;padding:12px 12px 12px 14px;gap:10px;min-height:86px;box-shadow:0 3px 10px rgba(20,40,65,.025)}
 #planbox .blk .item span{font-size:1.05rem;font-weight:600;overflow-wrap:anywhere}
 #planbox .blk .item .duration{font-size:.85rem;font-weight:400;color:var(--sub)}
@@ -400,7 +402,7 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 .plan-preview-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.9rem}.plan-preview-row span:first-child{overflow-wrap:anywhere}.plan-preview-row small{color:var(--sub);white-space:nowrap}
 .draft-subject{display:grid;grid-template-columns:38px minmax(0,1fr) 56px 36px;gap:8px;margin:8px 0}.draft-subject input{min-width:0}.draft-subject input[type=color]{width:38px;min-height:40px;padding:3px;border:1px solid var(--line);border-radius:8px}
 #planDraftError{color:var(--red)}
-@media(max-width:480px){#planbox{padding:14px}.plan-heading{gap:6px}#planSettingsOpen{padding:8px;font-size:.8rem}.plan-date b{font-size:1.15rem}.plan-summary{padding:12px;gap:8px}.plan-summary .metric+ .metric{padding-left:12px}#planbox .blk{padding-right:7px;gap:7px}.plan-dialog .tmbox{padding:18px}.plan-choice{padding:16px 12px;gap:10px}.plan-choice .choice-icon{width:36px;height:36px}.plan-dialog .actions{bottom:-18px}}
+@media(max-width:480px){#planbox{padding:14px}.plan-heading{gap:6px}#planSettingsOpen{padding:8px;font-size:.8rem}.plan-date b{font-size:1.15rem}.plan-summary{padding:9px 10px;gap:6px}.plan-summary .metric+ .metric{padding-left:10px}#planbox .blk{padding-right:7px;gap:7px}.plan-dialog .tmbox{padding:18px}.plan-choice{padding:16px 12px;gap:10px}.plan-choice .choice-icon{width:36px;height:36px}.plan-dialog .actions{bottom:-18px}}
 
 
 /* 標準のシステムフォントと通常／やや太めの2段階で統一する。 */
@@ -459,6 +461,7 @@ button.follow-action:disabled{opacity:.6}
 @media(max-width:360px){#today .tcard{gap:7px;padding-left:8px;padding-right:8px}.today-detail{font-size:.75rem}}
 .request-profile-details{display:grid;grid-template-columns:3em minmax(0,1fr);gap:5px 10px;margin:10px 0;font-size:.85rem;text-align:left}.request-profile-details dt{color:var(--sub)}.request-profile-details dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.request-profile-details .request-profile-legacy{grid-column:1/-1;font-size:.78rem;color:var(--sub);margin-top:4px}
 .friend-compact{padding:8px;margin:6px 0}.friend-compact .fbrow{display:grid;grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr) 38px;gap:6px;align-items:center;padding:0}.friend-compact .av{width:32px;height:32px;font-size:1.1rem}.friend-compact .fbrow>div:nth-child(2){min-width:0;font-size:.8rem;overflow-wrap:anywhere}.friend-compact .fbrow>div:nth-child(2)>.note{display:none}.friend-compact .fbrow>button{padding:4px 2px;font-size:.75rem;width:38px}.friend-compact .request-profile-details{font-size:.75rem;grid-template-columns:2.3em minmax(0,1fr);gap:2px 4px;margin:0;min-width:0}.friend-compact .actions{margin-top:5px;gap:4px}.friend-compact .actions button{padding:3px 5px;font-size:.72rem;max-width:100%}
+.friend-following .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr)}.friend-following .friend-details{min-width:0}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -492,7 +495,6 @@ button.follow-action:disabled{opacity:.6}
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
-<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
 <div class="sp-top">
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
@@ -510,6 +512,9 @@ button.follow-action:disabled{opacity:.6}
   </button>
 </div>
 </div>
+
+<button id="activeTimer" class="active-timer" type="button" hidden aria-label="計測中のタイマーに戻る"><span class="active-timer-dot" aria-hidden="true"></span><span id="activeTimerText"></span><span class="active-timer-link">タイマーへ</span></button>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -588,6 +593,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="note" id="meSub"></div><div class="note" id="meSchool"></div><div class="note" id="meMore"></div></div></div>
 <div class="actions" id="pfView"><button id="shareBtn" hidden>シェア</button></div>
 <h3 class="sh">アカウント</h3>
+<p class="note" id="settingsSyncStatus" role="status" aria-live="polite"></p>
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
 <p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
@@ -671,6 +677,9 @@ button.follow-action:disabled{opacity:.6}
 <div class="fld"><label>生まれた年<input type="number" id="pfBY" min="1900" max="2100" placeholder="例 2008"></label></div>
 <div class="fld"><label>誕生日<span class="pair"><input type="number" id="pfBM" min="1" max="12" placeholder="月"><span>月</span><input type="number" id="pfBD" min="1" max="31" placeholder="日"><span>日</span></span></label></div>
 </div>
+<h3 class="sh">タイマー</h3>
+<div class="fld"><label>操作がないときの記録確認<input id="timerIdleMinutes" type="number" min="5" max="480" step="1" value="60" inputmode="numeric"></label><p class="note">5〜480分で設定できます。この時間操作がなければ一時停止し、操作がなかった時間を記録するか確認します。</p><p class="note" id="timerIdleSettingNote" role="status"></p></div>
+<p class="note">ログイン中は、先に計測を開始した端末を優先します。別端末で開始する場合は、先の端末で一時停止してください。</p>
 <h3 class="sh">アプリのデザイン</h3>
 <div class="fld theme-settings">
   <span class="lb">配色テーマ</span>
@@ -702,12 +711,18 @@ button.follow-action:disabled{opacity:.6}
 <div class="tmbox" id="tmbox">
 <div class="tmname" id="tmname"></div>
 <div class="tmplan" id="tmplan"></div>
+<div id="timerEndNotice" class="timer-end-notice" role="status" hidden>予定時間が終了しました。計測は続いています。</div>
+<div id="timerRemainingLabel" class="timer-reading-label">残り時間</div>
 <div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div class="tmtime" id="tmtime">0:00:00</div><span id="clockEditHandle" aria-hidden="true" hidden></span></div>
-<div id="clockEditPanel" hidden><p class="note" id="clockEditHint">円をなぞって残り時間を調整できます。時計回りで増え、逆回りで減ります。</p><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
+<div id="timerElapsed" class="timer-elapsed"></div><p class="note" id="timerOvertimeHint" hidden>予定時間を超えて勉強した分です。計測は自動では止まりません。</p>
+<div id="clockEditPanel" hidden><p class="note" id="clockEditHint">まだ確定していません。円をゆっくり回すと1周で30分調整できます。</p><div class="actions clock-step-buttons"><button id="clockMinus" type="button">−1分</button><button id="clockPlus" type="button">＋1分</button></div><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
+<div id="timerUndo" class="note" hidden><span>時間を変更しました。</span><button id="timerUndoButton" type="button">元に戻す</button></div>
 <div class="adj" id="clockEditOpenRow"><button id="timeAdjustOpen">時間を調整</button></div>
+<p class="note" id="timerCloseHint">「閉じる」は画面を閉じる操作です。計測を止めるには「一時停止」を押してください。</p>
 <div class="actions" id="timerMainActions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmReset">リセット</button><button id="tmclose">閉じる</button></div>
 </div>
 </div>
+<div class="tm" id="idleReviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="idleReviewTitle"><div class="tmbox"><div class="tmname" id="idleReviewTitle">この時間を記録しますか？</div><p id="idleReviewText"></p><p class="note">タイマーは一時停止しています。最後の操作までの時間は保存済みです。記録後、必要に応じて時間を調整できます。</p><div class="actions"><button id="idleRecord" class="main">記録する</button><button id="idleDiscard">記録しない</button></div></div></div>
 <div class="tm" id="em" hidden role="dialog" aria-modal="true" aria-labelledby="emtitle">
 <div class="tmbox">
 <div class="tmname" id="emtitle">項目を追加</div>
@@ -760,10 +775,11 @@ var initialState=JSON.stringify(state),dataOwner=null,authEpoch=0,accountNeedsCl
 function accountKey(uid){return KEY+(uid?":user:"+uid:":guest")}
 function readAccount(uid){try{return JSON.parse(localStorage.getItem(accountKey(uid))||"null")}catch(e){return null}}
 function ownsCurrentData(uid){return !!uid&&uid===dataOwner&&uid===FB.uid}
-var SYNC_SKIP=["timer","page","planPage","updatedAt","dataAt"],lastData="";
+var SYNC_SKIP=["timer","idleReview","pendingTimerRelease","page","planPage","updatedAt","dataAt"],lastData="",saveRevision=0;
 function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
-function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);}catch(e){}lastData=syncData()}
-function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
+function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);loadTimerRuntime();}catch(e){}lastData=syncData()}
+function loadTimerRuntime(){try{var r=JSON.parse(sessionStorage.getItem(accountKey(dataOwner)+":timer-runtime")||"null");if(r){state.timer=r.timer;state.idleReview=r.idleReview;state.pendingTimerRelease=r.pendingTimerRelease}else{if(state.timer&&state.timer.lease&&state.timer.lease.tab!==timerTabId)state.timer=null;if(state.idleReview&&state.idleReview.lease&&state.idleReview.lease.tab!==timerTabId)state.idleReview=null}}catch(e){}}
+function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
 function switchAccountData(uid){
   uid=uid||null;
   if(dataOwner===uid){try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}return false}
@@ -776,13 +792,14 @@ function switchAccountData(uid){
   if(legacyUnclaimed){try{localStorage.setItem(KEY+":legacy-archived","1")}catch(e){}legacyUnclaimed=false}
   var saved=readAccount(uid);accountNeedsCloud=!!uid&&!saved;
   state=Object.assign(JSON.parse(initialState),saved||{});dataOwner=uid;
+  loadTimerRuntime();timerUndoState=null;
   saveHealth={localSaved:!!saved,localError:null,cloudError:null,writeError:null,pending:!!uid,synced:false};
   try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}
   lastData=syncData();ensureIds();rollForward();fillWeeklySetup();countdown();renderPlan();
   showPage(state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)));
   return true;
 }
-function save(){state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now()}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule()}
+function save(){state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now();saveRevision++}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule();if(typeof renderActiveTimer==="function")renderActiveTimer()}
 
 var $=function(id){return document.getElementById(id)};
 var saveHealth={localSaved:false,localError:null,cloudError:null,writeError:null,pending:false,synced:false};
@@ -801,14 +818,15 @@ function paintSaveStatus(){
   else if(h.cloudError||h.writeError){var k=errorKind(h.cloudError||h.writeError);label="保存できませんでした（クラウド）。"+(k==="permission"?"保存権限がありません。":k==="auth"?"ログインし直してください。":k==="network"||k==="timeout"?"通信を確認してください。":"再試行してください。")}
   else if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
   else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
-  if(el.textContent!==label)el.textContent=label;box.classList.toggle("has-error",!!err);button.hidden=!err;
+  var settings=document.getElementById("settingsSyncStatus");if(settings&&settings.textContent!==label)settings.textContent=label;
+  var mainLabel=err||h.pending?label:"";if(el.textContent!==mainLabel)el.textContent=mainLabel;box.hidden=!mainLabel;box.classList.toggle("has-error",!!err);button.hidden=!err;
 }
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
   if(!FB.syncReady){await fbOnAuth();return}
   var failed=saveHealth.writeError;
   if(failed&&failed.retry&&!/^(privateData|profiles)\//.test(failed.path)&&failed.path!=="stats/"+FB.uid){try{await failed.retry()}catch(e){return}}
-  await syncPush();await fbPublish(true);
+  await syncPush();if(state.pendingTimerRelease)await releaseTimerLease(state.pendingTimerRelease);await fbPublish(true);
   if(!saveHealth.cloudError&&!saveHealth.writeError)paintSaveStatus();
 }
 function limitRead(task){return new Promise(function(resolve,reject){var timer=setTimeout(function(){var e=new Error("timeout");e.code="deadline-exceeded";reject(e)},12000);Promise.resolve(task).then(function(v){clearTimeout(timer);resolve(v)},function(e){clearTimeout(timer);reject(e)})})}
@@ -1007,6 +1025,7 @@ function showWeeklySetupStatus(){
 }
 function rollForward(){
   if(!state.plan||!state.plan.length)return false;
+  if(state.idleReview||checkIdleTimer())return false;
   var today=fmtDate(new Date());
   if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;
   if(state.weekSetupPending||state.planDaySeen===today)return false;
@@ -1209,22 +1228,104 @@ function elapsed(id){return (state.spent[id]||0)+(running(id)?(Date.now()-state.
 function remain(id){var x=findBlock(id);return x?x.h*3600-elapsed(id):0}
 function fmtR(sec){return sec>=0?fmtT(Math.ceil(sec)):"+"+fmtT(Math.floor(-sec))+" 超過"} // 残り時間(カウントダウン)。過ぎたら「+ ○ 超過」
 function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
-function pauseTimer(){if(state.timer){var t=state.timer,now=Date.now(),sec=Math.max(0,(now-t.start)/1000),x=findBlock(t.id);if(x)splitTimerDays(t.start,now,function(d,s){logAdd(x.name,s,t.id,"t",d)});state.spent[t.id]=(state.spent[t.id]||0)+sec;state.timer=null;save()}}
+function pauseTimer(at,keepLease){
+  if(!state.timer)return;if(!keepLease)timerUndoState=null;var t=state.timer,now=at===undefined?Date.now():Math.max(t.start,Math.min(Date.now(),at)),sec=Math.max(0,(now-t.start)/1000),x=findBlock(t.id);
+  if(x)splitTimerDays(t.start,now,function(d,s){logAdd(x.name,s,t.id,"t",d)});state.spent[t.id]=(state.spent[t.id]||0)+sec;state.timer=null;
+  if(t.lease&&!keepLease)state.pendingTimerRelease=t.lease;
+  save();if(t.lease&&!keepLease)releaseTimerLease(t.lease);renderActiveTimer();
+}
 var AC=null; // 時間になったときの音。画面を操作した時点で使えるようにしておく
 function unlockAudio(){try{if(!AC){var C=window.AudioContext||window.webkitAudioContext;AC=new C()}if(AC.state==="suspended")AC.resume()}catch(e){}}
 function beep(){try{if(!AC)return;var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=0.15;o.start();o.stop(AC.currentTime+0.7)}catch(e){}}
 function askNotify(){try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission()}catch(e){}}
 function notifyDone(name){try{if("Notification" in window&&Notification.permission==="granted")new Notification("時間です",{body:name+" の予定時間になりました"})}catch(e){}}
 var notified=null; // 時間ちょうどになったときに1回だけ知らせる
-function toggleTimer(id){
-  if(running(id))pauseTimer();
-  else{unlockAudio();askNotify();pauseTimer();state.timer={id:id,start:Date.now()};notified=remain(id)<=0?id:null;save()}
-  updateTimer();renderPlan();
+function timerIdentity(key,kind){try{var storage=kind==="session"?sessionStorage:localStorage,id=storage.getItem(key);if(!id){id=rid();storage.setItem(key,id)}return id}catch(e){return rid()}}
+var timerDeviceId=timerIdentity(KEY+":device","local"),timerTabId=timerIdentity(KEY+":timer-tab","session"),timerReleaseTask=null,timerReleaseOwner=null;
+async function timerLeaseTransaction(fn){var fs=FB.Fs;if(!fs||typeof fs.runTransaction!=="function"){var e=new Error("lease-unavailable");e.code="unavailable";throw e}var ref=fs.doc(FB.db,"privateData/"+FB.uid);return fs.runTransaction(FB.db,async function(tx){var snap=await tx.get(ref);return fn(snap.exists()?snap.data():{},function(lease){tx.set(ref,{timerLease:lease},{merge:true})})})}
+async function claimTimerLease(id,resume){
+  if(!FB.uid)return {local:true};var uid=FB.uid,epoch=authEpoch;
+  if(!ownsCurrentData(uid)||!FB.syncReady){showTimerMessage("同期を確認しています。","同期が完了してから開始してください。");return null}
+  if(state.pendingTimerRelease){await releaseTimerLease(state.pendingTimerRelease);if(state.pendingTimerRelease){showTimerMessage("一時停止した時間を保存しています。","同期が完了してから開始してください。");return null}}
+  var x=findBlock(id),token=resume&&resume.token||rid(),now=Date.now();
+  var result=await timerLeaseTransaction(function(doc,set){
+    var old=doc.timerLease;
+    if(old&&old.active&&!(resume&&old.token===resume.token&&old.device===timerDeviceId&&old.tab===timerTabId))return {blocked:true,name:old.name||"別の科目"};
+    if(!resume&&doc.data&&Number(doc.dataAt)>(state.dataAt||0))return {sync:doc};
+    var lease={uid:uid,device:timerDeviceId,tab:timerTabId,token:token,active:true,name:x?x.name:"勉強",startedAt:resume&&resume.startedAt||now};set(lease);return lease;
+  });
+  if(!ownsCurrentData(uid)||epoch!==authEpoch){if(result.token){try{var old=readAccount(uid)||JSON.parse(initialState);old.pendingTimerRelease=result;localStorage.setItem(accountKey(uid),JSON.stringify(old));var runtime=JSON.parse(sessionStorage.getItem(accountKey(uid)+":timer-runtime")||"{}");runtime.pendingTimerRelease=result;sessionStorage.setItem(accountKey(uid)+":timer-runtime",JSON.stringify(runtime))}catch(e){}}return null}
+  if(result.blocked){showTimerMessage("別端末で計測中です。",result.name+"の計測が先に開始されています。その端末で一時停止してから、この端末で開始してください。");return null}
+  if(result.sync){syncApply(result.sync);return null}return result;
+}
+function releaseTimerLease(lease){
+  if(!lease||!ownsCurrentData(lease.uid))return Promise.resolve(false);
+  if(timerReleaseTask&&timerReleaseOwner===lease.uid)return timerReleaseTask;
+  var uid=lease.uid,epoch=authEpoch,task=(async function(){
+    try{
+      if(!FB.syncReady)return false;await syncPush();
+      if(!ownsCurrentData(uid)||epoch!==authEpoch||saveHealth.cloudError||syncData()!==syncSig)return false;
+      await timerLeaseTransaction(function(doc,set){if(doc.timerLease&&doc.timerLease.token===lease.token)set(Object.assign({},doc.timerLease,{active:false,stoppedAt:Date.now()}));return true});
+      if(ownsCurrentData(uid)&&epoch===authEpoch&&state.pendingTimerRelease&&state.pendingTimerRelease.token===lease.token){state.pendingTimerRelease=null;store()}return true;
+    }catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return false}
+  })();timerReleaseTask=task;timerReleaseOwner=uid;task.finally(function(){if(timerReleaseTask===task){timerReleaseTask=null;timerReleaseOwner=null}}).catch(function(){});return task;
+}
+async function restoreTimerLease(){
+  if(state.pendingTimerRelease)await releaseTimerLease(state.pendingTimerRelease);
+  var t=state.timer;if(!t)return;
+  if(t.lease&&(t.lease.device!==timerDeviceId||t.lease.tab!==timerTabId)){state.timer=null;store();renderActiveTimer();return}
+  try{var lease=await claimTimerLease(t.id,t.lease||null);if(state.timer!==t)return;if(!lease){state.timer=null;store();renderActiveTimer();return}t.lease=lease.local?null:lease;store()}catch(e){if(state.timer===t){pauseTimer();showTimerMessage("計測を再開できませんでした。",readErrorMessage(e))}}
+}
+
+var timerStartBusy=false,timerUndoState=null,timerUndoSerial=0;
+async function toggleTimer(id){
+  if(timerStartBusy)return;if(state.idleReview){showIdleReview();return}if(checkIdleTimer())return;
+  if(running(id)){pauseTimer();updateTimer();renderPlan();return}
+  if(!findBlock(id))return;timerStartBusy=true;updateTimer();
+  try{
+    unlockAudio();askNotify();pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;
+    var lease=await claimTimerLease(id);if(!lease)return;
+    if(state.done[id])setDone(id,false);
+    state.timer={id:id,start:Date.now(),lastActivity:Date.now(),lease:lease.local?null:lease};notified=remain(id)<=0?id:null;timerUndoState=null;save();
+  }catch(e){showTimerMessage("計測を開始できませんでした。",readErrorMessage(e))}finally{timerStartBusy=false;updateTimer();renderPlan();renderActiveTimer()}
+}
+function showTimerMessage(title,text){askConfirm(title,text,"OK")}
+function renderActiveTimer(){
+  if(document.hidden)return;var el=$("activeTimer"),text=$("activeTimerText");if(!el)return;
+  var review=state.idleReview,t=state.timer,x=t&&findBlock(t.id);el.hidden=!review&&!x;
+  if(review)setTextIfChanged(text,review.name+" · 記録の確認");
+  else if(x){var left=remain(t.id),label=x.name+" · 計測中 · "+(left<=0?"予定時間終了 · 超過 "+fmtT(-left):"残り "+fmtT(left));setTextIfChanged(text,label)}
+  el.setAttribute("aria-label",review?"未確認の計測時間を確認する":x?x.name+"の計測中タイマーに戻る":"計測中のタイマーに戻る");
+  var undo=$("timerUndo");if(undo)undo.hidden=!timerUndoState||timerUndoState.id!==openId||timerUndoState.expires<Date.now()||timerUndoState.revision!==saveRevision;
+}
+function idleMinutes(){return Math.max(5,Math.min(480,Number(state.timerIdleMinutes)||60))}
+function checkIdleTimer(){
+  var t=state.timer;if(!t||state.idleReview)return false;var now=Date.now(),last=Math.max(t.start,Number(t.lastActivity)||t.start);
+  if(now-last<idleMinutes()*60000)return false;
+  var x=findBlock(t.id);if(!x)return false;
+  var review={id:t.id,name:x.name,from:last,to:now,seconds:(now-last)/1000,lease:t.lease||null};
+  pauseTimer(last,true);state.idleReview=review;timerUndoState=null;closeClockAdjust(false);save();if(!document.hidden)showIdleReview();return true;
+}
+function showIdleReview(){var r=state.idleReview;if(!r)return;$("idleReviewText").textContent=r.name+"：操作がなかった "+fmtT(r.seconds)+" を学習記録に追加しますか？";$("idleReviewModal").hidden=false}
+async function resolveIdleReview(record){
+  var r=state.idleReview;if(!r)return;state.idleReview=null;$("idleReviewModal").hidden=true;
+  if(record){splitTimerDays(r.from,r.to,function(d,s){logAdd(r.name,s,r.id,"t",d)});state.spent[r.id]=(state.spent[r.id]||0)+r.seconds}
+  if(r.lease)state.pendingTimerRelease=r.lease;save();if(r.lease)releaseTimerLease(r.lease);rollAndRender();updateTimer();renderPlan();if(state.page===4)renderStats();renderActiveTimer();
+}
+var timerActivitySaved=0;
+function timerActivity(){if(checkIdleTimer()||state.idleReview)return;if(state.timer){state.timer.lastActivity=Date.now();if(Date.now()-timerActivitySaved>30000){timerActivitySaved=Date.now();store()}}}
+function timerSnapshot(id){return {spent:state.spent[id],contrib:structuredClone(state.contrib&&state.contrib[id]||null),credit:structuredClone(state.credit&&state.credit[id]||null),done:state.done[id],log:structuredClone(state.log||{}),timer:state.timer?Object.assign({},state.timer):null}}
+function undoTimerAdjustment(){
+  var u=timerUndoState;if(!u||u.expires<Date.now()||u.revision!==saveRevision){timerUndoState=null;renderActiveTimer();return}
+  timerUndoState=null;var old=u.before;state.log=old.log;
+  if(old.spent===undefined)delete state.spent[u.id];else state.spent[u.id]=old.spent;
+  state.contrib=state.contrib||{};if(old.contrib)state.contrib[u.id]=old.contrib;else delete state.contrib[u.id];state.credit=state.credit||{};if(old.credit)state.credit[u.id]=old.credit;else delete state.credit[u.id];if(old.done===undefined)delete state.done[u.id];else state.done[u.id]=old.done;state.timer=old.timer;if(state.timer)state.timer.lastActivity=Date.now();
+  save();updateTimer();renderPlan();if(state.page===4)renderStats();renderActiveTimer();
 }
 // 勉強した時間(計測した時間)を、あとから増やしたり減らしたりする。学習記録にも同じだけ反映する。
 function adjustSpent(id,deltaSec){
   var x=findBlock(id);if(!x||!deltaSec)return;
-  var wasRun=running(id);if(wasRun)pauseTimer();
+  var previousTimer=state.timer?Object.assign({},state.timer):null,wasRun=running(id);if(wasRun)pauseTimer(undefined,true);
   var wasDone=!!state.done[id];if(wasDone)setDone(id,false); // 完了のときは、予定との差で足した分を一度戻して、あとで入れ直す
   if(deltaSec>0){logAdd(x.name,deltaSec,id,"t");state.spent[id]=(state.spent[id]||0)+deltaSec}
   else{
@@ -1235,7 +1336,7 @@ function adjustSpent(id,deltaSec){
     state.spent[id]=Math.max(0,(state.spent[id]||0)-cut);
   }
   if(wasDone)setDone(id,true);
-  if(wasRun)state.timer={id:id,start:Date.now()};
+  if(wasRun)state.timer=Object.assign({},previousTimer,{id:id,start:Date.now(),lastActivity:Date.now()});
   save();
   updateTimer();renderPlan();if(state.page===6&&typeof renderToday==="function")renderToday();
 }
@@ -1248,7 +1349,9 @@ function setClockRemaining(seconds){
 }
 function openClockAdjust(){
   var x=findBlock(openId);if(!x)return;
-  clockEdit={id:openId,remaining:x.h*3600-elapsed(openId),changed:false,pointer:null};
+  if(state.idleReview){showIdleReview();return}if(checkIdleTimer())return;
+  timerUndoState=null;renderActiveTimer();
+  clockEdit={id:openId,remaining:x.h*3600-elapsed(openId),before:elapsed(openId),changed:false,pointer:null};
   var clock=$("clock");clock.classList.add("is-adjusting");clock.setAttribute("role","slider");clock.setAttribute("tabindex","0");clock.setAttribute("aria-label","残り時間を調整。右・上キーで1分増やし、左・下キーで1分減らします");
   $("clockEditPanel").hidden=false;$("clockEditHandle").hidden=false;$("timerMainActions").style.display="none";$("clockEditOpenRow").hidden=true;updateTimer();clock.focus({preventScroll:true});
 }
@@ -1261,19 +1364,19 @@ function closeClockAdjust(restore){
 function applyClockAdjust(){
   if(!clockEdit)return;var x=findBlock(clockEdit.id);if(!x){closeClockAdjust(true);return}
   var id=clockEdit.id,changed=clockEdit.changed,seconds=Math.max(0,x.h*3600-clockEdit.remaining);closeClockAdjust(true);
-  if(changed)adjustSpent(id,seconds-elapsed(id));
+  if(changed&&Math.abs(seconds-elapsed(id))>.5){var before=timerSnapshot(id);adjustSpent(id,seconds-elapsed(id));timerUndoState={id:id,before:before,revision:saveRevision,expires:Date.now()+15000};var serial=++timerUndoSerial;setTimeout(function(){if(serial===timerUndoSerial){timerUndoState=null;renderActiveTimer()}},15000);renderActiveTimer()}
 }
 function clockPointerAngle(e){var r=$("clock").getBoundingClientRect();return Math.atan2(e.clientY-r.top-r.height/2,e.clientX-r.left-r.width/2)}
 function bindClockAdjust(){
   var clock=$("clock");
   clock.addEventListener("pointerdown",function(e){
     if(!clockEdit||e.button>0||clockEdit.pointer!==null)return;
-    var r=clock.getBoundingClientRect(),distance=Math.hypot(e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2);if(distance<r.width*.22)return;
+    var r=clock.getBoundingClientRect(),distance=Math.hypot(e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2);if(distance<r.width*.30||distance>r.width*.60)return;
     e.preventDefault();clockEdit.pointer=e.pointerId;clockEdit.angle=clockPointerAngle(e);clockEdit.raw=clockEdit.remaining;clockEdit.dragStart=clockEdit.remaining;clockEdit.wasChanged=clockEdit.changed;clock.setPointerCapture(e.pointerId);
   });
   clock.addEventListener("pointermove",function(e){
     if(!clockEdit||clockEdit.pointer!==e.pointerId)return;e.preventDefault();var angle=clockPointerAngle(e),delta=angle-clockEdit.angle;if(delta>Math.PI)delta-=Math.PI*2;if(delta<-Math.PI)delta+=Math.PI*2;
-    var x=findBlock(clockEdit.id),limit=clockEditLimits();if(!x||!limit)return;clockEdit.angle=angle;clockEdit.raw=Math.max(limit.min,Math.min(limit.max,clockEdit.raw+delta/(Math.PI*2)*x.h*3600));if(Math.abs(delta)>.0001)setClockRemaining(clockEdit.raw);
+    var x=findBlock(clockEdit.id),limit=clockEditLimits();if(!x||!limit)return;clockEdit.angle=angle;clockEdit.raw=Math.max(limit.min,Math.min(limit.max,clockEdit.raw+Math.max(-Math.PI/12,Math.min(Math.PI/12,delta))/(Math.PI*2)*1800));if(Math.abs(delta)>.0001)setClockRemaining(clockEdit.raw);
   });
   clock.addEventListener("pointerup",function(e){if(!clockEdit||clockEdit.pointer!==e.pointerId)return;clockEdit.pointer=null;try{clock.releasePointerCapture(e.pointerId)}catch(x){}});
   clock.addEventListener("pointercancel",function(e){if(!clockEdit||clockEdit.pointer!==e.pointerId)return;clockEdit.remaining=clockEdit.dragStart;clockEdit.changed=clockEdit.wasChanged;clockEdit.pointer=null;updateTimer()});
@@ -1296,14 +1399,20 @@ function openTimer(id){
   $("tmbox").style.borderTopColor=colorOf(x.name);
   $("tm").hidden=false;updateTimer();
 }
-function closeTimer(){closeClockAdjust(false);openId=null;$("tm").hidden=true}
+function closeTimer(){closeClockAdjust(false);openId=null;$("tm").hidden=true;renderActiveTimer()}
 function updateTimer(){
   if(openId===null)return;
   var x=findBlock(openId);if(!x){closeTimer();return}
   var e=elapsed(openId),rm=x.h*3600-e;
   if(clockEdit&&clockEdit.id===openId){rm=clockEdit.remaining;e=Math.max(0,x.h*3600-rm)}
   $("tmtime").textContent=fmtR(rm);$("tmtime").classList.toggle("over",rm<0);
-  $("tmplan").textContent="予定 "+hm(x.h)+"(経過 "+fmtT(e)+")";
+  $("tmplan").textContent="予定 "+hm(x.h);
+  $("timerRemainingLabel").textContent=clockEdit?"調整中の残り時間（未確定）":rm<0?"予定時間を超えた時間":"残り時間";
+  $("timerElapsed").textContent="経過時間 "+fmtT(clockEdit?elapsed(openId):e);
+  $("timerOvertimeHint").hidden=rm>=0;$("timerEndNotice").hidden=remain(openId)>0;
+  $("timerEndNotice").textContent=running(openId)?"予定時間が終了しました。計測は続いています。":"予定時間が終了しました。現在は一時停止しています。";
+  $("timerCloseHint").textContent=running(openId)?"閉じても計測は続きます。止めるには「一時停止」を押してください。":"「閉じる」は画面だけを閉じます。「一時停止」は計測を止める操作です。";
+  $("tmtoggle").disabled=timerStartBusy;
   var frac=Math.max(0,Math.min(1,rm/(x.h*3600)));
   $("tmarc").style.strokeDashoffset=565.49*(1-frac);
   $("tmarc").style.stroke=rm<0?"var(--red)":colorOf(x.name);
@@ -1312,12 +1421,12 @@ function updateTimer(){
     var clock=$("clock"),angle=Math.max(0,Math.min(1,rm/(x.h*3600)))*Math.PI*2,limit=clockEditLimits();
     $("clockEditHandle").style.left=(50+45*Math.sin(angle))+"%";$("clockEditHandle").style.top=(50-45*Math.cos(angle))+"%";$("clockEditHandle").style.background=rm<0?"var(--red)":colorOf(x.name);
     clock.setAttribute("aria-valuemin",Math.floor(limit.min/60));clock.setAttribute("aria-valuemax",Math.floor(limit.max/60));clock.setAttribute("aria-valuenow",Math.round(rm/60));clock.setAttribute("aria-valuetext",rm>=0?"残り"+hm(rm/3600):hm(-rm/3600)+"超過");
-    $("clockEditPreview").textContent="計測時間を "+fmtT(e)+" に変更";
+    $("clockEditPreview").textContent="未確定：計測 "+fmtH(elapsed(openId))+" → "+fmtH(e);
   }
 }
 var backgroundPlanDirty=false;
 function tickAll(){
-  var visible=!document.hidden;
+  var visible=!document.hidden;checkIdleTimer();if(visible&&state.idleReview)showIdleReview();if(visible)renderActiveTimer();
   if(visible&&state.page===6)todayBar();
   if(state.plan&&state.plan.length&&!state.weekSetupPending&&state.planDaySeen!==fmtDate(new Date())){if(visible)rollAndRender();else backgroundPlanDirty=rollForward()||backgroundPlanDirty}
   if(state.timer){
@@ -1465,6 +1574,7 @@ var sMode="d",sSel=-1;
 function setDone(id,on){
   var x=findBlock(id);state.credit=state.credit||{};
   if(on){
+    if(state.idleReview){showIdleReview();return}if(checkIdleTimer())return;if(running(id))pauseTimer();
     state.done[id]=true;
     if(x&&!state.credit[id]){
       var sec=Math.max(0,x.h*3600-elapsed(id));
@@ -1936,6 +2046,7 @@ function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生
 }
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
+  $("timerIdleMinutes").value=idleMinutes();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
   var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
   if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
@@ -1981,7 +2092,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-20 v33"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-20 v35"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2040,7 +2151,7 @@ async function fGet(path){
   }catch(e){if(FB.uid===owner&&profileCacheEpoch===epoch)profileCache.delete(path);throw e}
 }
 async function cloudWrite(task,path){var uid=FB.uid,epoch=authEpoch;try{await task();profileCacheDrop(path);if(ownsCurrentData(uid)&&epoch===authEpoch&&saveHealth.writeError&&saveHealth.writeError.path===path){saveHealth.writeError=null;paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.writeError={code:e.code,path:path,retry:function(){if(ownsCurrentData(uid)&&epoch===authEpoch)return cloudWrite(task,path)}};paintSaveStatus()}throw e}}
-async function fSet(path,data){return cloudWrite(function(){return FB.Fs.setDoc(FB.Fs.doc(FB.db,path),data)},path)}
+async function fSet(path,data){return cloudWrite(function(){var ref=FB.Fs.doc(FB.db,path);return /^privateData\/[^/]+$/.test(path)?FB.Fs.setDoc(ref,data,{merge:true}):FB.Fs.setDoc(ref,data)},path)}
 async function fDel(path){return cloudWrite(function(){return FB.Fs.deleteDoc(FB.Fs.doc(FB.db,path))},path)}
 async function fList(path){var r=await limitRead(FB.Fs.getDocs(FB.Fs.collection(FB.db,path))),o=[];r.forEach(function(d){o.push({id:d.id,data:d.data()})});return o}
 async function fbInit(){
@@ -2161,12 +2272,12 @@ async function syncPush(){
   if(!state.dataAt){state.dataAt=Date.now();store()}var dataAt=state.dataAt;
   saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus();
   var flight={uid:uid,epoch:epoch,promise:null};syncFlight=flight;
-  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null}})();
+  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null;if(ownsCurrentData(uid)&&epoch===authEpoch&&!saveHealth.cloudError&&!saveHealth.pending&&state.pendingTimerRelease)setTimeout(function(){if(ownsCurrentData(uid)&&state.pendingTimerRelease&&!timerReleaseTask)releaseTimerLease(state.pendingTimerRelease)},0)}})();
   return flight.promise;
 }
 function syncApply(r){ // 別の端末のほうが新しい: その内容をこの端末に入れて、開き直す
   try{
-    var o=JSON.parse(r.data);o.timer=state.timer;o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
+    var o=JSON.parse(r.data);o.timer=state.timer;o.idleReview=state.idleReview||null;o.pendingTimerRelease=state.pendingTimerRelease||null;o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
     if(!ownsCurrentData(FB.uid))return false;
     localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));location.reload();return true;
   }catch(e){saveHealth.localError=e;paintSaveStatus();return false}
@@ -2207,7 +2318,7 @@ async function fbOnAuth(){
   if(profileCacheOwner!==FB.uid){profileCacheReset();closeProfile();closeList();$("lmBody").innerHTML="";$("tlm").hidden=true;$("tlBody").innerHTML=""}
   renderFb();
   if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=FBN.dm=0;dmStop();paintCounts();return}
-  try{if(await syncStart())return;if(epoch!==authEpoch||!ownsCurrentData(uid)||!FB.syncReady)return;await fbEnsure();if(epoch!==authEpoch||!ownsCurrentData(uid))return;await fbPublish(true);if(epoch!==authEpoch||!ownsCurrentData(uid))return;await fbSocialSync();if(epoch!==authEpoch||!ownsCurrentData(uid))return;dmCheck()}catch(e){if(epoch===authEpoch)FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
+  try{if(await syncStart())return;if(epoch!==authEpoch||!ownsCurrentData(uid)||!FB.syncReady)return;await fbEnsure();if(epoch!==authEpoch||!ownsCurrentData(uid))return;await restoreTimerLease();if(epoch!==authEpoch||!ownsCurrentData(uid))return;await fbPublish(true);if(epoch!==authEpoch||!ownsCurrentData(uid))return;await fbSocialSync();if(epoch!==authEpoch||!ownsCurrentData(uid))return;dmCheck()}catch(e){if(epoch===authEpoch)FB.err="フレンドコードを作れませんでした。Firebaseの「ルール」の設定を確認してください。"}
   renderFb();
 }
 function fbMsg(t){FB.msg=t;var e=$("fbMsg");if(e)e.textContent=t}
@@ -2634,11 +2745,11 @@ async function fillFol(fb){
     if(!snapshot.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達を検索して、リクエストしましょう。</div>';
     await Promise.all(snapshot.map(async function(id){
       var cached=profileCached("profiles/"+id),statCache=profileCached("stats/"+id),p=cached?cached.value:null,d=statCache?statCache.value:null,approved=false,removed=ids.indexOf(id)<0;
-      var card=document.createElement("div");card.className="fcard";
+      var card=document.createElement("div");card.className="fcard friend-compact friend-following";
       var hd=fbRow(p,id),un=document.createElement("button");un.dataset.followUid=id;
       if(!cached)hd.querySelector("b").textContent="読み込み中…";
-      hd.appendChild(un);card.appendChild(hd);
-      var body=document.createElement("div");body.className="note";card.appendChild(body);fb.appendChild(card);
+      var actions=document.createElement("div");actions.className="actions";actions.appendChild(un);hd.children[1].appendChild(actions);card.appendChild(hd);
+      var body=document.createElement("div");body.className="friend-details";hd.appendChild(body);fb.appendChild(card);
       function paint(){
         un.textContent=removed?"フォロー":approved?"フォロー中":"リクエスト済み";un.classList.toggle("follow-action",removed);
         hd.querySelector(".note").textContent=p&&typeof p.grade==="string"?p.grade.slice(0,10):"";
@@ -2799,8 +2910,16 @@ $("tmReset").onclick=function(){
 $("timeAdjustOpen").onclick=openClockAdjust;
 $("clockEditApply").onclick=applyClockAdjust;
 $("clockEditCancel").onclick=function(){closeClockAdjust(true)};
+$("clockMinus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining-60)};
+$("clockPlus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining+60)};
+$("timerUndoButton").onclick=undoTimerAdjustment;
+$("activeTimer").onclick=function(){if(state.idleReview)showIdleReview();else if(state.timer)openTimer(state.timer.id)};
+$("idleRecord").onclick=function(){resolveIdleReview(true)};$("idleDiscard").onclick=function(){resolveIdleReview(false)};
+$("timerIdleMinutes").onchange=function(){var n=Number(this.value);if(!Number.isFinite(n)||n<5||n>480){$("timerIdleSettingNote").textContent="5〜480分で入力してください。";return}state.timerIdleMinutes=n;$("timerIdleSettingNote").textContent=n+"分操作がなければ確認します。";save()};
+document.addEventListener("pointerdown",timerActivity,{passive:true,capture:true});document.addEventListener("keydown",timerActivity,{capture:true});
+
 bindClockAdjust();
-$("tmdone").onclick=function(){if(running(openId))pauseTimer();setDone(openId,true);closeTimer();renderPlan()};
+$("tmdone").onclick=function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}setDone(openId,true);closeTimer();renderPlan()};
 $("tmclose").onclick=closeTimer;
 $("tm").onclick=function(e){if(e.target===this)closeTimer()};
 $("emh").oninput=updateEditDuration;
@@ -2920,7 +3039,7 @@ $("fbCfgSave").onclick=function(){
   location.reload();
 };
 $("fbIn").onclick=function(){fbSignIn()};
-$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",function(){$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
+$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",async function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;if(state.pendingTimerRelease){showTimerMessage("計測時間を保存できていません。","通信を確認し、保存の再試行後にログアウトしてください。");return}$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
 $("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
 $("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
@@ -2954,7 +3073,7 @@ $("shareBtn").onclick=async function(){
 setInterval(fbPoll,60000);
 setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
 setInterval(function(){if(!document.hidden&&!$("tlm").hidden)rankLoad()},20000);
-document.addEventListener("visibilitychange",function(){if(!document.hidden){if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
+document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
 fbInit();
 $("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
