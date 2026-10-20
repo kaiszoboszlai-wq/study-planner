@@ -514,7 +514,7 @@ button.follow-action:disabled{opacity:.6}
 </div>
 
 <button id="activeTimer" class="active-timer" type="button" hidden aria-label="計測中のタイマーに戻る"><span class="active-timer-dot" aria-hidden="true"></span><span id="activeTimerText"></span><span class="active-timer-link">タイマーへ</span></button>
-<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span></div>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -807,19 +807,18 @@ function errorKind(e){var code=String(e&&e.code||"").replace(/^firestore\//,"");
 function readErrorMessage(e){var k=errorKind(e);return k==="permission"?"この情報を閲覧する権限がありません。":k==="auth"?"ログインし直してください。":k==="timeout"?"読み込みに時間がかかっています。":k==="network"?"通信できませんでした。接続を確認してください。":k==="setup"?"この情報を取得する準備が完了していません。":"読み込めませんでした。"}
 function showReadError(box,e,retry,append){
   var row=document.createElement("div");row.className="note read-error";row.setAttribute("role","alert");var label=document.createElement("span");label.textContent=readErrorMessage(e);row.appendChild(label);
-  if(retry){var b=document.createElement("button");b.type="button";b.textContent="再試行";b.onclick=function(){b.disabled=true;Promise.resolve().then(retry).catch(function(err){if(row.isConnected){showReadError(row,err,retry);b.remove()}})};row.appendChild(b)}
+
   if(!append)box.replaceChildren();box.appendChild(row);return row;
 }
 function paintSaveStatus(){
-  var el=document.getElementById("saveStatusText"),button=document.getElementById("saveRetry"),box=document.getElementById("saveStatus");if(!el||!saveHealth)return;
-  if(document.hidden)return;
+  var el=document.getElementById("saveStatusText"),box=document.getElementById("saveStatus");if(!el||!box||!saveHealth)return;
   var h=saveHealth,err=h.localError||h.cloudError||h.writeError,label="";
-  if(h.localError)label="保存できませんでした（この端末）。";
-  else if(h.cloudError||h.writeError){var k=errorKind(h.cloudError||h.writeError);label="保存できませんでした（クラウド）。"+(k==="permission"?"保存権限がありません。":k==="auth"?"ログインし直してください。":k==="network"||k==="timeout"?"通信を確認してください。":"再試行してください。")}
-  else if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
-  else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
+  if(!err){
+    if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
+    else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
+  }
   var settings=document.getElementById("settingsSyncStatus");if(settings&&settings.textContent!==label)settings.textContent=label;
-  var mainLabel=err||h.pending?label:"";if(el.textContent!==mainLabel)el.textContent=mainLabel;box.hidden=!mainLabel;box.classList.toggle("has-error",!!err);button.hidden=!err;
+  var mainLabel=!err&&h.pending?label:"";if(el.textContent!==mainLabel)el.textContent=mainLabel;box.hidden=!mainLabel;box.classList.remove("has-error");
 }
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
@@ -2092,7 +2091,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-20 v38"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-20 v39"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2417,8 +2416,6 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   };
   var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
   var socialError=null,statsError=null;
-  var retry=document.createElement("button");retry.textContent="再試行";retry.hidden=true;
-  retry.onclick=function(){openProfile(id)};box.appendChild(retry);
   function paintStats(){
   paintProfileInfo();
   body.innerHTML="";
@@ -2978,7 +2975,7 @@ var renderStats38=renderStats;renderStats=function(){renderStats38();statsDetail
 var updateStats38=updateStatsLive;updateStatsLive=function(){var before=statsLiveKey;updateStats38();if(statsLiveKey!==before)statsDetail38()};
 var openDm38=openDm;openDm=function(){var wasOpen=!$('dm').hidden;if(!wasOpen){dMode=sMode;dOff=sOff;dSel=sSel;mrLimit=15;mrSig='';$('dm').hidden=false}renderDm()};
 var renderDm38=renderDm;renderDm=function(){renderDm38();if($('historyNow38'))$('historyNow38').textContent=dMode==='d'?'今日へ':dMode==='w'?'今週へ':'今月へ'};
-var todayRender38=renderToday;renderToday=function(){todayRender38();var day=(state.plan||[]).find(function(d){return d.date===fmtDate(new Date())});if(!day||!day.blocks.length){v36Button($('tdList'),day?'今日の項目を追加':'プランを設定',function(){if(day){showPage(3);openEdit(null,state.plan.indexOf(day))}else{showPage(1)}})}else{var wrap=document.createElement('label');wrap.className='completed-toggle38';var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!state.hideCompleted;cb.onchange=function(){state.hideCompleted=cb.checked;save();renderToday()};wrap.append(cb,document.createTextNode('完了した項目を折りたたむ'));$('tdList').prepend(wrap);Array.from($('tdList').querySelectorAll('.tcard.on')).forEach(function(c){c.hidden=!!state.hideCompleted})}};
+var todayRender38=renderToday;renderToday=function(){todayRender38();var day=(state.plan||[]).find(function(d){return d.date===fmtDate(new Date())});if(!day||!day.blocks.length){v36Button($('tdList'),day?'今日の項目を追加':'プランを設定',function(){if(day){showPage(3);openEdit(null,state.plan.indexOf(day))}else{showPage(1)}})}};
 var todayBar38=todayBar;todayBar=function(){var td=fmtDate(new Date());if($('tdTitle')&&$('tdTitle').dataset.date!==td){$('tdTitle').dataset.date=td;renderToday();return}todayBar38();if($('tdRemaining38')){var day=(state.plan||[]).find(function(d){return d.date===td}),remaining=(day?day.blocks:[]).reduce(function(n,b){return n+Math.max(0,b.h*3600-elapsed(b.id))},0);$('tdRemaining38').textContent='残り '+fmtH(remaining)}};
 
 // Messages retain drafts, retry with the same document ID, and page older history.
@@ -3119,13 +3116,13 @@ function mergeBackup38(current,incoming){var next=planClone(current);Object.keys
   next.planHistory=next.planHistory||[];var signatures=new Set(next.planHistory.map(function(h){return h.signature}));incoming.planHistory.forEach(function(h){if(signatures.has(h.signature))return;var copy=planClone(h);if(next.planHistory.some(function(v){return v.id===copy.id}))copy.id=rid();next.planHistory.push(copy);signatures.add(h.signature)});if(incoming.plan&&incoming.plan.length){var h={id:rid(),plan:planClone(incoming.plan),done:planClone(incoming.done),goal:incoming.goal,exam:incoming.exam,reason:'追加したバックアップ',created:Date.now(),reviewed:true};h.signature=JSON.stringify(h.plan.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]}));if(!signatures.has(h.signature))next.planHistory.push(h)}return next;
 }
 function previewRestore38(backup){var validated=validateBackup38(backup),owner=dataOwner,revision=saveRevision,dlg=v36Dialog('復元する内容を確認'),data=validated.data,total=Object.values(data.log).reduce(function(n,d){return n+Object.values(d).reduce(function(a,b){return a+b},0)},0),status=v36Text(dlg.box,'');v36Text(dlg.box,'記録 '+Object.keys(data.log).length+'日 · '+fmtH(total)+' ／ 成績 '+data.exams.length+'件 ／ プラン履歴 '+data.planHistory.length+'件'+(data.plan&&data.plan.length?' ／ 計画 '+data.plan.length+'日分（追加時は履歴に保存）':''));v36Text(dlg.box,'追加：同じ日・科目の記録は長い方を残します。成績は同じ日付・名前を重複させません。現在の計画と設定は維持します。');v36Text(dlg.box,'上書き：学習記録・プラン・成績・プロフィール・設定を、このバックアップの内容に置き換えます。ログイン先・フォロー・DMは変更しません。');
-  function restore(mode){if(owner!==dataOwner||revision!==saveRevision){status.textContent='データが更新されました。ファイルを開き直してください。';return}if(state.timer||state.idleReview||state.pendingTimerRelease){status.textContent='タイマーを一時停止し、未確認の記録と保存を完了してから復元してください。';return}var next=mode==='merge'?mergeBackup38(state,data):planClone(data),old=state;['dmSeen','dmDrafts','dmOutbox','commentDrafts','commentOutbox'].forEach(function(k){if(old[k]!=null)next[k]=old[k]});state=next;state.updatedAt=Date.now();state.dataAt=Date.now();if(!store()){state=old;status.textContent='保存できませんでした。現在のデータは維持しています。';return}timerUndoState=null;moveUndo36=null;mrSig='';save();if(mode==='replace'){var theme=document.querySelector('[data-app-theme="'+validated.theme+'"]');if(theme)theme.click()}dlg.hide();closePlanDialogs();fillWeeklySetup();countdown();renderPlan();showPage(state.weekSetupPending?1:state.plan?3:1);$('backupStatus38').textContent='データを復元しました。';}
+  function restore(mode){if(owner!==dataOwner||revision!==saveRevision){status.textContent='データが更新されました。ファイルを開き直してください。';return}if(state.timer||state.idleReview||state.pendingTimerRelease){status.textContent='タイマーを一時停止し、未確認の記録と保存を完了してから復元してください。';return}var next=mode==='merge'?mergeBackup38(state,data):planClone(data),old=state;['dmSeen','dmDrafts','dmOutbox','commentDrafts','commentOutbox'].forEach(function(k){if(old[k]!=null)next[k]=old[k]});state=next;state.updatedAt=Date.now();state.dataAt=Date.now();if(!store()){state=old;status.textContent='復元は完了していません。現在のデータは維持しています。';return}timerUndoState=null;moveUndo36=null;mrSig='';save();if(mode==='replace'){var theme=document.querySelector('[data-app-theme="'+validated.theme+'"]');if(theme)theme.click()}dlg.hide();closePlanDialogs();fillWeeklySetup();countdown();renderPlan();showPage(state.weekSetupPending?1:state.plan?3:1);$('backupStatus38').textContent='データを復元しました。';}
   v36Button(dlg.box,'記録・成績・履歴を追加',function(){restore('merge')});v36Button(dlg.box,'上書きして復元',function(){askConfirm('この内容で上書きしますか？','現在の学習記録・計画・成績・設定をバックアップの内容に置き換えます。','上書きして復元',function(){restore('replace')})});v36Button(dlg.box,'閉じる',dlg.hide);
 }
 async function chooseRestore38(){var file=this.files&&this.files[0];this.value='';if(!file)return;if(file.size>10*1024*1024){$('backupStatus38').textContent='10MB以下のバックアップを選んでください。';return}var owner=dataOwner;try{var text=await file.text(),raw=JSON.parse(text,function(k,v){if(['__proto__','prototype','constructor'].indexOf(k)>=0)throw new Error('対応していないデータ形式です。');return v});if(owner!==dataOwner)return;previewRestore38(raw)}catch(e){$('backupStatus38').textContent=e.message||'バックアップを読み込めませんでした。'}}
 
 function installV38(){
-  var style=document.createElement('style');style.textContent='.record-source38{display:block;font-size:.76rem;margin-top:3px}.frow{flex-wrap:wrap}.frow>span{flex:1;min-width:110px;overflow-wrap:anywhere}.dm-date38{text-align:center;margin:16px 0 8px}.dm-pending38{padding:10px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}.completed-toggle38{display:flex;align-items:center;gap:8px;font-size:.85rem;margin:10px 0}.completed-toggle38 input{width:18px;height:18px;margin:0}.rank-status38{padding:0 4px 8px}.record-details38{font-size:.83rem;margin:10px 0}.record-details38 p{margin:5px 0}.backup-actions38{display:flex;flex-wrap:wrap;gap:8px}.fbrow b,.rname,.gr h4{overflow-wrap:anywhere;min-width:0}.tm{top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh)}.tmbox{max-height:calc(var(--visual-height,100dvh) - 32px);scroll-padding-block:18px;overflow-y:auto}.tmbox input,.tmbox select,.tmbox textarea{max-width:100%}.photo-crop38 label{display:block;margin:10px 0}.photo-crop38 input{display:block;width:100%}#dmNew38{display:block;margin:8px auto}#dmNew38[hidden]{display:none}#statsDetail38:empty{display:none}#statsDetail38 .note{font-size:.8rem}#diagnosticRows38{overflow-wrap:anywhere}#gradeMetric38{max-width:100%}@media(pointer:coarse){button:not(.theme-choice),input[type=button]{min-height:44px;min-width:44px}input:not([type=checkbox]):not([type=color]):not([type=range]),select,textarea{font-size:16px!important}.friend-compact .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(86px,1.35fr) 44px;gap:5px}.friend-compact .fbrow button{white-space:normal}.plan-header-actions{flex-wrap:wrap;justify-content:flex-end}.plan-dates{overflow-x:auto;grid-template-columns:repeat(7,minmax(44px,1fr))}.subj{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}.draft-subject{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}}';document.head.appendChild(style);
+  var style=document.createElement('style');style.textContent='.record-source38{display:block;font-size:.76rem;margin-top:3px}.frow{flex-wrap:wrap}.frow>span{flex:1;min-width:110px;overflow-wrap:anywhere}.dm-date38{text-align:center;margin:16px 0 8px}.dm-pending38{padding:10px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}.rank-status38{padding:0 4px 8px}.record-details38{font-size:.83rem;margin:10px 0}.record-details38 p{margin:5px 0}.backup-actions38{display:flex;flex-wrap:wrap;gap:8px}.fbrow b,.rname,.gr h4{overflow-wrap:anywhere;min-width:0}.tm{top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh)}.tmbox{max-height:calc(var(--visual-height,100dvh) - 32px);scroll-padding-block:18px;overflow-y:auto}.tmbox input,.tmbox select,.tmbox textarea{max-width:100%}.photo-crop38 label{display:block;margin:10px 0}.photo-crop38 input{display:block;width:100%}#dmNew38{display:block;margin:8px auto}#dmNew38[hidden]{display:none}#statsDetail38:empty{display:none}#statsDetail38 .note{font-size:.8rem}#diagnosticRows38{overflow-wrap:anywhere}#gradeMetric38{max-width:100%}@media(pointer:coarse){button:not(.theme-choice),input[type=button]{min-height:44px;min-width:44px}input:not([type=checkbox]):not([type=color]):not([type=range]),select,textarea{font-size:16px!important}.friend-compact .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(86px,1.35fr) 44px;gap:5px}.friend-compact .fbrow button{white-space:normal}.plan-header-actions{flex-wrap:wrap;justify-content:flex-end}.plan-dates{overflow-x:auto;grid-template-columns:repeat(7,minmax(44px,1fr))}.subj{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}.draft-subject{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}}';document.head.appendChild(style);
   var headerCard=$('followingCard');if(headerCard){headerCard.setAttribute('role','button');headerCard.setAttribute('tabindex','0');headerCard.setAttribute('aria-label','友達の学習記録とランキング');headerCard.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();headerCard.click()}})}
   var nav=document.createElement('div');nav.className='hd0';nav.innerHTML='<button id="statsPrev38">‹ 前へ</button><small id="statsRange38" class="note"></small><button id="statsNext38">次へ ›</button>'; $('schart').before(nav);var now=v36Button($('stats'),'今日・今週・今月へ',function(){sOff=0;sSel=-1;statsViews38={};renderStats()});now.id='statsNow38';$('schart').after(now);var recordsButton=v36Button($('stats'),'記録一覧・詳細',function(){openDm()});recordsButton.id='statsHistory38';now.after(recordsButton);var details=document.createElement('details');details.id='statsDetail38';details.addEventListener('toggle',function(){statsDetailOpen38=details.open});details.className='record-details38';details.setAttribute('aria-live','polite');recordsButton.after(details);$('statsPrev38').onclick=function(){sOff++;sSel=-1;renderStats()};$('statsNext38').onclick=function(){if(sOff>0){sOff--;sSel=-1;renderStats()}};
   Array.from($('seg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(false,b.dataset.m)}});Array.from($('dseg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(true,b.dataset.m)}});
@@ -3324,7 +3321,7 @@ $("fbCfgSave").onclick=function(){
   location.reload();
 };
 $("fbIn").onclick=function(){fbSignIn()};
-$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",async function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;if(state.pendingTimerRelease){showTimerMessage("計測時間を保存できていません。","通信を確認し、保存の再試行後にログアウトしてください。");return}$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
+$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",async function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;if(state.pendingTimerRelease){showTimerMessage("計測時間を保存できていません。","通信が戻り計測時間の保存が完了してから、ログアウトしてください。");return}$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
 $("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
 $("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
@@ -3361,7 +3358,7 @@ setInterval(function(){if(!document.hidden&&!$("tlm").hidden)rankLoad()},20000);
 document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
 installV38();
 fbInit();
-$("saveRetry").onclick=retrySaving;
+if($("saveRetry"))$("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
 window.addEventListener("offline",function(){if(ownsCurrentData(FB.uid)&&syncData()!==syncSig){saveHealth.pending=true;paintSaveStatus()}});
 setInterval(tickAll,1000);
