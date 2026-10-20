@@ -1242,18 +1242,41 @@ var notified=null; // 時間ちょうどになったときに1回だけ知らせ
 function timerIdentity(key,kind){try{var storage=kind==="session"?sessionStorage:localStorage,id=storage.getItem(key);if(!id){id=rid();storage.setItem(key,id)}return id}catch(e){return rid()}}
 var timerDeviceId=timerIdentity(KEY+":device","local"),timerTabId=timerIdentity(KEY+":timer-tab","session"),timerReleaseTask=null,timerReleaseOwner=null;
 async function timerLeaseTransaction(fn){var fs=FB.Fs;if(!fs||typeof fs.runTransaction!=="function"){var e=new Error("lease-unavailable");e.code="unavailable";throw e}var ref=fs.doc(FB.db,"privateData/"+FB.uid);return fs.runTransaction(FB.db,async function(tx){var snap=await tx.get(ref);return fn(snap.exists()?snap.data():{},function(lease){tx.set(ref,{timerLease:lease},{merge:true})})})}
+// A browser-held lock survives backgrounding, but is released when its page closes.
+// It is evidence of a live owner, unlike a permanent Firestore active flag.
+var timerGuards41=Object.create(null);
+function acquireTimerGuard41(token){
+  if(timerGuards41[token])return Promise.resolve(true);
+  if(!navigator.locks||!navigator.locks.request)return Promise.resolve(null);
+  return new Promise(function(resolve){
+    navigator.locks.request("study-planner:timer:"+token,{ifAvailable:true},function(lock){
+      if(!lock){resolve(false);return}
+      return new Promise(function(release){timerGuards41[token]=release;resolve(true)});
+    }).catch(function(){resolve(null)});
+  });
+}
+function releaseTimerGuard41(token){var release=timerGuards41[token];if(release){delete timerGuards41[token];release()}}
 async function claimTimerLease(id,resume){
   if(!FB.uid)return {local:true};var uid=FB.uid,epoch=authEpoch;
   if(!ownsCurrentData(uid)||!FB.syncReady){showTimerMessage("同期を確認しています。","同期が完了してから開始してください。");return null}
   if(state.pendingTimerRelease){await releaseTimerLease(state.pendingTimerRelease);if(state.pendingTimerRelease){showTimerMessage("一時停止した時間を保存しています。","同期が完了してから開始してください。");return null}}
   var x=findBlock(id),token=resume&&resume.token||rid(),now=Date.now();
-  var result=await timerLeaseTransaction(function(doc,set){
+  var held41=[],result;
+  try{result=await timerLeaseTransaction(async function(doc,set){
     var old=doc.timerLease;
-    var abandonedHere=old&&old.device===timerDeviceId&&old.tab===timerTabId&&!state.timer&&!state.idleReview&&!state.pendingTimerRelease;
-    if(old&&old.active&&!abandonedHere&&!(resume&&old.token===resume.token&&old.device===timerDeviceId&&old.tab===timerTabId))return {blocked:true,name:old.name||"別の科目",lease:old};
+    var staleLocal41=!!(old&&held41.indexOf(old.token)>=0);
+    if(old&&old.active&&old.localGuard===1&&old.device===timerDeviceId&&!timerGuards41[old.token]){
+      var available41=await acquireTimerGuard41(old.token);
+      if(available41===true){held41.push(old.token);staleLocal41=true}
+    }
+    var abandonedHere=old&&old.localGuard!==1&&old.device===timerDeviceId&&old.tab===timerTabId&&!state.timer&&!state.idleReview&&!state.pendingTimerRelease;
+    if(old&&old.active&&!staleLocal41&&!abandonedHere&&!(resume&&old.token===resume.token&&old.device===timerDeviceId&&old.tab===timerTabId))return {blocked:true,name:old.name||"別の科目",lease:old};
     if(!resume&&doc.data&&Number(doc.dataAt)>(state.dataAt||0))return {sync:doc};
-    var lease={uid:uid,device:timerDeviceId,tab:timerTabId,token:token,active:true,name:x?x.name:"勉強",startedAt:resume&&resume.startedAt||now};set(lease);return lease;
-  });
+    var hadGuard41=!!timerGuards41[token],guard41=await acquireTimerGuard41(token);
+    if(guard41===false)return {blocked:true,lease:old};
+    if(guard41===true&&!hadGuard41)held41.push(token);
+    var lease={localGuard:guard41===true?1:0,uid:uid,device:timerDeviceId,tab:timerTabId,token:token,active:true,name:x?x.name:"勉強",startedAt:resume&&resume.startedAt||now};set(lease);return lease;
+  })}finally{held41.forEach(function(t){if(!result||result.token!==t)releaseTimerGuard41(t)})}
   if(!ownsCurrentData(uid)||epoch!==authEpoch){if(result.token){try{var old=readAccount(uid)||JSON.parse(initialState);old.pendingTimerRelease=result;localStorage.setItem(accountKey(uid),JSON.stringify(old));var runtime=JSON.parse(sessionStorage.getItem(accountKey(uid)+":timer-runtime")||"{}");runtime.pendingTimerRelease=result;sessionStorage.setItem(accountKey(uid)+":timer-runtime",JSON.stringify(runtime))}catch(e){}}return null}
   if(result.blocked){offerTimerRecovery40(id,result.lease);return null}
   if(result.sync){syncApply(result.sync);return null}return result;
@@ -1261,7 +1284,7 @@ async function claimTimerLease(id,resume){
 var timerRecoveryBusy40=false;
 function offerTimerRecovery40(id,observed){
   var uid=FB.uid,epoch=authEpoch,name=observed&&observed.name||"前の科目";
-  askConfirm("前の計測情報が残っています",name+"の計測が先に開始されています。別の端末・タブで計測している場合は、そこで一時停止してください。どこでも計測していない場合は、残った開始情報を解除して、この端末で始められます。学習記録は削除しません。","解除してこの端末で開始",async function(){
+  askConfirm("計測状態を確認してください",name+"の開始情報が残っています。現在も計測中かは確認できません。別の端末・タブで計測している場合は、そこで一時停止してください。どこでも計測していない場合は、残った開始情報を解除して、この端末で始められます。学習記録は削除しません。","解除してこの端末で開始",async function(){
     if(timerRecoveryBusy40||!ownsCurrentData(uid)||epoch!==authEpoch||state.timer||state.idleReview||!observed||!observed.token)return;
     timerRecoveryBusy40=true;
     try{
@@ -1286,6 +1309,7 @@ function releaseTimerLease(lease){
       if(!FB.syncReady)return false;await syncPush();
       if(!ownsCurrentData(uid)||epoch!==authEpoch||saveHealth.cloudError||syncData()!==syncSig)return false;
       await timerLeaseTransaction(function(doc,set){if(doc.timerLease&&doc.timerLease.token===lease.token)set(Object.assign({},doc.timerLease,{active:false,stoppedAt:Date.now()}));return true});
+      releaseTimerGuard41(lease.token);
       if(ownsCurrentData(uid)&&epoch===authEpoch&&state.pendingTimerRelease&&state.pendingTimerRelease.token===lease.token){state.pendingTimerRelease=null;store()}return true;
     }catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return false}
   })();timerReleaseTask=task;timerReleaseOwner=uid;task.finally(function(){if(timerReleaseTask===task){timerReleaseTask=null;timerReleaseOwner=null}}).catch(function(){});return task;
@@ -2112,7 +2136,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-20 v40"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-20 v41"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
