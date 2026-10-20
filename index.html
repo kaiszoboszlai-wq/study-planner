@@ -683,7 +683,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="fld"><label>誕生日<span class="pair"><input type="number" id="pfBM" min="1" max="12" placeholder="月"><span>月</span><input type="number" id="pfBD" min="1" max="31" placeholder="日"><span>日</span></span></label></div>
 </div>
 <h3 class="sh">タイマー</h3>
-<div class="fld"><label>操作がないときの記録確認<input id="timerIdleMinutes" type="number" min="5" max="480" step="1" value="60" inputmode="numeric"></label><p class="note">5〜480分で設定できます。この時間操作がなければ一時停止し、操作がなかった時間を記録するか確認します。</p><p class="note" id="timerIdleSettingNote" role="status"></p></div>
+<p class="note">タイマーは操作がなくても計測を続けます。一時停止・完了すると、計測時間を自動で記録します。</p>
 <p class="note">ログイン中は、先に計測を開始した端末を優先します。別端末で開始する場合は、先の端末で一時停止してください。</p>
 <h3 class="sh">アプリのデザイン</h3>
 <div class="fld theme-settings">
@@ -1347,15 +1347,9 @@ function renderActiveTimer(){
   el.setAttribute("aria-label",review?"未確認の計測時間を確認する":x?x.name+"の計測中タイマーに戻る":"計測中のタイマーに戻る");
   var undo=$("timerUndo");if(undo)undo.hidden=!timerUndoState||timerUndoState.id!==openId||timerUndoState.expires<Date.now()||timerUndoState.revision!==saveRevision;
 }
-function idleMinutes(){return Math.max(5,Math.min(480,Number(state.timerIdleMinutes)||60))}
-function checkIdleTimer(){
-  var t=state.timer;if(!t||state.idleReview)return false;var now=Date.now(),last=Math.max(t.start,Number(t.lastActivity)||t.start);
-  if(now-last<idleMinutes()*60000)return false;
-  var x=findBlock(t.id);if(!x)return false;
-  var review={id:t.id,name:x.name,from:last,to:now,seconds:(now-last)/1000,lease:t.lease||null};
-  pauseTimer(last,true);state.idleReview=review;timerUndoState=null;closeClockAdjust(false);save();if(!document.hidden)showIdleReview();return true;
-}
-function showIdleReview(){var r=state.idleReview;if(!r)return;$("idleReviewText").textContent=r.name+"：操作がなかった "+fmtT(r.seconds)+" を学習記録に追加しますか？";$("idleReviewModal").hidden=false}
+// 操作がなくても計測を継続する。旧版の未確認時間だけ自動で記録する。
+function checkIdleTimer(){return false}
+function showIdleReview(){if(state.idleReview)resolveIdleReview(true)}
 async function resolveIdleReview(record){
   var r=state.idleReview;if(!r)return;state.idleReview=null;$("idleReviewModal").hidden=true;
   if(record){splitTimerDays(r.from,r.to,function(d,s){logAdd(r.name,s,r.id,"t",d)});state.spent[r.id]=(state.spent[r.id]||0)+r.seconds}
@@ -2095,7 +2089,6 @@ function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生
 }
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
-  $("timerIdleMinutes").value=idleMinutes();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
   var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
   if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
@@ -3347,7 +3340,6 @@ $("clockPlus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remai
 $("timerUndoButton").onclick=undoTimerAdjustment;
 $("activeTimer").onclick=function(){if(state.idleReview)showIdleReview();else if(state.timer)openTimer(state.timer.id)};
 $("idleRecord").onclick=function(){resolveIdleReview(true)};$("idleDiscard").onclick=function(){resolveIdleReview(false)};
-$("timerIdleMinutes").onchange=function(){var n=Number(this.value);if(!Number.isFinite(n)||n<5||n>480){$("timerIdleSettingNote").textContent="5〜480分で入力してください。";return}state.timerIdleMinutes=n;$("timerIdleSettingNote").textContent=n+"分操作がなければ確認します。";save()};
 document.addEventListener("pointerdown",timerActivity,{passive:true,capture:true});document.addEventListener("keydown",timerActivity,{capture:true});
 
 bindClockAdjust();
