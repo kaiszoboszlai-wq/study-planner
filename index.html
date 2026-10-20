@@ -514,7 +514,7 @@ button.follow-action:disabled{opacity:.6}
 </div>
 
 <button id="activeTimer" class="active-timer" type="button" hidden aria-label="計測中のタイマーに戻る"><span class="active-timer-dot" aria-hidden="true"></span><span id="activeTimerText"></span><span class="active-timer-link">タイマーへ</span></button>
-<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span></div>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -715,7 +715,7 @@ button.follow-action:disabled{opacity:.6}
 <div id="timerRemainingLabel" class="timer-reading-label">残り時間</div>
 <div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div class="tmtime" id="tmtime">0:00:00</div><span id="clockEditHandle" aria-hidden="true" hidden></span></div>
 <div id="timerElapsed" class="timer-elapsed"></div><p class="note" id="timerOvertimeHint" hidden>予定時間を超えて勉強した分です。計測は自動では止まりません。</p>
-<div id="clockEditPanel" hidden><p class="note" id="clockEditHint">まだ確定していません。円をゆっくり回すと1周で30分調整できます。</p><div class="actions clock-step-buttons"><button id="clockMinus" type="button">−15分</button><button id="clockPlus" type="button">＋15分</button></div><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
+<div id="clockEditPanel" hidden><p class="note" id="clockEditHint">まだ確定していません。円をゆっくり回すと1周で30分調整できます。</p><div class="actions clock-step-buttons"><button id="clockMinus" type="button">−1分</button><button id="clockPlus" type="button">＋1分</button></div><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
 <div id="timerUndo" class="note" hidden><span>時間を変更しました。</span><button id="timerUndoButton" type="button">元に戻す</button></div>
 <div class="adj" id="clockEditOpenRow"><button id="timeAdjustOpen">時間を調整</button></div>
 <p class="note" id="timerCloseHint">「閉じる」は画面を閉じる操作です。計測を止めるには「一時停止」を押してください。</p>
@@ -807,18 +807,19 @@ function errorKind(e){var code=String(e&&e.code||"").replace(/^firestore\//,"");
 function readErrorMessage(e){var k=errorKind(e);return k==="permission"?"この情報を閲覧する権限がありません。":k==="auth"?"ログインし直してください。":k==="timeout"?"読み込みに時間がかかっています。":k==="network"?"通信できませんでした。接続を確認してください。":k==="setup"?"この情報を取得する準備が完了していません。":"読み込めませんでした。"}
 function showReadError(box,e,retry,append){
   var row=document.createElement("div");row.className="note read-error";row.setAttribute("role","alert");var label=document.createElement("span");label.textContent=readErrorMessage(e);row.appendChild(label);
-
+  if(retry){var b=document.createElement("button");b.type="button";b.textContent="再試行";b.onclick=function(){b.disabled=true;Promise.resolve().then(retry).catch(function(err){if(row.isConnected){showReadError(row,err,retry);b.remove()}})};row.appendChild(b)}
   if(!append)box.replaceChildren();box.appendChild(row);return row;
 }
 function paintSaveStatus(){
-  var el=document.getElementById("saveStatusText"),box=document.getElementById("saveStatus");if(!el||!box||!saveHealth)return;
+  var el=document.getElementById("saveStatusText"),button=document.getElementById("saveRetry"),box=document.getElementById("saveStatus");if(!el||!saveHealth)return;
+  if(document.hidden)return;
   var h=saveHealth,err=h.localError||h.cloudError||h.writeError,label="";
-  if(!err){
-    if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
-    else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
-  }
+  if(h.localError)label="保存できませんでした（この端末）。";
+  else if(h.cloudError||h.writeError){var k=errorKind(h.cloudError||h.writeError);label="保存できませんでした（クラウド）。"+(k==="permission"?"保存権限がありません。":k==="auth"?"ログインし直してください。":k==="network"||k==="timeout"?"通信を確認してください。":"再試行してください。")}
+  else if(h.pending)label=(h.localSaved?"端末に保存済み · ":"")+"クラウド反映待ち";
+  else if(h.synced)label="同期完了";else if(h.localSaved)label="端末に保存済み";
   var settings=document.getElementById("settingsSyncStatus");if(settings&&settings.textContent!==label)settings.textContent=label;
-  var mainLabel=!err&&h.pending?label:"";if(el.textContent!==mainLabel)el.textContent=mainLabel;box.hidden=!mainLabel;box.classList.remove("has-error");
+  var mainLabel=err||h.pending?label:"";if(el.textContent!==mainLabel)el.textContent=mainLabel;box.hidden=!mainLabel;box.classList.toggle("has-error",!!err);button.hidden=!err;
 }
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
@@ -959,7 +960,7 @@ function makePlan(){
   if(state.exam&&state.exam<=today){$("weekSetupNotice").hidden=false;$("weekSetupNotice").textContent="上部の目標の「変更」から、試験日を明日以降に更新してください。";$("planMakeError").hidden=false;$("planMakeError").textContent=$("weekSetupNotice").textContent;return false}
   pauseTimer();
   var c=planConfig(),carry=state.weekSetupPending&&state.carry!==false?(state.weekCarry||[]):[];
-  var plan=buildPlanCandidate(c,0,carry);if(!plan.length)return false;var audit=allocationAudit(plan,c);if(!audit.ok){$('planMakeError').hidden=false;$('planMakeError').textContent='設定時間を満たせませんでした。科目と時間を確認してください。';return false}
+  var plan=buildPlanCandidate(c,0,carry);if(!plan.length)return false;
   if(!state.start)state.start=today;
   state.plan=plan;state.planStyle=0;state.planCycleStart=today;state.planDaySeen=today;state.weekSetupPending=false;state.weekCarry=[];
   selectedPlanDate=today;closeTimer();save();renderPlan();showWeeklySetupStatus();
@@ -1085,7 +1086,7 @@ function renderPlan(){
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
       b.querySelector("span").textContent=x.name;
-      var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+carryLabel(x);b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
+      var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+(x.carried?"（繰り越し）":"");b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
       b.querySelector(".sp").textContent=spText(id);
       var pb=b.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
@@ -1774,7 +1775,7 @@ function renderPies(bs,L,targetBox){
   var names=Object.keys(per).sort(function(a,b){return per[b]-per[a]});
   var box=targetBox||$("pies");box.innerHTML="";
   // 1つ目: 勉強した時間配分(表示している期間)
-  var rng=bs.length?bs[0].key+"〜"+bs[bs.length-1].key:"表示期間",c1=document.createElement("div");c1.className="pie";
+  var rng={d:"直近7日",w:"直近8週",m:"直近6か月"}[sMode],c1=document.createElement("div");c1.className="pie";
   c1.innerHTML='<div class="pt"></div><div class="pg"></div><div class="pl2"></div>';
   c1.querySelector(".pt").textContent="勉強した時間配分("+rng+")";
   c1.querySelector(".pg").innerHTML=donut(names.map(function(n){return{c:colorOf(n),v:per[n]}}),sum,sum>0?hm(sum/3600):"記録なし");
@@ -1797,7 +1798,7 @@ function barSvg(bs,sel){ // 柱グラフ(積み上げ)。柱の上に、合計�
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
   var mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total/3600)});
-  var sc=niceTop(mx),W=320,H=340,ml=42,mr=6,mt=26,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
+  var sc=niceTop(mx),W=320,H=340,ml=42,mr=6,mt=10,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="学習時間のグラフ">';
   for(var v=0;v<=sc.top+1e-9;v+=sc.step){
     var y=mt+ph-v/sc.top*ph;
@@ -1812,7 +1813,7 @@ function barSvg(bs,sel){ // 柱グラフ(積み上げ)。柱の上に、合計�
       svg+='<rect x="'+(cx-bw/2)+'" y="'+top+'" width="'+bw+'" height="'+(h/sc.top*ph)+'" style="fill:'+colorOf(nm)+'"/>';
       acc+=h;
     });
-    if(b.total>0)svg+='<text class="ax" x="'+cx+'" y="'+(mt+ph-acc/sc.top*ph-4)+'" text-anchor="middle">'+compactHours38(b.total)+'</text>';
+    if(b.total>0)svg+='<text class="ax" x="'+cx+'" y="'+(mt+ph-acc/sc.top*ph-4)+'" text-anchor="middle">'+(b.total/3600).toFixed(1)+'h</text>';
     svg+='<text class="ax axb" x="'+cx+'" y="'+(mt+ph+16)+'" text-anchor="middle"'+(i===sel?' style="fill:var(--ink)"':'')+'>'+b.label+'</text><text class="ax" x="'+cx+'" y="'+(mt+ph+30)+'" text-anchor="middle">'+b.sub+'</text></g>';
   });
   return svg+'</svg>';
@@ -1827,7 +1828,7 @@ function renderStats(){
   $("sMonth").textContent=fmtH(mon);$("sAll").textContent=fmtH(tot);
   Array.prototype.forEach.call($("seg").querySelectorAll("button"),function(b){b.className=b.getAttribute("data-m")===sMode?"on":""});
 
-  var bs=buckets(L,sMode,sOff);
+  var bs=buckets(L,sMode);
   if(sSel<0||sSel>=bs.length)sSel=bs.length-1;
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
@@ -1838,7 +1839,7 @@ function renderStats(){
   statsLiveKey=statsTickKey();
 }
 var statsLiveKey="";
-function statsTickKey(){return fmtDate(new Date())+"|"+sMode+"|"+sOff+"|"+sSel+"|"+(state.timer?state.timer.id+"/"+Math.round(elapsed(state.timer.id)/60):"")}
+function statsTickKey(){return fmtDate(new Date())+"|"+sMode+"|"+sSel+"|"+(state.timer?state.timer.id+"/"+Math.round(elapsed(state.timer.id)/60):"")}
 function setTextIfChanged(el,text){if(el&&el.textContent!==text)el.textContent=text}
 function patchStatsElement(current,next,keepAttributes){
   if(current.nodeType===3){if(current.nodeValue!==next.nodeValue)current.nodeValue=next.nodeValue;return}
@@ -1850,7 +1851,7 @@ function patchStatsElement(current,next,keepAttributes){
 }
 function updateStatsLive(){
   var key=statsTickKey();if(key===statsLiveKey)return;statsLiveKey=key;
-  var L=logData(),sum=sumsOf(L),bs=buckets(L,sMode,sOff);
+  var L=logData(),sum=sumsOf(L),bs=buckets(L,sMode);
   setTextIfChanged($("sToday"),fmtH(sum.tdy));setTextIfChanged($("sMonth"),fmtH(sum.mon));setTextIfChanged($("sAll"),fmtH(sum.tot));
   var chart=document.createElement("div");chart.innerHTML=barSvg(bs,sSel);patchStatsElement($("schart"),chart,true);
   var pies=document.createElement("div");renderPies(bs,L,pies);patchStatsElement($("pies"),pies,true);
@@ -1882,13 +1883,13 @@ function askConfirm(msg,sub,okLabel,fn,noLabel,noFn){$("cfmsg").textContent=msg;
 // ===== 今日のやること =====
 function renderToday(){
   var box=$("tdList");box.innerHTML="";
-  var now=new Date(),td=fmtDate(now);$("tdTitle").dataset.date=td;$("tdTitle").textContent=(now.getMonth()+1)+"月"+now.getDate()+"日（"+DAYS[now.getDay()]+"）";
+  var now=new Date(),td=fmtDate(now);$("tdTitle").textContent=(now.getMonth()+1)+"月"+now.getDate()+"日（"+DAYS[now.getDay()]+"）";
   var day=(state.plan||[]).filter(function(y){return y.date===td})[0];
   $("tdSum").textContent=day&&day.blocks.length?"":day?"今日の予定はありません。":"今日の計画がまだありません。「プラン」で作りましょう。";
   (day?day.blocks:[]).forEach(function(x){
     var id=x.id,on=!!state.done[id],run=running(id),c=document.createElement("div");c.className="tcard"+(on?" on":"")+(run?" is-running":"");c.dataset.todayBlock=id;c.style.setProperty("--subject-color",colorOf(x.name));
     c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span class="today-subject"></span><small class="today-detail"></small><span class="today-progress-row"><span class="today-progress"><i></i></span><small class="today-block-percent"></small></span></button><div class="today-play"><button class="ib play"></button><small class="today-running-label"></small></div>';
-    c.querySelector(".today-subject").textContent=x.name+carryLabel(x);
+    c.querySelector(".today-subject").textContent=x.name+(x.carried?"（繰り越し）":"");
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
     c.querySelector(".item").onclick=function(){openTimer(id)};
     c.querySelector(".play").onclick=function(){var was=running(id);toggleTimer(id);if(!was)openTimer(id)};
@@ -2091,7 +2092,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-20 v39"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-20 v35"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2335,7 +2336,7 @@ function mini7(L){ // 直近7日の積み上げ棒(小さいグラフ)。柱の�
   bs.forEach(function(b,i){
     var x=gap+i*(bw+gap),acc=0;
     Object.keys(b.parts).forEach(function(n){var h=mx>0?b.parts[n]/mx*H:0;if(h<=0)return;svg+='<rect x="'+x+'" y="'+(T+H-acc-h)+'" width="'+bw+'" height="'+h+'" style="fill:'+colorOf(n)+'"/>';acc+=h});
-    if(b.total>0)svg+='<text class="ax" x="'+(x+bw/2)+'" y="'+(T+H-acc-3)+'" text-anchor="middle" style="font-size:8px">'+compactHours38(b.total)+'</text>';
+    if(b.total>0)svg+='<text class="ax" x="'+(x+bw/2)+'" y="'+(T+H-acc-3)+'" text-anchor="middle" style="font-size:8px">'+(b.total/3600).toFixed(1)+'h</text>';
     svg+='<text class="ax" x="'+(x+bw/2)+'" y="'+(T+H+11)+'" text-anchor="middle">'+b.sub+'</text>';
   });
   return svg+'</svg>';
@@ -2416,6 +2417,8 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
   };
   var cb=cnt.querySelectorAll("button");cb[0].onclick=function(){show(fo,"フォロー中")};cb[1].onclick=function(){show(fr,"フォロワー")};
   var socialError=null,statsError=null;
+  var retry=document.createElement("button");retry.textContent="再試行";retry.hidden=true;
+  retry.onclick=function(){openProfile(id)};box.appendChild(retry);
   function paintStats(){
   paintProfileInfo();
   body.innerHTML="";
@@ -2439,7 +2442,7 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
     profileRead("profiles/"+id).then(function(value){
       if(!active())return;p=value;
       fbPaint(top.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);
-      top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=p?fbSub(p):"プロフィールが存在しません。";paintProfileInfo();
+      top.querySelector("b").textContent=fbNm(p);top.querySelector(".note").textContent=fbSub(p);paintProfileInfo();
     }).catch(function(e){if(active()){showReadError(top.querySelector(".note"),e,function(){openProfile(id)});top.querySelector("b").textContent=cachedP?fbNm(p):"プロフィール"}}),
     profileRead("social/"+id).then(function(value){
       if(!active())return;so=value;socialState="ok";fo=ids("following");fr=ids("followers");
@@ -2490,17 +2493,16 @@ async function rankRows(onRows,onError){
 }
 var rankHistory={key:"",positions:{},trends:{}};
 function rankPaint(box,rows,partial){
-  rows=rows.slice().sort(function(a,b){return b.s-a.s||String(a.uid).localeCompare(String(b.uid))});var status=$("rankStatus38");if(!status){status=document.createElement("p");status.id="rankStatus38";status.className="note rank-status38";box.before(status)}status.textContent=(partial?"取得中：順位が変わる場合があります。 ":"取得完了。 ")+"同じ秒数は同順位。△▽は前回の取得完了時との比較です。";
   var historyKey=String(FB.uid||"")+"/"+fmtDate(new Date());
   if(rankHistory.key!==historyKey)rankHistory={key:historyKey,positions:{},trends:{}};
-  var positions={},place=0,lastSeconds=null,lastRank=0;
-  rows.forEach(function(r){if(r.s<60)return;place++;var seconds=Math.floor(r.s),next=seconds===lastSeconds?lastRank:place;lastSeconds=seconds;lastRank=next;var prev=rankHistory.positions[r.uid];positions[r.uid]=next;if(!partial){if(prev!=null&&prev!==next)rankHistory.trends[r.uid]=next<prev?"up":"down";else delete rankHistory.trends[r.uid]}});
+  var positions={},place=0;
+  rows.forEach(function(r){if(r.s<60)return;var next=++place,prev=rankHistory.positions[r.uid];positions[r.uid]=next;if(!partial&&prev!=null&&prev!==next)rankHistory.trends[r.uid]=next<prev?"up":"down"});
   if(!partial){Object.keys(rankHistory.trends).forEach(function(id){if(positions[id]==null)delete rankHistory.trends[id]});rankHistory.positions=positions;}
   box.innerHTML="";var pos=0;
   rows.forEach(function(r){
     var e=document.createElement("div"),pid=rankPid(r.uid),on=r.s>=60;e.className="rkrow"+(r.me?" me":"");e.setAttribute("data-pid",pid);
     e.innerHTML='<span class="rn"></span><div class="av"></div><span class="rname"></span><button class="rcm" aria-label="コメント">'+IC_CMT+'<i></i></button><b></b>';
-    if(on)pos=positions[r.uid];
+    if(on)pos++;
     e.querySelector(".rn").textContent=on?(pos<=3?["🥇","🥈","🥉"][pos-1]:String(pos)):"ー"; // 0分の人は「ー」
     var trend=on&&rankHistory.trends[r.uid];
     if(trend){var arrow=document.createElement("span");arrow.className="rank-trend "+trend;arrow.textContent=trend==="up"?"△":"▽";arrow.setAttribute("aria-label",trend==="up"?"前回表示から順位上昇":"前回表示から順位下降");e.querySelector(".rn").appendChild(arrow)}
@@ -2637,7 +2639,7 @@ async function fillList(){
   out.innerHTML='<div class="note">読み込み中…</div>';
   // 先に表示先を置く。新しい呼び出しは別の要素なので、古い応答で上書きされない。
   $("lmBody").innerHTML="";$("lmBody").appendChild(out);
-  if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);if(out.isConnected&&(mode==="fol"||mode==="fr")){var note=document.createElement("p");note.className="note";note.textContent=mode==="fr"?"ここにいる相手はあなたの学習記録を閲覧できます。「解除」で閲覧許可を取り消します。":"承認された相手の学習記録を閲覧できます。相手にあなたの記録を公開する操作とは別です。";out.prepend(note)}
+  if(mode==="req")await fillReq(out);else if(mode==="fol")await fillFol(out);else await fillVie(out);
 }
 var friendSearchRequest=0;
 function resetFriendSearch(){friendSearchState=null;friendSearchRequest++;$("fbUserSearch").value="";$("fbUserResults").innerHTML=""}
@@ -2705,7 +2707,7 @@ function makeFollowButton(id,ids){
   if(initial==="checking"||initial==="pending")Promise.all([profileRead("stats/"+id+"/viewers/"+uid),profileRead("requests/"+id+"/from/"+uid)]).then(function(data){if(FB.uid===uid&&button.isConnected&&!followBusy.has(id)&&button.dataset.followState===initial)followButtonState(button,data[0]?"following":data[1]?"pending":"none")}).catch(function(){if(FB.uid===uid&&button.isConnected){button.textContent="再確認";button.disabled=false;button.onclick=function(){button.replaceWith(makeFollowButton(id,ids))}}});
   return button;
 }
-function fbNm(prof){return (prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||(prof?"名前未設定":"退会済み・見つからないユーザー")}
+function fbNm(prof){return (prof&&typeof prof.name==="string"&&prof.name.slice(0,20))||"この人"}
 function fbFollowEl(id,ids,name){var row=document.createElement("div");row.className="actions";row.appendChild(makeFollowButton(id,ids));return row}
 async function fillReq(box){
   var uid=FB.uid;
@@ -2718,12 +2720,12 @@ async function fillReq(box){
     await Promise.all(reqs.map(async function(item,index){
       var rid=item.id,pr=null;
       if(FB.uid!==uid)return;
-      var row=fbRow(pr,rid);row.querySelector(".note").textContent="あなたの学習記録の閲覧リクエストです。相手をフォローする操作とは別です。";
+      var row=fbRow(pr,rid);row.querySelector(".note").textContent="あなたの記録を見たいそうです";
       var ok=document.createElement("button");ok.className="main";ok.textContent="承認";
       var no=document.createElement("button");no.textContent="拒否";
       (function(rid){
-        ok.onclick=function(){requestAction38(uid,rid,true,card,ok,no,requestSharedProfile(pr,item.data))};
-        no.onclick=function(){requestAction38(uid,rid,false,card,ok,no,requestSharedProfile(pr,item.data))};
+        ok.onclick=async function(){try{await fSet("stats/"+uid+"/viewers/"+rid,{at:Date.now(),profile:requestSharedProfile(pr,item.data)});await fDel("requests/"+uid+"/from/"+rid)}catch(e){fbMsg("承認できませんでした。")}fbAfter()};
+        no.onclick=async function(){try{await fDel("requests/"+uid+"/from/"+rid)}catch(e){}fbAfter()};
       })(rid);
       row.appendChild(ok);row.appendChild(no);
       var card=document.createElement("div");card.className="fcard";card.appendChild(row);card.appendChild(requestProfileDetails(pr,item.data));slots[index].replaceWith(card);minePromise.then(function(mine){if(FB.uid===uid&&card.isConnected)card.appendChild(fbFollowEl(rid,mine,fbNm(pr)))});
@@ -2742,22 +2744,22 @@ async function fillFol(fb){
     var snapshot=listFolSession.slice();fb.innerHTML="";
     if(!snapshot.length)fb.innerHTML='<div class="note">まだ誰もフォローしていません。友達を検索して、リクエストしましょう。</div>';
     await Promise.all(snapshot.map(async function(id){
-      var cached=profileCached("profiles/"+id),statCache=profileCached("stats/"+id),p=cached?cached.value:null,d=statCache?statCache.value:null,approved=false,removed=ids.indexOf(id)<0,requestResolved38=false,approvalResolved38=false,pending38=true,followVersion38=0;
+      var cached=profileCached("profiles/"+id),statCache=profileCached("stats/"+id),p=cached?cached.value:null,d=statCache?statCache.value:null,approved=false,removed=ids.indexOf(id)<0;
       var card=document.createElement("div");card.className="fcard friend-compact friend-following";
       var hd=fbRow(p,id),un=document.createElement("button");un.dataset.followUid=id;
       if(!cached)hd.querySelector("b").textContent="読み込み中…";
       var actions=document.createElement("div");actions.className="actions";actions.appendChild(un);hd.children[1].appendChild(actions);card.appendChild(hd);
       var body=document.createElement("div");body.className="friend-details";hd.appendChild(body);fb.appendChild(card);
       function paint(){
-        if(approvalResolved38&&requestResolved38&&!approved&&!pending38)removed=true;un.textContent=removed?"フォロー":approved?"フォロー中":"リクエスト済み";un.classList.toggle("follow-action",removed);
+        un.textContent=removed?"フォロー":approved?"フォロー中":"リクエスト済み";un.classList.toggle("follow-action",removed);
         hd.querySelector(".note").textContent=p&&typeof p.grade==="string"?p.grade.slice(0,10):"";
         body.replaceChildren();if(!removed)body.appendChild(requestProfileDetails(p,{profile:d||{}}));
       }
-      un.onFollowState=function(status){followVersion38++;pending38=status==="pending";requestResolved38=approvalResolved38=true;removed=status==="none";approved=status==="following";if(removed)d=null;un.disabled=false;paint()};
+      un.onFollowState=function(status){removed=status==="none";approved=status==="following";if(removed)d=null;un.disabled=false;paint()};
       un.onclick=function(){
-        followVersion38++;if(removed){un.disabled=true;fbFollowBack(id);return}
+        if(removed){un.disabled=true;fbFollowBack(id);return}
         if(!approved){un.disabled=true;cancelFollowRequest(id);return}
-        askConfirm("フォローをやめますか？",fbNm(p)+"さんの学習記録は、見られなくなります。","フォローをやめる",async function(){
+        askConfirm("フォローをやめますか？","この人の記録は、見られなくなります。","フォローをやめる",async function(){
           un.disabled=true;
           try{
             var f=await fGet("follows/"+uid),next=((f&&f.ids)||[]).filter(function(x){return x!==id});
@@ -2772,8 +2774,7 @@ async function fillFol(fb){
       await Promise.all([
         profileRead("profiles/"+id).then(function(value){if(FB.uid!==uid)return;p=value;fbPaint(hd.querySelector(".av"),p&&p.icon,p&&p.color,p&&p.photo);hd.querySelector("b").textContent=fbNm(p);paint()}).catch(function(e){if(FB.uid===uid&&card.isConnected){hd.querySelector("b").textContent=cached?fbNm(p):"プロフィール";showReadError(card,e,function(){fillFol(fb)},true)}}),
         !removed?profileRead("stats/"+id).then(function(value){if(FB.uid===uid&&!removed){d=value;paint()}}).catch(function(e){if(FB.uid===uid&&!removed){d=null;paint();if(errorKind(e)!=="permission"&&card.isConnected)showReadError(card,e,function(){fillFol(fb)},true)}}):Promise.resolve(),
-        !removed?profileRead("stats/"+id+"/viewers/"+uid).then(function(value){if(FB.uid===uid&&!removed&&followVersion38===0){approved=!!value;approvalResolved38=true;paint()}}).catch(function(){}):Promise.resolve(),
-        !removed?profileRead("requests/"+id+"/from/"+uid).then(function(value){if(FB.uid===uid&&followVersion38===0){pending38=!!value;requestResolved38=true;paint()}}).catch(function(){}):Promise.resolve()
+        !removed?profileRead("stats/"+id+"/viewers/"+uid).then(function(value){if(FB.uid===uid&&!removed){approved=!!value;paint()}}).catch(function(){}):Promise.resolve()
       ]);
     }));
   }catch(e){if(FB.uid===uid)showReadError(fb,e,function(){fillFol(fb)})}
@@ -2858,289 +2859,6 @@ async function fbSearchUsers(more){
     if(mineError&&active())showReadError(footer,mineError,function(){fbSearchUsers(append)},true);
   }catch(e){if(active())showReadError(footer,e,function(){fbSearchUsers(append)})}
 }
-// v36: allocation audit, explicit carry confirmation, and durable plan history.
-function planClone(v){return JSON.parse(JSON.stringify(v))}
-function cleanSubject(v){return String(v||'').trim()}
-function syncPlanTotals(plan){(plan||[]).forEach(function(d){d.normalHours=d.blocks.reduce(function(n,b){b.name=cleanSubject(b.name);return n+(!b.carried?Number(b.h)||0:0)},0);d.carryHours=d.blocks.reduce(function(n,b){return n+(b.carried?Number(b.h)||0:0)},0);d.h=d.normalHours+d.carryHours})}
-function duplicateSubject(subs){var seen=new Set();return (subs||[]).some(function(s){var n=cleanSubject(s[0]);if(!n)return false;if(seen.has(n))return true;seen.add(n);return false})}
-function allocationAudit(plan,c){var configured=0,actual=0,extra=0;(plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))return;var dt=new Date(d.date+'T00:00:00'),h=Number(dt.getDay()%6===0?c.we:c.wd)||0;configured+=h;actual+=d.normalHours;extra+=d.carryHours});return {configured:configured,actual:actual,carry:extra,ok:actual+0.00001>=configured,text:'設定した合計 '+hm(configured)+' ／ 通常の配分 '+hm(actual)+(extra?' ＋ 繰り越し '+hm(extra):'')+(Number(c.tot)>0?'（週間目標 '+hm(Number(c.tot))+'）':'')+(actual>configured+0.001?'。計測済み・手動の項目を保護した分を含みます。':'')+(Number(c.tot)>0&&Math.abs(Number(c.tot)-configured)>.001?'。週間目標と日別設定の合計が異なります。日別設定を基準に配分しています。':'') }}
-var allocationSave=save;save=function(){syncPlanTotals(state.plan);allocationSave()};
-function v36Dialog(title){var el=document.createElement('div');el.className='tm plan-dialog';el.style.zIndex='32';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');var box=document.createElement('div');box.className='tmbox';el.appendChild(box);var heading=document.createElement('h2');heading.textContent=title;box.appendChild(heading);el.hide=function(){el.remove()};document.body.appendChild(el);el.box=box;setTimeout(function(){var b=el.querySelector('button,input,select');if(b)b.focus()},0);return el}
-function v36Text(box,text,cls){var p=document.createElement('p');p.className=cls||'note';p.textContent=text;box.appendChild(p);return p}
-function v36Button(box,text,fn){var b=document.createElement('button');b.type='button';b.textContent=text;b.onclick=fn;b.style.margin='5px 5px 5px 0';box.appendChild(b);return b}
-function renamePast(old,nw){Object.keys(state.log||{}).forEach(function(date){var row=state.log[date];if(Object.prototype.hasOwnProperty.call(row,old)){row[nw]=(row[nw]||0)+row[old];delete row[old]}});Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){if(e.name===old)e.name=nw})});Object.keys(state.credit||{}).forEach(function(id){var c=state.credit[id];if(c&&typeof c==='object'&&c.name===old)c.name=nw});(state.planHistory||[]).forEach(function(h){h.plan.forEach(function(d){d.blocks.forEach(function(b){if(b.name===old)b.name=nw})})});(state.plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))d.blocks.forEach(function(b){if(b.name===old)b.name=nw})})}
-var renameDialog36=null;function chooseRename(old,nw,apply){if(renameDialog36)return;var dlg=v36Dialog('科目名を変更');renameDialog36=dlg;var hide=dlg.hide;dlg.hide=function(){renameDialog36=null;hide()};v36Text(dlg.box,old+' → '+nw);v36Text(dlg.box,'過去の学習記録・プランの科目名も変更しますか？時間はそのまま残します。');v36Button(dlg.box,'過去の記録はそのまま',function(){dlg.hide();apply(false)});v36Button(dlg.box,'過去の記録も変更',function(){dlg.hide();apply(true)});v36Button(dlg.box,'キャンセル',function(){dlg.hide();renderSubjects()})}
-var renderSubjects36=renderSubjects;renderSubjects=function(){renderSubjects36();var warning=$('subjectDuplicateWarning');if(!warning){warning=document.createElement('p');warning.id='subjectDuplicateWarning';warning.className='note';warning.setAttribute('role','alert');$('subjects').after(warning)}warning.textContent=duplicateSubject(state.subjects)?'同じ名前の科目が登録されています。変更するか重複を削除してください。':'';warning.hidden=!warning.textContent;Array.from($('subjects').children).forEach(function(row,i){var input=row.querySelectorAll('input')[1];input.oninput=function(){var v=cleanSubject(input.value),dupe=state.subjects.some(function(s,k){return k!==i&&v&&cleanSubject(s[0])===v});input.setCustomValidity(dupe?'同じ名前の科目が登録されています。':'');var note=row.querySelector('.duplicate-note');if(dupe&&!note){note=document.createElement('small');note.className='duplicate-note';note.textContent='同じ科目名があります';note.style.cssText='color:#b42318;grid-column:1 / -1';row.appendChild(note)}if(!dupe&&note)note.remove()};input.onchange=function(){var old=cleanSubject(state.subjects[i][0]),nw=cleanSubject(input.value);input.value=nw;if(!nw||state.subjects.some(function(s,k){return k!==i&&cleanSubject(s[0])===nw})){input.setCustomValidity('空白または重複した科目名は登録できません。');input.reportValidity();return}input.setCustomValidity('');function apply(past){pauseTimer();if(past)renamePast(old,nw);state.subjects[i][0]=nw;(state.plan||[]).forEach(function(d){if(d.date>=fmtDate(new Date()))d.blocks.forEach(function(b){if(b.name===old)b.name=nw})});(state.weekCarry||[]).forEach(function(b){if(b.name===old)b.name=nw});if(state.carryReview)state.carryReview.items.forEach(function(b){if(b.name===old)b.name=nw});state.subjColors=state.subjColors||{};if(state.subjColors[old])state.subjColors[nw]=state.subjColors[old];save();renderSubjects();renderPlan()}if(nw===old){state.subjects[i][0]=nw;save()}else chooseRename(old,nw,apply)}})};
-var build36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){c=planClone(c);c.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});var p=build36(c,style,null,start);syncPlanTotals(p);var subs=c.subjects.filter(function(s){return s[0]});p.forEach(function(d){if(d.date<fmtDate(new Date()))return;var date=new Date(d.date+'T00:00:00'),required=Number(date.getDay()%6===0?c.we:c.wd)||0,left=Math.max(0,required-d.normalHours);if(left>0.00001&&subs.length){var targets=makeTargets(subs,left);allocDay(left,subs,targets,style).forEach(function(b){b.id=newId();d.blocks.push(b)})}});syncPlanTotals(p);var applied=appendWeekCarry(p,carry||[],state.carryDistribution||'next');p.carryRemaining=applied.remaining;syncPlanTotals(p);return p};
-var make36=makePlan;makePlan=function(){if(state.carryReview||state.pendingWeekReview){showPendingPlanReview();return false}state.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});if(duplicateSubject(state.subjects)){$('planMakeError').hidden=false;$('planMakeError').textContent='同じ名前の科目があります。科目名を変更するか、重複を削除してください。';return false}archivePlan('計画の更新');var before=planClone(state.weekCarry||[]),usedCarry=state.weekSetupPending&&state.carry!==false,ok=make36();if(ok){state.weekCarry=usedCarry?(state.plan.carryRemaining||[]):before;var a=allocationAudit(state.plan,planConfig());state.lastAllocationAudit=a;save();renderPlan()}return ok};
-var preview36=generatePlanPreview;generatePlanPreview=function(){preview36();var a=allocationAudit(planCandidate,planCandidateConfig);$('planPreviewNote').textContent+=' '+a.text;$('planAdopt').disabled=!planCandidate.length||!a.ok};
-var adopt36=adoptPlanCandidate;adoptPlanCandidate=function(){if(!planCandidate)return;var a=allocationAudit(planCandidate,planCandidateConfig);if(!a.ok){$('planPreviewNote').textContent='設定時間を満たしていません。設定を確認してください。';return}archivePlan('計画の更新');var held=(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]);adopt36();state.weekCarry=held;state.lastAllocationAudit=a;save();renderPlan()};
-remainingWeekItems=function(days){var items=[];if(state.carry===false)return items;days.forEach(function(d){if(d.carryProcessed)return;d.blocks.forEach(function(b){if(state.done[b.id]||b.skipCarry)return;var h=Math.max(0,b.h-elapsed(b.id)/3600);if(h>1/3600)items.push({sourceId:b.id,sourceDate:d.date,carryFrom:b.carryFrom||d.date,name:b.name,h:Math.round(h*3600)/3600,selected:true})})});return items};
-appendWeekCarry=function(plan,items,mode){syncPlanTotals(plan);var days=plan.filter(function(d){return d.date>=fmtDate(new Date())}),remaining=[],touched=[];items.forEach(function(source){var left=Number(source.h)||0;while(left>.000001){var available=days.filter(function(d){return d.h<16-.000001});if(mode==='spread')available.sort(function(a,b){return a.h-b.h||a.date.localeCompare(b.date)});var day=available[0];if(!day){remaining.push(Object.assign({},source,{h:left}));break}var h=Math.min(left,16-day.h,mode==='spread'?.5:left);day.blocks.push({id:newId(),name:cleanSubject(source.name),h:h,manual:true,carried:true,carryFrom:source.carryFrom||source.sourceDate||'',sourceId:source.sourceId});day.h+=h;left-=h;if(touched.indexOf(day)<0)touched.push(day)}});syncPlanTotals(plan);return {remaining:remaining,touched:touched}};
-function archivePlan(reason){if(!state.plan||!state.plan.length)return null;state.planHistory=state.planHistory||[];var signature=JSON.stringify(state.plan.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]}));var found=state.planHistory.find(function(h){return h.signature===signature});if(found)return found;var h={id:rid(),signature:signature,reason:reason,created:Date.now(),goal:state.goal,exam:state.exam,plan:planClone(state.plan),done:planClone(state.done)};state.planHistory.push(h);return h}
-function planReviewNumbers(h){var names={},dates=new Set(h.plan.map(function(d){return d.date}));h.plan.forEach(function(d){d.blocks.forEach(function(b){names[b.name]=names[b.name]||{planned:0,actual:0};names[b.name].planned+=b.h*3600})});dates.forEach(function(date){Object.keys(state.log[date]||{}).forEach(function(n){names[n]=names[n]||{planned:0,actual:0};names[n].actual+=state.log[date][n]})});Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){if(e.k==='c'&&dates.has(e.date)&&names[e.name])names[e.name].actual-=e.sec})});return names}
-function renderHistoryDetail(box,h){v36Text(box,dayLabel(h.plan[0].date)+' 〜 '+dayLabel(h.plan[h.plan.length-1].date));var ns=planReviewNumbers(h),p=0,a=0;Object.keys(ns).forEach(function(n){p+=ns[n].planned;a+=Math.max(0,ns[n].actual)});v36Text(box,'予定 '+fmtH(p)+' ／ 計測・手動記録 '+fmtH(a)+' ／ 達成率 '+(p?Math.floor(a/p*100):0)+'%');Object.keys(ns).forEach(function(n){v36Text(box,n+'：予定 '+fmtH(ns[n].planned)+' ／ 記録 '+fmtH(Math.max(0,ns[n].actual)))});h.plan.forEach(function(d){var details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=dayLabel(d.date)+' · '+hm(d.h);details.appendChild(summary);d.blocks.forEach(function(b){v36Text(details,(h.done[b.id]?'✓ ':'')+b.name+' '+hm(b.h)+carryLabel(b))});box.appendChild(details)})}
-function openPlanHistory(){var dlg=v36Dialog('プラン履歴');var list=(state.planHistory||[]).slice().reverse();if(!list.length)v36Text(dlg.box,'保存された過去のプランはまだありません。');list.forEach(function(h){var details=document.createElement('details'),summary=document.createElement('summary');summary.textContent=h.plan[0].date+' 〜 '+h.plan[h.plan.length-1].date;details.appendChild(summary);renderHistoryDetail(details,h);dlg.box.appendChild(details)});v36Button(dlg.box,'閉じる',dlg.hide)}
-var carryModal36=null,weekModal36=null;
-function carrySourceSignature(items){return JSON.stringify(items.map(function(x){var b=findBlock(x.sourceId);return [x.sourceId,b?b.h:null,!!state.done[x.sourceId],Math.round(elapsed(x.sourceId))]}))}
-function carryProposal(review,mode){var days=review.mode==='week'?buildPlanCandidate(planConfig(),0,null):planClone((state.plan||[]).filter(function(d){return d.date>=fmtDate(new Date())}));var a=appendWeekCarry(days,review.items.filter(function(x){return x.selected!==false}),mode);return {days:days,remaining:a.remaining}}
-function showCarryReview(){var r=state.carryReview;if(!r||carryModal36)return;var dlg=v36Dialog('繰り越す項目を確認');carryModal36=dlg;function close(){carryModal36=null;dlg.hide()}v36Text(dlg.box,'残り時間を表示しています。チェックを外した項目は、今回は繰り越しません。');r.items.forEach(function(x){var label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;margin:12px 0';var cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:18px;height:18px;flex:none;margin:0';cb.checked=x.selected!==false;cb.onchange=function(){x.selected=cb.checked;save();refresh()};label.appendChild(cb);label.appendChild(document.createTextNode(' '+x.name+' '+(Math.round(x.h*3600)%60?fmtT(x.h*3600):hm(x.h))+'（'+(x.carryFrom||x.sourceDate)+'から）'));dlg.box.appendChild(label)});var label=document.createElement('label');label.textContent='配分方法 ';var select=document.createElement('select');select.innerHTML='<option value="next">次の日から順に追加</option><option value="spread">予定が少ない日に分散（提案）</option>';select.value=state.carryDistribution||'next';label.appendChild(select);dlg.box.appendChild(label);var summary=document.createElement('div');summary.setAttribute('aria-live','polite');dlg.box.appendChild(summary);function refresh(){summary.innerHTML='';var selected=r.items.filter(function(x){return x.selected!==false});v36Text(summary,selected.length?'選択中 '+selected.length+'項目 · 残り '+hm(selected.reduce(function(n,x){return n+x.h},0)):'今回は繰り越しません。');var p=carryProposal(r,select.value);p.days.forEach(function(d){if(d.carryHours)v36Text(summary,dayLabel(d.date)+'：通常 '+hm(d.normalHours)+' ＋ 繰り越し '+hm(d.carryHours)+' ＝ '+hm(d.h))});var held=p.remaining.reduce(function(n,x){return n+x.h},0);if(held)v36Text(summary,'16時間を超える分 '+hm(held)+' は次の週へ保留します。');if(p.days.some(function(d){return d.carryHours>d.normalHours||d.h>10}))v36Text(summary,'1日の予定が多くなります。「予定が少ない日に分散」を選べます。')}select.onchange=refresh;refresh();v36Button(dlg.box,'この内容で確定',function(){if(state.idleReview){close();showIdleReview();return}pauseTimer();if(r.signature!==carrySourceSignature(r.items)){r.items=remainingWeekItems((state.plan||[]).filter(function(d){return r.sourceDates.indexOf(d.date)>=0}));r.signature=carrySourceSignature(r.items);save();close();showCarryReview();return}var selected=r.items.filter(function(x){return x.selected!==false});state.carryDistribution=select.value;r.sourceDates.forEach(function(date){var d=state.plan.find(function(y){return y.date===date});if(d)d.carryProcessed=true});if(r.mode==='week')state.weekCarry=(state.weekCarry||[]).concat(selected);else{var a=appendWeekCarry(state.plan,selected,select.value);state.weekCarry=(state.weekCarry||[]).concat(a.remaining)}state.carryReview=null;save();close();renderPlan();fillWeeklySetup()});v36Button(dlg.box,'あとで確認',function(){save();close();renderPlan()})}
-function showPendingPlanReview(){if(document.hidden)return;if(state.pendingWeekReview){if(weekModal36)return;var h=(state.planHistory||[]).find(function(h){return h.id===state.pendingWeekReview});if(!h){state.pendingWeekReview=null;save();showCarryReview();return}var dlg=v36Dialog('前週の振り返り');weekModal36=dlg;renderHistoryDetail(dlg.box,h);v36Button(dlg.box,'次の週の設定へ',function(){state.pendingWeekReview=null;h.reviewed=true;save();weekModal36=null;dlg.hide();fillWeeklySetup();showPage(1);showCarryReview()})}else showCarryReview()}
-rollForward=function(){if(!state.plan||!state.plan.length||state.idleReview||checkIdleTimer())return false;var today=fmtDate(new Date());if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;if(state.weekSetupPending||state.carryReview||state.planDaySeen===today)return false;var end=planWeekEnd(),weekly=(end&&today>=end)||(state.exam&&today>=state.exam),past=state.plan.filter(function(d){return d.date<today&&!d.carryProcessed});pauseTimer();if(weekly){var history=archivePlan('期間終了');state.pendingWeekReview=history&&history.id;state.weekSetupPending=true;state.planPage=1}var items=remainingWeekItems(past);if(items.length)state.carryReview={mode:weekly?'week':'daily',items:items,sourceDates:past.map(function(d){return d.date}),signature:carrySourceSignature(items)};else past.forEach(function(d){d.carryProcessed=true});state.planDaySeen=today;save();return true};
-var rollRender36=rollAndRender;rollAndRender=function(force){rollRender36(force);showPendingPlanReview()};
-function carryLabel(b){return b.carried?'（'+(b.carryFrom||'前日')+'からの繰り越し）':''}
-var renderPlan36=renderPlan;renderPlan=function(){syncPlanTotals(state.plan);renderPlan36();Array.from(document.querySelectorAll('[data-plan-summary]')).forEach(function(el){var d=(state.plan||[]).find(function(d){return d.date===el.dataset.planSummary});if(d&&d.carryHours){var p=document.createElement('small');p.style.gridColumn='1 / -1';p.textContent='通常 '+hm(d.normalHours)+' ＋ 繰り越し '+hm(d.carryHours);el.appendChild(p)}});(state.plan||[]).forEach(function(d){d.blocks.forEach(function(b){if(!b.carried)return;var row=Array.from(document.querySelectorAll('.blk')).find(function(el){return el.dataset.blockId===b.id});if(row){var small=row.querySelector('.duration');if(small)small.textContent=hm(b.h)+carryLabel(b)}})});var old=$('planReviewPending');if(old)old.remove();var banner=document.createElement('div');banner.id='planReviewPending';if(state.pendingWeekReview||state.carryReview)v36Button(banner,'振り返り・繰り越しを確認',showPendingPlanReview);if(state.weekCarry&&state.weekCarry.length)v36Text(banner,'次週へ保留：'+hm(state.weekCarry.reduce(function(n,x){return n+x.h},0)));if(state.lastAllocationAudit){var auditDetails=document.createElement('details'),auditTitle=document.createElement('summary');auditTitle.textContent='生成時の配分確認';auditDetails.appendChild(auditTitle);v36Text(auditDetails,state.lastAllocationAudit.text);banner.appendChild(auditDetails)}$('plan').parentNode.insertBefore(banner,$('plan'))};
-var openEdit36=openEdit;openEdit=function(id,d){openEdit36(id,d);var old=$('emSkipCarryWrap');if(old)old.remove();var label=document.createElement('label');label.id='emSkipCarryWrap';var cb=document.createElement('input');cb.type='checkbox';cb.id='emSkipCarry';cb.checked=!!(id&&findBlock(id).skipCarry);label.appendChild(cb);label.appendChild(document.createTextNode(' 今回は繰り越さない'));$('emday').parentNode.after(label)};
-var saveEdit36=saveEdit;saveEdit=function(){if(!edit)return;var id=edit.id,b=id&&findBlock(id),old=b&&b.name,nw=cleanSubject($('emname').value),skip=$('emSkipCarry')&&$('emSkipCarry').checked;if(!nw)return;function apply(past){if(old!==nw)pauseTimer();if(past)renamePast(old,nw);if(b)b.skipCarry=skip;var snap=moveSnapshot();saveEdit36();if(!id){var day=state.plan[Number($('emday').value)];if(day&&day.blocks.length)day.blocks[day.blocks.length-1].skipCarry=skip;save()}if(snap&&id)offerMoveUndo(snap,moveMerge36?'同じ科目の項目を統合しました。':'項目を変更しました。');moveMerge36=false}if(old&&old!==nw)chooseRename(old,nw,apply);else apply(false)};
-var moveMerge36=false,moveUndo36=null;
-function moveSnapshot(){return {owner:dataOwner,plan:planClone(state.plan),spent:planClone(state.spent),contrib:planClone(state.contrib),done:planClone(state.done),credit:planClone(state.credit),timer:planClone(state.timer)}}
-moveBlock=function(id,nd){var l=locate(id);if(!l||nd<0||nd>=state.plan.length||nd===l.d)return;var x=l.x,dst=state.plan[nd];state.plan[l.d].blocks.splice(l.k,1);var twin=dst.blocks.find(function(y){return y.name===x.name&&!!y.carried===!!x.carried&&(!y.carried||y.carryFrom===x.carryFrom)&&!state.done[y.id]&&!state.done[x.id]});if(twin){moveMerge36=true;twin.h+=x.h;twin.manual=true;twin.skipCarry=twin.skipCarry&&x.skipCarry;state.spent[twin.id]=(state.spent[twin.id]||0)+(state.spent[x.id]||0);delete state.spent[x.id];if(state.contrib&&state.contrib[x.id]){state.contrib[twin.id]=(state.contrib[twin.id]||[]).concat(state.contrib[x.id]);delete state.contrib[x.id]}if(running(x.id))state.timer.id=twin.id}else{x.manual=true;dst.blocks.push(x)}syncPlanTotals(state.plan)};
-function offerMoveUndo(snapshot,message){var prior=$('planMoveUndo');if(prior)prior.remove();var el=document.createElement('div');el.id='planMoveUndo';el.setAttribute('role','status');el.style.cssText='position:fixed;bottom:85px;left:12px;right:12px;z-index:35;padding:10px;background:var(--card,#fff);border:1px solid var(--line);border-radius:12px;max-width:540px;margin:auto';v36Text(el,message);var token={snapshot:snapshot,revision:saveRevision,expires:Date.now()+15000};moveUndo36=token;v36Button(el,'元に戻す',function(){if(moveUndo36!==token||dataOwner!==snapshot.owner||Date.now()>token.expires||saveRevision!==token.revision){el.remove();return}['plan','spent','contrib','done','credit','timer'].forEach(function(k){state[k]=snapshot[k]});moveUndo36=null;el.remove();save();renderPlan()});document.body.appendChild(el);setTimeout(function(){if(moveUndo36===token){moveUndo36=null;el.remove()}},15000)}
-var endDrag36=endDrag;endDrag=function(cancel){var valid=drag&&!cancel&&drag.over,snap=valid?moveSnapshot():null;moveMerge36=false;endDrag36(cancel);if(snap)offerMoveUndo(snap,moveMerge36?'同じ科目の項目を統合しました。':'項目の並び・移動を変更しました。');moveMerge36=false};
-v36Button($('planSettings').querySelector('.tmbox'),'過去のプランを見る',openPlanHistory);
-v36Button($('weekSetupNotice').parentNode,'プラン履歴',openPlanHistory);
-setTimeout(function(){syncPlanTotals(state.plan);if(state.weekSetupPending&&!state.pendingWeekReview){var h=archivePlan('期間終了');if(h&&!h.reviewed){state.pendingWeekReview=h.id;h.reviewed=true;save()}}showPendingPlanReview()},100);
-
-// Draft subject changes use the same explicit historical rename choice.
-var draftOpen36=openPlanDraft;openPlanDraft=function(){draftOpen36();Array.from($('draftSubjects').children).forEach(function(row){row.dataset.originalName=cleanSubject(row.children[1].value)})};
-var draftRead36=readPlanDraft;readPlanDraft=function(){var c=draftRead36();c.nameChanges=Array.from($('draftSubjects').children).map(function(row){return {old:row.dataset.originalName||'',name:cleanSubject(row.children[1].value)}}).filter(function(x){return x.old&&x.name&&x.old!==x.name});return c};
-var draftBuild36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){var p=draftBuild36(c,style,carry,start);var nameMap={};(c.nameChanges||[]).forEach(function(change){nameMap[change.old]=change.name});p.forEach(function(d){if(d.date>=fmtDate(new Date()))d.blocks.forEach(function(b){if(findBlock(b.id))b.name=nameMap[b.name]||b.name})});return p};
-var draftAdopt36=adoptPlanCandidate;adoptPlanCandidate=function(){var c=planCandidateConfig;if(!c||!planCandidate)return;if(planCandidateBase!==planBaseSignature()){draftAdopt36();return}var changes=c.nameChanges||[],index=0,choices=[];function next(){if(index<changes.length){var change=changes[index++];chooseRename(change.old,change.name,function(past){if(past)choices.push(change);next()});return}if(changes.length)pauseTimer();var selected=planCandidate;draftAdopt36();if(state.plan!==selected)return;renamePastBatch(choices);save();renderPlan()}next()};
-var accountSwitch36=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){document.querySelectorAll('.plan-dialog[style*="32"]').forEach(function(el){el.remove()});carryModal36=null;weekModal36=null;renameDialog36=null;moveUndo36=null;var undo=$('planMoveUndo');if(undo)undo.remove()}return accountSwitch36(uid)};
-
-function renamePastBatch(changes){if(!changes.length)return;var names={};changes.forEach(function(c){names[c.old]=c.name});Object.keys(state.log||{}).forEach(function(date){var row={};Object.keys(state.log[date]).forEach(function(n){var next=names[n]||n;row[next]=(row[next]||0)+state.log[date][n]});state.log[date]=row});Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){e.name=names[e.name]||e.name})});Object.keys(state.credit||{}).forEach(function(id){var c=state.credit[id];if(c&&typeof c==='object')c.name=names[c.name]||c.name});(state.planHistory||[]).forEach(function(h){h.plan.forEach(function(d){d.blocks.forEach(function(b){b.name=names[b.name]||b.name})})});(state.plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))d.blocks.forEach(function(b){b.name=names[b.name]||b.name})})}
-
-// v38: record provenance, editing, period navigation and equal-period comparisons.
-function compactHours38(sec){var h=sec/3600;return h>=10000?r1(h/10000)+'万h':h>=100?Math.round(h)+'h':h.toFixed(1)+'h'}
-var statsDetailOpen38=false;var sOff=0,statsViews38={},detailViews38={},recordEdit38=null;
-function validDate38(v){return /^\d{4}-\d{2}-\d{2}$/.test(v)&&fmtDate(new Date(v+'T00:00:00'))===v}
-function recordParts38(date,name){
-  var parts={timer:0,manual:0,check:0,legacy:0},total=Number((state.log[date]||{})[name])||0;
-  Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){if(e.date===date&&e.name===name)parts[e.k==='c'?'check':e.k==='m'?'manual':'timer']+=Number(e.sec)||0})});
-  parts.legacy=Math.max(0,total-parts.timer-parts.manual-parts.check);return parts;
-}
-function partsLabel38(p){return [['timer','計測'],['manual','手入力'],['check','チェック補完'],['legacy','手入力・旧記録']].filter(function(v){return p[v[0]]>.001}).map(function(v){return v[1]+' '+fmtH(p[v[0]])}).join(' ／ ')}
-var renderRecords38=renderRecords;
-renderRecords=function(){
-  renderRecords38();Array.from($('mrRows').children).forEach(function(row,i){var r=recRows()[i];if(!r||!row.querySelector('span'))return;
-    var p=recordParts38(r.d,r.n),note=row.querySelector('.record-source38');if(!note){note=document.createElement('small');note.className='note record-source38';row.querySelector('span').appendChild(note)}note.textContent=partsLabel38(p);
-    if(p.manual+p.legacy>0&&!row.querySelector('.record-edit38')){var b=document.createElement('button');b.className='record-edit38';b.textContent='編集';b.onclick=function(){openManualEdit38(r,p.manual+p.legacy)};row.insertBefore(b,row.querySelector('.dng'))}
-  });
-};
-function openManualEdit38(row,sec){openMr();recordEdit38={date:row.d,name:row.n,seconds:sec,revision:saveRevision,owner:dataOwner};$('mrmt').textContent='手入力・旧記録を編集';$('mrDate').value=row.d;$('mrSubj').value=row.n;$('mrH').value=Math.floor(sec/3600);$('mrM').value=Math.round((sec%3600)/60);if(Number($('mrM').value)===60){$('mrH').value=Number($('mrH').value)+1;$('mrM').value=0}$('mrAdd').textContent='変更を確認';markDraft38('mrm')}
-var openMr38=openMr;openMr=function(){openMr38();recordEdit38=null;$('mrmt').textContent='学習記録を入力する';$('mrAdd').textContent='内容を確認';markDraft38('mrm')};
-addRecord=function(){
-  var date=$('mrDate').value,name=cleanSubject($('mrSubj').value),h=Number($('mrH').value||0),m=Number($('mrM').value||0),err=$('mrErr'),sec=h*3600+m*60;
-  if(!validDate38(date)||date>fmtDate(new Date())||!name){err.textContent='今日以前の正しい日付と科目を入力してください。';return}
-  if(!Number.isInteger(h)||!Number.isInteger(m)||h<0||m<0||m>59||sec<=0||sec>86400){err.textContent='時間は0〜24、分は0〜59の整数で、合計は1分〜24時間にしてください。';return}
-  var editing=recordEdit38,revision=saveRevision,owner=dataOwner;
-  if(editing&&(editing.owner!==owner||editing.revision!==revision)){err.textContent='記録に変更がありました。一覧を開き直してから編集してください。';return}
-  err.textContent='';askConfirm(editing?'この記録を変更しますか？':'この記録を追加しますか？',(editing?editing.date+' '+editing.name+' '+fmtH(editing.seconds)+' → ':'')+date+' '+name+' '+fmtH(sec)+(editing?'。計測・チェック補完の記録は残します。':' を追加します。'),'確定する',function(){
-    if(owner!==dataOwner||revision!==saveRevision){err.textContent='データが更新されました。内容をもう一度確認してください。';return}
-    if(editing){
-      subLog(editing.date,editing.name,editing.seconds);
-      Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id]=state.contrib[id].filter(function(e){return !(e.k==='m'&&e.date===editing.date&&e.name===editing.name)});if(!state.contrib[id].length)delete state.contrib[id]});
-    }
-    logAdd(name,sec,'manual-'+rid(),'m',date);save();recordEdit38=null;$('mrH').value='';$('mrM').value='';$('mrSubj').value='';$('mrm').hidden=true;forgetDraft38('mrm');mrSig='';renderStats();if(!$('dm').hidden)renderDm();
-  });
-};
-function selectedPeriod38(mode,off,sel){var bs=buckets(logData(),mode,off);return bs[sel>=0&&sel<bs.length?sel:bs.length-1]}
-function changePeriod38(detail,mode){
-  var oldMode=detail?dMode:sMode,off=detail?dOff:sOff,sel=detail?dSel:sSel,views=detail?detailViews38:statsViews38,selected=selectedPeriod38(oldMode,off,sel),saved=views[mode];views[oldMode]={off:off,sel:sel};
-  if(!saved){var anchor=selected.key.length===7?selected.key+'-01':selected.key,today=new Date(),dt=new Date(anchor+'T00:00:00'),distance;
-    if(mode==='d')distance=Math.round((Date.UTC(today.getFullYear(),today.getMonth(),today.getDate())-Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate()))/86400000);
-    else if(mode==='w'){var a=mondayOf(today),b=mondayOf(dt);distance=Math.round((Date.UTC(a.getFullYear(),a.getMonth(),a.getDate())-Date.UTC(b.getFullYear(),b.getMonth(),b.getDate()))/604800000)}else distance=(today.getFullYear()-dt.getFullYear())*12+today.getMonth()-dt.getMonth();
-    var n=mode==='d'?7:mode==='w'?8:6;distance=Math.max(0,distance);saved={off:Math.floor(distance/n),sel:n-1-distance%n};
-  }
-  if(detail){dMode=mode;dOff=saved.off;dSel=saved.sel;renderDm()}else{sMode=mode;sOff=saved.off;sSel=saved.sel;renderStats()}
-}
-function statsDetail38(){
-  if(!$('statsDetail38'))return;var sb=selectedPeriod38(sMode,sOff,sSel),box=$('statsDetail38');box.innerHTML='';var summary=document.createElement('summary');summary.textContent=sb.key+' の内訳・比較';box.appendChild(summary);box.open=statsDetailOpen38;
-  v36Text(box,sb.key+' · 記録合計 '+fmtH(sb.total));var parts={timer:0,manual:0,check:0,legacy:0};Object.keys(state.log||{}).filter(bucketMatch(sMode,sb.key)).forEach(function(date){Object.keys(state.log[date]).forEach(function(name){var p=recordParts38(date,name);Object.keys(parts).forEach(function(k){parts[k]+=p[k]})})});
-  if(state.timer){var x=findBlock(state.timer.id);if(x)splitTimerDays(state.timer.start,Date.now(),function(date,sec){if(bucketMatch(sMode,sb.key)(date))parts.timer+=sec})}
-  v36Text(box,partsLabel38(parts)||'記録なし（0時間）');Object.keys(sb.parts).sort(function(a,b){return sb.parts[b]-sb.parts[a]}).forEach(function(name){v36Text(box,name+' '+fmtH(sb.parts[name]))});
-  $('statsNext38').disabled=sOff===0;$('statsRange38').textContent=buckets(logData(),sMode,sOff).map(function(b){return b.label}).filter(function(_,i,a){return i===0||i===a.length-1}).join(' 〜 ');
-  v36Text(box,comparePeriod38(sMode,sb.key));
-}
-function comparePeriod38(mode,key){
-  var now=new Date(),today=fmtDate(now),start=new Date((key.length===7?key+'-01':key)+'T00:00:00'),previous=new Date(start),end=new Date(start),count=0;
-  if(mode==='d'){if(key>=today){start.setDate(start.getDate()-1)}previous=new Date(start);previous.setDate(previous.getDate()-1);count=1}
-  else if(mode==='w'){previous.setDate(previous.getDate()-7);count=key===fmtDate(mondayOf(now))?(now.getDay()+6)%7:7}
-  else{previous.setMonth(previous.getMonth()-1);var len=new Date(start.getFullYear(),start.getMonth()+1,0).getDate(),prevLen=new Date(previous.getFullYear(),previous.getMonth()+1,0).getDate();count=Math.min(key===today.slice(0,7)?now.getDate()-1:len,prevLen)}
-  if(!count)return '同じ日数での比較は、今日の終了後に表示します。';
-  function sum(date){var v=0;for(var i=0;i<count;i++){var d=new Date(date);d.setDate(d.getDate()+i);Object.values(state.log[fmtDate(d)]||{}).forEach(function(s){v+=s})}return v}
-  var a=sum(start),b=sum(previous),diff=a-b;return '完了した'+count+'日間で比較：'+fmtDate(start)+'から '+fmtH(a)+' ／ '+fmtDate(previous)+'から '+fmtH(b)+'（'+(diff>=0?'+':'−')+fmtH(Math.abs(diff))+'）。チェック補完を含む記録合計。';
-}
-var renderStats38=renderStats;renderStats=function(){renderStats38();statsDetail38();if($('statsNow38'))$('statsNow38').textContent=sMode==='d'?'今日へ':sMode==='w'?'今週へ':'今月へ';Array.from($('schart').querySelectorAll('.col')).forEach(function(col){var sb=buckets(logData(),sMode,sOff)[Number(col.dataset.i)];col.setAttribute('role','button');col.setAttribute('tabindex','0');if(sb)col.setAttribute('aria-label',sb.key+' 記録合計 '+fmtH(sb.total));col.onclick=function(e){e.stopPropagation();sSel=Number(col.dataset.i);statsDetailOpen38=true;renderStats()};col.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();col.click()}}})};
-var updateStats38=updateStatsLive;updateStatsLive=function(){var before=statsLiveKey;updateStats38();if(statsLiveKey!==before)statsDetail38()};
-var openDm38=openDm;openDm=function(){var wasOpen=!$('dm').hidden;if(!wasOpen){dMode=sMode;dOff=sOff;dSel=sSel;mrLimit=15;mrSig='';$('dm').hidden=false}renderDm()};
-var renderDm38=renderDm;renderDm=function(){renderDm38();if($('historyNow38'))$('historyNow38').textContent=dMode==='d'?'今日へ':dMode==='w'?'今週へ':'今月へ'};
-var todayRender38=renderToday;renderToday=function(){todayRender38();var day=(state.plan||[]).find(function(d){return d.date===fmtDate(new Date())});if(!day||!day.blocks.length){v36Button($('tdList'),day?'今日の項目を追加':'プランを設定',function(){if(day){showPage(3);openEdit(null,state.plan.indexOf(day))}else{showPage(1)}})}};
-var todayBar38=todayBar;todayBar=function(){var td=fmtDate(new Date());if($('tdTitle')&&$('tdTitle').dataset.date!==td){$('tdTitle').dataset.date=td;renderToday();return}todayBar38();if($('tdRemaining38')){var day=(state.plan||[]).find(function(d){return d.date===td}),remaining=(day?day.blocks:[]).reduce(function(n,b){return n+Math.max(0,b.h*3600-elapsed(b.id))},0);$('tdRemaining38').textContent='残り '+fmtH(remaining)}};
-
-// Messages retain drafts, retry with the same document ID, and page older history.
-var dmSendTasks38=new Map(),commentTasks38=new Map(),requestTasks38=new Map();
-async function fDmOlder38(cid,before,n){var fs=FB.Fs,q=fs.query(fs.collection(FB.db,'dm/'+cid+'/messages'),fs.orderBy('at','desc'),fs.orderBy(fs.documentId(),'desc'),fs.startAfter(before.data.at,before.id),fs.limit(n)),snap=await limitRead(fs.getDocs(q)),rows=[];snap.forEach(function(d){rows.push({id:d.id,data:d.data()})});return rows}
-function dmStill38(c){return dmCur===c&&c.uid===FB.uid&&(c.epoch==null||c.epoch===authEpoch)&&!$('dmm').hidden&&inboxTab==='dm'}
-var openChat38=openChat;openChat=async function(other,p){
-  if(dmCur)saveDmDraft38();inboxTab='dm';var promise=openChat38(other,p),c=dmCur;if(c){c.epoch=authEpoch;c.messages=new Map();c.more=true;c.loadingOlder=false;c.atBottom=true;$('dmIn').value=(state.dmDrafts||{})[c.cid]||''}await promise;
-};
-function saveDmDraft38(){if(!dmCur||dmCur.uid!==FB.uid)return;state.dmDrafts=state.dmDrafts||{};var text=$('dmIn').value;if(text)state.dmDrafts[dmCur.cid]=text;else delete state.dmDrafts[dmCur.cid];save()}
-function sortedDm38(c){return Array.from(c.messages.values()).sort(function(a,b){return (a.data.at||0)-(b.data.at||0)||a.id.localeCompare(b.id)})}
-function renderDmMessages38(c,prepend){
-  if(!dmStill38(c))return;var box=$('dmBody'),oldTop=box.scrollTop,oldHeight=box.scrollHeight,wasBottom=c.atBottom!==false,rows=sortedDm38(c);box.innerHTML='';
-  if(c.more){var older=v36Button(box,c.loadingOlder?'読み込み中…':'以前のメッセージを読む',function(){loadOlderDm38()});older.id='dmOlder38';older.disabled=c.loadingOlder}
-  if(!rows.length)v36Text(box,'メッセージを送ってみましょう。');var date='';
-  rows.forEach(function(m){var d=m.data,dt=new Date(Number(d.at)||0),key=fmtDate(dt);if(key!==date){var divider=v36Text(box,key,'dm-date38');divider.setAttribute('role','separator');date=key}
-    var e=document.createElement('div');e.className='msg'+(d.from===c.uid?' me':'');e.dataset.messageId=m.id;var bubble=document.createElement('div');bubble.className='bub';bubble.textContent=String(d.text||'').slice(0,1000);var time=document.createElement('small');time.dataset.at=String(d.at||0);time.dataset.mine=d.from===c.uid?'1':'0';time.dataset.time=('0'+dt.getHours()).slice(-2)+':'+('0'+dt.getMinutes()).slice(-2);time.textContent=time.dataset.time+(d.from===c.uid&&Number(d.at)<=Number(c.readAt||0)?'  既読':'');e.append(bubble,time);box.appendChild(e)
-  });
-  var out=(state.dmOutbox||{})[c.cid];if(out){var pending=document.createElement('div');pending.className='dm-pending38';pending.setAttribute('role','status');v36Text(pending,(out.error?'送信できませんでした：':'送信中：')+out.text);if(out.error){v36Text(pending,readErrorMessage({code:out.error}));v36Button(pending,'再送',function(){sendDmPending38(c,out)})}box.appendChild(pending)}
-  if(prepend)box.scrollTop=oldTop+box.scrollHeight-oldHeight;else if(wasBottom)box.scrollTop=box.scrollHeight;else box.scrollTop=oldTop;
-  $('dmNew38').hidden=wasBottom||prepend||!rows.length;
-}
-async function markDmRead38(c){
-  if(!dmStill38(c)||document.hidden||c.atBottom===false||c.readTask)return;var rows=sortedDm38(c),last=rows[rows.length-1];if(!last)return;var at=Number(last.data.at)||0;if(at<=Number((state.dmSeen||{})[c.cid]||0))return;
-  c.readTask=true;try{await fSet('dm/'+c.cid+'/reads/'+c.uid,{at:at});if(!dmStill38(c))return;state.dmSeen=state.dmSeen||{};state.dmSeen[c.cid]=Math.max(state.dmSeen[c.cid]||0,at);save();dmCheck()}catch(e){if(dmStill38(c))showReadError($('dmBody'),e,function(){markDmRead38(c)},true)}finally{c.readTask=false}
-}
-dmLoad=async function(first){
-  var c=dmCur;if(!c||c.busy||document.hidden)return;c.busy=true;if(!c.messages)c.messages=new Map();
-  var receipt=profileRead('dm/'+c.cid+'/reads/'+c.other).then(function(r){return {at:r&&Number(r.at)||0}},function(e){return {error:e}});
-  try{var newest=await fQ('dm/'+c.cid+'/messages','at',100);if(!dmStill38(c))return;var before=c.messages.size,newIds=newest.some(function(m){return !c.messages.has(m.id)});newest.forEach(function(m){c.messages.set(m.id,m)});var pending=(state.dmOutbox||{})[c.cid];if(pending&&c.messages.has(pending.id)){var delivered=c.messages.get(pending.id).data;if(delivered.from===c.uid&&delivered.text===pending.text){delete state.dmOutbox[c.cid];if($('dmIn').value.trim()===pending.text)$('dmIn').value='';if((state.dmDrafts||{})[c.cid]===pending.text)delete state.dmDrafts[c.cid];save()}}if(first)c.more=newest.length===100;
-    if(first||newIds||c.lastMessageSig!==JSON.stringify(newest)){c.lastMessageSig=JSON.stringify(newest);renderDmMessages38(c,false)}
-    var read=await receipt;if(!dmStill38(c))return;if(read.error)showReadError($('dmBody'),read.error,function(){dmLoad(false)},true);else{c.readAt=read.at;$('dmBody').querySelectorAll('small[data-at]').forEach(function(el){setTextIfChanged(el,el.dataset.time+(el.dataset.mine==='1'&&Number(el.dataset.at)<=read.at?'  既読':''))})}
-    markDmRead38(c);
-  }catch(e){if(dmStill38(c))showReadError($('dmBody'),e,function(){dmLoad(first)},!first)}finally{c.busy=false}
-};
-async function loadOlderDm38(){var c=dmCur;if(!c||c.loadingOlder||!c.more)return;var rows=sortedDm38(c),oldest=rows[0];if(!oldest)return;c.loadingOlder=true;var button=$('dmOlder38');if(button)button.disabled=true;try{var older=await fDmOlder38(c.cid,oldest,100);if(!dmStill38(c))return;older.forEach(function(m){c.messages.set(m.id,m)});c.more=older.length===100;c.loadingOlder=false;renderDmMessages38(c,true)}catch(e){if(dmStill38(c))showReadError($('dmBody'),e,loadOlderDm38,true)}finally{c.loadingOlder=false;if(button&&button.isConnected)button.disabled=false}}
-async function sendDmPending38(c,pending){
-  var epoch=authEpoch;var key=c.uid+'/'+c.cid;if(dmSendTasks38.has(key))return dmSendTasks38.get(key);if(!dmStill38(c))return;
-  var task=(async function(){pending.error=null;$('dmSend').disabled=true;renderDmMessages38(c,false);
-    try{var meta=await fGet('dm/'+c.cid);if(c.uid!==FB.uid||epoch!==authEpoch)return;if(!meta||Number(meta.updated||0)<=pending.at)await fSet('dm/'+c.cid,{members:[c.uid,c.other].sort(),updated:pending.at,last:pending.text.slice(0,100),lastFrom:c.uid});
-      if(c.uid!==FB.uid||epoch!==authEpoch)return;await fSet('dm/'+c.cid+'/messages/'+pending.id,{from:c.uid,text:pending.text,at:pending.at});if(c.uid!==FB.uid||epoch!==authEpoch)return;
-      delete state.dmOutbox[c.cid];if(dmStill38(c)&&$('dmIn').value===pending.text)$('dmIn').value='';if((state.dmDrafts||{})[c.cid]===pending.text)delete state.dmDrafts[c.cid];save();if(dmStill38(c)){c.atBottom=true;await dmLoad(false);renderDmMessages38(c,false)}
-    }catch(e){if(c.uid===FB.uid&&epoch===authEpoch){pending.error=String(e.code||'unknown');save();if(dmStill38(c))renderDmMessages38(c,false)}}finally{if(dmStill38(c))$('dmSend').disabled=false}
-  })();dmSendTasks38.set(key,task);try{return await task}finally{dmSendTasks38.delete(key)}
-}
-dmSend=async function(){var c=dmCur,text=$('dmIn').value.trim();if(!c||!text||dmSendTasks38.has(c.uid+'/'+c.cid))return;state.dmOutbox=state.dmOutbox||{};var previous=state.dmOutbox[c.cid];if(previous){if(previous.text===text)return sendDmPending38(c,previous);var notice=$('dmPendingNotice38');if(!notice){notice=v36Text($('dmBody'),'未送信のメッセージを再送してから、新しいメッセージを送ってください。');notice.id='dmPendingNotice38';notice.setAttribute('role','alert')}return}var p={id:rid(),text:text.slice(0,1000),at:Date.now()};state.dmOutbox[c.cid]=p;saveDmDraft38();return sendDmPending38(c,p)};
-pxSend=async function(){var c=pxCur,t=$('pxIn').value.trim(),uid=FB.uid,epoch=authEpoch;if(!c||(!t&&!c.pending)||!uid||commentTasks38.has(uid+'/'+c.pid))return;var key=uid+'/'+c.pid;state.commentOutbox=state.commentOutbox||{};if(!c.pending)c.pending=state.commentOutbox[c.pid]||{id:rid(),data:{uid:uid,text:t.slice(0,300),at:Date.now()}};state.commentOutbox[c.pid]=c.pending;save();var p=c.pending;
-  var task=(async function(){$('pxSend').disabled=true;try{await fSet('posts/'+c.pid+'/comments/'+p.id,p.data);if(FB.uid!==uid||epoch!==authEpoch)return;if(px[c.pid]&&!px[c.pid].cms.some(function(m){return m.id===p.id}))px[c.pid].cms.push({id:p.id,data:p.data});c.pending=null;delete state.commentOutbox[c.pid];if((state.commentDrafts||{})[c.pid]===p.data.text)delete state.commentDrafts[c.pid];save();if(pxCur===c){if($('pxIn').value.trim()===p.data.text)$('pxIn').value='';var err=$('pxSendError38');if(err)err.remove();pxRender();pxCount(c.pid)}}catch(e){if(FB.uid===uid&&epoch===authEpoch&&pxCur===c){var old=$('pxSendError38');if(old)old.remove();var err=showReadError($('pxm').querySelector('.tmbox'),e,function(){pxSend()},true);err.id='pxSendError38';v36Text(err,'未送信：'+p.data.text)}}finally{if(pxCur===c)$('pxSend').disabled=false}})();commentTasks38.set(key,task);try{return await task}finally{commentTasks38.delete(key)}
-};
-// Return one consistent state to every follow button, including an open compact list.
-var updateFollow38=updateFollowButtons;updateFollowButtons=function(id,status){updateFollow38(id,status);if(status==='none')delete FBSENT[id]};
-var publishShared38=publishFollowerProfile;
-publishFollowerProfile=function(force){var uid=FB.uid,epoch=authEpoch,profile=followRequestProfile();var grants=publishShared38(force);if(!uid||!FB.syncReady)return grants;var signature=uid+JSON.stringify(profile);if(!force&&signature===publishShared38.pendingSignature)return grants;publishShared38.pendingSignature=signature;
-  return Promise.all([grants,(async function(){var ids=await myFollowIds();await Promise.all(ids.map(async function(owner){var path='requests/'+owner+'/from/'+uid;try{var req=await fGet(path);if(!req||uid!==FB.uid||epoch!==authEpoch)return;if(JSON.stringify(req.profile||{})===JSON.stringify(profile))return;await fSet(path,Object.assign({},req,{profile:profile}));profileCacheDrop(path)}catch(e){publishShared38.pendingSignature='';if(uid===FB.uid)$('friendProfileStatus').textContent='共有先への更新を待っています。';}}))})()]);
-};
-function requestAction38(uid,id,approve,card,ok,no,profile){var key=uid+'/'+id;if(requestTasks38.has(key))return requestTasks38.get(key);ok.disabled=no.disabled=true;var task=(async function(){try{if(approve)await fSet('stats/'+uid+'/viewers/'+id,{at:Date.now(),profile:profile});if(uid!==FB.uid)return;await fDel('requests/'+uid+'/from/'+id);if(uid===FB.uid){profileCacheDrop('requests/'+uid+'/from');fbAfter()}}catch(e){if(uid===FB.uid&&card.isConnected)showReadError(card,e,function(){requestAction38(uid,id,approve,card,ok,no,profile)},true)}finally{if(card.isConnected)ok.disabled=no.disabled=false}})();requestTasks38.set(key,task);task.finally(function(){requestTasks38.delete(key)});return task}
-
-function saveCommentDraft38(){if(!pxCur)return;state.commentDrafts=state.commentDrafts||{};if($('pxIn').value)state.commentDrafts[pxCur.pid]=$('pxIn').value;else delete state.commentDrafts[pxCur.pid];save()}
-var openPost38=openPost;openPost=async function(pid,it){if(pxCur)saveCommentDraft38();var task=openPost38(pid,it),c=pxCur;$('pxIn').value=(state.commentDrafts||{})[pid]||'';if(c)c.pending=(state.commentOutbox||{})[pid]||null;var err=$('pxSendError38');if(err)err.remove();await task;if(c===pxCur&&c.pending){var box=showReadError($('pxm').querySelector('.tmbox'),{code:'unavailable'},pxSend,true);box.id='pxSendError38';v36Text(box,'未送信：'+c.pending.data.text)}};
-
-// Strict grade validation, duplicate-test confirmation and comparable score percentages.
-var gradeMetric38='score',gradeDupApproval38='';
-var gradeLine38=gLine;gLine=function(recs,sel){if(gradeMetric38!=='percent')return gradeLine38(recs,sel);var mapped=planClone(recs);mapped.forEach(function(e){Object.keys(e.sc).forEach(function(n){var o=e.sc[n];if(o.s!=null)o.s=o.m>0?o.s/o.m*100:null;o.m=100})});return gradeLine38(mapped,sel).replace('点数のグラフ','得点率のグラフ（％）')};
-var gradesRender38=renderGrades;renderGrades=function(){gradesRender38();if($('gradeMetric38'))$('gradeMetric38').value=gradeMetric38;$('gNote').textContent=gradeMetric38==='percent'?'得点率（点数÷満点×100）で比較しています。':'点数を表示しています。満点が異なる試験は得点率に切り替えられます。';
-  var recs=gSorted().slice().reverse();Array.from($('glist').children).forEach(function(card,index){var e=recs[index];if(!e)return;Array.from(card.querySelectorAll('.gl')).forEach(function(row,i){var name=Object.keys(e.sc)[i],o=e.sc[name],sp=row.querySelectorAll('span'),previous=gSorted().filter(function(r){return r.date<e.date&&r.sc[name]&&r.sc[name].s!=null}).pop();if(o.s!=null&&previous){var old=previous.sc[name];if(old.m!==o.m){var diff=r1(gPct(o)-gPct(old));sp[2].textContent=(diff>0?'+':'')+diff+'ポイント（得点率）';sp[2].className=diff>0?'up':diff<0?'dn':''}}})})};
-saveGrade=function(){
-  var name=$('gmName').value.trim(),date=$('gmDate').value,rankText=$('gmRank').value,ofText=$('gmOf').value,rank=Number(rankText||0),of=Number(ofText||0),sc={},error='';
-  gmRows.forEach(function(r){var n=cleanSubject(r.n.value),scoreText=r.s.value,dText=r.d.value,score=Number(scoreText),max=Number(r.m.value),d=Number(dText);if(!n&&(scoreText!==''||dText!=='')){error='入力した点数・偏差値の科目名を入力してください。';return}if(!n||scoreText===''&&dText==='')return;if(sc[n]){error='同じ科目名が2つあります。';return}
-    if(scoreText!==''&&(!Number.isFinite(score)||!Number.isFinite(max)||max<=0||max>10000||score<0||score>max)){error='点数は0〜満点、満点は0より大きく10000以下で入力してください。';return}
-    if(dText!==''&&(!Number.isFinite(d)||d<0||d>150)){error='偏差値は0〜150で入力してください。';return}sc[n]={s:scoreText===''?null:score,m:Number.isFinite(max)&&max>0?max:100};if(dText!=='')sc[n].d=d;
-  });
-  if(!name||!validDate38(date)||date>fmtDate(new Date()))error='試験名と今日以前の正しい日付を入力してください。';
-  if((rankText!==''&&(!Number.isInteger(rank)||rank<1||rank>10000000))||(ofText!==''&&(!Number.isInteger(of)||of<1||of>10000000))||(rank&&of&&rank>of))error='順位・人数は1以上の整数で、順位は人数以下にしてください。';
-  if(!Object.keys(sc).length&&!rank)error=error||'点数・偏差値・順位を1つ以上入力してください。';if(error){$('gmErr').textContent=error;return}
-  var signature=JSON.stringify([gEdit,name,date,rank,of,sc]),duplicate=(state.exams||[]).some(function(e){return e.id!==gEdit&&cleanSubject(e.name)===name&&e.date===date});
-  if(duplicate&&gradeDupApproval38!==signature){askConfirm('同じ日付・名前の成績があります','別の記録として追加しますか？既存の成績を直す場合はキャンセルして「編集」を選んでください。','別の記録として保存',function(){gradeDupApproval38=signature;saveGrade()});return}
-  var rec={id:gEdit||newId(),name:name.slice(0,30),date:date,rank:rank,of:of,sc:sc};state.exams=(state.exams||[]).filter(function(e){return e.id!==rec.id});state.exams.push(rec);save();gradeDupApproval38='';forgetDraft38('gm');$('gm').hidden=true;renderGrades();
-};
-var openGrade38=openGrade;openGrade=function(id){openGrade38(id);markDraft38('gm')};
-// Preview and position the square profile-photo crop before committing it.
-function openPhotoCrop38(im){var dlg=v36Dialog('写真の切り抜き');dlg.classList.add('photo-crop38');var drawVersion=0;var canvas=document.createElement('canvas');canvas.width=canvas.height=320;canvas.style.cssText='display:block;width:100%;max-width:280px;aspect-ratio:1;margin:12px auto;border-radius:16px';canvas.setAttribute('aria-label','保存する写真のプレビュー');dlg.box.appendChild(canvas);var controls={};[['zoom','拡大',1,3,1,.01],['x','左右の位置',0,100,50,1],['y','上下の位置',0,100,50,1]].forEach(function(v){var label=document.createElement('label');label.textContent=v[1];var input=document.createElement('input');input.type='range';input.min=v[2];input.max=v[3];input.value=v[4];input.step=v[5];input.setAttribute('aria-label',v[1]);input.oninput=draw;controls[v[0]]=input;label.appendChild(input);dlg.box.appendChild(label)});function square(size,quality){var side=Math.min(im.width,im.height)/Number(controls.zoom.value),sx=(im.width-side)*Number(controls.x.value)/100,sy=(im.height-side)*Number(controls.y.value)/100,c=document.createElement('canvas');c.width=c.height=size;c.getContext('2d').drawImage(im,sx,sy,side,side,0,0,size,size);return c.toDataURL('image/jpeg',quality)}function draw(){var version=++drawVersion,image=new Image();image.onload=function(){if(version===drawVersion)canvas.getContext('2d').drawImage(image,0,0)};image.src=square(320,.85)}draw();var owner=dataOwner;v36Button(dlg.box,'この写真にする',function(){if(owner!==dataOwner){dlg.hide();return}state.profile.photo=square(160,.85);state.profile.photoS=square(96,.7);save();renderMy();forgetDraftElement38(dlg);dlg.hide()});v36Button(dlg.box,'キャンセル',function(){requestCloseElement38(dlg,dlg.hide)});markDraftElement38(dlg)}
-function photoSelected38(){var f=this.files&&this.files[0];this.value='';if(!f)return;if(f.size>20*1024*1024){$('pfNote').textContent='写真は20MB以下のものを選んでください。';return}var owner=dataOwner,reader=new FileReader();reader.onerror=function(){$('pfNote').textContent='写真を読み込めませんでした。'};reader.onload=function(){var im=new Image();im.onerror=function(){$('pfNote').textContent='この写真を開けません。JPEG・PNGなどの写真を選んでください。'};im.onload=function(){if(owner!==dataOwner)return;$('pfNote').textContent='';openPhotoCrop38(im)};im.src=reader.result};reader.readAsDataURL(f)}
-// Track only uncommitted forms. Profile fields and theme choices already auto-save.
-var draftStates38=new Map(),modalOrigins38=new Map(),closeBypass38=new WeakSet();
-function formSnapshot38(el){return JSON.stringify(Array.from(el.querySelectorAll('input,select,textarea')).map(function(e){return [e.id||e.getAttribute('aria-label')||'',e.type==='checkbox'?e.checked:e.value]}))}
-function markDraftElement38(el){if(el)draftStates38.set(el,formSnapshot38(el))}
-function forgetDraftElement38(el){draftStates38.delete(el)}
-function markDraft38(id){markDraftElement38($(id))}
-function forgetDraft38(id){forgetDraftElement38($(id))}
-function dirtyDraft38(el){return draftStates38.has(el)&&draftStates38.get(el)!==formSnapshot38(el)}
-function requestCloseElement38(el,close){if(dirtyDraft38(el)){askConfirm('変更を保存せず閉じますか？','入力中の変更は確定されていません。','変更を破棄して閉じる',function(){forgetDraftElement38(el);close()})}else{forgetDraftElement38(el);close()}}
-var openEdit38=openEdit;openEdit=function(id,d){openEdit38(id,d);markDraft38('em')};
-var openDraft38=openPlanDraft;openPlanDraft=function(){openDraft38();markDraft38('planDraft')};
-function installModalBehavior38(){
-  var closing=new Set(['gmNo','mrNo','emno','emNo','emcancel','dmClose','appearanceClose','fmClose','lmClose','tlClose','pmClose','dmmClose','pxClose','wmno','tmclose']);
-  document.addEventListener('click',function(e){var button=e.target.closest('button'),modal=e.target.closest('[role="dialog"]');if(!modal||modal.id==='cf')return;var isClose=button&&(closing.has(button.id)||button.hasAttribute('data-plan-close'))||e.target===modal;if(!isClose||!dirtyDraft38(modal)||closeBypass38.has(modal))return;e.preventDefault();e.stopImmediatePropagation();requestCloseElement38(modal,function(){closeBypass38.add(modal);if(button)button.click();else modal.click();closeBypass38.delete(modal)})},true);
-  document.addEventListener('keydown',function(e){if(e.key!=='Tab'&&e.key!=='Escape')return;var list=Array.from(document.querySelectorAll('[role="dialog"]')).filter(function(el){return !el.hidden&&el.isConnected&&el.getClientRects().length});list.sort(function(a,b){return (Number(getComputedStyle(a).zIndex)||0)-(Number(getComputedStyle(b).zIndex)||0)});var modal=list[list.length-1];if(!modal)return;
-    if(e.key==='Escape'&&dirtyDraft38(modal)){e.preventDefault();e.stopImmediatePropagation();requestCloseElement38(modal,function(){modal.hidden=true;if(modal.id==='planDraft')closePlanDialogs()});return}
-    if(e.key==='Tab'){var items=Array.from(modal.querySelectorAll('button,input,select,textarea,[tabindex="0"]')).filter(function(el){return !el.disabled&&el.getClientRects().length}),first=items[0],last=items[items.length-1];if(!first)return;if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
-  },true);
-  var pending=false;new MutationObserver(function(){if(pending)return;pending=true;queueMicrotask(function(){pending=false;Array.from(document.querySelectorAll('[role="dialog"]')).forEach(function(el){var visible=!el.hidden&&el.getClientRects().length;if(visible&&!modalOrigins38.has(el)){modalOrigins38.set(el,{focus:document.activeElement,y:window.scrollY});if(!el.contains(document.activeElement)){var first=el.querySelector('button,input,select,textarea');if(first)first.focus({preventScroll:true})}}});modalOrigins38.forEach(function(origin,el){if(!el.hidden&&el.isConnected)return;modalOrigins38.delete(el);if(origin.focus&&origin.focus.isConnected&&!origin.focus.closest('[hidden]'))origin.focus.focus({preventScroll:true});if(!Array.from(modalOrigins38.keys()).some(function(e){return e.isConnected&&!e.hidden}))window.scrollTo(0,origin.y)})})}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden']});
-  function viewport(){document.documentElement.style.setProperty('--visual-top',((window.visualViewport&&window.visualViewport.offsetTop)||0)+'px');document.documentElement.style.setProperty('--visual-height',((window.visualViewport&&window.visualViewport.height)||innerHeight)+'px');var active=document.activeElement;if(active&&/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName))requestAnimationFrame(function(){active.scrollIntoView({block:'nearest',inline:'nearest'})})}if(window.visualViewport){window.visualViewport.addEventListener('resize',viewport);window.visualViewport.addEventListener('scroll',viewport)}viewport();
-}
-// In-memory diagnostic timings; never uploaded to a server.
-var readTimings38=[];
-function installTiming38(){['fGet','fList','fQ','fDmOlder38','profileRead'].forEach(function(name){var original=window[name];window[name]=function(){var args=arguments,start=performance.now(),path=String(args[0]||'').split('/').map(function(part,i){return i%2?'…':part}).join('/');return Promise.resolve().then(function(){return original.apply(null,args)}).then(function(v){record('成功');return v},function(e){record(errorKind(e));throw e});function record(status){readTimings38.push({type:name,path:path,seconds:Math.round((performance.now()-start))/1000,status:status});if(readTimings38.length>200)readTimings38.shift()}}});window.studyPlannerDiagnostics=function(){return planClone(readTimings38)}}
-
-// Export and restore application data only; authentication, grants and DM stay with the account.
-function backupState38(){var data=planClone(state);data.log=planClone(logData());if(state.timer){var t=state.timer,x=findBlock(t.id);if(x){var seconds=Math.max(0,(Date.now()-t.start)/1000);data.spent[t.id]=(data.spent[t.id]||0)+seconds;data.contrib[t.id]=data.contrib[t.id]||[];splitTimerDays(t.start,Date.now(),function(date,sec){data.contrib[t.id].push({date:date,name:x.name,sec:sec,k:'t'})})}}['timer','idleReview','pendingTimerRelease','dmSeen','dmDrafts','dmOutbox','commentDrafts','commentOutbox','page','planPage','updatedAt','dataAt','lastAllocationAudit'].forEach(function(k){delete data[k]});return {format:'study-planner-backup',version:1,exportedAt:new Date().toISOString(),appearance:{theme:document.documentElement.getAttribute('data-app-theme')||'sky'},data:data}}
-function downloadBackup38(){if(state.idleReview){$('backupStatus38').textContent='未確認の放置時間を記録するか決めてから、書き出してください。';return}var backup=backupState38(),blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='study-planner-backup-'+fmtDate(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);$('backupStatus38').textContent='バックアップを書き出しました。'}
-function validateBackup38(raw){
-  if(!raw||raw.format!=='study-planner-backup'||raw.version!==1||!raw.data||typeof raw.data!=='object'||Array.isArray(raw.data))throw new Error('study plannerで書き出したバックアップを選んでください。');
-  var src=raw.data,out=JSON.parse(initialState),count=0;
-  function object(v){if(!v||typeof v!=='object'||Array.isArray(v))throw new Error('データ形式が正しくありません。');return v}
-  function text(v,max){if(typeof v!=='string'||v.length>max)throw new Error('文字データの形式が正しくありません。');return v}
-  function number(v,max){if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>max)throw new Error('時間・数値データの範囲が正しくありません。');return v}
-  function date(v){if(!validDate38(v))throw new Error('日付データが正しくありません。');return v}
-  function items(v){if(!Array.isArray(v)||v.length>100000)throw new Error('項目の形式が正しくありません。');return v}
-  function carry(v){return items(v||[]).map(function(x){object(x);var b={name:text(x.name,100),h:number(x.h,100000)};['sourceId','sourceDate','carryFrom'].forEach(function(k){if(x[k]!=null)b[k]=text(x[k],120)});if(x.selected!=null)b.selected=!!x.selected;return b})}
-  function plan(v){if(v==null)return null;var ids=new Set();return items(v).map(function(d){object(d);var blocks=items(d.blocks).map(function(b){if(++count>100000)throw new Error('項目が多すぎます。');object(b);var next={id:text(b.id,120),name:text(b.name,100),h:number(b.h,100000)};if(ids.has(next.id))throw new Error('計画の項目IDが重複しています。');ids.add(next.id);['manual','carried','skipCarry'].forEach(function(k){if(b[k]!=null)next[k]=!!b[k]});['carryFrom','sourceId'].forEach(function(k){if(b[k]!=null)next[k]=text(b[k],120)});return next});return {date:date(d.date),blocks:blocks,h:blocks.reduce(function(n,b){return n+b.h},0),carryProcessed:!!d.carryProcessed}})}
-  out.subjects=items(src.subjects).map(function(s){if(!Array.isArray(s)||s.length<2)throw new Error('科目の形式が正しくありません。');return [cleanSubject(text(s[0],100)),number(Number(s[1]),7)||1]});if(duplicateSubject(out.subjects))throw new Error('科目名が重複しています。');
-  ['goal','exam','start','planCycleStart','planDaySeen','pendingWeekReview'].forEach(function(k){if(src[k]!=null)out[k]=text(src[k],k==='goal'?200:120)});['exam','start','planCycleStart','planDaySeen'].forEach(function(k){if(out[k])date(out[k])});
-  ['wd','we','tot','rwd','rwe','timerIdleMinutes','planStyle'].forEach(function(k){if(src[k]!=null)out[k]=number(Number(src[k]),k==='wd'||k==='we'?16:k==='timerIdleMinutes'?480:100000)});
-  ['carry','weekSetupPending','legacyOff','hideCompleted'].forEach(function(k){if(src[k]!=null)out[k]=!!src[k]});out.carryDistribution=src.carryDistribution==='spread'?'spread':'next';
-  out.profile={};Object.keys(object(src.profile||{})).forEach(function(k){if(['icon','color','name','grade','age','school','high','gender','bY','bM','bD','photo','photoS'].indexOf(k)<0)return;var v=text(src.profile[k],k==='photo'||k==='photoS'?200000:200);if((k==='photo'||k==='photoS')&&v&&!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(v))throw new Error('写真の形式が正しくありません。');out.profile[k]=v});
-  out.subjColors={};Object.keys(object(src.subjColors||{})).forEach(function(k){text(k,100);var v=text(src.subjColors[k],7);if(!/^#[0-9a-f]{6}$/i.test(v))throw new Error('科目の色が正しくありません。');out.subjColors[k]=v});
-  out.log={};Object.keys(object(src.log||{})).forEach(function(d){date(d);out.log[d]={};Object.keys(object(src.log[d])).forEach(function(n){text(n,100);out.log[d][n]=number(src.log[d][n],1000000000)})});
-  out.spent={};Object.keys(object(src.spent||{})).forEach(function(id){text(id,120);out.spent[id]=number(src.spent[id],1000000000)});out.done={};Object.keys(object(src.done||{})).forEach(function(id){text(id,120);if(typeof src.done[id]!=='boolean')throw new Error('完了データが正しくありません。');out.done[id]=src.done[id]});
-  out.contrib={};Object.keys(object(src.contrib||{})).forEach(function(id){text(id,120);out.contrib[id]=items(src.contrib[id]).map(function(e){if(['t','c','m'].indexOf(e.k)<0)throw new Error('記録の種類が正しくありません。');return {date:date(e.date),name:text(e.name,100),sec:number(e.sec,1000000000),k:e.k}})});
-  out.credit={};Object.keys(object(src.credit||{})).forEach(function(id){text(id,120);var c=object(src.credit[id]);out.credit[id]={date:date(c.date),name:text(c.name,100),sec:number(c.sec,1000000000)}});
-  out.plan=plan(src.plan);out.weekCarry=carry(src.weekCarry);out.planHistory=items(src.planHistory||[]).map(function(h){var p=plan(h.plan);if(!p||!p.length)throw new Error('プラン履歴が空です。');var done={};Object.keys(object(h.done||{})).forEach(function(id){done[text(id,120)]=!!h.done[id]});return {id:text(h.id,120),plan:p,done:done,goal:typeof h.goal==='string'?h.goal:'',exam:typeof h.exam==='string'?h.exam:'',reason:typeof h.reason==='string'?h.reason:'復元',created:number(h.created||0,100000000000000),signature:JSON.stringify(p.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]})),reviewed:!!h.reviewed}});
-  out.exams=items(src.exams||[]).map(function(e){var sc={};Object.keys(object(e.sc||{})).forEach(function(n){text(n,100);var o=e.sc[n],m=number(o.m,10000);if(m<=0)throw new Error('満点が正しくありません。');sc[n]={s:o.s==null?null:number(o.s,m*10),m:m};if(o.d!=null)sc[n].d=number(o.d,1000)});return {id:text(e.id,120),date:date(e.date),name:text(e.name,100),rank:number(e.rank||0,10000000),of:number(e.of||0,10000000),sc:sc}});
-  if(src.carryReview){var r=object(src.carryReview);out.carryReview={mode:r.mode==='week'?'week':'daily',items:carry(r.items),sourceDates:items(r.sourceDates||[]).map(date),signature:text(r.signature||'',200000)}}else out.carryReview=null;
-  out.timer=null;out.idleReview=null;out.pendingTimerRelease=null;syncPlanTotals(out.plan);return {data:out,theme:['sky','sage','lavender','peach'].indexOf(raw.appearance&&raw.appearance.theme)>=0?raw.appearance.theme:'sky'};
-}
-function mergeBackup38(current,incoming){var next=planClone(current);Object.keys(incoming.log).forEach(function(d){next.log[d]=next.log[d]||{};Object.keys(incoming.log[d]).forEach(function(n){var old=Number(next.log[d][n]||0),newSec=Math.max(old,incoming.log[d][n]);if(newSec>old){next.log[d][n]=newSec;var id='import-'+rid();next.contrib[id]=[{date:d,name:n,sec:newSec-old,k:'m'}]}})});
-  var examKeys=new Set((next.exams||[]).map(function(e){return e.date+'|'+e.name}));incoming.exams.forEach(function(e){if(examKeys.has(e.date+'|'+e.name))return;var copy=planClone(e);if((next.exams||[]).some(function(v){return v.id===copy.id}))copy.id=rid();next.exams.push(copy);examKeys.add(e.date+'|'+e.name)});
-  next.planHistory=next.planHistory||[];var signatures=new Set(next.planHistory.map(function(h){return h.signature}));incoming.planHistory.forEach(function(h){if(signatures.has(h.signature))return;var copy=planClone(h);if(next.planHistory.some(function(v){return v.id===copy.id}))copy.id=rid();next.planHistory.push(copy);signatures.add(h.signature)});if(incoming.plan&&incoming.plan.length){var h={id:rid(),plan:planClone(incoming.plan),done:planClone(incoming.done),goal:incoming.goal,exam:incoming.exam,reason:'追加したバックアップ',created:Date.now(),reviewed:true};h.signature=JSON.stringify(h.plan.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]}));if(!signatures.has(h.signature))next.planHistory.push(h)}return next;
-}
-function previewRestore38(backup){var validated=validateBackup38(backup),owner=dataOwner,revision=saveRevision,dlg=v36Dialog('復元する内容を確認'),data=validated.data,total=Object.values(data.log).reduce(function(n,d){return n+Object.values(d).reduce(function(a,b){return a+b},0)},0),status=v36Text(dlg.box,'');v36Text(dlg.box,'記録 '+Object.keys(data.log).length+'日 · '+fmtH(total)+' ／ 成績 '+data.exams.length+'件 ／ プラン履歴 '+data.planHistory.length+'件'+(data.plan&&data.plan.length?' ／ 計画 '+data.plan.length+'日分（追加時は履歴に保存）':''));v36Text(dlg.box,'追加：同じ日・科目の記録は長い方を残します。成績は同じ日付・名前を重複させません。現在の計画と設定は維持します。');v36Text(dlg.box,'上書き：学習記録・プラン・成績・プロフィール・設定を、このバックアップの内容に置き換えます。ログイン先・フォロー・DMは変更しません。');
-  function restore(mode){if(owner!==dataOwner||revision!==saveRevision){status.textContent='データが更新されました。ファイルを開き直してください。';return}if(state.timer||state.idleReview||state.pendingTimerRelease){status.textContent='タイマーを一時停止し、未確認の記録と保存を完了してから復元してください。';return}var next=mode==='merge'?mergeBackup38(state,data):planClone(data),old=state;['dmSeen','dmDrafts','dmOutbox','commentDrafts','commentOutbox'].forEach(function(k){if(old[k]!=null)next[k]=old[k]});state=next;state.updatedAt=Date.now();state.dataAt=Date.now();if(!store()){state=old;status.textContent='復元は完了していません。現在のデータは維持しています。';return}timerUndoState=null;moveUndo36=null;mrSig='';save();if(mode==='replace'){var theme=document.querySelector('[data-app-theme="'+validated.theme+'"]');if(theme)theme.click()}dlg.hide();closePlanDialogs();fillWeeklySetup();countdown();renderPlan();showPage(state.weekSetupPending?1:state.plan?3:1);$('backupStatus38').textContent='データを復元しました。';}
-  v36Button(dlg.box,'記録・成績・履歴を追加',function(){restore('merge')});v36Button(dlg.box,'上書きして復元',function(){askConfirm('この内容で上書きしますか？','現在の学習記録・計画・成績・設定をバックアップの内容に置き換えます。','上書きして復元',function(){restore('replace')})});v36Button(dlg.box,'閉じる',dlg.hide);
-}
-async function chooseRestore38(){var file=this.files&&this.files[0];this.value='';if(!file)return;if(file.size>10*1024*1024){$('backupStatus38').textContent='10MB以下のバックアップを選んでください。';return}var owner=dataOwner;try{var text=await file.text(),raw=JSON.parse(text,function(k,v){if(['__proto__','prototype','constructor'].indexOf(k)>=0)throw new Error('対応していないデータ形式です。');return v});if(owner!==dataOwner)return;previewRestore38(raw)}catch(e){$('backupStatus38').textContent=e.message||'バックアップを読み込めませんでした。'}}
-
-function installV38(){
-  var style=document.createElement('style');style.textContent='.record-source38{display:block;font-size:.76rem;margin-top:3px}.frow{flex-wrap:wrap}.frow>span{flex:1;min-width:110px;overflow-wrap:anywhere}.dm-date38{text-align:center;margin:16px 0 8px}.dm-pending38{padding:10px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}.rank-status38{padding:0 4px 8px}.record-details38{font-size:.83rem;margin:10px 0}.record-details38 p{margin:5px 0}.backup-actions38{display:flex;flex-wrap:wrap;gap:8px}.fbrow b,.rname,.gr h4{overflow-wrap:anywhere;min-width:0}.tm{top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh)}.tmbox{max-height:calc(var(--visual-height,100dvh) - 32px);scroll-padding-block:18px;overflow-y:auto}.tmbox input,.tmbox select,.tmbox textarea{max-width:100%}.photo-crop38 label{display:block;margin:10px 0}.photo-crop38 input{display:block;width:100%}#dmNew38{display:block;margin:8px auto}#dmNew38[hidden]{display:none}#statsDetail38:empty{display:none}#statsDetail38 .note{font-size:.8rem}#diagnosticRows38{overflow-wrap:anywhere}#gradeMetric38{max-width:100%}@media(pointer:coarse){button:not(.theme-choice),input[type=button]{min-height:44px;min-width:44px}input:not([type=checkbox]):not([type=color]):not([type=range]),select,textarea{font-size:16px!important}.friend-compact .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(86px,1.35fr) 44px;gap:5px}.friend-compact .fbrow button{white-space:normal}.plan-header-actions{flex-wrap:wrap;justify-content:flex-end}.plan-dates{overflow-x:auto;grid-template-columns:repeat(7,minmax(44px,1fr))}.subj{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}.draft-subject{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}}';document.head.appendChild(style);
-  var headerCard=$('followingCard');if(headerCard){headerCard.setAttribute('role','button');headerCard.setAttribute('tabindex','0');headerCard.setAttribute('aria-label','友達の学習記録とランキング');headerCard.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();headerCard.click()}})}
-  var nav=document.createElement('div');nav.className='hd0';nav.innerHTML='<button id="statsPrev38">‹ 前へ</button><small id="statsRange38" class="note"></small><button id="statsNext38">次へ ›</button>'; $('schart').before(nav);var now=v36Button($('stats'),'今日・今週・今月へ',function(){sOff=0;sSel=-1;statsViews38={};renderStats()});now.id='statsNow38';$('schart').after(now);var recordsButton=v36Button($('stats'),'記録一覧・詳細',function(){openDm()});recordsButton.id='statsHistory38';now.after(recordsButton);var details=document.createElement('details');details.id='statsDetail38';details.addEventListener('toggle',function(){statsDetailOpen38=details.open});details.className='record-details38';details.setAttribute('aria-live','polite');recordsButton.after(details);$('statsPrev38').onclick=function(){sOff++;sSel=-1;renderStats()};$('statsNext38').onclick=function(){if(sOff>0){sOff--;sSel=-1;renderStats()}};
-  Array.from($('seg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(false,b.dataset.m)}});Array.from($('dseg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(true,b.dataset.m)}});
-  var historyNow=v36Button($('dm').querySelector('.tmbox'),'今日へ',function(){dOff=0;dSel=-1;detailViews38={};renderDm()});historyNow.id='historyNow38';$('dchart').before(historyNow);
-  var remaining=document.createElement('small');remaining.id='tdRemaining38';$('tdPlanned').after(remaining);var recordNote=v36Text($('stats'),'記録合計：計測・手入力・チェック補完を含みます。棒を押すと内訳を確認できます。');$('stats').querySelector('.sum3').after(recordNote);
-  var metric=document.createElement('label');metric.textContent='グラフの表示 ';var select=document.createElement('select');select.id='gradeMetric38';select.innerHTML='<option value="score">点数</option><option value="percent">得点率（％）</option>';select.onchange=function(){gradeMetric38=this.value;renderGrades()};metric.appendChild(select);$('gchart').before(metric);
-  var oldRow=addGmRow;addGmRow=function(){oldRow.apply(null,arguments);var row=gmRows[gmRows.length-1];row.s.max=row.m.value;row.m.max=10000;row.d.max=150;row.m.addEventListener('input',function(){row.s.max=row.m.value})};
-  v36Text($('pfEdit'),'名前・アイコン・写真・学年・志望校は、ログインした利用者が閲覧できます。目標・高校名は、送信したフォローリクエストの相手や、フォロー関係の画面で共有されます。年齢・性別・誕生日・成績は相手に表示しません。');$('pfPhoto').onchange=photoSelected38;
-  var settings=$('appearanceModal').querySelector('.tmbox'),heading=document.createElement('h3');heading.className='sh';heading.textContent='データの保存と復元';settings.insertBefore(heading,$('appearanceClose').parentNode);var actions=document.createElement('div');actions.className='backup-actions38';heading.after(actions);v36Button(actions,'バックアップを書き出す',downloadBackup38);var upload=document.createElement('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;upload.id='backupFile38';upload.onchange=chooseRestore38;actions.appendChild(upload);v36Button(actions,'バックアップから復元',function(){upload.click()});var backupStatus=v36Text(settings,'');backupStatus.id='backupStatus38';actions.after(backupStatus);var diagnostics=document.createElement('details'),title=document.createElement('summary');title.textContent='読み込み診断（開発用）';diagnostics.appendChild(title);var diagnosticRows=document.createElement('div');diagnosticRows.id='diagnosticRows38';function timings(){diagnosticRows.innerHTML='';readTimings38.slice(-30).reverse().forEach(function(r){v36Text(diagnosticRows,r.type+' '+r.path+' · '+r.seconds.toFixed(3)+'秒 · '+r.status)})}v36Button(diagnostics,'更新',timings);v36Button(diagnostics,'クリア',function(){readTimings38=[];timings()});diagnostics.appendChild(diagnosticRows);backupStatus.after(diagnostics);
-  var newer=v36Button($('dmm').querySelector('.tmbox'),'新しいメッセージへ',function(){if(dmCur){dmCur.atBottom=true;$('dmBody').scrollTop=$('dmBody').scrollHeight;newer.hidden=true;markDmRead38(dmCur)}});newer.id='dmNew38';newer.hidden=true;$('dmBody').after(newer);$('dmBody').addEventListener('scroll',function(){var c=dmCur;if(!c)return;c.atBottom=this.scrollTop+this.clientHeight>=this.scrollHeight-48;if(c.atBottom){newer.hidden=true;markDmRead38(c)}});$('dmIn').addEventListener('input',function(){saveDmDraft38()});
-  var dmStop38=dmStop;dmStop=function(){if(dmCur)saveDmDraft38();dmStop38();newer.hidden=true};
-  $('pxIn').addEventListener('input',saveCommentDraft38);
-  $('mrAdd').onclick=addRecord;$('mrOpen').onclick=openMr;$('gmSave').onclick=saveGrade;$('gAdd').onclick=function(){openGrade(null)};$('dmSend').onclick=dmSend;$('pxSend').onclick=pxSend;
-  [['openTimer','tm'],['openMr','mrm'],['openGrade','gm'],['openEdit','em'],['openDm','dm'],['openFriend','fm'],['openList','lm'],['openProfile','pm'],['openInbox','dmm'],['openRanking','tlm']].forEach(function(pair){var original=window[pair[0]];window[pair[0]]=function(){var modal=$(pair[1]);if(modal.hidden)modalOrigins38.set(modal,{focus:document.activeElement,y:window.scrollY});return original.apply(null,arguments)}});
-  $('settingsBtn').addEventListener('click',function(){if($('appearanceModal').hidden)modalOrigins38.set($('appearanceModal'),{focus:document.activeElement,y:window.scrollY})},true);
-  installModalBehavior38();installTiming38();
-}
-
 // ===== イベント =====
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
@@ -3192,8 +2910,8 @@ $("tmReset").onclick=function(){
 $("timeAdjustOpen").onclick=openClockAdjust;
 $("clockEditApply").onclick=applyClockAdjust;
 $("clockEditCancel").onclick=function(){closeClockAdjust(true)};
-$("clockMinus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining-15*60)};
-$("clockPlus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining+15*60)};
+$("clockMinus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining-60)};
+$("clockPlus").onclick=function(){if(clockEdit)setClockRemaining(clockEdit.remaining+60)};
 $("timerUndoButton").onclick=undoTimerAdjustment;
 $("activeTimer").onclick=function(){if(state.idleReview)showIdleReview();else if(state.timer)openTimer(state.timer.id)};
 $("idleRecord").onclick=function(){resolveIdleReview(true)};$("idleDiscard").onclick=function(){resolveIdleReview(false)};
@@ -3321,7 +3039,7 @@ $("fbCfgSave").onclick=function(){
   location.reload();
 };
 $("fbIn").onclick=function(){fbSignIn()};
-$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",async function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;if(state.pendingTimerRelease){showTimerMessage("計測時間を保存できていません。","通信が戻り計測時間の保存が完了してから、ログアウトしてください。");return}$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
+$("fbLogout").onclick=function(){askConfirm("ログアウトしますか?","","ログアウトする",async function(){if(state.idleReview||checkIdleTimer()){showIdleReview();return}pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;if(state.pendingTimerRelease){showTimerMessage("計測時間を保存できていません。","通信を確認し、保存の再試行後にログアウトしてください。");return}$("appearanceModal").hidden=true;if(FB.Au)FB.Au.signOut(FB.auth)})};
 $("fbUserSearchBtn").onclick=function(){fbSearchUsers()};
 $("fbUserSearch").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();fbSearchUsers()}};
 $("addBtn").onclick=openFriend;
@@ -3356,9 +3074,8 @@ setInterval(fbPoll,60000);
 setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
 setInterval(function(){if(!document.hidden&&!$("tlm").hidden)rankLoad()},20000);
 document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
-installV38();
 fbInit();
-if($("saveRetry"))$("saveRetry").onclick=retrySaving;
+$("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
 window.addEventListener("offline",function(){if(ownsCurrentData(FB.uid)&&syncData()!==syncSig){saveHealth.pending=true;paintSaveStatus()}});
 setInterval(tickAll,1000);
