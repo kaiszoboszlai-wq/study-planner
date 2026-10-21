@@ -499,6 +499,16 @@ button.follow-action:disabled{opacity:.6}
 @media(max-width:360px){.sp-top .header-goal54{font-size:.7rem!important}.header-deadline54{gap:3px}.header-deadline54 .eyebrow{font-size:.6rem!important}#stats .sum3{display:flex;flex-direction:column;gap:4px;text-align:left;margin:8px 0}#stats .sum3>div{display:flex;justify-content:space-between;align-items:baseline;gap:12px}#stats .sum3 b{font-size:1rem}#stats .sum3 small{display:inline}}
 @media(prefers-reduced-motion:reduce){.carry-switch-row54 input:before{transition:none}}
 </style>
+
+<style id="readable-v55">
+#stats .sum3 b{font-weight:650;line-height:1.4;white-space:nowrap}#stats .sum3{gap:8px}
+.sp-top .sp-preview-card:not(.follow){flex-wrap:wrap;gap:2px 8px!important}.sp-top .header-goal54{flex:1 1 100%;font-size:var(--goal-size55,18px)!important;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}.header-deadline54{margin-left:auto}#goalEdit{display:none!important}
+#rankingPage54 .rank-title54{font-size:clamp(1.15rem,4.6vw,1.6rem);color:var(--ink);font-weight:650;margin:0 0 18px}
+#statsNow38,#statsHistory38,#statsDetail38,#tdRemaining38,#timerUndo,#planMoveUndo{display:none!important}
+#schart svg .ax,#dchart svg .ax{font-size:12px}#schart svg .bar-total55,#dchart svg .bar-total55{font-weight:600;paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+#today .today-summary{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:6px 10px}#today .today-summary strong{font-size:clamp(1.5rem,6vw,2rem);font-weight:650;white-space:nowrap;line-height:1.25}#today .today-summary #tdPlanned{font-size:.8rem;margin-top:5px}#today .today-subject{font-size:1.2rem;font-weight:700}#today .today-detail{font-size:.95rem;font-weight:600;line-height:1.4;color:var(--ink)}#today .today-block-percent{font-size:.85rem;font-weight:600}
+@media(max-width:360px){#today .today-summary strong{font-size:1.4rem}}
+</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -517,7 +527,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="sp-top">
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
-<p class="goalbar">目標：<span id="goalTxt"></span><button class="lnk" id="goalEdit">変更</button></p>
+<p class="goalbar">目標：<span id="goalTxt"></span><button class="lnk" id="goalEdit" hidden>変更</button></p>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
 <div class="sp-preview-head">
   <div class="sp-preview-card" aria-live="polite">
@@ -591,7 +601,7 @@ button.follow-action:disabled{opacity:.6}
 </section>
 <section id="today" hidden>
 <div class="today-heading"><h2>今日</h2><span id="tdTitle"></span></div>
-<div id="tdSummary" class="today-summary"><div><small>今日の計測時間</small><strong id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><small>達成率</small><strong id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
+<div id="tdSummary" class="today-summary"><div><strong aria-label="今日の計測時間" id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><strong aria-label="達成率" id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
 <div class="note" id="tdSum"></div>
 <div id="tdList"></div>
 <div class="actions"><button id="tdPlan">今日から7日間のプランを見る</button></div>
@@ -688,6 +698,7 @@ button.follow-action:disabled{opacity:.6}
 <p class="err" id="pfNote"></p></div>
 <div class="fld"><span class="lb">テーマの色</span><div class="icons" id="colorPick"></div></div>
 <div class="fld"><label>名前<input type="text" id="pfName" maxlength="20" placeholder="例 たろう"></label></div>
+<div class="fld"><label>目標<input type="text" id="pfGoal55" maxlength="60" placeholder="例 第一志望に合格する"></label></div>
 <div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
 <div class="fld"><label>年齢<input type="number" id="pfAge" min="5" max="99" placeholder="例 17"></label></div>
 <div class="fld"><label>志望校<input type="text" id="pfSchool" maxlength="40" placeholder="例 東京大学 理科一類"></label></div>
@@ -1350,7 +1361,7 @@ function renderActiveTimer(){
   if(review)setTextIfChanged(text,review.name+" · 記録の確認");
   else if(x){var left=remain(t.id),label=x.name+" · 計測中 · "+(left<=0?"予定時間終了 · 超過 "+fmtT(-left):"残り "+fmtT(left));setTextIfChanged(text,label)}
   el.setAttribute("aria-label",review?"未確認の計測時間を確認する":x?x.name+"の計測中タイマーに戻る":"計測中のタイマーに戻る");
-  var undo=$("timerUndo");if(undo)undo.hidden=!timerUndoState||timerUndoState.id!==openId||timerUndoState.expires<Date.now()||timerUndoState.revision!==saveRevision;
+  var undo=$("timerUndo");if(undo)undo.hidden=true;
 }
 // 操作がなくても計測を継続する。旧版の未確認時間だけ自動で記録する。
 function checkIdleTimer(){return false}
@@ -1847,7 +1858,7 @@ function barSvg(bs,sel){ // 柱グラフ(積み上げ)。柱の上に、合計�
   var names=state.subjects.map(function(s){return s[0]});
   bs.forEach(function(b){Object.keys(b.parts).forEach(function(n){if(names.indexOf(n)<0)names.push(n)})});
   var mx=0;bs.forEach(function(b){mx=Math.max(mx,b.total/3600)});
-  var sc=niceTop(mx),W=320,H=340,ml=42,mr=6,mt=26,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56;
+  var host=!$('dm').hidden?$('dchart'):$('schart'),sc=niceTop(mx),W=Math.max(240,Math.round(host.clientWidth||320)),H=320,ml=60,mr=8,mt=48,mb=44,pw=W-ml-mr,ph=H-mt-mb,slot=pw/bs.length,bw=slot*0.56,labels=[];
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="学習時間のグラフ">';
   for(var v=0;v<=sc.top+1e-9;v+=sc.step){
     var y=mt+ph-v/sc.top*ph;
@@ -1862,7 +1873,10 @@ function barSvg(bs,sel){ // 柱グラフ(積み上げ)。柱の上に、合計�
       svg+='<rect x="'+(cx-bw/2)+'" y="'+top+'" width="'+bw+'" height="'+(h/sc.top*ph)+'" style="fill:'+colorOf(nm)+'"/>';
       acc+=h;
     });
-    if(b.total>0)svg+='<text class="ax" x="'+cx+'" y="'+(mt+ph-acc/sc.top*ph-4)+'" text-anchor="middle">'+compactHours38(b.total)+'</text>';
+    if(b.total>0){var text=compactHours38(b.total),tw=text.length*6.8,ly=mt+ph-acc/sc.top*ph-8;
+      while(labels.some(function(l){return Math.abs(l.x-cx)<(l.w+tw)/2+4&&Math.abs(l.y-ly)<22}))ly-=22;
+      ly=Math.max(14,ly);labels.push({x:cx,y:ly,w:tw});svg+='<text class="ax bar-total55" x="'+cx+'" y="'+ly+'" text-anchor="middle">'+text+'</text>';
+    }
     svg+='<text class="ax axb" x="'+cx+'" y="'+(mt+ph+16)+'" text-anchor="middle"'+(i===sel?' style="fill:var(--ink)"':'')+'>'+b.label+'</text><text class="ax" x="'+cx+'" y="'+(mt+ph+30)+'" text-anchor="middle">'+b.sub+'</text></g>';
   });
   return svg+'</svg>';
@@ -1925,7 +1939,7 @@ function showPage(n){
   if(n===7)renderGrades();
   window.scrollTo(0,0);
 }
-function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"未設定です";$("goalEdit").textContent=g?"変更":"設定する"}
+function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"未設定です";$("goalEdit").hidden=true;$("goalTxt").parentNode.title="目標："+g;queueFit55()}
 var goalBack=null,cfFn=null,cfNoFn=null;
 function askConfirm(msg,sub,okLabel,fn,noLabel,noFn){$("cfmsg").textContent=msg;$("cfsub").textContent=sub||"";$("cfok").textContent=okLabel||"OK";$("cfno").textContent=noLabel||"キャンセル";cfFn=fn;cfNoFn=noFn||null;$("cf").hidden=false}
 
@@ -1950,7 +1964,7 @@ function todayBar(){
   (day?day.blocks:[]).forEach(function(x){hours+=Number(x.h)||0;seconds+=Math.max(0,elapsed(x.id))});
   var percent=hours>0?Math.floor(seconds/(hours*3600)*100):0;
   $("tdPlanned").textContent="予定合計 "+hm(hours);$("tdMeasured").textContent=fmtH(seconds);$("tdPercent").textContent=percent+"%";$("tdBar").style.width=Math.min(100,percent)+"%";$("tdMeter").setAttribute("aria-valuenow",Math.min(100,percent));$("tdMeter").setAttribute("aria-valuetext",percent+"パーセント");
-  document.querySelectorAll("[data-today-block]").forEach(function(card){var id=card.dataset.todayBlock,x=findBlock(id);if(!x)return;var e=Math.max(0,elapsed(id)),p=x.h>0?Math.floor(e/(x.h*3600)*100):0,run=running(id);card.classList.toggle("is-running",run);card.querySelector(".today-detail").textContent="計測 "+fmtH(e)+" / 予定 "+hm(x.h);card.querySelector(".today-progress i").style.width=Math.min(100,p)+"%";card.querySelector(".today-block-percent").textContent=p+"%";var play=card.querySelector(".play");play.innerHTML=run?IC_PAUSE:IC_PLAY;play.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");card.querySelector(".today-running-label").textContent=run?"計測中":""});
+  document.querySelectorAll("[data-today-block]").forEach(function(card){var id=card.dataset.todayBlock,x=findBlock(id);if(!x)return;var e=Math.max(0,elapsed(id)),p=x.h>0?Math.floor(e/(x.h*3600)*100):0,run=running(id);card.classList.toggle("is-running",run);card.querySelector(".today-detail").textContent=fmtH(e)+" / "+hm(x.h);card.querySelector(".today-progress i").style.width=Math.min(100,p)+"%";card.querySelector(".today-block-percent").textContent=p+"%";var play=card.querySelector(".play");play.innerHTML=run?IC_PAUSE:IC_PLAY;play.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");card.querySelector(".today-running-label").textContent=run?"計測中":""});
 }
 
 // ===== 模試・テストの成績 =====
@@ -2114,6 +2128,7 @@ function renderMy(){
     b.onclick=function(){p.color=c;save();renderMy()};cp.appendChild(b);
   });
   if(document.activeElement!==$("pfName"))$("pfName").value=p.name||"";
+  if(document.activeElement!==$("pfGoal55"))$("pfGoal55").value=state.goal||"";
   $("pfGrade").value=p.grade||"";
   if(document.activeElement!==$("pfAge"))$("pfAge").value=p.age||"";
   if(document.activeElement!==$("pfSchool"))$("pfSchool").value=p.school||"";
@@ -2140,7 +2155,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-22 v54"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-22 v55"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2944,7 +2959,8 @@ var saveEdit36=saveEdit;saveEdit=function(){if(!edit)return;var id=edit.id,b=id&
 var moveMerge36=false,moveUndo36=null;
 function moveSnapshot(){return {owner:dataOwner,plan:planClone(state.plan),spent:planClone(state.spent),contrib:planClone(state.contrib),done:planClone(state.done),credit:planClone(state.credit),timer:planClone(state.timer)}}
 moveBlock=function(id,nd){var l=locate(id);if(!l||nd<0||nd>=state.plan.length||nd===l.d)return;var x=l.x,dst=state.plan[nd];state.plan[l.d].blocks.splice(l.k,1);var twin=dst.blocks.find(function(y){return y.name===x.name&&!!y.carried===!!x.carried&&(!y.carried||y.carryFrom===x.carryFrom)&&!state.done[y.id]&&!state.done[x.id]});if(twin){moveMerge36=true;twin.h+=x.h;twin.manual=true;twin.skipCarry=twin.skipCarry&&x.skipCarry;state.spent[twin.id]=(state.spent[twin.id]||0)+(state.spent[x.id]||0);delete state.spent[x.id];if(state.contrib&&state.contrib[x.id]){state.contrib[twin.id]=(state.contrib[twin.id]||[]).concat(state.contrib[x.id]);delete state.contrib[x.id]}if(running(x.id))state.timer.id=twin.id}else{x.manual=true;dst.blocks.push(x)}syncPlanTotals(state.plan)};
-function offerMoveUndo(snapshot,message){var prior=$('planMoveUndo');if(prior)prior.remove();var el=document.createElement('div');el.id='planMoveUndo';el.setAttribute('role','status');el.style.cssText='position:fixed;bottom:85px;left:12px;right:12px;z-index:35;padding:10px;background:var(--card,#fff);border:1px solid var(--line);border-radius:12px;max-width:540px;margin:auto';v36Text(el,message);var token={snapshot:snapshot,revision:saveRevision,expires:Date.now()+15000};moveUndo36=token;v36Button(el,'元に戻す',function(){if(moveUndo36!==token||dataOwner!==snapshot.owner||Date.now()>token.expires||saveRevision!==token.revision){el.remove();return}['plan','spent','contrib','done','credit','timer'].forEach(function(k){state[k]=snapshot[k]});moveUndo36=null;el.remove();save();renderPlan()});document.body.appendChild(el);setTimeout(function(){if(moveUndo36===token){moveUndo36=null;el.remove()}},15000)}
+function offerMoveUndo(){moveUndo36=null;var el=$('planMoveUndo');if(el)el.remove()}
+
 var endDrag36=endDrag;endDrag=function(cancel){var valid=drag&&!cancel&&drag.over,snap=valid?moveSnapshot():null;moveMerge36=false;endDrag36(cancel);if(snap)offerMoveUndo(snap,moveMerge36?'同じ科目の項目を統合しました。':'項目の並び・移動を変更しました。');moveMerge36=false};
 v36Button($('planSettings').querySelector('.tmbox'),'過去のプランを見る',openPlanHistory);
 v36Button($('weekSetupNotice').parentNode,'プラン履歴',openPlanHistory);
@@ -3004,13 +3020,10 @@ function changePeriod38(detail,mode){
   if(detail){dMode=mode;dOff=saved.off;dSel=saved.sel;renderDm()}else{sMode=mode;sOff=saved.off;sSel=saved.sel;renderStats()}
 }
 function statsDetail38(){
-  if(!$('statsDetail38'))return;var sb=selectedPeriod38(sMode,sOff,sSel),box=$('statsDetail38');box.innerHTML='';var summary=document.createElement('summary');summary.textContent=sb.key+' の内訳・比較';box.appendChild(summary);box.open=statsDetailOpen38;
-  v36Text(box,sb.key+' · 記録合計 '+fmtH(sb.total));var parts={timer:0,manual:0,check:0,legacy:0};Object.keys(state.log||{}).filter(bucketMatch(sMode,sb.key)).forEach(function(date){Object.keys(state.log[date]).forEach(function(name){var p=recordParts38(date,name);Object.keys(parts).forEach(function(k){parts[k]+=p[k]})})});
-  if(state.timer){var x=findBlock(state.timer.id);if(x)splitTimerDays(state.timer.start,Date.now(),function(date,sec){if(bucketMatch(sMode,sb.key)(date))parts.timer+=sec})}
-  v36Text(box,partsLabel38(parts)||'記録なし（0時間）');Object.keys(sb.parts).sort(function(a,b){return sb.parts[b]-sb.parts[a]}).forEach(function(name){v36Text(box,name+' '+fmtH(sb.parts[name]))});
-  $('statsNext38').disabled=sOff===0;$('statsRange38').textContent=buckets(logData(),sMode,sOff).map(function(b){return b.label}).filter(function(_,i,a){return i===0||i===a.length-1}).join(' 〜 ');
-  v36Text(box,comparePeriod38(sMode,sb.key));
+  $('statsNext38').disabled=sOff===0;
+  $('statsRange38').textContent=buckets(logData(),sMode,sOff).map(function(b){return b.label}).filter(function(_,i,a){return i===0||i===a.length-1}).join(' 〜 ');
 }
+
 function comparePeriod38(mode,key){
   var now=new Date(),today=fmtDate(now),start=new Date((key.length===7?key+'-01':key)+'T00:00:00'),previous=new Date(start),end=new Date(start),count=0;
   if(mode==='d'){if(key>=today){start.setDate(start.getDate()-1)}previous=new Date(start);previous.setDate(previous.getDate()-1);count=1}
@@ -3173,10 +3186,10 @@ async function chooseRestore38(){var file=this.files&&this.files[0];this.value='
 function installV38(){
   var style=document.createElement('style');style.textContent='.record-source38{display:block;font-size:.76rem;margin-top:3px}.frow{flex-wrap:wrap}.frow>span{flex:1;min-width:110px;overflow-wrap:anywhere}.dm-date38{text-align:center;margin:16px 0 8px}.dm-pending38{padding:10px;border:1px solid var(--line);border-radius:10px;overflow-wrap:anywhere}.rank-status38{padding:0 4px 8px}.record-details38{font-size:.83rem;margin:10px 0}.record-details38 p{margin:5px 0}.backup-actions38{display:flex;flex-wrap:wrap;gap:8px}.fbrow b,.rname,.gr h4{overflow-wrap:anywhere;min-width:0}.tm{top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh)}.tmbox{max-height:calc(var(--visual-height,100dvh) - 32px);scroll-padding-block:18px;overflow-y:auto}.tmbox input,.tmbox select,.tmbox textarea{max-width:100%}.photo-crop38 label{display:block;margin:10px 0}.photo-crop38 input{display:block;width:100%}#dmNew38{display:block;margin:8px auto}#dmNew38[hidden]{display:none}#statsDetail38:empty{display:none}#statsDetail38 .note{font-size:.8rem}#diagnosticRows38{overflow-wrap:anywhere}#gradeMetric38{max-width:100%}@media(pointer:coarse){button:not(.theme-choice),input[type=button]{min-height:44px;min-width:44px}input:not([type=checkbox]):not([type=color]):not([type=range]),select,textarea{font-size:16px!important}.friend-compact .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(86px,1.35fr) 44px;gap:5px}.friend-compact .fbrow button{white-space:normal}.plan-header-actions{flex-wrap:wrap;justify-content:flex-end}.plan-dates{overflow-x:auto;grid-template-columns:repeat(7,minmax(44px,1fr))}.subj{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}.draft-subject{grid-template-columns:32px minmax(0,1fr) 48px 44px;gap:5px}}';document.head.appendChild(style);
   var headerCard=$('followingCard');if(headerCard){headerCard.setAttribute('role','button');headerCard.setAttribute('tabindex','0');headerCard.setAttribute('aria-label','友達の学習記録とランキング');headerCard.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();headerCard.click()}})}
-  var nav=document.createElement('div');nav.className='hd0';nav.innerHTML='<button id="statsPrev38">‹ 前へ</button><small id="statsRange38" class="note"></small><button id="statsNext38">次へ ›</button>'; $('schart').before(nav);var now=v36Button($('stats'),'今日・今週・今月へ',function(){sOff=0;sSel=-1;statsViews38={};renderStats()});now.id='statsNow38';$('schart').after(now);var recordsButton=v36Button($('stats'),'記録一覧・詳細',function(){openDm()});recordsButton.id='statsHistory38';now.after(recordsButton);var details=document.createElement('details');details.id='statsDetail38';details.addEventListener('toggle',function(){statsDetailOpen38=details.open});details.className='record-details38';details.setAttribute('aria-live','polite');recordsButton.after(details);$('statsPrev38').onclick=function(){sOff++;sSel=-1;renderStats()};$('statsNext38').onclick=function(){if(sOff>0){sOff--;sSel=-1;renderStats()}};
+  var nav=document.createElement('div');nav.className='hd0';nav.innerHTML='<button id="statsPrev38">‹ 前へ</button><small id="statsRange38" class="note"></small><button id="statsNext38">次へ ›</button>'; $('schart').before(nav);$('statsPrev38').onclick=function(){sOff++;sSel=-1;renderStats()};$('statsNext38').onclick=function(){if(sOff>0){sOff--;sSel=-1;renderStats()}};
   Array.from($('seg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(false,b.dataset.m)}});Array.from($('dseg').querySelectorAll('button')).forEach(function(b){b.onclick=function(){changePeriod38(true,b.dataset.m)}});
   var historyNow=v36Button($('dm').querySelector('.tmbox'),'今日へ',function(){dOff=0;dSel=-1;detailViews38={};renderDm()});historyNow.id='historyNow38';$('dchart').before(historyNow);
-  var remaining=document.createElement('small');remaining.id='tdRemaining38';$('tdPlanned').after(remaining);
+  var remaining=document.createElement('small');remaining.id='tdRemaining38';remaining.hidden=true;$('tdPlanned').after(remaining);
   var metric=document.createElement('label');metric.textContent='グラフの表示 ';var select=document.createElement('select');select.id='gradeMetric38';select.innerHTML='<option value="score">点数</option><option value="percent">得点率（％）</option>';select.onchange=function(){gradeMetric38=this.value;renderGrades()};metric.appendChild(select);$('gchart').before(metric);
   var oldRow=addGmRow;addGmRow=function(){oldRow.apply(null,arguments);var row=gmRows[gmRows.length-1];row.s.max=row.m.value;row.m.max=10000;row.d.max=150;row.m.addEventListener('input',function(){row.s.max=row.m.value})};
   v36Text($('pfEdit'),'名前・アイコン・写真・学年・志望校は、ログインした利用者が閲覧できます。目標・高校名は、送信したフォローリクエストの相手や、フォロー関係の画面で共有されます。年齢・性別・誕生日・成績は相手に表示しません。');$('pfPhoto').onchange=photoSelected38;
@@ -3305,7 +3318,7 @@ function compactLegend54(box,key){
   var details=document.createElement('details');details.className='legend-more54';details.dataset.legendKey=key;details.open=legendExpanded54.has(key);var summary=document.createElement('summary');summary.textContent='さらに表示（'+(rows.length-3)+'教科）';details.appendChild(summary);rows.slice(3).forEach(function(row){details.appendChild(row)});box.appendChild(details);
 }
 function rankVisible54(){return !!($('rankingPage54')&&!$('rankingPage54').hidden&&state.page===8)}
-var rankTask54=null,rankTaskOwner54=null,rankLive54=new Map(),rankLiveKey54='';
+var rankTask54=null,rankTaskOwner54=null,rankLive54=new Map(),rankLiveKey54='',rankFetch55={key:'',at:0};
 function rankPaint54(box,rows,partial){
   var key=String(FB.uid||'')+'/'+fmtDate(new Date());if(rankHistory.key!==key)rankHistory={key:key,positions:{},trends:{},known:[]};
   rows=rows.slice().sort(function(a,b){return Math.floor(b.s)-Math.floor(a.s)||String(a.uid).localeCompare(String(b.uid))});
@@ -3339,6 +3352,8 @@ rankLoad=function(){
   if(key!==rankLiveKey54){rankLive54.clear();rankLiveKey54=key;box.replaceChildren()}
   if(!uid){box.textContent='ログインすると、友達の学習記録とランキングが見られます。';return Promise.resolve()}
   var active=function(){return rankVisible54()&&!document.hidden&&request===rankRequest&&uid===FB.uid&&epoch===authEpoch};
+  if(rankFetch55.key===ownerKey+'/'+key&&Date.now()-rankFetch55.at<60000&&box.children.length)return Promise.resolve();
+  rankFetch55={key:ownerKey+'/'+key,at:Date.now()};
   var errors=[];
   function paint(rows,final){if(!active())return;rows.forEach(function(r){rankLive54.set(r.uid,r)});if(final){var ids=new Set(rows.map(function(r){return r.uid}));Array.from(rankLive54.keys()).forEach(function(id){if(!ids.has(id))rankLive54.delete(id)})}rankPaint(box,Array.from(rankLive54.values()),!final);var errorBox=$('rankErrors54');errorBox.replaceChildren();errors.forEach(function(e){showReadError(errorBox,e,null,true)})}
   var task=(async function(){try{await rankRows(paint,function(e){if(active()&&!errors.some(function(old){return errorKind(old)===errorKind(e)}))errors.push(e)})}catch(e){if(active())showReadError($('rankErrors54'),e,null)}finally{if(rankTask54===task){rankTask54=null;rankTaskOwner54=null}}})();rankTask54=task;rankTaskOwner54=ownerKey;return task;
@@ -3367,7 +3382,7 @@ function installV54(){
   state.carryDistribution='spread';
   var nav=document.querySelector('.side'),rankButton=document.createElement('button');rankButton.id='navRank54';rankButton.className='nv';rankButton.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21V12h5v9M9.5 21V4h5v17M16 21v-7h5v7"/></svg><span>ランキング</span>';
   ['navPlan','navStats','navToday'].forEach(function(id){nav.appendChild($(id))});nav.append(rankButton,$('navGrades'),$('navMy'));
-  var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='<h2>ランキング</h2><p class="note">友達の学習記録</p>';var title=$('tlt');title.className='rank-title54';page.appendChild(title);page.appendChild($('tlBody'));var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
+  var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='今日の学習時間ランキング';page.appendChild(title);page.appendChild($('tlBody'));var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
   var page54=showPage;showPage=function(n){var result=page54(n);var rank=state.page===8;page.hidden=!rank;rankButton.classList.toggle('on',rank);if(rank){$('tlm').hidden=true;rankLoad()}return result};
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
   var header=document.querySelector('.sp-top'),card=document.querySelector('.sp-preview-head .sp-preview-card:not(.follow)'),goal=document.querySelector('.sp-top .goalbar'),deadline=document.createElement('div');deadline.className='header-deadline54';Array.from(card.children).forEach(function(el){deadline.appendChild(el)});card.append(goal,deadline);goal.classList.add('header-goal54');$('followingCard').hidden=true;document.querySelector('.sp-top > .count').hidden=true;
@@ -3381,6 +3396,24 @@ function installV54(){
   var oldPage54=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){rankRequest++;rankTask54=null;rankLive54.clear();rankLiveKey54='';rankHistory={key:'',positions:{},trends:{},known:[]};legendExpanded54.clear()}return oldPage54(uid)};
   document.addEventListener('toggle',function(e){var el=e.target;if(el.matches&&el.matches('.legend-more54')){if(el.open)legendExpanded54.add(el.dataset.legendKey);else legendExpanded54.delete(el.dataset.legendKey)}},true);
   showCarry();paintSaveStatus();
+}
+
+
+var fitFrame55=0;
+function queueFit55(){if(fitFrame55)return;fitFrame55=requestAnimationFrame(function(){fitFrame55=0;fitText55()})}
+function fitText55(){
+  var nums=Array.from(document.querySelectorAll('#stats .sum3 b')).filter(function(el){return el.clientWidth>0});
+  function fit(el,max,min){el.style.fontSize=max+'px';var lo=min,hi=max;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.fontSize=mid+'px';if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.fontSize=Math.floor(lo*2)/2+'px';return lo}
+  if(nums.length){var size=Math.min.apply(null,nums.map(function(el){return fit(el,26,12)}));nums.forEach(function(el){el.style.fontSize=Math.floor(size*2)/2+'px'})}
+  var goal=$('goalTxt');if(goal&&goal.parentNode.clientWidth){var el=goal.parentNode;el.style.removeProperty('--goal-size55');el.style.setProperty('--goal-size55','13px');var lo=13,hi=18;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.setProperty('--goal-size55',mid+'px');if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.setProperty('--goal-size55',Math.floor(lo*2)/2+'px')}
+}
+function installV55(){
+  var repaint=renderStats;renderStats=function(){repaint();queueFit55()};
+  var live=updateStatsLive;updateStatsLive=function(){live();queueFit55()};
+  var pending=false,lastWidth=0;
+  if(window.ResizeObserver)new ResizeObserver(function(){queueFit55();var width=$('schart').clientWidth;if(width&&width!==lastWidth){lastWidth=width;if(state.page===4&&!pending){pending=true;requestAnimationFrame(function(){pending=false;renderStats()})}}}).observe(document.querySelector('main'));
+  var observer=new MutationObserver(queueFit55);observer.observe($('goalTxt'),{childList:true,characterData:true,subtree:true});
+  queueFit55();
 }
 
 // ===== イベント =====
@@ -3450,6 +3483,7 @@ $("emsave").onclick=saveEdit;
 $("emdel").onclick=deleteEdit;
 $("emcancel").onclick=closeEdit;
 $("em").onclick=function(e){if(e.target===this)closeEdit()};
+$("pfGoal55").oninput=function(){state.goal=this.value.trim().slice(0,60);save();showGoal()};
 $("pfName").oninput=function(){state.profile.name=this.value.slice(0,20);save();$("meName").textContent=this.value||"名前は未設定です"};
 $("pfGrade").onchange=function(){state.profile.grade=this.value;save();renderMy()};
 $("pfAge").oninput=function(){var v=Math.max(0,Math.min(99,Number(this.value)||0));state.profile.age=v?String(v):"";save();$("meSub").textContent=[state.profile.grade,state.profile.age?state.profile.age+"歳":""].filter(Boolean).join("・")};
@@ -3595,11 +3629,12 @@ $("shareBtn").onclick=async function(){
 };
 setInterval(fbPoll,60000);
 setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
-setInterval(function(){if(!document.hidden&&rankVisible54())rankLoad()},20000);
+setInterval(function(){if(!document.hidden&&rankVisible54())rankLoad()},60000);
 document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
 installV38();
 installWeeklyFlow40();
 installV54();
+installV55();
 fbInit();
 if($("saveRetry"))$("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
