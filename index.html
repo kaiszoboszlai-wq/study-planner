@@ -531,6 +531,45 @@ button.follow-action:disabled{opacity:.6}
 .sp-top .header-goal54{flex:1 1 auto;min-width:0;line-height:1.25;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .header-deadline54{flex:0 0 auto;align-items:baseline;gap:4px;margin:0;white-space:nowrap;line-height:1.25}
 </style>
+<style id="today-design-v60">
+/* Today: approved card design. */
+#today{
+  background:linear-gradient(150deg,color-mix(in srgb,var(--card) 94%,var(--accbg)),var(--card) 45%);
+  border-color:color-mix(in srgb,var(--line) 75%,var(--card));
+  border-radius:20px;
+  box-shadow:0 8px 26px color-mix(in srgb,var(--ink) 5%,transparent);
+}
+#today .today-summary{
+  background:color-mix(in srgb,var(--accbg) 65%,var(--card));
+  border-color:color-mix(in srgb,var(--acc) 15%,var(--card));
+  border-radius:14px;
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 90%,transparent);
+}
+#today .today-summary>div:nth-child(2){border-left-color:color-mix(in srgb,var(--acc) 18%,var(--card))}
+#today .today-summary strong{color:color-mix(in srgb,var(--ink) 90%,var(--acc))}
+#today .today-summary .barx{background:color-mix(in srgb,var(--acc) 13%,var(--card))}
+#today .today-summary .barx i{background:var(--acc)}
+#today .tcard{
+  background:var(--card);
+  border-top-color:color-mix(in srgb,var(--line) 75%,var(--card));
+  border-right-color:color-mix(in srgb,var(--line) 75%,var(--card));
+  border-bottom-color:color-mix(in srgb,var(--line) 75%,var(--card));
+  border-radius:16px;
+  box-shadow:0 3px 10px color-mix(in srgb,var(--ink) 5%,transparent);
+}
+#today .tcard.is-running{background:color-mix(in srgb,var(--subject-color) 5%,var(--card))}
+#today .tcard.on{background:color-mix(in srgb,var(--line) 15%,var(--card));box-shadow:none}
+#today .tcard .play{
+  color:var(--card);
+  background:var(--acc);
+  border-color:var(--acc);
+  box-shadow:0 3px 8px color-mix(in srgb,var(--acc) 18%,transparent);
+}
+#today .tcard.is-running .play{background:var(--ink);border-color:var(--ink)}
+#today .today-progress{background:color-mix(in srgb,var(--subject-color) 10%,var(--card))}
+#today .today-progress i{background:var(--subject-color)}
+#today>button{background:var(--card);border-color:color-mix(in srgb,var(--acc) 28%,var(--card));border-radius:12px}
+</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -626,7 +665,6 @@ button.follow-action:disabled{opacity:.6}
 <div id="tdSummary" class="today-summary"><div><strong aria-label="今日の計測時間" id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><strong aria-label="達成率" id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
 <div class="note" id="tdSum"></div>
 <div id="tdList"></div>
-<div class="actions"><button id="tdPlan">今日から7日間のプランを見る</button></div>
 </section>
 <section id="grades" hidden>
 <h2>模試・テストの成績</h2>
@@ -2178,7 +2216,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-23 v59"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-23 v60"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -3701,7 +3739,6 @@ $("dm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("mrMore").onclick=function(){mrLimit+=15;renderStats()};
 $("navToday").onclick=function(){showPage(6)};
 $("navGrades").onclick=function(){showPage(7)};
-$("tdPlan").onclick=function(){showPage(3)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
 $("gmAddRow").onclick=function(){addGmRow("","","100")};
