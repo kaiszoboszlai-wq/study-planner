@@ -526,6 +526,11 @@ button.follow-action:disabled{opacity:.6}
 .wheel-scroll57::-webkit-scrollbar{display:none}.wheel-row57{height:52px;line-height:52px;scroll-snap-align:center;scroll-snap-stop:normal;text-align:center;white-space:nowrap;font-size:1.45rem;font-weight:600;color:var(--sub);opacity:.3;pointer-events:auto}.wheel-row57.is-current{color:var(--ink);opacity:1;font-weight:700}.wheel-row57.is-neighbor{opacity:.35}#emWheelError57{grid-column:1/-1;margin:0}
 @media(max-width:360px){#emWheels57{gap:18px}.wheel-row57{font-size:1.3rem}}
 </style>
+<style id="header-line-v58">
+.sp-top .sp-preview-card:not(.follow){flex-wrap:nowrap;gap:8px!important;align-items:center;min-height:0!important;padding-block:5px!important}
+.sp-top .header-goal54{flex:1 1 auto;min-width:0;line-height:1.25;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-deadline54{flex:0 0 auto;align-items:baseline;gap:4px;margin:0;white-space:nowrap;line-height:1.25}
+</style>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -544,7 +549,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="sp-top">
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
-<p class="goalbar">目標：<span id="goalTxt"></span><button class="lnk" id="goalEdit" hidden>変更</button></p>
+<p class="goalbar">🏹<span id="goalTxt"></span><button class="lnk" id="goalEdit" hidden>変更</button></p>
 <p class="count">試験まであと <b id="days">-</b> 日</p>
 <div class="sp-preview-head">
   <div class="sp-preview-card" aria-live="polite">
@@ -824,7 +829,7 @@ function readAccount(uid){try{return JSON.parse(localStorage.getItem(accountKey(
 function ownsCurrentData(uid){return !!uid&&uid===dataOwner&&uid===FB.uid}
 var SYNC_SKIP=["timer","idleReview","pendingTimerRelease","page","planPage","updatedAt","dataAt"],lastData="",saveRevision=0;
 function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
-function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);loadTimerRuntime();}catch(e){}lastData=syncData()}
+function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);loadTimerRuntime();repairLog58(state);}catch(e){}lastData=syncData()}
 function loadTimerRuntime(){try{var r=JSON.parse(sessionStorage.getItem(accountKey(dataOwner)+":timer-runtime")||"null");if(r){state.timer=r.timer;state.idleReview=r.idleReview;state.pendingTimerRelease=r.pendingTimerRelease}else{if(state.timer&&state.timer.lease&&state.timer.lease.tab!==timerTabId)state.timer=null;if(state.idleReview&&state.idleReview.lease&&state.idleReview.lease.tab!==timerTabId)state.idleReview=null}}catch(e){}}
 function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
 function switchAccountData(uid){
@@ -839,14 +844,14 @@ function switchAccountData(uid){
   if(legacyUnclaimed){try{localStorage.setItem(KEY+":legacy-archived","1")}catch(e){}legacyUnclaimed=false}
   var saved=readAccount(uid);accountNeedsCloud=!!uid&&!saved;
   state=Object.assign(JSON.parse(initialState),saved||{});dataOwner=uid;
-  loadTimerRuntime();timerUndoState=null;
+  loadTimerRuntime();repairLog58(state);timerUndoState=null;
   saveHealth={localSaved:!!saved,localError:null,cloudError:null,writeError:null,pending:!!uid,synced:false};
   try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}
   lastData=syncData();ensureIds();rollForward();fillWeeklySetup();countdown();renderPlan();
   showPage(state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)));
   return true;
 }
-function save(){state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now();saveRevision++}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule();if(typeof renderActiveTimer==="function")renderActiveTimer()}
+function save(){checkpointRunning58(Date.now());state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now();saveRevision++}store();if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule();if(typeof renderActiveTimer==="function")renderActiveTimer()}
 
 var $=function(id){return document.getElementById(id)};
 var saveHealth={localSaved:false,localError:null,cloudError:null,writeError:null,pending:false,synced:false};
@@ -1502,6 +1507,7 @@ function updateTimer(){
 }
 var backgroundPlanDirty=false;
 function tickAll(){
+  if(state.timer&&Date.now()-state.timer.start>=30000)save();
   var visible=!document.hidden;checkIdleTimer();if(visible&&state.idleReview)showIdleReview();if(visible)renderActiveTimer();
   if(visible&&state.page===6)todayBar();
   if(state.plan&&state.plan.length&&!state.weekSetupPending&&state.planDaySeen!==fmtDate(new Date())){if(visible)rollAndRender();else backgroundPlanDirty=rollForward()||backgroundPlanDirty}
@@ -1671,7 +1677,7 @@ function logAdd(name,sec,id,kind,date){ // id/kind: どの項目の、計測(t)�
   var d=date||fmtDate(new Date());
   state.log=state.log||{};state.log[d]=state.log[d]||{};
   state.log[d][name]=(state.log[d][name]||0)+sec;
-  if(id){state.contrib=state.contrib||{};(state.contrib[id]=state.contrib[id]||[]).push({date:d,name:name,sec:sec,k:kind})}
+  if(id){state.contrib=state.contrib||{};var list=state.contrib[id]=state.contrib[id]||[],last=list[list.length-1];if(kind==='t'&&last&&last.k==='t'&&last.date===d&&last.name===name)last.sec+=sec;else list.push({date:d,name:name,sec:sec,k:kind})}
 }
 function subLog(date,name,sec){ // 取り消せた分(秒)を返す
   var d=state.log&&state.log[date];if(!d||!d[name])return 0;
@@ -1956,7 +1962,7 @@ function showPage(n){
   if(n===7)renderGrades();
   window.scrollTo(0,0);
 }
-function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"未設定です";$("goalEdit").hidden=true;$("goalTxt").parentNode.title="目標："+g;queueFit55()}
+function showGoal(){var g=(state.goal||"").trim();$("goalTxt").textContent=g||"未設定です";$("goalEdit").hidden=true;$("goalTxt").parentNode.title="🏹"+g;$("goalTxt").parentNode.setAttribute("aria-label","目標："+(g||"未設定です"));queueFit55()}
 var goalBack=null,cfFn=null,cfNoFn=null;
 function askConfirm(msg,sub,okLabel,fn,noLabel,noFn){$("cfmsg").textContent=msg;$("cfsub").textContent=sub||"";$("cfok").textContent=okLabel||"OK";$("cfno").textContent=noLabel||"キャンセル";cfFn=fn;cfNoFn=noFn||null;$("cf").hidden=false}
 
@@ -2172,7 +2178,7 @@ var FIREBASE_CONFIG={ // Firebaseの設定(アプリの場所を示すだけの�
   appId:"1:523330976385:web:69342f4db8674cafbfeb80"
   // データベースのIDが (default) 以外のときだけ、databaseId:"IDの名前" を足す
 };
-var APP_VERSION="2026-10-23 v57"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
+var APP_VERSION="2026-10-23 v58"; // アプリを直すたびに、この日付と番号を変える(端末に新しい版が届いたかの確認用)
 var FB={uid:null,user:null,code:"",loaded:false,err:"",msg:""};
 var FB_VER="11.6.1",FB_CFG_KEY="study-planner-fbconfig",fbSig="",fbTimer=null;
 function goodIcon(v){return ICONS.indexOf(v)>=0?v:""}
@@ -2359,7 +2365,7 @@ function syncApply(r){ // 別の端末のほうが新しい: その内容をこ�
   try{
     var o=JSON.parse(r.data);o.timer=state.timer;o.idleReview=state.idleReview||null;o.pendingTimerRelease=state.pendingTimerRelease||null;o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
     if(!ownsCurrentData(FB.uid))return false;
-    localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));location.reload();return true;
+    repairLog58(o);localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));location.reload();return true;
   }catch(e){saveHealth.localError=e;paintSaveStatus();return false}
 }
 async function syncPull(){ // 画面にもどったとき、別の端末のほうが新しければ取り込む
@@ -3524,6 +3530,26 @@ function installV57(){
   new MutationObserver(function(){if($('em').hidden)timeWheels57.forEach(function(w){w.commit()})}).observe($('em'),{attributes:true,attributeFilter:['hidden']});
 }
 
+
+// v58: persist elapsed study time before a timer runtime/tab can disappear.
+// Advancing start after each checkpoint keeps both the timer and logData additive exactly once.
+function checkpointRunning58(at){
+  var t=state.timer,x=t&&findBlock(t.id);if(!t||!x||!Number.isFinite(t.start)||!Number.isFinite(at)||at<=t.start)return false;
+  var sec=(at-t.start)/1000;if(!(sec>0))return false;
+  splitTimerDays(t.start,at,function(date,seconds){logAdd(x.name,seconds,t.id,'t',date)});
+  state.spent[t.id]=(Number(state.spent[t.id])||0)+sec;t.start=at;return true;
+}
+function repairLog58(data){
+  if(!data||!data.contrib||typeof data.contrib!=='object')return false;
+  var totals={},changed=false;Object.keys(data.contrib).forEach(function(id){var rows=data.contrib[id];if(!Array.isArray(rows))return;rows.forEach(function(e){if(!e||!/^\d{4}-\d{2}-\d{2}$/.test(e.date)||typeof e.name!=='string'||!Number.isFinite(e.sec)||e.sec<=0)return;var key=JSON.stringify([e.date,e.name]);totals[key]=(totals[key]||0)+e.sec})});
+  Object.keys(totals).forEach(function(key){var parts=JSON.parse(key),date=parts[0],name=parts[1],current=data.log&&data.log[date]&&Number(data.log[date][name])||0;if(totals[key]>current+.001){data.log=data.log||{};data.log[date]=data.log[date]||{};data.log[date][name]=totals[key];changed=true}});return changed;
+}
+function installRecords58(){
+  function persist(){if(state.timer)save();else store()}
+  document.addEventListener('visibilitychange',function(){if(document.hidden)persist()});
+  addEventListener('pagehide',persist);addEventListener('beforeunload',persist);
+}
+
 // ===== イベント =====
 load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
@@ -3745,6 +3771,7 @@ installV54();
 installV55();
 installV56();
 installV57();
+installRecords58();
 fbInit();
 if($("saveRetry"))$("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
