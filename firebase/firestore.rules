@@ -1,0 +1,168 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function authorOf(postId) { return postId.split('_')[0]; }
+    function isViewer(owner) {
+      return exists(/databases/$(database)/documents/stats/$(owner)/viewers/$(request.auth.uid));
+    }
+    function canInteract(postId) {
+      return signedIn() && (request.auth.uid == authorOf(postId) || isViewer(authorOf(postId)));
+    }
+    function inChat(chatId) {
+      return signedIn() && chatId.split('_').size() == 2
+        && request.auth.uid in chatId.split('_');
+    }
+    function otherOf(chatId) {
+      return chatId.split('_')[0] == request.auth.uid ? chatId.split('_')[1] : chatId.split('_')[0];
+    }
+    function connected(chatId) {
+      return isViewer(otherOf(chatId))
+        || exists(/databases/$(database)/documents/stats/$(request.auth.uid)/viewers/$(otherOf(chatId)));
+    }
+    match /privateData/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /profiles/{uid} {
+      allow get,list: if signedIn();
+      allow create, update: if request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'icon', 'color', 'code', 'updated', 'photo', 'grade', 'school'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 20;
+      allow delete: if request.auth.uid == uid;
+    }
+    match /social/{uid} {
+      allow get: if signedIn();
+      allow write: if request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['following', 'followers', 'updated']);
+    }
+    match /codes/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid']);
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+    match /stats/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isViewer(uid));
+      allow write: if request.auth.uid == uid;
+      match /viewers/{viewer} {
+        allow read: if request.auth.uid == uid || request.auth.uid == viewer;
+        allow create: if request.auth.uid == uid;
+        allow delete: if request.auth.uid == uid || request.auth.uid == viewer;
+      }
+    }
+    match /requests/{target}/from/{from} {
+      allow create: if request.auth.uid == from;
+      allow read, delete: if request.auth.uid == target || request.auth.uid == from;
+    }
+    match /follows/{uid} {
+      allow read, write: if request.auth.uid == uid;
+    }
+    match /posts/{postId}/likes/{liker} {
+      allow read: if signedIn();
+      allow create: if canInteract(postId) && request.auth.uid == liker
+        && request.resource.data.keys().hasOnly(['at']);
+      allow delete: if signedIn() && request.auth.uid == liker;
+    }
+    match /posts/{postId}/comments/{cid} {
+      allow read: if signedIn();
+      allow create: if canInteract(postId)
+        && request.resource.data.keys().hasOnly(['uid', 'text', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 300;
+      allow delete: if signedIn() && (resource.data.uid == request.auth.uid || authorOf(postId) == request.auth.uid);
+    }
+    // 会話の個別確認は、作成前も会話IDに含まれる2人だけ許可。
+    // 一覧の取得は保存済みmembersに自分が含まれる会話だけ許可。
+    match /dm/{chatId} {
+      allow get: if inChat(chatId);
+      allow list: if signedIn() && request.auth.uid in resource.data.members;
+      allow create, update: if inChat(chatId) && connected(chatId)
+        && request.resource.data.keys().hasOnly(['members', 'updated', 'last', 'lastFrom'])
+        && request.resource.data.members.size() == 2
+        && request.resource.data.members.hasAll(chatId.split('_'))
+        && request.resource.data.lastFrom == request.auth.uid
+        && request.resource.data.last is string
+        && request.resource.data.last.size() <= 100;
+      match /messages/{mid} {
+        allow read: if inChat(chatId);
+        allow create: if inChat(chatId) && connected(chatId)
+          && request.resource.data.keys().hasOnly(['from', 'text', 'at'])
+          && request.resource.data.from == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 1000
+          && request.resource.data.at is number;
+      }
+      match /reads/{reader} {
+        allow read: if inChat(chatId);
+        allow write: if inChat(chatId) && request.auth.uid == reader
+          && request.resource.data.keys().hasOnly(['at']);
+      }
+    }
+
+    // 承認済みの閲覧者が、自分の共有プロフィールだけを更新できる。
+    match /stats/{owner}/viewers/{viewer} {
+      allow update: if signedIn() && request.auth.uid == viewer
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profile'])
+        && request.resource.data.profile is map
+        && request.resource.data.profile.keys().hasOnly(['grade', 'goal', 'high', 'updated'])
+        && request.resource.data.profile.keys().hasAll(['grade', 'goal', 'high', 'updated'])
+        && request.resource.data.profile.grade is string
+        && request.resource.data.profile.grade.size() <= 10
+        && request.resource.data.profile.goal is string
+        && request.resource.data.profile.goal.size() <= 60
+        && request.resource.data.profile.high is string
+        && request.resource.data.profile.high.size() <= 30
+        && request.resource.data.profile.updated is number;
+    }
+    // 承認待ちリクエストの送信者が、共有プロフィールだけを更新できる。
+    match /requests/{target}/from/{from} {
+      allow update: if signedIn() && request.auth.uid == from
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['profile'])
+        && request.resource.data.profile is map
+        && request.resource.data.profile.keys().hasOnly(['grade', 'goal', 'high'])
+        && request.resource.data.profile.keys().hasAll(['grade', 'goal', 'high'])
+        && request.resource.data.profile.grade is string
+        && request.resource.data.profile.grade.size() <= 10
+        && request.resource.data.profile.goal is string
+        && request.resource.data.profile.goal.size() <= 60
+        && request.resource.data.profile.high is string
+        && request.resource.data.profile.high.size() <= 30;
+    }
+
+    // 全ユーザーランキング専用の公開データ。学習記録本体の権限は変更しない。
+    match /dailyRankings/{day}/users/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.keys().hasAll([
+          'name', 'icon', 'color', 'photo', 'seconds', 'live', 'updated'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'name', 'icon', 'color', 'photo', 'seconds', 'live', 'updated'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.icon is string
+        && request.resource.data.icon.size() <= 16
+        && request.resource.data.color is string
+        && request.resource.data.color.matches('^#[0-9a-fA-F]{6}$')
+        && request.resource.data.photo is string
+        && request.resource.data.photo.size() < 40000
+        && (request.resource.data.photo == ''
+          || request.resource.data.photo.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$'))
+        && request.resource.data.seconds is int
+        && request.resource.data.seconds >= 0
+        && request.resource.data.seconds <= 864000
+        && request.resource.data.live is bool
+        && request.resource.data.updated is int
+        && request.resource.data.updated >= 0;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}

@@ -486,6 +486,7 @@ button.follow-action:disabled{opacity:.6}
 #tlBody>.rank-empty59{padding:20px 16px;margin:0;color:var(--sub);font-size:.85rem}.rank-status59{margin:10px 2px;color:var(--sub);font-size:.7rem}
 @media(max-width:360px){#rankingPage54 #tlBody .rkrow{column-gap:7px;padding:12px 10px}#rankingPage54 .rkrow>b{font-size:.75rem}.rank-scope59{font-size:.65rem}}
 #rankingPage54 .rank-title54{font-size:2.1rem;color:var(--ink);font-weight:700;line-height:1.5;white-space:nowrap;margin:0 0 18px}
+.rank-tabs61{display:flex;gap:4px;padding:4px;margin:12px 0 20px;border:1px solid var(--line);border-radius:13px;background:var(--bg)}.rank-tabs61 button{flex:1;min-width:0;min-height:44px;margin:0;padding:8px 4px;border:0;border-radius:9px;background:transparent;color:var(--sub);font:inherit;font-size:.78rem;white-space:normal;overflow-wrap:anywhere}.rank-tabs61 button[aria-pressed="true"]{background:var(--card);color:var(--acc);font-weight:650;box-shadow:0 1px 4px rgba(20,40,65,.08)}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2364,6 +2365,8 @@ async function fbPublish(force){ // プロフィールと、目標・学習記�
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
   var me=fbMine(),st={share:true,colors:sharedColors54(),grade:me.grade,high:me.high,goal:String(state.goal||"").slice(0,60),log:trimLog(),live:state.timer?{n:String((findBlock(state.timer.id)||{}).name||"").slice(0,30),at:Date.now()}:null,updated:Date.now()};
   var sig=JSON.stringify([me.name,me.icon,me.color,me.photo,me.grade,me.school,me.high,FB.code,st.goal,st.log,st.colors,!!state.timer]);
+  await publishGlobalRank61().catch(function(){});
+  if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
   if(!force&&sig===fbSig)return;
   var base={name:me.name,icon:me.icon,color:me.color,code:FB.code,updated:Date.now()},full=Object.assign({},base);
   if(me.photo)full.photo=me.photo;if(me.grade)full.grade=me.grade;if(me.school)full.school=me.school;
@@ -3421,11 +3424,65 @@ function compactLegend54(box,key){
   var rows=Array.from(box.children);if(rows.length<5)return;
   var details=document.createElement('details');details.className='legend-more54';details.dataset.legendKey=key;details.open=legendExpanded54.has(key);var summary=document.createElement('summary');summary.textContent='さらに表示（'+(rows.length-3)+'教科）';details.appendChild(summary);rows.slice(3).forEach(function(row){details.appendChild(row)});box.appendChild(details);
 }
+// A separate daily collection exposes only the fields required by global rankings.
+var rankScope61='following',globalRankSig61='',globalRankTask61=null,globalRankAgain61=false;
+async function publishGlobalRank61(){
+  var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady||!FB.Fs)return;
+  if(globalRankTask61){globalRankAgain61=true;return globalRankTask61}
+  var day=fmtDate(new Date()),logs=logData(),me=fbMine(),seconds=Math.floor(Object.values(logs[day]||{}).reduce(function(n,s){return n+Math.max(0,Number(s)||0)},0));
+  var data={name:me.name,icon:me.icon,color:me.color,photo:me.photo||'',seconds:seconds,live:!!state.timer,updated:Date.now()};
+  var signature=JSON.stringify([uid,day,data.name,data.icon,data.color,data.photo,seconds,data.live]);if(signature===globalRankSig61)return;
+  var task=(async function(){
+    if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
+    await limitRead(FB.Fs.setDoc(FB.Fs.doc(FB.db,'dailyRankings/'+day+'/users/'+uid),data));
+    if(ownsCurrentData(uid)&&epoch===authEpoch)globalRankSig61=signature;
+  })();globalRankTask61=task;
+  try{await task}finally{if(globalRankTask61===task){globalRankTask61=null;var again=globalRankAgain61;globalRankAgain61=false;if(again)publishGlobalRank61().catch(function(){})}}
+}
+function setRankScope61(scope){
+  if(scope!== 'following'&&scope!=='global')return;if(scope===rankScope61)return;
+  rankScope61=scope;rankRequest++;rankFetch55.at=0;rankLoad();
+}
+function paintRankScope61(){
+  $('rankFollowing61').setAttribute('aria-pressed',String(rankScope61==='following'));
+  $('rankGlobal61').setAttribute('aria-pressed',String(rankScope61==='global'));
+}
+async function globalRankRows61(onRows,onError){
+  var uid=FB.uid,epoch=authEpoch,day=fmtDate(new Date()),fs=FB.Fs,rows=new Map(),me=fbMine(),logs=logData();
+  rows.set(uid,{uid:uid,me:true,name:me.name,icon:me.icon,color:me.color,photo:me.photo,s:Object.values(logs[day]||{}).reduce(function(n,s){return n+Math.max(0,Number(s)||0)},0),live:!!state.timer});
+  var active=function(){return uid===FB.uid&&epoch===authEpoch&&rankScope61==='global'&&day===fmtDate(new Date())};
+  if(active())onRows(Array.from(rows.values()),false);
+  try{await publishGlobalRank61()}catch(e){if(active()&&onError)onError(e)}
+  var cursor=null;
+  while(active()){
+    var parts=[fs.orderBy(fs.documentId()),fs.limit(200)];if(cursor)parts.push(fs.startAfter(cursor));
+    var query=fs.query.apply(fs,[fs.collection(FB.db,'dailyRankings/'+day+'/users')].concat(parts));
+    var snapshot=await limitRead(fs.getDocs(query));if(!active())return [];
+    snapshot.docs.forEach(function(doc){if(doc.id===uid)return;var d=doc.data();if(!d||!Number.isFinite(d.seconds)||d.seconds<0)return;rows.set(doc.id,{uid:doc.id,me:false,name:typeof d.name==='string'?d.name.slice(0,20):'名無し',icon:goodIcon(d.icon),color:goodColor(d.color),photo:goodPhoto(d.photo),s:d.seconds,live:!!d.live&&Date.now()-Number(d.updated)<150000})});
+    var final=snapshot.docs.length<200;onRows(Array.from(rows.values()),final);if(final)break;cursor=snapshot.docs[snapshot.docs.length-1];
+  }
+  return Array.from(rows.values());
+}
+async function openGlobalRankProfile61(row){
+  if(!row||!FB.uid||row.uid===FB.uid)return;
+  pmStack=[];pmCur=row.uid;var request=++pmRequest,viewer=FB.uid,epoch=authEpoch,day=fmtDate(new Date()),id=row.uid;
+  var box=$('pmBody');box.replaceChildren();$('pm').hidden=false;
+  var active=function(){return !$('pm').hidden&&pmCur===id&&request===pmRequest&&viewer===FB.uid&&epoch===authEpoch};
+  var top=document.createElement('div');top.className='me big';top.innerHTML='<div class="av pav"></div><div><b></b></div>';box.appendChild(top);
+  var summary=document.createElement('div');summary.className='fstat';summary.innerHTML='<div><small>今日の勉強時間</small><b></b></div>';box.appendChild(summary);
+  function paint(data){fbPaint(top.querySelector('.av'),data.icon,data.color,data.photo);top.querySelector('b').textContent=typeof data.name==='string'?data.name.slice(0,20):'名無し';summary.querySelector('b').textContent=fmtDur(Math.max(0,Number(data.s)||0))}
+  paint(row);
+  var actions=document.createElement('div');actions.className='actions';box.appendChild(actions);var loading=document.createElement('button');loading.type='button';loading.disabled=true;loading.textContent='フォロー状態を確認中…';actions.appendChild(loading);
+  await Promise.all([
+    myFollowIds(true).then(function(ids){if(!active())return;var button=makeFollowButton(id,ids);button.classList.add('main');button.onFollowState=function(status){followButtonState(button,status);if(status==='none')button.textContent='フォローリクエストを送る'};button.onFollowState(button.dataset.followState);actions.replaceChildren(button)}).catch(function(e){if(active()){actions.replaceChildren();showReadError(actions,e,null,true);var retry=document.createElement('button');retry.textContent='再試行';retry.onclick=function(){openGlobalRankProfile61(row)};actions.appendChild(retry)}}),
+    profileRead('dailyRankings/'+day+'/users/'+id).then(function(data){if(!active()||!data)return;paint({name:data.name,icon:goodIcon(data.icon),color:goodColor(data.color),photo:goodPhoto(data.photo),s:data.seconds})}).catch(function(e){if(active()){var note=document.createElement('p');note.className='note';note.textContent='ランキング表示時の情報です。';box.appendChild(note)}})
+  ]);
+}
 function rankVisible54(){return !!($('rankingPage54')&&!$('rankingPage54').hidden&&state.page===8)}
 var rankTask54=null,rankTaskOwner54=null,rankLive54=new Map(),rankLiveKey54='',rankFetch55={key:'',at:0};
 function rankSummary59(rows,positions,partial){
   var me=rows.find(function(r){return r.me});$('rankSelf59').hidden=!me;
-  $('rankStatus59').textContent=partial?'集計中…':'同じ秒数は同順位です。▲・▼は前回の集計からの順位変動です。';
+  $('rankStatus59').textContent=partial?'集計中…':(rankScope61==='global'?'今日の記録が同期されたユーザーを表示しています。 ':'')+'同じ秒数は同順位です。▲・▼は前回の集計からの順位変動です。';
   if(!me)return;var place=positions[me.uid],trend=rankHistory.trends[me.uid];
   setTextIfChanged($('rankPlace59'),place==null?'—':String(place));$('rankPlaceUnit59').textContent=place==null?'':'位';
   $('rankSelfTrend59').textContent=trend==='up'?'▲':trend==='down'?'▼':'';$('rankSelfTrend59').className='rank-trend '+(trend||'');
@@ -3433,7 +3490,7 @@ function rankSummary59(rows,positions,partial){
   setTextIfChanged($('rankSelfTime59'),me.s>=60?fmtDur(me.s):'0分');$('rankCount59').textContent=partial?'集計中':rows.length+'人中';
 }
 function rankPaint54(box,rows,partial){
-  var key=String(FB.uid||'')+'/'+fmtDate(new Date());if(rankHistory.key!==key)rankHistory={key:key,positions:{},trends:{},known:[]};
+  var key=String(FB.uid||'')+'/'+fmtDate(new Date())+'/'+rankScope61;if(rankHistory.key!==key)rankHistory={key:key,positions:{},trends:{},known:[]};
   rows=rows.slice().sort(function(a,b){return Math.floor(b.s)-Math.floor(a.s)||String(a.uid).localeCompare(String(b.uid))});
   var positions={},count=0,lastSeconds=null,place=0;
   rows.forEach(function(r){if(r.s<60)return;count++;var sec=Math.floor(r.s);if(sec!==lastSeconds)place=count;positions[r.uid]=place;lastSeconds=sec});
@@ -3446,7 +3503,7 @@ function rankPaint54(box,rows,partial){
   var present=new Map();Array.from(box.querySelectorAll(':scope > .rkrow')).forEach(function(el){present.set(el.dataset.rankUid,el)});
   var keep=new Set();rows.forEach(function(r,index){
     keep.add(r.uid);var el=present.get(r.uid),created=!el;
-    if(!el){el=document.createElement('div');el.className='rkrow';el.dataset.rankUid=r.uid;el.innerHTML='<span class="rn"></span><div class="av"></div><span class="rname"></span><button class="rcm" aria-label="コメント">'+IC_CMT+'<i></i></button><b></b>';el.querySelector('.rname').onclick=function(){var d=el.rankData54;if(d&&!d.me)openProfile(d.uid)};el.querySelector('.rcm').onclick=function(){var d=el.rankData54;if(d)openPost(rankPid(d.uid),{n:(d.me?'あなた':d.name+'さん')+'の今日',s:d.s})}}
+    if(!el){el=document.createElement('div');el.className='rkrow';el.dataset.rankUid=r.uid;el.innerHTML='<span class="rn"></span><div class="av"></div><span class="rname"></span><button class="rcm" aria-label="コメント">'+IC_CMT+'<i></i></button><b></b>';var openRankProfile=function(){var d=el.rankData54;if(d&&!d.me){if(rankScope61==='global')openGlobalRankProfile61(d);else openProfile(d.uid)}};el.querySelector('.rname').onclick=openRankProfile;var avatar=el.querySelector('.av');avatar.setAttribute('role','button');avatar.tabIndex=0;avatar.setAttribute('aria-label','プロフィールを開く');avatar.onclick=openRankProfile;avatar.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openRankProfile()}};el.querySelector('.rcm').onclick=function(){var d=el.rankData54;if(d)openPost(rankPid(d.uid),{n:(d.me?'あなた':d.name+'さん')+'の今日',s:d.s})}}
     el.rankData54=r;el.dataset.pid=rankPid(r.uid);el.classList.toggle('me',!!r.me);
     var pos=positions[r.uid],rank=pos==null?'—':String(pos),trend=pos!=null&&rankHistory.trends[r.uid],signature=rank+'|'+(trend||'');
     if(el.rankLabel54!==signature){var label=el.querySelector('.rn');label.textContent=rank;label.dataset.place=pos==null?'':String(pos);label.setAttribute('aria-label',pos==null?'順位なし':pos+'位');if(trend){var arrow=document.createElement('span');arrow.className='rank-trend '+trend;arrow.textContent=trend==='up'?'▲':'▼';arrow.setAttribute('aria-label',trend==='up'?'順位上昇':'順位下降');label.appendChild(arrow)}el.rankLabel54=signature}
@@ -3460,18 +3517,18 @@ function rankPaint54(box,rows,partial){
 }
 rankPaint=rankPaint54;
 rankLoad=function(){
-  if(document.hidden||!rankVisible54())return Promise.resolve();var uid=FB.uid,ownerKey=String(uid)+'/'+authEpoch;
+  if(document.hidden||!rankVisible54())return Promise.resolve();var uid=FB.uid,scope=rankScope61,day=fmtDate(new Date()),ownerKey=String(uid)+'/'+authEpoch+'/'+day+'/'+scope;paintRankScope61();
   if(rankTask54&&rankTaskOwner54===ownerKey)return rankTask54;
-  var box=$('tlBody'),request=++rankRequest,epoch=authEpoch,key=String(uid)+'/'+fmtDate(new Date());
+  var box=$('tlBody'),request=++rankRequest,epoch=authEpoch,key=String(uid)+'/'+fmtDate(new Date())+'/'+scope;
   if(key!==rankLiveKey54){rankLive54.clear();rankLiveKey54=key;box.replaceChildren();rankSummary59([],{},true)}
-  if(!uid){rankSummary59([],{},false);$('rankStatus59').textContent='';box.replaceChildren();var note=document.createElement('p');note.className='rank-empty59';note.textContent='ログインすると、フォロー中の人の今日の勉強時間ランキングが見られます。';box.appendChild(note);$('rankErrors54').replaceChildren();return Promise.resolve()}
-  var active=function(){return rankVisible54()&&!document.hidden&&request===rankRequest&&uid===FB.uid&&epoch===authEpoch};
+  if(!uid){rankSummary59([],{},false);$('rankStatus59').textContent='';box.replaceChildren();var note=document.createElement('p');note.className='rank-empty59';note.textContent=scope==='global'?'ログインすると、全ユーザーの今日の学習時間ランキングが見られます。':'ログインすると、フォロー中の人の今日の学習時間ランキングが見られます。';box.appendChild(note);$('rankErrors54').replaceChildren();return Promise.resolve()}
+  var active=function(){return rankVisible54()&&!document.hidden&&request===rankRequest&&uid===FB.uid&&epoch===authEpoch&&scope===rankScope61&&day===fmtDate(new Date())};
   if(rankFetch55.key===ownerKey+'/'+key&&Date.now()-rankFetch55.at<60000&&box.children.length)return Promise.resolve();
   rankFetch55={key:ownerKey+'/'+key,at:Date.now()};
   rankSummary59(Array.from(rankLive54.values()),rankHistory.positions||{},true);
   var errors=[];
   function paint(rows,final){if(!active())return;rows.forEach(function(r){rankLive54.set(r.uid,r)});if(final){var ids=new Set(rows.map(function(r){return r.uid}));Array.from(rankLive54.keys()).forEach(function(id){if(!ids.has(id))rankLive54.delete(id)})}rankPaint(box,Array.from(rankLive54.values()),!final);var errorBox=$('rankErrors54');errorBox.replaceChildren();errors.forEach(function(e){showReadError(errorBox,e,null,true)})}
-  var task=(async function(){try{await rankRows(paint,function(e){if(active()&&!errors.some(function(old){return errorKind(old)===errorKind(e)}))errors.push(e)})}catch(e){if(active())showReadError($('rankErrors54'),e,null)}finally{if(rankTask54===task){rankTask54=null;rankTaskOwner54=null}}})();rankTask54=task;rankTaskOwner54=ownerKey;return task;
+  var task=(async function(){try{await (scope==='global'?globalRankRows61:rankRows)(paint,function(e){if(active()&&!errors.some(function(old){return errorKind(old)===errorKind(e)}))errors.push(e)})}catch(e){if(active()){rankFetch55.at=0;showReadError($('rankErrors54'),e,null);$('rankStatus59').textContent='集計できませんでした。';$('rankPlace59').textContent='—';$('rankPlaceUnit59').textContent='';$('rankSelfTrend59').textContent='';$('rankCount59').textContent='未取得';}}finally{if(rankTask54===task){rankTask54=null;rankTaskOwner54=null}}})();rankTask54=task;rankTaskOwner54=ownerKey;return task;
 };
 renderRank=function(){if(rankVisible54())rankLoad()};
 function consumeCarry54(){
@@ -3498,8 +3555,8 @@ function installV54(){
   var nav=document.querySelector('.side'),rankButton=document.createElement('button');rankButton.id='navRank54';rankButton.className='nv';rankButton.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21V12h5v9M9.5 21V4h5v17M16 21v-7h5v7"/></svg><span>ランキング</span>';
   nav.append(rankButton,$('navPlan'),$('navToday'),$('navStats'),$('navMy'));
   var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='今日の学習時間ランキング';page.appendChild(title);
-  var layout=document.createElement('div');layout.innerHTML='<div class="rank-date59"><span class="rank-scope59">あなたとフォロー中の人</span></div><section id="rankSelf59" class="rank-self59" hidden aria-label="あなたの今日の順位と勉強時間"><div class="rank-self-top59"><span>あなたの今日</span><span id="rankCount59"></span></div><div class="rank-self-stats59"><div><b id="rankPlace59">—</b><span id="rankPlaceUnit59" class="rank-self-unit59"></span> <span id="rankSelfTrend59"></span></div><span id="rankSelfTime59">0分</span></div><p class="rank-self-note59">今日も、自分のペースで積み重ねよう。</p></section><div class="rank-list-head59"><h3>みんなの勉強時間</h3><span>今日の計測時間</span></div>';
-  while(layout.firstChild)page.appendChild(layout.firstChild);page.appendChild($('tlBody'));var status=document.createElement('p');status.id='rankStatus59';status.className='rank-status59';status.setAttribute('role','status');page.appendChild(status);var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
+  var layout=document.createElement('div');layout.innerHTML='<div class="rank-tabs61" role="group" aria-label="ランキングの範囲"><button id="rankFollowing61" type="button" aria-pressed="true">あなたとフォロー中</button><button id="rankGlobal61" type="button" aria-pressed="false">このアプリの全ユーザー</button></div><section id="rankSelf59" class="rank-self59" hidden aria-label="あなたの今日の順位と勉強時間"><div class="rank-self-top59"><span>あなたの今日</span><span id="rankCount59"></span></div><div class="rank-self-stats59"><div><b id="rankPlace59">—</b><span id="rankPlaceUnit59" class="rank-self-unit59"></span> <span id="rankSelfTrend59"></span></div><span id="rankSelfTime59">0分</span></div><p class="rank-self-note59">今日も、自分のペースで積み重ねよう。</p></section><div class="rank-list-head59"><h3>みんなの勉強時間</h3><span>今日の計測時間</span></div>';
+  while(layout.firstChild)page.appendChild(layout.firstChild);page.appendChild($('tlBody'));var status=document.createElement('p');status.id='rankStatus59';status.className='rank-status59';status.setAttribute('role','status');page.appendChild(status);var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);$('rankFollowing61').onclick=function(){setRankScope61('following')};$('rankGlobal61').onclick=function(){setRankScope61('global')};
   var page54=showPage;showPage=function(n){var result=page54(n);var rank=state.page===8;page.hidden=!rank;rankButton.classList.toggle('on',rank);if(rank){$('tlm').hidden=true;rankLoad()}return result};
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
   var header=document.querySelector('.sp-top'),card=document.querySelector('.sp-preview-head .sp-preview-card:not(.follow)'),goal=document.querySelector('.sp-top .goalbar'),deadline=document.createElement('div');deadline.className='header-deadline54';Array.from(card.children).forEach(function(el){deadline.appendChild(el)});card.append(goal,deadline);goal.classList.add('header-goal54');$('followingCard').hidden=true;document.querySelector('.sp-top > .count').hidden=true;
@@ -3510,7 +3567,7 @@ function installV54(){
   var preview54=generatePlanPreview;generatePlanPreview=function(){preview54();if(!planCandidateConfig)return;var audit=allocationAudit(planCandidate,planCandidateConfig),note=$('planPreviewNote');note.textContent=audit.ok?'':'設定時間を満たしていません。設定を確認してください。';note.hidden=audit.ok;
     var order=[1,2,3,0],style=order.indexOf(planCandidateStyle),names=['① まんべんなく','② 集中型','③ ランダム','④ 標準'];$('planPreviewTitle').textContent=names[style<0?3:style];var choices=$('planStyleChoices54');if(!choices){choices=document.createElement('div');choices.id='planStyleChoices54';$('planPreviewBody').before(choices)}choices.replaceChildren();order.forEach(function(n,i){var b=document.createElement('button');b.textContent=names[i];b.setAttribute('aria-pressed',n===planCandidateStyle?'true':'false');b.onclick=function(){planCandidateStyle=n;generatePlanPreview()};choices.appendChild(b)});
     Array.from($('planPreviewBody').children).forEach(function(dayEl,i){var day=planCandidate[i];if(!day)return;Array.from(dayEl.querySelectorAll('.plan-preview-row')).forEach(function(row,k){var block=day.blocks[k];if(block)row.style.borderLeft='5px solid '+subjectColor54(block.name,planCandidateConfig.subjColors)})});};
-  var oldPage54=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){rankRequest++;rankTask54=null;rankLive54.clear();rankLiveKey54='';rankHistory={key:'',positions:{},trends:{},known:[]};legendExpanded54.clear()}return oldPage54(uid)};
+  var oldPage54=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){rankScope61='following';globalRankSig61='';rankRequest++;rankTask54=null;rankLive54.clear();rankLiveKey54='';rankHistory={key:'',positions:{},trends:{},known:[]};legendExpanded54.clear()}return oldPage54(uid)};
   document.addEventListener('toggle',function(e){var el=e.target;if(el.matches&&el.matches('.legend-more54')){if(el.open)legendExpanded54.add(el.dataset.legendKey);else legendExpanded54.delete(el.dataset.legendKey)}},true);
   showCarry();paintSaveStatus();
 }
