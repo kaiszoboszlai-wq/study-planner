@@ -463,6 +463,11 @@ button.follow-action:disabled{opacity:.6}
 .friend-compact{padding:8px;margin:6px 0}.friend-compact .fbrow{display:grid;grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr) 38px;gap:6px;align-items:center;padding:0}.friend-compact .av{width:32px;height:32px;font-size:1.1rem}.friend-compact .fbrow>div:nth-child(2){min-width:0;font-size:.8rem;overflow-wrap:anywhere}.friend-compact .fbrow>div:nth-child(2)>.note{display:none}.friend-compact .fbrow>button{padding:4px 2px;font-size:.75rem;width:38px}.friend-compact .request-profile-details{font-size:.75rem;grid-template-columns:2.3em minmax(0,1fr);gap:2px 4px;margin:0;min-width:0}.friend-compact .actions{margin-top:5px;gap:4px}.friend-compact .actions button{padding:3px 5px;font-size:.72rem;max-width:100%}
 .friend-following .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr)}.friend-following .friend-details{min-width:0}
 .my-grades-card{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:16px 0;padding:18px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-align:left;font:inherit;font-weight:600}.my-grades-card>span:last-child{font-size:1.5rem;color:var(--sub)}#gradesBackMy{margin-bottom:12px}
+/* Emphasize the central study action within the five-item menu. */
+.side #navToday{position:relative;top:-6px;margin:0 4px -6px;padding:9px 2px 7px;border:1px solid var(--line);border-radius:18px;background:var(--accbg);color:var(--acc);font-size:clamp(.72rem,3vw,.82rem);font-weight:700;box-shadow:0 3px 10px rgba(20,40,65,.1)}
+.side #navToday svg{width:29px;height:29px}
+.side #navToday.on{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:0 4px 12px rgba(20,40,65,.16)}
+.side #navToday:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
