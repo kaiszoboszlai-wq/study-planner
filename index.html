@@ -672,9 +672,10 @@ button.follow-action:disabled{opacity:.6}
 
 <section id="planbox" hidden>
 <div class="plan-heading"><h2>今週のプラン</h2><div class="plan-header-actions"><button id="planSettingsOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.3-1.5.9-2.3-.6-2.5 4.3 1.7 1.7v1.8L2.6 15l2.5 4.3 2.3-.6 1.5.9.6 2.4h5l.6-2.4 1.5-.9 2.3.6 2.5-4.3-1.7-1.6v-1.8l1.7-1.7-2.5-4.3-2.3.6-1.5-.9L14.5 3z"/><circle cx="12" cy="12.5" r="3.2"/></svg><span>プラン設定</span></button><button id="tipsShow" class="plan-help" aria-label="使い方" title="使い方" aria-expanded="false" aria-controls="tips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.8-2.5 2-2.5 3.8"/><path d="M12 16.8h.01"/></svg></button></div></div>
-<div class="actions"><button id="goTodayStudy" class="lnk" type="button">今日の勉強へ</button></div>
+<div class="plan-week62"><b id="planWeekRange62"></b><span>週間合計 <strong id="planWeekHours62"></strong></span></div>
 <div id="planDates" class="plan-dates" role="tablist" aria-label="計画の日付"></div>
 <div id="plan" class="days"></div>
+<button id="goTodayStudy" type="button">今日の勉強へ <span aria-hidden="true">→</span></button>
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すと予定を編集できます。計測は「今日の勉強へ」から始めます</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
@@ -684,6 +685,7 @@ button.follow-action:disabled{opacity:.6}
 <div id="schart"></div>
 
 <div class="pies" id="pies"></div>
+<div class="section-heading62"><h3>最近の記録</h3><button id="statsRecentMore62" class="lnk" type="button">すべて見る →</button></div><div id="statsRecent62" class="card62"></div>
 </section>
 <section id="today" hidden>
 <div class="today-heading"><h2>今日</h2><span id="tdTitle"></span><button id="adjustTodayPlan" class="lnk" type="button" style="margin-left:auto;font-size:.8rem">今日の予定を調整</button></div>
@@ -1167,6 +1169,9 @@ function renderPlan(){
   var box=$("plan"),sl=box.scrollLeft;box.innerHTML="";
   if(!state.plan.length){box.innerHTML='<div class="note">試験日が今日以前になっています。先の日付にしてください。</div>';return}
   var all=0,ok=0,per={},todayStr=fmtDate(new Date());
+  var first=new Date(state.plan[0].date+'T00:00:00'),last=new Date(state.plan[state.plan.length-1].date+'T00:00:00');
+  $('planWeekRange62').textContent=(first.getMonth()+1)+'月'+first.getDate()+'日 — '+(first.getMonth()!==last.getMonth()?(last.getMonth()+1)+'月':'')+last.getDate()+'日';
+  $('planWeekHours62').textContent=hm(state.plan.reduce(function(n,d){return n+d.blocks.reduce(function(a,b){return a+Number(b.h||0)},0)},0));
   if(!state.plan.some(function(day){return day.date===selectedPlanDate}))selectedPlanDate=state.plan.some(function(day){return day.date===todayStr})?todayStr:state.plan[0].date;
   var tabs=$("planDates");tabs.innerHTML="";
   state.plan.forEach(function(day,d){
@@ -1181,16 +1186,17 @@ function renderPlan(){
     var el=document.createElement("div");el.className="day";el.id="plan-day-"+d;el.hidden=day.date!==selectedPlanDate;el.setAttribute("role","tabpanel");
     var head=document.createElement("h3");head.textContent=dayLabel(day.date);
     if(day.date===todayStr){var t=document.createElement("em");t.className="today";t.textContent="今日";head.appendChild(t)}
-    el.appendChild(head);
+    var heading=document.createElement("div");heading.className="plan-day-heading62";heading.appendChild(head);el.appendChild(heading);
     var summary=document.createElement("div");summary.className="plan-summary";summary.dataset.planSummary=day.date;
-    summary.innerHTML='<div class="metric"><small>時間</small><strong class="plan-total"></strong></div><div class="metric"><small>完了</small><strong class="plan-percent"></strong><small class="plan-measured"></small></div><div class="plan-meter" role="progressbar" aria-label="計測時間による進捗" aria-valuemin="0" aria-valuemax="100"><span></span></div>';
-    el.appendChild(summary);
+    summary.innerHTML='<small>時間</small><strong class="plan-total"></strong>';
+    heading.appendChild(summary);
+    var items=document.createElement('div');items.className='plan-items62';el.appendChild(items);
     day.blocks.forEach(function(x){
       var id=x.id,on=!!state.done[id],run=running(id);
       all+=x.h;if(on)ok+=x.h;
       per[x.name]=(per[x.name]||0)+x.h;
       var b=document.createElement("div");b.className="blk"+(on?" on":"");b.dataset.blockId=id;
-      b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
+      b.style.setProperty("--subject-color62",colorOf(x.name));
       b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
       b.querySelector("span").textContent=x.name;
       var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+carryLabel(x);b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
@@ -1199,9 +1205,9 @@ function renderPlan(){
       b.querySelector(".item").onclick=function(){if(justDragged)return;openEdit(id,d)};
       bindDrag(b,id);
       b.querySelector(".edit").onclick=function(){openEdit(id,d)};
-      el.appendChild(b);
+      items.appendChild(b);
     });
-    if(!day.blocks.length)el.insertAdjacentHTML("beforeend",'<div class="note">予定なし</div>');
+    if(!day.blocks.length)items.insertAdjacentHTML("beforeend",'<div class="note">予定なし</div>');
     var ab=document.createElement("button");ab.className="addb";ab.textContent="＋ 項目を追加";
     ab.onclick=function(){openEdit(null,d)};
     el.appendChild(ab);
@@ -1218,12 +1224,7 @@ function updatePlanProgress(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-plan-summary]"),function(el){
     var day=(state.plan||[]).filter(function(d){return d.date===el.dataset.planSummary})[0];if(!day)return;
     var hours=day.blocks.reduce(function(n,b){return n+Number(b.h||0)},0);
-    var seconds=day.blocks.reduce(function(n,b){return n+Math.max(0,elapsed(b.id))},0);
-    var percent=hours>0?Math.floor(seconds/(hours*3600)*100):0;
-    el.querySelector(".plan-total").textContent=hm(hours);
-    el.querySelector(".plan-percent").textContent=percent+"%";
-    el.querySelector(".plan-measured").textContent="計測 "+fmtH(seconds);
-    var meter=el.querySelector(".plan-meter");meter.setAttribute("aria-valuenow",Math.min(100,percent));meter.setAttribute("aria-valuetext",percent+"パーセント");meter.querySelector("span").style.width=Math.min(100,percent)+"%";
+    el.querySelector('.plan-total').textContent=hm(hours);
   });
 }
 function openPlanDialog(id){
@@ -1922,7 +1923,7 @@ function renderPies(bs,L,targetBox){
   // 1つ目: 勉強した時間配分(表示している期間)
   var rng=bs.length?bs[0].key+"〜"+bs[bs.length-1].key:"表示期間",c1=document.createElement("div");c1.className="pie";
   c1.innerHTML='<div class="pt"></div><div class="pg"></div><div class="pl2"></div>';
-  c1.querySelector(".pt").textContent="勉強した時間配分("+rng+")";
+  c1.querySelector(".pt").textContent="科目ごとの勉強時間";
   c1.querySelector(".pg").innerHTML=donut(names.map(function(n){return{c:colorOf(n),v:per[n]}}),sum,sum>0?hm(sum/3600):"記録なし");
   var lg=c1.querySelector(".pl2");
   names.forEach(function(n){
@@ -3573,13 +3574,46 @@ function installV54(){
 }
 
 
+
+function renderGoalDesign62(){
+  if(!$('myGoalText62'))return;$('myGoalText62').textContent=state.goal||'目標は未設定です';
+  var exam=state.exam&&new Date(state.exam+'T00:00:00'),valid=exam&&!isNaN(exam.getTime());
+  $('myGoalDate62').textContent=valid?(exam.getMonth()+1)+'月'+exam.getDate()+'日まで':'試験日未設定';
+  var now=new Date();now.setHours(0,0,0,0);$('myGoalDays62').textContent=valid?Math.max(0,Math.round((exam-now)/86400000)):'—';
+  $('myFriends62').hidden=!FB.uid;$('myAccountState62').textContent=FB.uid?'接続済み':'未ログイン';
+}
+function renderRecentDesign62(){
+  var box=$('statsRecent62');if(!box)return;box.replaceChildren();var rows=recRows().slice(0,3);
+  if(!rows.length){var empty=document.createElement('p');empty.className='note';empty.textContent='まだ記録がありません。';box.appendChild(empty);return}
+  rows.forEach(function(record){var row=document.createElement('div');row.className='stats-record62';var date=new Date(record.d+'T00:00:00');var time=document.createElement('time');time.dateTime=record.d;time.textContent=(date.getMonth()+1)+'/'+date.getDate();var dot=document.createElement('i');dot.className='dot';dot.style.background=colorOf(record.n);var name=document.createElement('span');name.className='record-name62';name.textContent=record.n;var duration=document.createElement('strong');duration.textContent=fmtDur(record.s);row.append(time,dot,name,duration);box.appendChild(row)})
+}
+function installPageDesign62(){
+  var style=document.createElement('style');style.textContent="\nbody:has(#planbox:not([hidden])),body:has(#stats:not([hidden])),body:has(#mypage:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--card))}\n#planbox,#stats,#mypage{padding:8px 0 0;background:transparent;border:0;box-shadow:none;color:var(--ink)}\n#planbox .plan-heading h2,#stats>.mh h2,#mypage>.mh h2{font-size:1.6rem;font-weight:700;line-height:1.4;margin:0}\n#planbox .plan-heading,#stats>.mh,#mypage>.mh{margin-bottom:22px;gap:12px}\n.card62{background:var(--card);border:1px solid var(--line);border-radius:17px;overflow:hidden}.section-heading62{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 11px}.section-heading62 h3{margin:0;font-size:.9rem}.section-heading62 .lnk{font-size:.75rem;padding:4px 0}\n#planSettingsOpen,#settingsBtn{width:42px;height:42px;min-height:42px;padding:9px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--acc)}#planSettingsOpen span,#tipsShow{display:none}#planSettingsOpen svg{width:22px;height:22px}\n.plan-week62{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:13px;font-size:.85rem}.plan-week62>span{font-size:.75rem;color:var(--sub)}.plan-week62 strong{color:var(--ink);font-size:.95rem;margin-left:4px}\n#planbox .plan-dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:24px;padding:0;border:0;background:transparent}#planbox .plan-date{min-width:0;min-height:74px;padding:8px 1px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}#planbox .plan-date b{font-size:1.25rem;color:var(--ink)}#planbox .plan-date small{font-size:.7rem}#planbox .plan-date:after{content:'';width:4px;height:4px;border-radius:50%;background:var(--line)}#planbox .plan-date[aria-selected=\"true\"]{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:0 4px 10px rgba(20,40,65,.08)}#planbox .plan-date[aria-selected=\"true\"] b{color:#fff}#planbox .plan-date[aria-selected=\"true\"]:after{background:#fff}\n.plan-day-heading62{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:18px}#planbox .plan-day-heading62 h3{margin:0;font-size:1rem;gap:7px;flex-wrap:wrap;min-width:0}#planbox .today{font-size:.65rem;padding:3px 7px;border-radius:5px;font-style:normal}\n#planbox .plan-summary{display:flex;align-items:baseline;gap:6px;flex:none;margin:0;padding:0;border:0;background:transparent;border-radius:0;box-shadow:none}#planbox .plan-summary small{font-size:.7rem;color:var(--sub)}#planbox .plan-summary .plan-total{font-size:1.25rem;white-space:nowrap}#planbox .plan-summary>small:not(:first-child){display:none}\n.plan-items62{border:1px solid var(--line);border-radius:17px;overflow:hidden;background:var(--card)}#planbox .plan-items62 .blk{position:relative;min-height:84px;margin:0;padding:16px 14px 16px 18px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0;background:transparent;box-shadow:none;gap:12px}#planbox .plan-items62 .blk:last-child{border-bottom:0!important}#planbox .plan-items62 .blk:before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:4px;background:var(--subject-color62);border-radius:0 4px 4px 0}#planbox .blk .item{padding:0;text-align:left}#planbox .blk .item span{font-size:1rem;font-weight:600}#planbox .blk .item .duration{display:block;font-size:.8rem;color:var(--sub);margin-top:4px}#planbox .blk .sp{display:none}#planbox .blk input[type=checkbox]{width:21px;height:21px;border-radius:6px}#planbox .blk .edit{width:30px;min-width:30px;color:var(--sub);font-size:1.4rem}#planbox .plan-items62>.note{padding:18px;margin:0}#planbox .addb{width:100%;margin:12px 0 0;min-height:46px;border:1px solid var(--line);border-radius:13px;background:var(--card);color:var(--acc);font-size:.85rem}#goTodayStudy{display:block;width:100%;min-height:52px;margin:23px 0 4px;padding:12px;border:0;border-radius:14px;background:var(--acc);color:#fff;font-size:1rem;font-weight:650}#goTodayStudy span{margin-left:12px}\n#stats .sum3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 24px;padding:18px 10px;border:1px solid var(--line);border-radius:18px;background:var(--accbg);text-align:center}#stats .sum3>div{display:block;min-width:0;border-right:1px solid var(--line);padding:0 4px}#stats .sum3>div:last-child{border:0}#stats .sum3 small{font-size:.7rem;color:var(--sub);display:block}#stats .sum3 b{display:block;font-size:1.15rem;white-space:nowrap;margin-top:5px;line-height:1.4}\n#stats #mrOpen{background:var(--acc);color:#fff;border:0;border-radius:12px;padding:8px 15px;font-size:.8rem;min-height:38px}\n#stats #seg{display:flex;width:100%;max-width:none;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--bg);margin-bottom:20px}#stats #seg button{flex:1;margin:0;min-height:38px;background:transparent;color:var(--sub);border:0;border-radius:8px;font-size:.8rem}#stats #seg button.on{background:var(--card);color:var(--acc);font-weight:650;box-shadow:0 1px 4px rgba(20,40,65,.06)}\n#statsChart62{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:15px 12px;overflow:hidden}#statsChart62>.hd0{margin:0 0 6px;gap:8px}#statsPrev38,#statsNext38{border:0;background:transparent;color:var(--sub);font-size:1.4rem;min-width:32px;min-height:36px;padding:0}#statsRange38{font-size:.8rem;color:var(--ink);font-weight:600;text-align:center}#stats #schart{margin:0;background:transparent;border:0;padding:0}#stats #schart svg{display:block;width:100%;height:auto;max-height:220px}\n#stats #pies{display:block;margin:22px 0 0}#stats #pies>.pie{border:1px solid var(--line);border-radius:17px;background:var(--card);padding:16px;display:grid;grid-template-columns:minmax(100px,.85fr) minmax(0,1.15fr);gap:10px 14px;align-items:center;text-align:left}#stats #pies>.pie>.pt{grid-column:1/-1;font-size:.9rem;font-weight:650;color:var(--ink);margin:0 0 3px}#stats #pies .pg{min-width:0;margin:0}#stats #pies .pg svg{max-width:145px;width:100%;height:auto;display:block}#stats #pies .pl2{min-width:0;margin:0}#stats #pies .srow{font-size:.75rem;gap:6px;margin:9px 0;display:flex;flex-wrap:wrap}#stats #pies .srow>span:first-of-type{flex:1;min-width:0;overflow-wrap:anywhere}#stats #pies>.pie:nth-child(n+2){display:none}\n.stats-record62{display:flex;align-items:center;gap:9px;padding:14px 15px;border-bottom:1px solid var(--line);font-size:.8rem}.stats-record62:last-child{border:0}.stats-record62 time{color:var(--sub);font-size:.7rem;white-space:nowrap}.stats-record62 .record-name62{flex:1;min-width:0;overflow-wrap:anywhere}.stats-record62 strong{white-space:nowrap;font-size:.8rem}.stats-record62 .dot{flex:none;width:8px;height:8px}#statsRecent62>.note{padding:16px;margin:0}\n#mypage>.mh>.hbtn>#addBtn{display:none!important}.my-profile62{padding:20px 18px 0}.my-profile62>.me{margin:0;gap:15px;align-items:center}.my-profile62 #meAv{width:64px;height:64px;font-size:2rem;flex:none}.my-profile62 #meName{font-size:1.4rem;font-weight:650;overflow-wrap:anywhere}.my-profile62 .note{font-size:.75rem;color:var(--sub)}.my-profile62 .note:empty{display:none}.my-profile62>#cntRow{margin:20px -18px 0;padding:0;border-top:1px solid var(--line);gap:0}.my-profile62 #cntRow button{flex:1;padding:14px 4px;font-size:.7rem;color:var(--sub);display:flex;align-items:baseline;justify-content:center;gap:6px}.my-profile62 #cntRow b{font-size:1.2rem;color:var(--ink)}.my-profile62 #cntRow>i{display:none}.my-profile62 #pfView{margin:0}.my-profile62 #pfView:has(button[hidden]){display:none}\n#myGoal62{background:var(--accbg);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:24px}.goal-title62{font-size:1.2rem;line-height:1.5;font-weight:650;margin-bottom:18px;overflow-wrap:anywhere}.goal-deadline62{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:12px;color:var(--sub);font-size:.75rem}#myGoalDays62{font-size:1.8rem;font-weight:650;color:var(--ink);margin:0 4px}\n.my-menu62 button{display:flex;align-items:center;gap:12px;width:100%;min-height:66px;margin:0;padding:16px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:var(--card);color:var(--ink);font-size:.85rem;font-weight:600;text-align:left}.my-menu62 button:last-child{border:0}.my-menu62 button[hidden]{display:none}.menu-icon62{width:33px;height:33px;border-radius:10px;display:grid;place-items:center;background:var(--accbg);color:var(--acc);flex:none}.menu-icon62 svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.menu-chevron62{margin-left:auto;color:var(--sub);font-size:1.3rem}.my-account62{padding:16px}.my-account-heading62{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.8rem;font-weight:600}.my-account-heading62 .google62{font-size:1.3rem;color:var(--acc)}#myAccountState62{margin-left:auto;font-size:.65rem;color:var(--sub);font-weight:400}#fbMail{overflow-wrap:anywhere;font-size:.75rem}#myGoalEdit62{white-space:nowrap}\n@media(max-width:360px){.plan-day-heading62{gap:5px}#planbox .plan-day-heading62 h3{font-size:.9rem}#planbox .plan-summary .plan-total{font-size:1rem}#planbox .plan-items62 .blk{gap:9px;padding-left:14px!important}#stats #pies>.pie{padding:12px;gap:9px;grid-template-columns:minmax(85px,.8fr) minmax(0,1.2fr)}.stats-record62{gap:6px;padding:13px 10px}}\n";document.head.appendChild(style);
+  $('planSettingsOpen').setAttribute('aria-label','プラン設定');$('planSettingsOpen').title='プラン設定';
+  var chart=document.createElement('div');chart.id='statsChart62';var navigation=$('statsPrev38').parentNode;$('schart').before(chart);chart.append(navigation,$('schart'));
+  $('statsPrev38').textContent='‹';$('statsPrev38').setAttribute('aria-label','前の期間');$('statsNext38').textContent='›';$('statsNext38').setAttribute('aria-label','次の期間');$('mrOpen').textContent='＋ 記録';$('statsRecentMore62').onclick=openDm;
+  var profile=document.createElement('div');profile.className='card62 my-profile62';var me=$('meAv').closest('.me');me.before(profile);profile.append(me,$('cntRow'),$('pfView'));
+  var goalHeading=document.createElement('div');goalHeading.className='section-heading62';goalHeading.innerHTML='<h3>目標</h3><button id="myGoalEdit62" class="lnk" type="button">変更</button>';
+  var goal=document.createElement('section');goal.id='myGoal62';goal.innerHTML='<div id="myGoalText62" class="goal-title62"></div><div class="goal-deadline62"><span id="myGoalDate62"></span><span>あと <b id="myGoalDays62"></b>日</span></div>';profile.after(goalHeading,goal);
+  $('myGoalEdit62').onclick=function(){goalBack=5;showPage(0)};
+  var menu=document.createElement('div');menu.className='card62 my-menu62';var grades=$('myGradesOpen');grades.before(menu);menu.appendChild(grades);
+  function menuContent(button,icon,text){button.replaceChildren();var wrap=document.createElement('span');wrap.className='menu-icon62';wrap.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+icon+'</svg>';var label=document.createElement('span');label.textContent=text;var arrow=document.createElement('span');arrow.className='menu-chevron62';arrow.setAttribute('aria-hidden','true');arrow.textContent='›';button.append(wrap,label,arrow)}
+  menuContent(grades,'<path d="M4 20V4M4 20h16M7 15l4-4 3 3 5-6"/>','模試・テストの成績');
+  var friend=document.createElement('button');friend.id='myFriends62';friend.type='button';menuContent(friend,'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M19 8v6M16 11h6"/>','友達を追加');friend.onclick=openFriend;
+  var settings=document.createElement('button');settings.id='mySettings62';settings.type='button';menuContent(settings,'<circle cx="12" cy="12" r="3"/><path d="M9 3h6l1 4 4 2v6l-4 2-1 4H9l-1-4-4-2V9l4-2z"/>','プロフィール・設定');settings.onclick=function(){$('settingsBtn').click()};menu.append(friend,settings);
+  var account=document.createElement('div');account.className='card62 my-account62';var accountTitle=$('settingsSyncStatus').previousElementSibling;accountTitle.className='section-heading62';accountTitle.after(account);var accountHead=document.createElement('div');accountHead.className='my-account-heading62';accountHead.innerHTML='<span class="google62" aria-hidden="true">G</span><span>Googleアカウント</span><span id="myAccountState62"></span>';account.appendChild(accountHead);['settingsSyncStatus','fbOff','fbSetup','fbOutBox','fbOn'].forEach(function(id){account.appendChild($(id))});
+  var stats=renderStats;renderStats=function(){stats();renderRecentDesign62()};var live=updateStatsLive;updateStatsLive=function(){live();if(state.page===4)renderRecentDesign62()};
+  var my=renderMy;renderMy=function(){my();renderGoalDesign62()};var oldGoal=showGoal;showGoal=function(){oldGoal();renderGoalDesign62()};
+  renderGoalDesign62();renderRecentDesign62();
+}
+
 var fitFrame55=0;
 function queueFit55(){if(fitFrame55)return;fitFrame55=requestAnimationFrame(function(){fitFrame55=0;fitText55()})}
 function fitText55(){
   var nums=Array.from(document.querySelectorAll('#stats .sum3 b')).filter(function(el){return el.clientWidth>0});
   function fit(el,max,min){el.style.fontSize=max+'px';var lo=min,hi=max;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.fontSize=mid+'px';if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.fontSize=Math.floor(lo*2)/2+'px';return lo}
   var rankTitle=$('tlt');if(rankTitle&&rankTitle.clientWidth)fit(rankTitle,33.5,12);
-  if(nums.length){var size=Math.min.apply(null,nums.map(function(el){return fit(el,26,12)}));nums.forEach(function(el){el.style.fontSize=Math.floor(size*2)/2+'px'})}
+  if(nums.length){var size=Math.min.apply(null,nums.map(function(el){return fit(el,22,12)}));nums.forEach(function(el){el.style.fontSize=Math.floor(size*2)/2+'px'})}
   var goal=$('goalTxt');if(goal&&goal.parentNode.clientWidth){var el=goal.parentNode;el.style.removeProperty('--goal-size55');el.style.setProperty('--goal-size55','13px');var lo=13,hi=28;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.setProperty('--goal-size55',mid+'px');if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.setProperty('--goal-size55',Math.floor(lo*2)/2+'px')}
 }
 function installV55(){
@@ -3926,6 +3960,7 @@ installV54();
 installV55();
 installV56();
 installV57();
+installPageDesign62();
 installRecords58();
 fbInit();
 if($("saveRetry"))$("saveRetry").onclick=retrySaving;
