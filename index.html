@@ -468,6 +468,24 @@ button.follow-action:disabled{opacity:.6}
 .side #navToday svg{width:29px;height:29px}
 .side #navToday.on{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:0 4px 12px rgba(20,40,65,.16)}
 .side #navToday:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+/* Ranking: personal summary and a compact list of study times. */
+#rankingPage54 .rank-eyebrow59{font-size:.8rem;color:var(--sub);margin:0 0 4px}
+#rankingPage54 .rank-title54{font-size:1.65rem;font-weight:700;margin:0}
+.rank-date59{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:10px 0 20px;color:var(--sub);font-size:.75rem}
+.rank-scope59{padding:4px 9px;border:1px solid var(--line);border-radius:20px;background:var(--card)}
+.rank-self59{padding:17px 18px;margin:0 0 24px;background:var(--accbg);border:1px solid var(--line);border-radius:18px}
+.rank-self59[hidden]{display:none}.rank-self-top59,.rank-self-stats59{display:flex;align-items:center;justify-content:space-between;gap:10px}.rank-self-top59{font-size:.75rem;color:var(--sub)}#rankCount59{background:var(--card);padding:2px 7px;border-radius:5px;font-size:.65rem}.rank-self-stats59{margin-top:8px;flex-wrap:wrap}#rankPlace59{font-size:2.3rem;line-height:1.3;letter-spacing:-1px}.rank-self-unit59{font-size:.9rem;margin-left:3px}#rankSelfTime59{font-size:1.3rem;font-weight:650;font-variant-numeric:tabular-nums}.rank-self-note59{padding-top:10px;margin:10px 0 0;border-top:1px solid var(--line);font-size:.7rem;color:var(--sub)}
+.rank-list-head59{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 2px 10px}.rank-list-head59 h3{margin:0;font-size:.9rem}.rank-list-head59 span{color:var(--sub);font-size:.7rem}
+#rankingPage54>#tlBody{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:0;overflow:hidden;max-height:none}
+#rankingPage54 #tlBody .rkrow{display:grid;grid-template-columns:26px 36px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:9px;row-gap:0;align-items:center;min-height:74px;padding:12px 14px;margin:0;border-bottom:1px solid var(--line);border-radius:0}
+#rankingPage54 #tlBody .rkrow:last-child{border-bottom:0}#rankingPage54 #tlBody .rkrow.me{background:var(--accbg)}
+#rankingPage54 .rkrow .rn{grid-column:1;grid-row:1 / 3;width:26px;font-size:.95rem;position:relative;color:var(--sub);border-radius:7px;min-height:28px;gap:0}#rankingPage54 .rkrow .rn[data-place="1"]{background:#fff0ce;color:#9b6b16}#rankingPage54 .rkrow .rn[data-place="2"]{background:#edf1f5;color:#657481}#rankingPage54 .rkrow .rn[data-place="3"]{background:#f8e8dd;color:#996441}#rankingPage54 .rn .rank-trend{position:absolute;bottom:-12px;font-size:.55rem}
+#rankingPage54 .rkrow .av{grid-column:2;grid-row:1 / 3;width:36px;height:36px;flex:none}
+#rankingPage54 .rkrow .rname{grid-column:3;grid-row:1;align-self:end;font-size:.85rem;font-weight:600;overflow-wrap:anywhere}#rankingPage54 .rkrow.me .rname{color:var(--acc)}.rank-you59{font-size:.6rem;font-weight:400;border:1px solid var(--line);border-radius:4px;padding:1px 4px;margin-left:5px;white-space:nowrap}
+#rankingPage54 .rkrow .rcm{grid-column:3;grid-row:2;justify-self:start;align-self:start;min-height:24px;padding:0;gap:5px;font-size:.65rem}#rankingPage54 .rkrow .rcm svg{width:14px;height:14px}
+#rankingPage54 .rkrow>b{grid-column:4;grid-row:1 / 3;text-align:right;font-size:.85rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+#tlBody>.rank-empty59{padding:20px 16px;margin:0;color:var(--sub);font-size:.85rem}.rank-status59{margin:10px 2px;color:var(--sub);font-size:.7rem}
+@media(max-width:360px){#rankingPage54 #tlBody .rkrow{column-gap:7px;padding:12px 10px}#rankingPage54 .rkrow>b{font-size:.75rem}.rank-scope59{font-size:.65rem}}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3405,6 +3423,16 @@ function compactLegend54(box,key){
 }
 function rankVisible54(){return !!($('rankingPage54')&&!$('rankingPage54').hidden&&state.page===8)}
 var rankTask54=null,rankTaskOwner54=null,rankLive54=new Map(),rankLiveKey54='',rankFetch55={key:'',at:0};
+function rankSummary59(rows,positions,partial){
+  var now=new Date();$('rankDate59').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日（'+DAYS[now.getDay()]+'）';
+  var me=rows.find(function(r){return r.me});$('rankSelf59').hidden=!me;
+  $('rankStatus59').textContent=partial?'集計中…':'同じ秒数は同順位です。▲・▼は前回の集計からの順位変動です。';
+  if(!me)return;var place=positions[me.uid],trend=rankHistory.trends[me.uid];
+  setTextIfChanged($('rankPlace59'),place==null?'—':String(place));$('rankPlaceUnit59').textContent=place==null?'':'位';
+  $('rankSelfTrend59').textContent=trend==='up'?'▲':trend==='down'?'▼':'';$('rankSelfTrend59').className='rank-trend '+(trend||'');
+  $('rankSelfTrend59').setAttribute('aria-label',trend==='up'?'順位上昇':trend==='down'?'順位下降':'順位変動なし');
+  setTextIfChanged($('rankSelfTime59'),me.s>=60?fmtDur(me.s):'0分');$('rankCount59').textContent=partial?'集計中':rows.length+'人中';
+}
 function rankPaint54(box,rows,partial){
   var key=String(FB.uid||'')+'/'+fmtDate(new Date());if(rankHistory.key!==key)rankHistory={key:key,positions:{},trends:{},known:[]};
   rows=rows.slice().sort(function(a,b){return Math.floor(b.s)-Math.floor(a.s)||String(a.uid).localeCompare(String(b.uid))});
@@ -3415,15 +3443,16 @@ function rankPaint54(box,rows,partial){
     if(changed){var trends={};rows.forEach(function(r){var before=previous[r.uid],after=positions[r.uid];if(after!=null&&before!=null&&before!==after)trends[r.uid]=after<before?'up':'down';else if(after!=null&&before==null&&(rankHistory.known||[]).indexOf(r.uid)>=0)trends[r.uid]='up'});rankHistory.trends=trends}
     rankHistory.positions=positions;rankHistory.known=rows.map(function(r){return r.uid});
   }
+  rankSummary59(rows,positions,partial);
   var present=new Map();Array.from(box.querySelectorAll(':scope > .rkrow')).forEach(function(el){present.set(el.dataset.rankUid,el)});
   var keep=new Set();rows.forEach(function(r,index){
     keep.add(r.uid);var el=present.get(r.uid),created=!el;
     if(!el){el=document.createElement('div');el.className='rkrow';el.dataset.rankUid=r.uid;el.innerHTML='<span class="rn"></span><div class="av"></div><span class="rname"></span><button class="rcm" aria-label="コメント">'+IC_CMT+'<i></i></button><b></b>';el.querySelector('.rname').onclick=function(){var d=el.rankData54;if(d&&!d.me)openProfile(d.uid)};el.querySelector('.rcm').onclick=function(){var d=el.rankData54;if(d)openPost(rankPid(d.uid),{n:(d.me?'あなた':d.name+'さん')+'の今日',s:d.s})}}
     el.rankData54=r;el.dataset.pid=rankPid(r.uid);el.classList.toggle('me',!!r.me);
-    var pos=positions[r.uid],rank=pos==null?'ー':pos<=3?['🥇','🥈','🥉'][pos-1]:String(pos),trend=pos!=null&&rankHistory.trends[r.uid],signature=rank+'|'+(trend||'');
-    if(el.rankLabel54!==signature){var label=el.querySelector('.rn');label.textContent=rank;if(trend){var arrow=document.createElement('span');arrow.className='rank-trend '+trend;arrow.textContent=trend==='up'?'▲':'▼';arrow.setAttribute('aria-label',trend==='up'?'順位上昇':'順位下降');label.appendChild(arrow)}el.rankLabel54=signature}
+    var pos=positions[r.uid],rank=pos==null?'—':String(pos),trend=pos!=null&&rankHistory.trends[r.uid],signature=rank+'|'+(trend||'');
+    if(el.rankLabel54!==signature){var label=el.querySelector('.rn');label.textContent=rank;label.dataset.place=pos==null?'':String(pos);label.setAttribute('aria-label',pos==null?'順位なし':pos+'位');if(trend){var arrow=document.createElement('span');arrow.className='rank-trend '+trend;arrow.textContent=trend==='up'?'▲':'▼';arrow.setAttribute('aria-label',trend==='up'?'順位上昇':'順位下降');label.appendChild(arrow)}el.rankLabel54=signature}
     var profileSig=JSON.stringify([r.icon,r.color,r.photo]);if(el.rankProfile54!==profileSig){fbPaint(el.querySelector('.av'),r.icon,r.color,r.photo);el.rankProfile54=profileSig}
-    var nm=el.querySelector('.rname'),name=r.name+(r.me?'（あなた）':'');if(el.rankName54!==name||el.rankLive54!==!!r.live){nm.textContent=name;if(r.live){var dot=document.createElement('i');dot.className='live';dot.setAttribute('aria-label','勉強中');nm.appendChild(dot)}el.rankName54=name;el.rankLive54=!!r.live}
+    var nm=el.querySelector('.rname'),name=r.me?'あなた':r.name;if(el.rankName54!==name||el.rankLive54!==!!r.live){nm.textContent=name;if(r.me){var badge=document.createElement('span');badge.className='rank-you59';badge.textContent='自分';nm.appendChild(badge)}if(r.live){var dot=document.createElement('i');dot.className='live';dot.setAttribute('aria-label','勉強中');nm.appendChild(dot)}el.rankName54=name;el.rankLive54=!!r.live}
     setTextIfChanged(el.querySelector('b'),r.s>=60?fmtDur(r.s):'0分');
     var current=box.children[index];if(current!==el)box.insertBefore(el,current||null);
     if(created){var pid=el.dataset.pid;profileRead('posts/'+pid+'/comments',fList).then(function(list){if(el.isConnected&&el.dataset.pid===pid)setTextIfChanged(el.querySelector('.rcm i'),list.length?String(list.length):'')}).catch(function(){})}
@@ -3435,11 +3464,12 @@ rankLoad=function(){
   if(document.hidden||!rankVisible54())return Promise.resolve();var uid=FB.uid,ownerKey=String(uid)+'/'+authEpoch;
   if(rankTask54&&rankTaskOwner54===ownerKey)return rankTask54;
   var box=$('tlBody'),request=++rankRequest,epoch=authEpoch,key=String(uid)+'/'+fmtDate(new Date());
-  if(key!==rankLiveKey54){rankLive54.clear();rankLiveKey54=key;box.replaceChildren()}
-  if(!uid){box.textContent='ログインすると、友達の学習記録とランキングが見られます。';return Promise.resolve()}
+  if(key!==rankLiveKey54){rankLive54.clear();rankLiveKey54=key;box.replaceChildren();rankSummary59([],{},true)}
+  if(!uid){rankSummary59([],{},false);$('rankStatus59').textContent='';box.replaceChildren();var note=document.createElement('p');note.className='rank-empty59';note.textContent='ログインすると、フォロー中の人の今日の勉強時間ランキングが見られます。';box.appendChild(note);$('rankErrors54').replaceChildren();return Promise.resolve()}
   var active=function(){return rankVisible54()&&!document.hidden&&request===rankRequest&&uid===FB.uid&&epoch===authEpoch};
   if(rankFetch55.key===ownerKey+'/'+key&&Date.now()-rankFetch55.at<60000&&box.children.length)return Promise.resolve();
   rankFetch55={key:ownerKey+'/'+key,at:Date.now()};
+  rankSummary59(Array.from(rankLive54.values()),rankHistory.positions||{},true);
   var errors=[];
   function paint(rows,final){if(!active())return;rows.forEach(function(r){rankLive54.set(r.uid,r)});if(final){var ids=new Set(rows.map(function(r){return r.uid}));Array.from(rankLive54.keys()).forEach(function(id){if(!ids.has(id))rankLive54.delete(id)})}rankPaint(box,Array.from(rankLive54.values()),!final);var errorBox=$('rankErrors54');errorBox.replaceChildren();errors.forEach(function(e){showReadError(errorBox,e,null,true)})}
   var task=(async function(){try{await rankRows(paint,function(e){if(active()&&!errors.some(function(old){return errorKind(old)===errorKind(e)}))errors.push(e)})}catch(e){if(active())showReadError($('rankErrors54'),e,null)}finally{if(rankTask54===task){rankTask54=null;rankTaskOwner54=null}}})();rankTask54=task;rankTaskOwner54=ownerKey;return task;
@@ -3468,7 +3498,9 @@ function installV54(){
   state.carryDistribution='spread';
   var nav=document.querySelector('.side'),rankButton=document.createElement('button');rankButton.id='navRank54';rankButton.className='nv';rankButton.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21V12h5v9M9.5 21V4h5v17M16 21v-7h5v7"/></svg><span>ランキング</span>';
   nav.append(rankButton,$('navPlan'),$('navToday'),$('navStats'),$('navMy'));
-  var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='今日の学習時間ランキング';page.appendChild(title);page.appendChild($('tlBody'));var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
+  var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='ランキング';var eyebrow=document.createElement('p');eyebrow.className='rank-eyebrow59';eyebrow.textContent='今日の勉強時間';page.append(eyebrow,title);
+  var layout=document.createElement('div');layout.innerHTML='<div class="rank-date59"><span id="rankDate59"></span><span class="rank-scope59">あなたとフォロー中の人</span></div><section id="rankSelf59" class="rank-self59" hidden aria-label="あなたの今日の順位と勉強時間"><div class="rank-self-top59"><span>あなたの今日</span><span id="rankCount59"></span></div><div class="rank-self-stats59"><div><b id="rankPlace59">—</b><span id="rankPlaceUnit59" class="rank-self-unit59"></span> <span id="rankSelfTrend59"></span></div><span id="rankSelfTime59">0分</span></div><p class="rank-self-note59">今日も、自分のペースで積み重ねよう。</p></section><div class="rank-list-head59"><h3>みんなの勉強時間</h3><span>今日の計測時間</span></div>';
+  while(layout.firstChild)page.appendChild(layout.firstChild);page.appendChild($('tlBody'));var status=document.createElement('p');status.id='rankStatus59';status.className='rank-status59';status.setAttribute('role','status');page.appendChild(status);var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
   var page54=showPage;showPage=function(n){var result=page54(n);var rank=state.page===8;page.hidden=!rank;rankButton.classList.toggle('on',rank);if(rank){$('tlm').hidden=true;rankLoad()}return result};
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
   var header=document.querySelector('.sp-top'),card=document.querySelector('.sp-preview-head .sp-preview-card:not(.follow)'),goal=document.querySelector('.sp-top .goalbar'),deadline=document.createElement('div');deadline.className='header-deadline54';Array.from(card.children).forEach(function(el){deadline.appendChild(el)});card.append(goal,deadline);goal.classList.add('header-goal54');$('followingCard').hidden=true;document.querySelector('.sp-top > .count').hidden=true;
