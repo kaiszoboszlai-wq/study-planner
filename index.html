@@ -3286,10 +3286,10 @@ function normalizeRatios53(entries){
   entries.forEach(function(e){e.weight=Math.max(1,Math.min(10,Math.round((Number(e.weight)||1)/max*10)))})
 }
 // Priority labels leave existing numeric allocations intact until the user changes them.
-function priorityLabel59(weight){return Number(weight)===.5?'少なめ':Number(weight)===1?'標準':Number(weight)===2?'多め':'以前の配分'}
+function priorityLabel59(weight){return Number(weight)===.5?'少なめ':Number(weight)===1?'標準':Number(weight)===2?'多め':''}
 function priorityOptions59(select,weight){
   [[.5,'少なめ'],[1,'標準'],[2,'多め']].forEach(function(item){var option=document.createElement('option');option.value=item[0];option.textContent=item[1];select.appendChild(option)});
-  if(![.5,1,2].includes(Number(weight))){var option=document.createElement('option');option.value=weight;option.textContent='以前の配分';select.appendChild(option)}
+  if(![.5,1,2].includes(Number(weight))){var option=document.createElement('option');option.value=weight;option.textContent='';select.appendChild(option)}
   select.value=weight;
 }
 function flowSteps40(w){
