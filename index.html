@@ -648,9 +648,10 @@ button.follow-action:disabled{opacity:.6}
 
 <section id="planbox" hidden>
 <div class="plan-heading"><h2>今週のプラン</h2><div class="plan-header-actions"><button id="planSettingsOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 3-.6 2.3-1.5.9-2.3-.6-2.5 4.3 1.7 1.7v1.8L2.6 15l2.5 4.3 2.3-.6 1.5.9.6 2.4h5l.6-2.4 1.5-.9 2.3.6 2.5-4.3-1.7-1.6v-1.8l1.7-1.7-2.5-4.3-2.3.6-1.5-.9L14.5 3z"/><circle cx="12" cy="12.5" r="3.2"/></svg><span>プラン設定</span></button><button id="tipsShow" class="plan-help" aria-label="使い方" title="使い方" aria-expanded="false" aria-controls="tips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.8-2.5 2-2.5 3.8"/><path d="M12 16.8h.01"/></svg></button></div></div>
+<div class="actions"><button id="goTodayStudy" class="lnk" type="button">今日の勉強へ</button></div>
 <div id="planDates" class="plan-dates" role="tablist" aria-label="計画の日付"></div>
 <div id="plan" class="days"></div>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すとタイマー、▶で計測を開始します</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すと予定を編集できます。計測は「今日の勉強へ」から始めます</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
@@ -661,7 +662,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="pies" id="pies"></div>
 </section>
 <section id="today" hidden>
-<div class="today-heading"><h2>今日</h2><span id="tdTitle"></span></div>
+<div class="today-heading"><h2>今日</h2><span id="tdTitle"></span><button id="adjustTodayPlan" class="lnk" type="button" style="margin-left:auto;font-size:.8rem">今日の予定を調整</button></div>
 <div id="tdSummary" class="today-summary"><div><strong aria-label="今日の計測時間" id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><strong aria-label="達成率" id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
 <div class="note" id="tdSum"></div>
 <div id="tdList"></div>
@@ -1164,15 +1165,13 @@ function renderPlan(){
       per[x.name]=(per[x.name]||0)+x.h;
       var b=document.createElement("div");b.className="blk"+(on?" on":"");b.dataset.blockId=id;
       b.style.borderLeft="6px solid "+colorOf(x.name);b.style.paddingLeft="10px";
-      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib play"></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
+      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
       b.querySelector("span").textContent=x.name;
       var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+carryLabel(x);b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
       b.querySelector(".sp").textContent=spText(id);
-      var pb=b.querySelector(".play");pb.innerHTML=run?IC_PAUSE:IC_PLAY;pb.setAttribute("aria-label",run?"計測を一時停止":"計測を開始");
       b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
-      b.querySelector(".item").onclick=function(){if(justDragged)return;openTimer(id)};
+      b.querySelector(".item").onclick=function(){if(justDragged)return;openEdit(id,d)};
       bindDrag(b,id);
-      pb.onclick=function(){var wasRunning=running(id);toggleTimer(id);if(!wasRunning)openTimer(id)};
       b.querySelector(".edit").onclick=function(){openEdit(id,d)};
       el.appendChild(b);
     });
@@ -2010,7 +2009,7 @@ function renderToday(){
   var now=new Date(),td=fmtDate(now);$("tdTitle").dataset.date=td;$("tdTitle").textContent=(now.getMonth()+1)+"月"+now.getDate()+"日（"+DAYS[now.getDay()]+"）";
   var day=(state.plan||[]).filter(function(y){return y.date===td})[0];
   $("tdSum").textContent=day&&day.blocks.length?"":day?"今日の予定はありません。":"今日の計画がまだありません。「プラン」で作りましょう。";
-  (day?day.blocks:[]).forEach(function(x){
+  (day?day.blocks.slice():[]).sort(function(a,b){return Number(running(b.id))-Number(running(a.id))}).forEach(function(x){
     var id=x.id,on=!!state.done[id],run=running(id),c=document.createElement("div");c.className="tcard"+(on?" on":"")+(run?" is-running":"");c.dataset.todayBlock=id;c.style.setProperty("--subject-color",colorOf(x.name));
     c.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span class="today-subject"></span><small class="today-detail"></small><span class="today-progress-row"><span class="today-progress"><i></i></span><small class="today-block-percent"></small></span></button><div class="today-play"><button class="ib play"></button><small class="today-running-label"></small></div>';
     c.querySelector(".today-subject").textContent=x.name+carryLabel(x);
@@ -3757,6 +3756,8 @@ $("ddel").onclick=dmDelete;
 $("dm").onclick=function(e){if(e.target===this)this.hidden=true};
 $("mrMore").onclick=function(){mrLimit+=15;renderStats()};
 $("navToday").onclick=function(){showPage(6)};
+$("goTodayStudy").onclick=function(){showPage(6)};
+$("adjustTodayPlan").onclick=function(){selectedPlanDate=fmtDate(new Date());showPage(3);if(state.page===3)renderPlan()};
 $("navGrades").onclick=function(){showPage(7)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
