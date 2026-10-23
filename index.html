@@ -462,6 +462,7 @@ button.follow-action:disabled{opacity:.6}
 .request-profile-details{display:grid;grid-template-columns:3em minmax(0,1fr);gap:5px 10px;margin:10px 0;font-size:.85rem;text-align:left}.request-profile-details dt{color:var(--sub)}.request-profile-details dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}.request-profile-details .request-profile-legacy{grid-column:1/-1;font-size:.78rem;color:var(--sub);margin-top:4px}
 .friend-compact{padding:8px;margin:6px 0}.friend-compact .fbrow{display:grid;grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr) 38px;gap:6px;align-items:center;padding:0}.friend-compact .av{width:32px;height:32px;font-size:1.1rem}.friend-compact .fbrow>div:nth-child(2){min-width:0;font-size:.8rem;overflow-wrap:anywhere}.friend-compact .fbrow>div:nth-child(2)>.note{display:none}.friend-compact .fbrow>button{padding:4px 2px;font-size:.75rem;width:38px}.friend-compact .request-profile-details{font-size:.75rem;grid-template-columns:2.3em minmax(0,1fr);gap:2px 4px;margin:0;min-width:0}.friend-compact .actions{margin-top:5px;gap:4px}.friend-compact .actions button{padding:3px 5px;font-size:.72rem;max-width:100%}
 .friend-following .fbrow{grid-template-columns:32px minmax(55px,.65fr) minmax(96px,1.35fr)}.friend-following .friend-details{min-width:0}
+.my-grades-card{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:16px 0;padding:18px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-align:left;font:inherit;font-weight:600}.my-grades-card>span:last-child{font-size:1.5rem;color:var(--sub)}#gradesBackMy{margin-bottom:12px}
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -581,7 +582,6 @@ button.follow-action:disabled{opacity:.6}
 <button class="nv" id="navToday"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg><span>今日</span></button>
 <button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
 <button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
-<button class="nv" id="navGrades"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M7 15l4-4 3 3 5-6"/></svg><span>成績</span></button>
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
@@ -668,6 +668,7 @@ button.follow-action:disabled{opacity:.6}
 <div id="tdList"></div>
 </section>
 <section id="grades" hidden>
+<button id="gradesBackMy" class="lnk" type="button">← マイページへ戻る</button>
 <h2>模試・テストの成績</h2>
 <div class="actions"><button id="gAdd" class="main">成績を追加</button></div>
 <p class="note" id="gNote"></p>
@@ -682,6 +683,7 @@ button.follow-action:disabled{opacity:.6}
 <div class="cnt" id="cntRow" hidden><button id="cntFol"><b id="nFol">0</b>フォロー中</button><i></i><button id="cntFr"><b id="nFr">0</b>フォロワー</button></div>
 <div class="note" id="meSub"></div><div class="note" id="meSchool"></div><div class="note" id="meMore"></div></div></div>
 <div class="actions" id="pfView"><button id="shareBtn" hidden>シェア</button></div>
+<button id="myGradesOpen" class="my-grades-card" type="button"><span>模試・テストの成績</span><span aria-hidden="true">›</span></button>
 <h3 class="sh">アカウント</h3>
 <p class="note" id="settingsSyncStatus" role="status" aria-live="polite"></p>
 <p class="note" id="fbOff" hidden></p>
@@ -1989,7 +1991,7 @@ function showPage(n){
   Object.keys(map).forEach(function(k){$(map[k]).hidden=Number(k)!==n});
   if(n<=3)state.planPage=n;
   $("navToday").classList.toggle("on",n===6);$("navPlan").classList.toggle("on",n<=3);$("navStats").classList.toggle("on",n===4);
-  $("navGrades").classList.toggle("on",n===7);$("navMy").classList.toggle("on",n===5);
+  $("navMy").classList.toggle("on",n===5||n===7);
   if(n===0){$("goal").value=state.goal||"";$("exam").value=state.exam||"";$("goalErr").hidden=true}
   showGoal();
   $("tips").hidden=true;$("tipsShow").setAttribute("aria-expanded","false");
@@ -3460,7 +3462,7 @@ showCarryReview=function(){if(consumeCarry54()){save();renderPlan()}};
 function installV54(){
   state.carryDistribution='spread';
   var nav=document.querySelector('.side'),rankButton=document.createElement('button');rankButton.id='navRank54';rankButton.className='nv';rankButton.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21V12h5v9M9.5 21V4h5v17M16 21v-7h5v7"/></svg><span>ランキング</span>';
-  ['navPlan','navStats','navToday'].forEach(function(id){nav.appendChild($(id))});nav.append(rankButton,$('navGrades'),$('navMy'));
+  ['navToday','navPlan','navStats'].forEach(function(id){nav.appendChild($(id))});nav.append(rankButton,$('navMy'));
   var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='今日の学習時間ランキング';page.appendChild(title);page.appendChild($('tlBody'));var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
   var page54=showPage;showPage=function(n){var result=page54(n);var rank=state.page===8;page.hidden=!rank;rankButton.classList.toggle('on',rank);if(rank){$('tlm').hidden=true;rankLoad()}return result};
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
@@ -3758,7 +3760,8 @@ $("mrMore").onclick=function(){mrLimit+=15;renderStats()};
 $("navToday").onclick=function(){showPage(6)};
 $("goTodayStudy").onclick=function(){showPage(6)};
 $("adjustTodayPlan").onclick=function(){selectedPlanDate=fmtDate(new Date());showPage(3);if(state.page===3)renderPlan()};
-$("navGrades").onclick=function(){showPage(7)};
+$("myGradesOpen").onclick=function(){showPage(7)};
+$("gradesBackMy").onclick=function(){showPage(5)};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
 $("gmAddRow").onclick=function(){addGmRow("","","100")};
