@@ -3462,7 +3462,7 @@ showCarryReview=function(){if(consumeCarry54()){save();renderPlan()}};
 function installV54(){
   state.carryDistribution='spread';
   var nav=document.querySelector('.side'),rankButton=document.createElement('button');rankButton.id='navRank54';rankButton.className='nv';rankButton.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21V12h5v9M9.5 21V4h5v17M16 21v-7h5v7"/></svg><span>ランキング</span>';
-  ['navToday','navPlan','navStats'].forEach(function(id){nav.appendChild($(id))});nav.append(rankButton,$('navMy'));
+  ['navPlan','navStats','navToday'].forEach(function(id){nav.appendChild($(id))});nav.append(rankButton,$('navMy'));
   var page=document.createElement('section');page.id='rankingPage54';page.hidden=true;page.innerHTML='';var oldTitle=$('tlt'),title=document.createElement('h2');title.id='tlt';oldTitle.replaceWith(title);title.className='rank-title54';title.textContent='今日の学習時間ランキング';page.appendChild(title);page.appendChild($('tlBody'));var errorBox=document.createElement('div');errorBox.id='rankErrors54';page.appendChild(errorBox);$('mypage').before(page);
   var page54=showPage;showPage=function(n){var result=page54(n);var rank=state.page===8;page.hidden=!rank;rankButton.classList.toggle('on',rank);if(rank){$('tlm').hidden=true;rankLoad()}return result};
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
