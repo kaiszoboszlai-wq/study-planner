@@ -515,7 +515,7 @@ button.follow-action:disabled{opacity:.6}
 .side{gap:1px}.side .nv{min-width:0;flex:1 1 0;padding:5px 1px;font-size:clamp(.6rem,2.6vw,.72rem)}.side .nv svg{width:23px;height:23px}.side .nv>span{white-space:nowrap}
 .sp-top{padding:7px 10px 8px!important;margin:-20px -16px 10px!important;border-radius:0 0 12px 12px!important}.sp-top .sp-brand{font-size:1rem!important;line-height:1.2;margin:0 44px 5px!important;white-space:nowrap}.sp-top .plane{top:0;right:6px;width:38px;height:32px;min-height:32px;min-width:38px}.sp-top .plane svg{width:22px;height:22px}
 .sp-top .sp-preview-head{display:block;margin:0!important}.sp-top .sp-preview-card:not(.follow){display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;min-height:46px!important;padding:5px 10px!important;border-radius:9px;box-shadow:none!important}.sp-top .header-goal54{flex:1;min-width:0;margin:0!important;font-size:.76rem!important;font-weight:400;line-height:1.4;color:var(--ink)!important;overflow-wrap:anywhere}.header-goal54 .lnk{font-size:.72rem;padding:0 4px;min-height:28px;min-width:28px}.header-deadline54{flex:none;display:flex;align-items:baseline;gap:5px}.header-deadline54 .eyebrow{font-size:.68rem!important}.header-deadline54 .big{font-size:.8rem!important;white-space:nowrap}#daysCard{font-size:1.35rem!important;color:var(--red);font-weight:600}.header-deadline54 .small{display:none}.sp-top>#followingCard,.sp-top .follow,.sp-top>.count{display:none!important}
-#saveStatus,#settingsSyncStatus,#appVer,#rankStatus38{display:none!important}
+#appVer,#rankStatus38{display:none!important}
 #rankingPage54 .rkrow .rname{flex:1;min-width:0}.rank-trend{font-size:.85rem;font-weight:600;flex:none}.rank-trend.up{color:#39b9e6}.rank-trend.down{color:#e03131}
 .carry-switch-row54{display:grid;grid-template-columns:minmax(0,1fr) 44px 2.8em;gap:9px;align-items:center;color:var(--ink)}.carry-switch-row54>span:first-of-type{grid-column:1;grid-row:1;font-size:.9rem}.carry-switch-row54 input{grid-column:2;grid-row:1;appearance:none;display:block;width:44px;height:26px;border:0;border-radius:15px;background:var(--line);margin:0;position:relative}.carry-switch-row54 input:checked{background:var(--acc)}.carry-switch-row54 input:before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;background:var(--card);border-radius:50%;transition:transform .15s}.carry-switch-row54 input:checked:before{transform:translateX(18px)}#carryState54{grid-column:3;font-size:.8rem;font-weight:600}
 #planPreviewTitle{font-size:1.35rem}#planStyleChoices54{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}#planStyleChoices54 button{font-weight:600}#planStyleChoices54 button[aria-pressed=true]{background:var(--accbg);border-color:var(--acc)}.plan-preview-row{padding-left:10px!important;margin:8px 0;border-radius:3px}.plan-preview-row small{font-size:.95rem;color:var(--ink);font-weight:600;white-space:nowrap}.plan-preview-day h3{font-weight:600;color:var(--ink)}
@@ -644,7 +644,7 @@ button.follow-action:disabled{opacity:.6}
 </div>
 
 <button id="activeTimer" class="active-timer" type="button" hidden aria-label="計測中のタイマーに戻る"><span class="active-timer-dot" aria-hidden="true"></span><span id="activeTimerText"></span><span class="active-timer-link">タイマーへ</span></button>
-<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span></div>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -945,7 +945,21 @@ function showReadError(box,e,retry,append){
 
   if(!append)box.replaceChildren();box.appendChild(row);return row;
 }
-function paintSaveStatus(){var el=$('saveStatusText'),box=$('saveStatus'),settings=$('settingsSyncStatus');if(el)el.textContent='';if(box)box.hidden=true;if(settings){settings.textContent='';settings.hidden=true}}
+function paintSaveStatus(){
+  var el=$('saveStatusText'),box=$('saveStatus'),settings=$('settingsSyncStatus'),retry=$('saveRetry');
+  var error=saveHealth.localError||saveHealth.cloudError||saveHealth.writeError,text="";
+  if(saveHealth.localError)text="この端末に保存できませんでした。";
+  else if(FB&&FB.uid){
+    if(error)text="同期できませんでした。"+readErrorMessage(error);
+    else if(!FB.syncReady)text="同期を確認しています…";
+    else if(saveHealth.pending)text="変更を同期しています…";
+    else if(saveHealth.synced)text="同期済み";
+  }
+  if(el)el.textContent=text;
+  if(box){box.hidden=!text||(!error&&saveHealth.synced);box.classList.toggle('has-error',!!error)}
+  if(settings){settings.textContent=text;settings.hidden=!text}
+  if(retry)retry.hidden=!error;
+}
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
   if(!FB.syncReady){await fbOnAuth();return}
@@ -2308,7 +2322,7 @@ async function fGet(path){
   if(profileCacheOwner!==FB.uid)profileCacheReset();
   var owner=FB.uid,epoch=profileCacheEpoch,cacheable=profileCacheKey(path);
   try{
-    var r=await limitRead(FB.Fs.getDoc(FB.Fs.doc(FB.db,path))),value=r.exists()?r.data():null;
+    var r=await limitRead((/^privateData\//.test(path)?FB.Fs.getDocFromServer:FB.Fs.getDoc)(FB.Fs.doc(FB.db,path))),value=r.exists()?r.data():null;
     if(cacheable&&owner&&FB.uid===owner&&profileCacheEpoch===epoch){
       profileCache.delete(path);profileCache.set(path,{value:value,at:Date.now()});
       while(profileCache.size>150)profileCache.delete(profileCache.keys().next().value);
@@ -2431,7 +2445,7 @@ function followerProfileDetails(prof,shared,data){
 // ---- 別の端末との同期: 自分だけが読み書きできる privateData/(自分のuid) に、データを丸ごと預ける ----
 var syncTimer=null,syncSig="",syncFlight=null;
 function isBlank(){return !state.plan&&!(state.goal||"").trim()&&!Object.keys(state.log||{}).length&&!(state.exams||[]).length} // まだ何も入れていない端末は、預けない(別の端末のデータを上書きしないため)
-function syncSchedule(){if(!ownsCurrentData(FB.uid))return;if(syncData()!==syncSig&&!isBlank()){saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus()}if(!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPush,4000)}
+function syncSchedule(){if(!ownsCurrentData(FB.uid))return;if(syncData()!==syncSig&&!isBlank()){saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus()}if(!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPull,4000)}
 async function syncPush(){
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady)return;
   clearTimeout(syncTimer);syncTimer=null;
@@ -2450,13 +2464,29 @@ function syncApply(r){ // 別の端末のほうが新しい: その内容をこ�
     repairLog58(o);localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));location.reload();return true;
   }catch(e){saveHealth.localError=e;paintSaveStatus();return false}
 }
-async function syncPull(){ // 画面にもどったとき、別の端末のほうが新しければ取り込む
+async function syncPull(){
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady)return;
-  if(syncTimer)await syncPush();
+  clearTimeout(syncTimer);syncTimer=null;
+  // Finish an existing write, but read before sending a queued or failed write.
+  if(syncFlight&&syncFlight.uid===uid&&syncFlight.epoch===epoch)await syncFlight.promise;
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
-  var r=null;try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return}
-  if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
-  if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0))syncApply(r);
+  var before=syncData(),r=null;
+  try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return}
+  if(!ownsCurrentData(uid)||epoch!==authEpoch||syncData()!==before)return;
+  if(r&&typeof r.data==="string"&&r.data===before){
+    syncSig=before;state.dataAt=Math.max(Number(r.dataAt)||0,state.dataAt||0);store();
+    saveHealth.cloudError=null;saveHealth.pending=false;saveHealth.synced=true;paintSaveStatus();return;
+  }
+  if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0)){
+    // Preserve unsent local work before accepting the newer cloud snapshot.
+    if(before!==syncSig&&!isBlank()){
+      try{localStorage.setItem(accountKey(uid)+":sync-backup",JSON.stringify(state))}
+      catch(e){saveHealth.localError=e;paintSaveStatus();return}
+    }
+    clearTimeout(syncTimer);syncTimer=null;syncApply(r);return;
+  }
+  // A failed write has no debounce timer left; retry based on unsent data.
+  if(before!==syncSig&&!isBlank())await syncPush();
   else{saveHealth.cloudError=null;paintSaveStatus()}
 }
 async function syncStart(){ // ログインしたとき: クラウドのほうが新しければ取り込む。なければ、この端末のデータを預ける
@@ -2464,10 +2494,22 @@ async function syncStart(){ // ログインしたとき: クラウドのほう�
   try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return false} // 読めなかったときは、上書きしないように、同期を始めない
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return false;
   var needsCloud=accountNeedsCloud;accountNeedsCloud=false;
-  if(r&&typeof r.data==="string"&&(needsCloud||(Number(r.dataAt)||0)>(state.dataAt||0))){if(syncApply(r))return true}
+  if(r&&typeof r.data==="string"&&(needsCloud||(isBlank()&&r.data!==syncData())||(Number(r.dataAt)||0)>(state.dataAt||0))){if(syncApply(r))return true;return false}
   FB.syncReady=true;saveHealth.cloudError=null;
   if(r&&r.data===syncData()){syncSig=syncData();saveHealth.pending=false;saveHealth.synced=true}else if(isBlank()){saveHealth.pending=false;saveHealth.synced=false}
   paintSaveStatus();await syncPush();
+}
+var syncRefreshFlight=null;
+async function syncRefresh(){
+  if(document.hidden||!ownsCurrentData(FB.uid))return;
+  if(syncRefreshFlight)return syncRefreshFlight;
+  // Do not reload over an active timer, a dialog, or an unfinished form edit.
+  if(FB.syncReady&&(state.timer||state.idleReview||state.pendingTimerRelease||
+    document.querySelector('[role="dialog"]:not([hidden])')||
+    /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement&&document.activeElement.tagName)))return;
+  var task=(async function(){if(!FB.syncReady)await fbOnAuth();else await syncPull()})();
+  syncRefreshFlight=task;
+  try{await task}finally{if(syncRefreshFlight===task)syncRefreshFlight=null}
 }
 async function fbSocialSync(){ // 友達に見せる、フォロー中・フォロワーの一覧(idだけ)を保存する
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid))return;
@@ -3959,9 +4001,10 @@ $("shareBtn").onclick=async function(){
   try{await navigator.clipboard.writeText(t);openFriend();fbMsg("シェア用の文章をコピーしました。")}catch(e){openFriend()}
 };
 setInterval(fbPoll,60000);
+setInterval(function(){syncRefresh().catch(function(){})},15000);
 setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
 setInterval(function(){if(!document.hidden&&rankVisible54())rankLoad()},60000);
-document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncPull();if(dmCur)dmLoad(false);tickAll()}});
+document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncRefresh().catch(function(){});if(dmCur)dmLoad(false);tickAll()}});
 installV38();
 installWeeklyFlow40();
 installV54();
