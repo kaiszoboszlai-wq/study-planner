@@ -1789,8 +1789,24 @@ function rollback(id,kind){
     if(old>0.5&&l)subLogAny(l.x.name,old);
   }
 }
+// Remove only elapsed time linked to the deleted records; preserve other days.
+function resetDeletedRecordTimers(match){
+  checkpointRunning58(Date.now());
+  var active=state.timer&&state.timer.id;
+  if(active&&(((state.contrib&&state.contrib[active])||[]).some(function(e){return e.k==='t'&&match(e.date,e.name)})))pauseTimer();
+  Object.keys(state.contrib||{}).forEach(function(id){
+    var removed=0,affected=false;
+    state.contrib[id].forEach(function(e){if(match(e.date,e.name)){affected=true;if(e.k==='t')removed+=Number(e.sec)||0}});
+    if(!affected)return;
+    if(removed>0)state.spent[id]=Math.max(0,(Number(state.spent[id])||0)-removed);
+    delete state.done[id];
+  });
+  timerUndoState=null;notified=null;
+}
+function refreshDeletedRecordTimers(){updateTimer();renderPlan();renderActiveTimer()}
 // 記録の削除。match(日付)が真の日の記録を、グラフ・内訳の元データごと消す。
 function deleteRecords(match){
+  resetDeletedRecordTimers(function(date){return match(date)});
   Object.keys(state.log||{}).forEach(function(d){if(match(d))delete state.log[d]});
   Object.keys(state.contrib||{}).forEach(function(id){
     var keep=state.contrib[id].filter(function(e){return !match(e.date)});
@@ -1798,7 +1814,7 @@ function deleteRecords(match){
   });
   Object.keys(state.credit||{}).forEach(function(id){if(match(state.credit[id].date))delete state.credit[id]});
   state.legacyOff=true; // 削除したあとは、古い記録をさかのぼって引く処理はしない
-  save();
+  save();refreshDeletedRecordTimers();
 }
 function bucketMatch(mode,key){
   return function(d){return mode==="d"?d===key:mode==="w"?fmtDate(mondayOf(new Date(d+"T00:00:00")))===key:d.slice(0,7)===key};
@@ -1865,13 +1881,14 @@ function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:�
 // ---- 記録の手入力(右上の「記録」ボタン)と、一覧・1件ずつの削除(グラフの枠を押す) ----
 var mrLimit=15,mrSig="";
 function delRecord(date,name){ // その日の、その科目の記録を消す
+  resetDeletedRecordTimers(function(d,n){return d===date&&n===name});
   if(state.log&&state.log[date]){delete state.log[date][name];if(!Object.keys(state.log[date]).length)delete state.log[date]}
   Object.keys(state.contrib||{}).forEach(function(id){
     var keep=state.contrib[id].filter(function(e){return !(e.date===date&&e.name===name)});
     if(keep.length)state.contrib[id]=keep;else delete state.contrib[id];
   });
   Object.keys(state.credit||{}).forEach(function(id){if(state.credit[id].date===date&&state.credit[id].name===name)delete state.credit[id]});
-  state.legacyOff=true;save();
+  state.legacyOff=true;save();refreshDeletedRecordTimers();
 }
 function recRows(){ // 記録の一覧(新しい日から)。30秒に満たない記録は出さない
   var rows=[];
