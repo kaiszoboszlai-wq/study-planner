@@ -557,43 +557,29 @@ button.follow-action:disabled{opacity:.6}
 .header-deadline54{flex:0 0 auto;align-items:baseline;gap:4px;margin:0;white-space:nowrap;line-height:1.25}
 </style>
 <style id="today-design-v60">
-/* Today: approved card design. */
-#today{
-  background:linear-gradient(150deg,color-mix(in srgb,var(--card) 94%,var(--accbg)),var(--card) 45%);
-  border-color:color-mix(in srgb,var(--line) 75%,var(--card));
-  border-radius:20px;
-  box-shadow:0 8px 26px color-mix(in srgb,var(--ink) 5%,transparent);
-}
-#today .today-summary{
-  background:color-mix(in srgb,var(--accbg) 65%,var(--card));
-  border-color:color-mix(in srgb,var(--acc) 15%,var(--card));
-  border-radius:14px;
-  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--card) 90%,transparent);
-}
-#today .today-summary>div:nth-child(2){border-left-color:color-mix(in srgb,var(--acc) 18%,var(--card))}
-#today .today-summary strong{color:color-mix(in srgb,var(--ink) 90%,var(--acc))}
-#today .today-summary .barx{background:color-mix(in srgb,var(--acc) 13%,var(--card))}
+/* Match the shared page surfaces while keeping Today's existing layout. */
+body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--card))}
+#today{padding:8px 0 0;background:transparent;border:0;border-radius:0;box-shadow:none}
+#today .today-heading{gap:10px;margin-bottom:22px}
+#today .today-heading h2{font-size:1.6rem;font-weight:700;line-height:1.4}
+#today .today-heading>span{font-size:.8rem;color:var(--sub)}
+#today .today-summary{padding:16px;gap:10px 14px;margin-bottom:18px;background:var(--accbg);border:1px solid var(--line);border-radius:18px;box-shadow:none}
+#today .today-summary>div:nth-child(2){border-left-color:var(--line);padding-left:14px}
+#today .today-summary strong{color:var(--ink);font-size:clamp(1.4rem,6vw,1.8rem);font-weight:650}
+#today .today-summary #tdPlanned{font-size:.75rem;color:var(--sub)}
+#today .today-summary .barx{height:5px;background:var(--line);margin-top:3px}
 #today .today-summary .barx i{background:var(--acc)}
-#today .tcard{
-  background:var(--card);
-  border-top-color:color-mix(in srgb,var(--line) 75%,var(--card));
-  border-right-color:color-mix(in srgb,var(--line) 75%,var(--card));
-  border-bottom-color:color-mix(in srgb,var(--line) 75%,var(--card));
-  border-radius:16px;
-  box-shadow:0 3px 10px color-mix(in srgb,var(--ink) 5%,transparent);
-}
-#today .tcard.is-running{background:color-mix(in srgb,var(--subject-color) 5%,var(--card))}
-#today .tcard.on{background:color-mix(in srgb,var(--line) 15%,var(--card));box-shadow:none}
-#today .tcard .play{
-  color:var(--card);
-  background:var(--acc);
-  border-color:var(--acc);
-  box-shadow:0 3px 8px color-mix(in srgb,var(--acc) 18%,transparent);
-}
-#today .tcard.is-running .play{background:var(--ink);border-color:var(--ink)}
-#today .today-progress{background:color-mix(in srgb,var(--subject-color) 10%,var(--card))}
+#today .tcard{background:var(--card);border-top-color:var(--line);border-right-color:var(--line);border-bottom-color:var(--line);border-left-width:4px;border-radius:17px;box-shadow:none}
+#today .tcard.is-running{background:color-mix(in srgb,var(--accbg) 50%,var(--card));border-top-color:var(--line);border-right-color:var(--line);border-bottom-color:var(--line)}
+#today .tcard.on{background:var(--card)}
+#today .today-subject{font-size:1rem;font-weight:600}
+#today .today-detail{font-size:.85rem;font-weight:400;color:var(--sub)}
+#today .today-block-percent{font-size:.75rem;font-weight:500}
+#today .tcard .play{color:var(--acc);background:var(--accbg);border-color:var(--line);box-shadow:none}
+#today .tcard.is-running .play{color:#fff;background:var(--acc);border-color:var(--acc)}
+#today .today-progress{background:var(--line);height:5px}
 #today .today-progress i{background:var(--subject-color)}
-#today>button{background:var(--card);border-color:color-mix(in srgb,var(--acc) 28%,var(--card));border-radius:12px}
+#today>button{background:var(--card);border-color:var(--line);border-radius:12px}
 </style>
 </head>
 <body>
