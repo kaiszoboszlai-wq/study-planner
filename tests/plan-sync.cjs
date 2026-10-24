@@ -1,0 +1,9 @@
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
+const plan=(id)=>[{date:'2026-10-24',blocks:[{id,name:'math',h:1}]}];
+function setup(){const c={state:{plan:plan('local'),spent:{local:900},done:{local:true},contrib:{local:[{date:'2026-10-24',name:'math',sec:900,k:'t'}]}},syncSig:'',JSON,Array,Error};vm.createContext(c);vm.runInContext(html.slice(html.indexOf('function protectSyncedPlan('),html.indexOf('function syncApply(')),c);return c;}
+test('missing or null cloud plan cannot clear a populated local plan',()=>{for(const remote of [{},{plan:null},{plan:[]}]){const c=setup();assert.throws(()=>c.protectSyncedPlan(remote),/プラン/);assert.equal(c.state.plan[0].blocks[0].id,'local')}});
+test('unsent local plan edits survive a newer remote snapshot',()=>{const c=setup();c.syncSig=JSON.stringify({plan:plan('base')});const remote={plan:plan('remote'),goal:'remote goal',spent:{remote:10}};c.protectSyncedPlan(remote);assert.equal(remote.plan[0].blocks[0].id,'local');assert.equal(remote.spent.local,900);assert.equal(remote.done.local,true);assert.equal(remote.goal,'remote goal')});
+test('when local plan is unchanged, remote plan updates including deliberate item deletions apply',()=>{const c=setup();c.syncSig=JSON.stringify({plan:c.state.plan});const remote={plan:[{date:'2026-10-24',blocks:[]}]};c.protectSyncedPlan(remote);assert.equal(remote.plan[0].blocks.length,0)});
+test('new device accepts populated cloud plan',()=>{const c=setup();c.state.plan=null;const remote={plan:plan('remote')};c.protectSyncedPlan(remote);assert.equal(remote.plan[0].blocks[0].id,'remote')});
+test('invalid cloud plan is rejected',()=>{const c=setup();assert.throws(()=>c.protectSyncedPlan({plan:[{date:'2026-10-24'}]}),/形式/)});

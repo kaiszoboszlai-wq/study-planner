@@ -934,7 +934,7 @@ function showReadError(box,e,retry,append){
 function paintSaveStatus(){
   var el=$('saveStatusText'),box=$('saveStatus'),settings=$('settingsSyncStatus'),retry=$('saveRetry');
   var error=saveHealth.localError||saveHealth.cloudError||saveHealth.writeError,text="";
-  if(saveHealth.localError)text="この端末に保存できませんでした。";
+  if(saveHealth.localError)text=saveHealth.localError.message&&/プラン/.test(saveHealth.localError.message)?saveHealth.localError.message:"この端末に保存できませんでした。";
   else if(FB&&FB.uid){
     if(error)text="同期できませんでした。"+readErrorMessage(error);
     else if(!FB.syncReady)text="同期を確認しています…";
@@ -2462,21 +2462,36 @@ async function syncPush(){
   if(!state.dataAt){state.dataAt=Date.now();store()}var dataAt=state.dataAt;
   saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus();
   var flight={uid:uid,epoch:epoch,promise:null};syncFlight=flight;
-  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null;if(ownsCurrentData(uid)&&epoch===authEpoch&&!saveHealth.cloudError&&!saveHealth.pending&&state.pendingTimerRelease)setTimeout(function(){if(ownsCurrentData(uid)&&state.pendingTimerRelease&&!timerReleaseTask)releaseTimerLease(state.pendingTimerRelease)},0)}})();
+  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;rememberSyncBase(d);saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null;if(ownsCurrentData(uid)&&epoch===authEpoch&&!saveHealth.cloudError&&!saveHealth.pending&&state.pendingTimerRelease)setTimeout(function(){if(ownsCurrentData(uid)&&state.pendingTimerRelease&&!timerReleaseTask)releaseTimerLease(state.pendingTimerRelease)},0)}})();
   return flight.promise;
+}
+function rememberSyncBase(data){try{localStorage.setItem(accountKey(dataOwner)+":sync-base",data)}catch(e){}}
+function protectSyncedPlan(remote){
+  var current=state.plan,hasCurrent=Array.isArray(current)&&current.some(function(d){return d.blocks&&d.blocks.length});
+  if(remote.plan!=null&&(!Array.isArray(remote.plan)||remote.plan.some(function(d){return !d||typeof d.date!=='string'||!Array.isArray(d.blocks)})))throw new Error('クラウドのプラン形式が正しくありません。');
+  if(hasCurrent&&(!Array.isArray(remote.plan)||!remote.plan.length))throw new Error('同期先にプランがありません。端末のプランを保護しました。');
+  // Three-way comparison: a newer remote timestamp must not erase unsent plan edits.
+  var base=null;try{base=JSON.parse(syncSig||(typeof localStorage!=="undefined"?localStorage.getItem(accountKey(dataOwner)+":sync-base"):null)||"null")}catch(e){}
+  if(base&&JSON.stringify(current)!==JSON.stringify(base.plan)){
+    remote.plan=JSON.parse(JSON.stringify(current));
+    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
+  }
+  return remote;
 }
 function syncApply(r){
   try{
     var remote=JSON.parse(r.data);
     if(!remote||typeof remote!=="object"||Array.isArray(remote))throw new Error("Invalid cloud data");
+    remote=protectSyncedPlan(remote);
     var o=Object.assign(JSON.parse(initialState),remote);
     o.timer=state.timer;o.idleReview=state.idleReview||null;o.pendingTimerRelease=state.pendingTimerRelease||null;
     o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
     if(!ownsCurrentData(FB.uid))return false;
     repairLog58(o);
     // Persist successfully before replacing the live state; never reload into setup.
+    localStorage.setItem(accountKey(dataOwner)+":before-sync",JSON.stringify(state));
     localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));
-    state=o;lastData=syncData();syncSig=r.data;accountNeedsCloud=false;FB.syncReady=true;
+    state=o;lastData=syncData();syncSig=r.data;rememberSyncBase(r.data);accountNeedsCloud=false;FB.syncReady=true;
     saveHealth.localError=null;saveHealth.cloudError=null;saveHealth.pending=lastData!==syncSig;saveHealth.synced=!saveHealth.pending;
     timerUndoState=null;mrSig='';
     closePlanDialogs();fillWeeklySetup();countdown();renderSubjects();renderPlan();
@@ -2493,7 +2508,7 @@ async function syncPull(){
   try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return}
   if(!ownsCurrentData(uid)||epoch!==authEpoch||syncData()!==before)return;
   if(r&&typeof r.data==="string"&&r.data===before){
-    syncSig=before;state.dataAt=Math.max(Number(r.dataAt)||0,state.dataAt||0);store();
+    syncSig=before;rememberSyncBase(before);state.dataAt=Math.max(Number(r.dataAt)||0,state.dataAt||0);store();
     saveHealth.cloudError=null;saveHealth.pending=false;saveHealth.synced=true;paintSaveStatus();return;
   }
   if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0)){
@@ -2516,7 +2531,7 @@ async function syncStart(){ // ログインしたとき: クラウドのほう�
   var needsCloud=accountNeedsCloud;accountNeedsCloud=false;
   if(r&&typeof r.data==="string"&&(needsCloud||(isBlank()&&r.data!==syncData())||(Number(r.dataAt)||0)>(state.dataAt||0))){if(syncApply(r))return true;return false}
   FB.syncReady=true;saveHealth.cloudError=null;
-  if(r&&r.data===syncData()){syncSig=syncData();saveHealth.pending=false;saveHealth.synced=true}else if(isBlank()){saveHealth.pending=false;saveHealth.synced=false}
+  if(r&&r.data===syncData()){syncSig=syncData();rememberSyncBase(syncSig);saveHealth.pending=false;saveHealth.synced=true}else if(isBlank()){saveHealth.pending=false;saveHealth.synced=false}
   paintSaveStatus();await syncPush();
 }
 var syncRefreshFlight=null;

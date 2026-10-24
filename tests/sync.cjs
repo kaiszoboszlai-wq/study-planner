@@ -5,7 +5,7 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 function setup(){
-  const c={state:{plan:null,goal:'',log:{},exams:[],dataAt:999},FB:{uid:'same-google-user',syncReady:false},authEpoch:1,accountNeedsCloud:false,saveHealth:{},document:{hidden:false,activeElement:null,querySelector:()=>null},setTimeout:()=>1,clearTimeout(){},Date,JSON,Promise,paintSaveStatus(){},store(){},ownsCurrentData(uid){return uid===c.FB.uid},syncData(){return JSON.stringify({goal:c.state.goal})},writes:[],applied:[],fGet:async()=>c.remote,fSet:async(path,data)=>c.writes.push({path,data}),syncApply(r){c.applied.push(r);return true}};
+  const c={state:{plan:null,goal:'',log:{},exams:[],dataAt:999},FB:{uid:'same-google-user',syncReady:false},authEpoch:1,accountNeedsCloud:false,saveHealth:{},document:{hidden:false,activeElement:null,querySelector:()=>null},setTimeout:()=>1,clearTimeout(){},Date,JSON,Promise,paintSaveStatus(){},rememberSyncBase(){},store(){},ownsCurrentData(uid){return uid===c.FB.uid},syncData(){return JSON.stringify({goal:c.state.goal})},writes:[],applied:[],fGet:async()=>c.remote,fSet:async(path,data)=>c.writes.push({path,data}),syncApply(r){c.applied.push(r);return true}};
   vm.createContext(c);
   const start=html.indexOf('var syncTimer=null');const end=html.indexOf('async function fbSocialSync()',start);
   // Keep the real network flow, replacing only the reload/storage boundary.
