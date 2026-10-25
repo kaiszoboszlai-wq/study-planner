@@ -627,6 +627,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 #today .today-progress i{background:var(--subject-color)}
 #today>button{background:var(--card);border-color:var(--line);border-radius:12px}
 </style>
+<link rel="stylesheet" href="assets/study-advisor.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -4219,5 +4220,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 })();
 </script>
 
+<script src="assets/study-route-data.js"></script>
+<script src="assets/study-advisor.js"></script>
 </body>
 </html>
