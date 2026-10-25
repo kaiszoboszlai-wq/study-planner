@@ -632,7 +632,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
-<div class="sp-logo sp-icon-frame"><img src="assets/app-flag-180.png" width="120" height="120" alt="study plannerの山と旗のアイコン" decoding="sync"></div>
+<div class="sp-logo sp-icon-frame"><img src="assets/app-flag-180.png" width="120" height="120" alt="study plannerの旗のアイコン" decoding="sync"></div>
 <div class="sp-t">study planner</div>
 </div></div>
 <script>
@@ -643,12 +643,12 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
   var seen=false;
   try{seen=sessionStorage.getItem(key)==="1";sessionStorage.setItem(key,"1")}catch(e){}
   if(seen){remove();return}
-  function hide(){if(done)return;done=true;sp.classList.add("out");setTimeout(remove,500)}
+  function hide(){if(done)return;done=true;sp.classList.add("out");setTimeout(remove,350)}
   var calm=false;try{calm=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){}
   sp.addEventListener("click",hide);
   sp.addEventListener("animationend",function(e){if(e.target===sp&&e.animationName==="spGone")remove()});
   window.addEventListener("pagehide",remove,{once:true});
-  setTimeout(hide,calm?500:1900);
+  setTimeout(hide,calm?120:1250);
 })();
 </script>
 <div class="app">

@@ -64,3 +64,19 @@ html[data-app-theme] .sp-preview-card{border-radius:12px}
 }
 
 html[data-app-theme] .advisor-entry{background:var(--selection-bg);color:var(--ink)}
+
+/* Quiet launch: a soft halo, a gentle icon lift, then the title. */
+#splash{background:var(--bg);transition:opacity .32s ease,visibility .32s;animation:spGone .01s 1.9s forwards}
+#splash .sp-in{position:relative;isolation:isolate}
+#splash .sp-in::before{content:"";position:absolute;z-index:-1;left:50%;top:60px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(6,199,85,.13),rgba(6,199,85,0) 70%);transform:translate(-50%,-50%);animation:launchHalo 900ms ease-out both;pointer-events:none}
+#splash .sp-icon-frame{animation:launchFlag 650ms cubic-bezier(.2,.7,.2,1) both}
+#splash .sp-icon-frame::after{display:none;animation:none}
+#splash .sp-t{animation:launchTitle 420ms 260ms ease-out both}
+@keyframes launchFlag{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes launchTitle{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes launchHalo{from{opacity:0;scale:.85}to{opacity:1;scale:1}}
+@media(prefers-reduced-motion:reduce){
+ #splash{transition:none}
+ #splash .sp-icon-frame,#splash .sp-t{animation:none;opacity:1;transform:none}
+ #splash .sp-in::before{animation:none;display:none}
+}
