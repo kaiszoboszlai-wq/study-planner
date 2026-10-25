@@ -517,6 +517,18 @@ button.follow-action:disabled{opacity:.6}
 @keyframes focusFinish{50%{border-color:#fff;box-shadow:0 0 22px #e4f3ffa0,inset 0 0 16px #e4f3ff50}}
 @media(prefers-reduced-motion:reduce){.focus-orbit,#focusRing.is-finished{animation:none!important}}
 
+
+/* Black theme keeps every application surface dark, including fixed navigation and dialogs. */
+:root[data-app-theme="black"]{color-scheme:dark;--bg:#090909;--card:#151515;--ink:#f2f2f2;--sub:#b0b0b0;--line:#363636;--acc:#8dd9c1;--accbg:#1b3029;--done:#777;--red:#ff8590;--theme-header:#090909;--theme-header-ink:#f2f2f2;background:var(--bg)}
+:root[data-app-theme="black"] body,:root[data-app-theme="black"] main{background:var(--bg)!important;color:var(--ink)}
+:root[data-app-theme="black"] section,:root[data-app-theme="black"] .card,:root[data-app-theme="black"] .stat-card{background:var(--card);color:var(--ink);border-color:var(--line)}
+:root[data-app-theme="black"] input,:root[data-app-theme="black"] select,:root[data-app-theme="black"] textarea{background:var(--card)!important;color:var(--ink)!important;border-color:var(--line)!important}
+:root[data-app-theme="black"] .sp-preview-card{background:var(--card)!important;color:var(--ink)!important;box-shadow:none}
+:root[data-app-theme="black"] .side{background:var(--bg);border-color:var(--line)}
+:root[data-app-theme="black"] .plane{color:var(--ink)}
+:root[data-app-theme="black"] button.main{background:var(--acc);border-color:var(--acc);color:#10251e}
+:root[data-app-theme="black"] #daysCard{color:var(--red)!important}
+
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -840,6 +852,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
     <button type="button" class="theme-choice" data-app-theme="sage"><span class="theme-swatches"><i style="background:#D5E8D4"></i><i style="background:#FFFDF7"></i><i style="background:#63805B"></i></span><b>セージグリーン</b><small>落ち着く・自然</small></button>
     <button type="button" class="theme-choice" data-app-theme="lavender"><span class="theme-swatches"><i style="background:#D8C9F2"></i><i style="background:#FFFFFF"></i><i style="background:#8256B5"></i></span><b>ラベンダー</b><small>柔らかい・上品</small></button>
     <button type="button" class="theme-choice" data-app-theme="peach"><span class="theme-swatches"><i style="background:#F4D8C8"></i><i style="background:#FFFCF7"></i><i style="background:#B97855"></i></span><b>ピーチ</b><small>温かい・明るい</small></button>
+    <button type="button" class="theme-choice" data-app-theme="black"><span class="theme-swatches"><i style="background:#090909"></i><i style="background:#151515"></i><i style="background:#8dd9c1"></i></span><b>ブラック</b><small>黒ベース・目にやさしい</small></button>
   </div>
   </div>
 <h3 class="sh">アカウント</h3>
@@ -3441,7 +3454,7 @@ function validateBackup38(raw){
   out.plan=plan(src.plan);out.weekCarry=carry(src.weekCarry);out.planHistory=items(src.planHistory||[]).map(function(h){var p=plan(h.plan);if(!p||!p.length)throw new Error('プラン履歴が空です。');var done={};Object.keys(object(h.done||{})).forEach(function(id){done[text(id,120)]=!!h.done[id]});return {id:text(h.id,120),plan:p,done:done,goal:typeof h.goal==='string'?h.goal:'',exam:typeof h.exam==='string'?h.exam:'',reason:typeof h.reason==='string'?h.reason:'復元',created:number(h.created||0,100000000000000),signature:JSON.stringify(p.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]})),reviewed:!!h.reviewed}});
   out.exams=items(src.exams||[]).map(function(e){var sc={};Object.keys(object(e.sc||{})).forEach(function(n){text(n,100);var o=e.sc[n],m=number(o.m,10000);if(m<=0)throw new Error('満点が正しくありません。');sc[n]={s:o.s==null?null:number(o.s,m*10),m:m};if(o.d!=null)sc[n].d=number(o.d,1000)});return {id:text(e.id,120),date:date(e.date),name:text(e.name,100),rank:number(e.rank||0,10000000),of:number(e.of||0,10000000),sc:sc}});
   if(src.carryReview){var r=object(src.carryReview);out.carryReview={mode:r.mode==='week'?'week':'daily',items:carry(r.items),sourceDates:items(r.sourceDates||[]).map(date),signature:text(r.signature||'',200000)}}else out.carryReview=null;
-  out.timer=null;out.idleReview=null;out.pendingTimerRelease=null;syncPlanTotals(out.plan);return {data:out,theme:['sky','sage','lavender','peach'].indexOf(raw.appearance&&raw.appearance.theme)>=0?raw.appearance.theme:'sky'};
+  out.timer=null;out.idleReview=null;out.pendingTimerRelease=null;syncPlanTotals(out.plan);return {data:out,theme:['sky','sage','lavender','peach','black'].indexOf(raw.appearance&&raw.appearance.theme)>=0?raw.appearance.theme:'sky'};
 }
 function mergeBackup38(current,incoming){var next=planClone(current);Object.keys(incoming.log).forEach(function(d){next.log[d]=next.log[d]||{};Object.keys(incoming.log[d]).forEach(function(n){var old=Number(next.log[d][n]||0),newSec=Math.max(old,incoming.log[d][n]);if(newSec>old){next.log[d][n]=newSec;var id='import-'+rid();next.contrib[id]=[{date:d,name:n,sec:newSec-old,k:'m'}]}})});
   var examKeys=new Set((next.exams||[]).map(function(e){return e.date+'|'+e.name}));incoming.exams.forEach(function(e){if(examKeys.has(e.date+'|'+e.name))return;var copy=planClone(e);if((next.exams||[]).some(function(v){return v.id===copy.id}))copy.id=rid();next.exams.push(copy);examKeys.add(e.date+'|'+e.name)});
@@ -4181,7 +4194,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script>
 (function(){
   var KEY="study-planner-appearance-v1";
-  var themes={sky:1,sage:1,lavender:1,peach:1};
+  var themes={sky:1,sage:1,lavender:1,peach:1,black:1};
   function read(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
   function apply(){
     var v=read(),theme=themes[v.theme]?v.theme:"sky",chrome="theme";
@@ -4189,7 +4202,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
     document.documentElement.setAttribute("data-chrome-theme",chrome);
     document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
     var sel=document.getElementById("chromeTheme");if(sel)sel.value=chrome;
-    var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
+    var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8",black:"#090909"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
   }
   function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){saveHealth.localError=e;paintSaveStatus()}apply()}
   document.querySelectorAll(".theme-choice").forEach(function(b){b.addEventListener("click",function(){save("theme",b.getAttribute("data-app-theme"))})});
