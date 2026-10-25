@@ -1,0 +1,11 @@
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8'),date='2026-10-25';
+function snapshot(sec){return {log:sec?{[date]:{math:sec}}:{},spent:sec?{timer:sec}:{},contrib:sec?{timer:[{date,name:'math',k:'t',sec}]}:{}}}
+function merge(b,l,r){const c={state:l,syncSig:b===null?'':JSON.stringify(b),localStorage:{getItem:()=>null},accountKey:()=>'',dataOwner:'me'};vm.createContext(c);vm.runInContext(html.slice(html.indexOf('function protectSyncedRecords('),html.indexOf('function syncApply(')),c);return JSON.parse(JSON.stringify(c.protectSyncedRecords(r)))}
+test('unsent timer time survives a newer cloud snapshot with an unchanged plan',()=>{const r=merge(snapshot(0),snapshot(1800),snapshot(0));assert.equal(r.log[date].math,1800);assert.equal(r.spent.timer,1800);assert.equal(r.contrib.timer[0].sec,1800)});
+test('independent additions on two devices are combined once',()=>{const r=merge(snapshot(600),snapshot(900),snapshot(1200));assert.equal(r.log[date].math,1500);assert.equal(r.spent.timer,1500);assert.equal(r.contrib.timer[0].sec,1500);assert.equal(merge(r,r,r).log[date].math,1500)});
+test('an intentional remote deletion applies when local records are unchanged',()=>{const r=merge(snapshot(600),snapshot(600),snapshot(0));assert.deepEqual(r,snapshot(0))});
+test('an unsent local deletion is not resurrected by an older cloud record',()=>{assert.deepEqual(merge(snapshot(600),snapshot(0),snapshot(600)),snapshot(0))});
+test('first sync without a baseline retains local records without counting the same time twice',()=>{assert.equal(merge(null,snapshot(900),snapshot(600)).log[date].math,900)});
+test('unrelated remote dates and subjects survive local timer additions',()=>{const remote=snapshot(0);remote.log={'2026-10-24':{english:1200}};const r=merge(snapshot(0),snapshot(900),remote);assert.equal(r.log[date].math,900);assert.equal(r.log['2026-10-24'].english,1200)});
+test('local timer time survives conflicting remote record deletion',()=>{const r=merge(snapshot(600),snapshot(900),snapshot(0));assert.equal(r.log[date].math,900);assert.equal(r.contrib.timer[0].sec,900)});

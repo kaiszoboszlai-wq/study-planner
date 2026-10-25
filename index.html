@@ -2542,11 +2542,35 @@ function protectSyncedPlan(remote){
   }
   return remote;
 }
+// Merge unsent study records against the last shared snapshot, independently of plan edits.
+function protectSyncedRecords(remote,incoming){
+  var base=null;try{base=JSON.parse(syncSig||localStorage.getItem(accountKey(dataOwner)+':sync-base')||'null')}catch(e){}
+  incoming=incoming||remote;
+  function mergeNumber(b,l,r){
+    b=Number(b)||0;l=Number(l)||0;r=Number(r)||0;
+    if(!base)return Math.max(l,r);
+    if(Math.abs(l-b)<.001)return r;
+    if(Math.abs(r-b)<.001)return l;
+    // Independent additions accumulate; a local edit/deletion takes priority over a conflict.
+    return l>=b&&r>=b?l+r-b:l;
+  }
+  function numbers(b,l,r){
+    b=b||{};l=l||{};r=r||{};var out={};
+    Array.from(new Set(Object.keys(b).concat(Object.keys(l),Object.keys(r)))).forEach(function(k){var n=mergeNumber(b[k],l[k],r[k]);if(n>0)Object.defineProperty(out,k,{value:n,writable:true,enumerable:true,configurable:true})});return out;
+  }
+  var logs={},localLog=state.log||{},remoteLog=incoming.log||{},baseLog=base&&base.log||{};
+  Array.from(new Set(Object.keys(baseLog).concat(Object.keys(localLog),Object.keys(remoteLog)))).forEach(function(d){var row=numbers(baseLog[d],localLog[d],remoteLog[d]);if(Object.keys(row).length)logs[d]=row});
+  remote.log=logs;remote.spent=numbers(base&&base.spent,state.spent,incoming.spent);
+  function contributions(data){var out={};Object.keys(data||{}).forEach(function(id){(data[id]||[]).forEach(function(e){var key=JSON.stringify([id,e.date,e.name,e.k]);out[key]=(out[key]||0)+e.sec})});return out}
+  var totals=numbers(contributions(base&&base.contrib),contributions(state.contrib),contributions(incoming.contrib)),contrib={};
+  Object.keys(totals).forEach(function(key){var p=JSON.parse(key);if(!Object.prototype.hasOwnProperty.call(contrib,p[0]))Object.defineProperty(contrib,p[0],{value:[],enumerable:true,writable:true,configurable:true});contrib[p[0]].push({date:p[1],name:p[2],k:p[3],sec:totals[key]})});remote.contrib=contrib;
+  return remote;
+}
 function syncApply(r){
   try{
     var remote=JSON.parse(r.data);
     if(!remote||typeof remote!=="object"||Array.isArray(remote))throw new Error("Invalid cloud data");
-    remote=protectSyncedPlan(remote);
+    remote=protectSyncedRecords(protectSyncedPlan(remote),JSON.parse(r.data));
     var o=Object.assign(JSON.parse(initialState),remote);
     o.timer=state.timer;o.idleReview=state.idleReview||null;o.pendingTimerRelease=state.pendingTimerRelease||null;
     o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
@@ -3900,6 +3924,8 @@ function installRecords58(){
   function persist(){if(state.timer)save();else store()}
   document.addEventListener('visibilitychange',function(){if(document.hidden)persist()});
   addEventListener('pagehide',persist);addEventListener('beforeunload',persist);
+  // Mobile processes may be killed without a final lifecycle event.
+  setInterval(function(){if(state.timer)persist()},15000);
 }
 
 // ===== イベント =====
