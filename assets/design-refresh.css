@@ -1,0 +1,49 @@
+/* Visual layer only. Source: PayPay's public App Style Guide (color/shape/layout/transition).
+   Keep the application's DOM, dimensions, ordering and five theme choices. */
+:root{--ui-shadow:0 2px 8px rgba(36,35,35,.045);--ui-ease:cubic-bezier(.2,.7,.2,1)}
+:root[data-app-theme="sky"][data-chrome-theme]{--bg:#f7f7f7;--card:#fff;--ink:#242323;--sub:#606060;--line:#eee;--acc:#002970;--accbg:#e5f1ff;--done:#909090;--red:#bd1834;--theme-header:#e5f1ff;--theme-header-ink:#242323}
+:root[data-app-theme="sage"][data-chrome-theme]{--bg:#f7f7f7;--card:#fff;--ink:#242323;--sub:#606060;--line:#eee;--acc:#146c48;--accbg:#dff7ed;--done:#909090;--red:#bd1834;--theme-header:#dff7ed;--theme-header-ink:#242323}
+:root[data-app-theme="lavender"][data-chrome-theme]{--bg:#f7f7f7;--card:#fff;--ink:#242323;--sub:#606060;--line:#eee;--acc:#7921a3;--accbg:#f7e5ff;--done:#909090;--red:#bd1834;--theme-header:#f7e5ff;--theme-header-ink:#242323}
+:root[data-app-theme="peach"][data-chrome-theme]{--bg:#f7f7f7;--card:#fff;--ink:#242323;--sub:#606060;--line:#eee;--acc:#93401a;--accbg:#fff0e5;--done:#909090;--red:#bd1834;--theme-header:#fff0e5;--theme-header-ink:#242323}
+:root[data-app-theme="black"][data-chrome-theme]{--bg:#090909;--card:#171717;--ink:#f7f7f7;--sub:#bababa;--line:#363636;--acc:#a8cbff;--accbg:#17263d;--done:#909090;--red:#ff9aab;--theme-header:#090909;--theme-header-ink:#f7f7f7;--ui-shadow:none}
+html[data-app-theme] body,html[data-app-theme] main{background:var(--bg)!important;color:var(--ink)}
+html[data-app-theme] section,html[data-app-theme] .card,html[data-app-theme] .stat-card{background:var(--card);color:var(--ink);border-color:var(--line);box-shadow:var(--ui-shadow)}
+html[data-app-theme] .sp-top{background:var(--theme-header);color:var(--theme-header-ink)}
+html[data-app-theme] .sp-top :is(.sp-brand,.sp-tagline,.goalbar,.plane){color:var(--theme-header-ink)}
+html[data-app-theme] .sp-preview-card{box-shadow:none!important;background:var(--card)!important}
+html[data-app-theme] .side{background:var(--card);border-top-color:var(--line);box-shadow:0 -2px 12px rgba(36,35,35,.025)}
+html[data-app-theme="black"] .side{background:#090909;box-shadow:none}
+html[data-app-theme] button{border-radius:8px;transition:background-color 160ms var(--ui-ease),border-color 160ms var(--ui-ease),box-shadow 160ms var(--ui-ease),opacity 120ms ease,transform 120ms var(--ui-ease)}
+html[data-app-theme] button:not(:disabled):active{transform:scale(.98)}
+html[data-app-theme] button.main{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:none}
+html[data-app-theme="black"] button.main{color:#10213c}
+html[data-app-theme] :is(input,select,textarea){background:var(--card)!important;color:var(--ink)!important;border-color:var(--line)!important;border-radius:8px;transition:border-color 160ms ease,box-shadow 160ms ease}
+html[data-app-theme] :is(input,select,textarea):focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+html[data-app-theme] button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+html[data-app-theme] :is(.card62,.plan-items62,.route-step,.advisor-entry,.theme-choice,.sp-preview-card){border-radius:8px;border-color:var(--line);box-shadow:none}
+html[data-app-theme] #planbox .plan-date{border-radius:8px;border-color:var(--line);box-shadow:none}
+html[data-app-theme] #planbox .plan-date[aria-selected="true"]{background:var(--acc);color:var(--card);border-color:var(--acc);box-shadow:none}
+html[data-app-theme="black"] #planbox .plan-date[aria-selected="true"]{color:#10213c}
+html[data-app-theme] #planbox .plan-date[aria-selected="true"] b{color:inherit}
+html[data-app-theme] #stats .sum3{background:var(--accbg);border-radius:8px;border-color:var(--line)}
+html[data-app-theme] #stats #pies>.pie{border-radius:8px;border-color:var(--line)}
+html[data-app-theme] #stats #seg{border-radius:8px}
+html[data-app-theme] :is(#myGoal62,.my-grades-card,.today-summary){border-radius:8px}
+html[data-app-theme] .tmbox{border-color:var(--line);border-radius:20px 20px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.06)}
+html[data-app-theme] #tm.focus-mode #tmbox{border-radius:0;box-shadow:none}
+html[data-app-theme] .advisor-choices button{border-radius:8px;box-shadow:none}
+html[data-app-theme] .advisor-choices button[aria-pressed="true"]{background:var(--accbg);border-color:var(--acc);box-shadow:inset 3px 0 var(--acc)}
+html[data-app-theme] .advisor-callout{border-radius:8px}
+html[data-app-theme] #advisorBody .route-step{background:var(--card)}
+@media(prefers-reduced-motion:no-preference){
+ main>section:not([hidden]){animation:ui-reveal 180ms var(--ui-ease) both}
+ .tm:not([hidden])>.tmbox{animation:ui-sheet 220ms var(--ui-ease) both}
+ #advisorBody{animation:ui-reveal 180ms var(--ui-ease)}
+ #tm.focus-mode #tmbox{animation:none}
+}
+@keyframes ui-reveal{from{opacity:.4}to{opacity:1}}
+@keyframes ui-sheet{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){
+ html[data-app-theme] :is(button,input,select,textarea){transition:none}
+ html[data-app-theme] button:not(:disabled):active{transform:none}
+}
