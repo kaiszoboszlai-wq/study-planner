@@ -487,6 +487,36 @@ button.follow-action:disabled{opacity:.6}
 @media(max-width:360px){#rankingPage54 #tlBody .rkrow{column-gap:7px;padding:12px 10px}#rankingPage54 .rkrow>b{font-size:.75rem}.rank-scope59{font-size:.65rem}}
 #rankingPage54 .rank-title54{font-size:2.1rem;color:var(--ink);font-weight:700;line-height:1.5;white-space:nowrap;margin:0 0 18px}
 .rank-tabs61{display:flex;gap:4px;padding:4px;margin:12px 0 20px;border:1px solid var(--line);border-radius:13px;background:var(--bg)}.rank-tabs61 button{flex:1;min-width:0;min-height:44px;margin:0;padding:8px 4px;border:0;border-radius:9px;background:transparent;color:var(--sub);font:inherit;font-size:.78rem;white-space:normal;overflow-wrap:anywhere}.rank-tabs61 button[aria-pressed="true"]{background:var(--card);color:var(--acc);font-weight:650;box-shadow:0 1px 4px rgba(20,40,65,.08)}
+
+/* Focus timer: the existing timer remains the single source of time. */
+#tm.focus-mode{background:#132b37 url('assets/focus-lake-clear.png') center/cover no-repeat;align-items:center;overflow:hidden}
+#tm.focus-mode::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,20,32,.18),rgba(5,18,28,.42) 55%,rgba(5,18,28,.75));pointer-events:none}
+#tm.focus-mode #tmbox{position:relative;max-width:none;height:100%;border:0;border-radius:0;background:transparent;display:flex;align-items:center;justify-content:center;padding:24px;color:#fff}
+#tm.focus-mode #tmbox> :not(#clock):not(#timerMainActions){display:none!important}
+#tm.focus-mode #clock{position:relative;width:min(62vh,420px);height:min(62vh,420px);margin:0 0 35px;border:0;cursor:default;display:grid;place-items:center}
+#tm.focus-mode #clock svg,#tm.focus-mode #clockEditHandle{display:none}
+#tm.focus-mode #tmtime{position:static;transform:none;font-size:clamp(2rem,12vh,6rem);font-weight:300;letter-spacing:.025em;line-height:1.2;color:#fff;text-shadow:0 3px 35px rgba(0,0,0,.4);font-variant-numeric:tabular-nums;text-align:center}
+#tm.focus-mode #timerMainActions{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:20px;right:20px;justify-content:center;gap:12px}
+#tm.focus-mode #timerMainActions button{color:#fff;border:1px solid rgba(255,255,255,.4);background:rgba(10,30,40,.3);backdrop-filter:blur(14px);border-radius:30px;min-height:48px;padding:10px 24px}
+#tm.focus-mode #tmdone,#tm.focus-mode #tmReset,#tm.focus-mode #tmclose,#tm.focus-mode #focusEnter{display:none}
+#focusExit[hidden]{display:none}body.timer-focus{overflow:hidden}
+
+
+#focusRotate{display:none}
+#tm.focus-mode.focus-portrait #tmbox{visibility:hidden;pointer-events:none}
+#tm.focus-mode.focus-portrait #focusRotate{display:flex;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:28px;color:#fff;background:rgba(5,18,32,.65)}
+#focusRotate svg{width:72px;height:72px}#focusRotate h2{font-size:1.4rem;margin:0}#focusRotate p{font-size:.85rem;line-height:1.8;margin:0;color:#e1e8ed}
+#focusRotate button{margin-top:10px;min-height:48px;border:1px solid #ffffff80;border-radius:30px;background:#ffffff16;color:white;padding:10px 24px}
+#focusRing{display:none;position:absolute;inset:0;border:1px solid #ffffff40;border-radius:50%;pointer-events:none}
+#tm.focus-mode #focusRing{display:block}
+.focus-orbit{position:absolute;inset:-1px;border-radius:50%;animation:focusOrbit 60s linear infinite;animation-play-state:paused}
+.focus-orbit::after{content:"";position:absolute;left:calc(50% - 3px);top:-2px;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 13px 3px #d8eeff80}
+#focusRing.is-running .focus-orbit{animation-play-state:running}
+#focusRing.is-finished{animation:focusFinish 2s ease-out 1}
+@keyframes focusOrbit{to{transform:rotate(360deg)}}
+@keyframes focusFinish{50%{border-color:#fff;box-shadow:0 0 22px #e4f3ffa0,inset 0 0 16px #e4f3ff50}}
+@media(prefers-reduced-motion:reduce){.focus-orbit,#focusRing.is-finished{animation:none!important}}
+
 </style>
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -829,18 +859,19 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="actions"><button id="wmok" class="main">提案を反映</button><button id="wmno">キャンセル</button></div></div>
 </div>
 <div class="tm" id="tm" hidden role="dialog" aria-modal="true" aria-labelledby="tmname">
+<div id="focusRotate" role="status"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="25" y="15" width="30" height="50" rx="5" transform="rotate(-25 40 40)"/><path d="M62 18a29 29 0 0 1 7 34m0 0 4-9m-4 9-9-4M18 62A29 29 0 0 1 11 28m0 0-4 9m4-9 9 4"/></svg><h2>横画面にしてください</h2><p>端末を横向きにすると、集中モードが使えます。<br>画面の回転ロックがオンの場合は解除してください。</p><button id="focusRotateExit" type="button">通常のタイマーに戻る</button></div>
 <div class="tmbox" id="tmbox">
 <div class="tmname" id="tmname"></div>
 <div class="tmplan" id="tmplan"></div>
 <div id="timerEndNotice" class="timer-end-notice" role="status" hidden>予定時間が終了しました。計測は続いています。</div>
 <div id="timerRemainingLabel" class="timer-reading-label">残り時間</div>
-<div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div class="tmtime" id="tmtime">0:00:00</div><span id="clockEditHandle" aria-hidden="true" hidden></span></div>
+<div class="clock" id="clock"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="90"/><circle class="arc" id="tmarc" cx="100" cy="100" r="90"/></svg><div id="focusRing" aria-hidden="true"><div class="focus-orbit"></div></div><div class="tmtime" id="tmtime">0:00:00</div><span id="clockEditHandle" aria-hidden="true" hidden></span></div>
 <div id="timerElapsed" class="timer-elapsed"></div><p class="note" id="timerOvertimeHint" hidden>予定時間を超えて勉強した分です。計測は自動では止まりません。</p>
 <div id="clockEditPanel" hidden><p class="note" id="clockEditHint">まだ確定していません。円をゆっくり回すと1周で30分調整できます。</p><div class="actions clock-step-buttons"><button id="clockMinus" type="button">−15分</button><button id="clockPlus" type="button">＋15分</button></div><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
 <div id="timerUndo" class="note" hidden><span>時間を変更しました。</span><button id="timerUndoButton" type="button">元に戻す</button></div>
 <div class="adj" id="clockEditOpenRow"><button id="timeAdjustOpen">時間を調整</button></div>
 <p class="note" id="timerCloseHint">「閉じる」は画面を閉じる操作です。計測を止めるには「一時停止」を押してください。</p>
-<div class="actions" id="timerMainActions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmReset">リセット</button><button id="tmclose">閉じる</button></div>
+<div class="actions" id="timerMainActions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmReset">リセット</button><button id="tmclose">閉じる</button><button id="focusEnter" type="button">集中モードにする</button><button id="focusExit" type="button" hidden>集中モードを終了</button></div>
 </div>
 </div>
 <div class="tm" id="idleReviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="idleReviewTitle"><div class="tmbox"><div class="tmname" id="idleReviewTitle">この時間を記録しますか？</div><p id="idleReviewText"></p><p class="note">タイマーは一時停止しています。最後の操作までの時間は保存済みです。記録後、必要に応じて時間を調整できます。</p><div class="actions"><button id="idleRecord" class="main">記録する</button><button id="idleDiscard">記録しない</button></div></div></div>
@@ -1560,11 +1591,42 @@ function openTimer(id){
   $("tmbox").style.borderTopColor=colorOf(x.name);
   $("tm").hidden=false;updateTimer();
 }
-function closeTimer(){closeClockAdjust(false);openId=null;$("tm").hidden=true;renderActiveTimer()}
+function closeTimer(){exitFocusMode();closeClockAdjust(false);openId=null;$("tm").hidden=true;renderActiveTimer()}
+function updateFocusOrientation(){
+  if(!$('tm').classList.contains('focus-mode'))return;
+  var portrait=window.innerHeight>=window.innerWidth,box=$('tmbox');
+  $('tm').classList.toggle('focus-portrait',portrait);box.inert=portrait;
+  if(portrait)$('focusRotateExit').focus();else if(document.activeElement===$('focusRotateExit')||document.activeElement===$('focusEnter'))$('focusExit').focus();
+}
+window.addEventListener('resize',updateFocusOrientation);
+window.addEventListener('orientationchange',updateFocusOrientation);
+var focusOwnsFullscreen=false,focusReturnTo=null;
+function enterFocusMode(){
+  if(openId===null||!findBlock(openId))return;
+  closeClockAdjust(true);focusReturnTo=document.activeElement;
+  $('tm').classList.add('focus-mode');$('focusExit').hidden=false;document.body.classList.add('timer-focus');
+  updateFocusOrientation();updateTimer();
+  if(!document.fullscreenElement&&document.documentElement.requestFullscreen){
+    try{var request=document.documentElement.requestFullscreen();Promise.resolve(request).then(function(){
+      if($('tm').classList.contains('focus-mode'))focusOwnsFullscreen=true;
+      else if(document.fullscreenElement)document.exitFullscreen().catch(function(){});
+    }).catch(function(){})}catch(e){}
+  }
+}
+function exitFocusMode(){
+  if(!$('tm').classList.contains('focus-mode'))return;
+  $('tm').classList.remove('focus-mode','focus-portrait');$('tmbox').inert=false;$('focusExit').hidden=true;document.body.classList.remove('timer-focus');
+  if(focusOwnsFullscreen&&document.fullscreenElement){try{document.exitFullscreen().catch(function(){})}catch(e){}}
+  focusOwnsFullscreen=false;
+  if(focusReturnTo&&focusReturnTo.isConnected)focusReturnTo.focus();focusReturnTo=null;
+}
+document.addEventListener('fullscreenchange',function(){if(focusOwnsFullscreen&&!document.fullscreenElement)exitFocusMode()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('tm').classList.contains('focus-mode')){e.preventDefault();e.stopImmediatePropagation();exitFocusMode()}},true);
 function updateTimer(){
   if(openId===null)return;
   var x=findBlock(openId);if(!x){closeTimer();return}
   var e=elapsed(openId),rm=x.h*3600-e;
+  $('focusRing').classList.toggle('is-running',running(openId));$('focusRing').classList.toggle('is-finished',rm<=0);
   if(clockEdit&&clockEdit.id===openId){rm=clockEdit.remaining;e=Math.max(0,x.h*3600-rm)}
   $("tmtime").textContent=fmtR(rm);$("tmtime").classList.toggle("over",rm<0);
   $("tmplan").textContent="予定 "+hm(x.h);
@@ -3883,6 +3945,7 @@ $("cfok").onclick=function(){var f=cfFn;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cfno").onclick=function(){var f=cfNoFn;cfNoFn=null;cfFn=null;$("cf").hidden=true;if(f)f()};
 $("cf").onclick=function(e){if(e.target===this){cfFn=null;cfNoFn=null;this.hidden=true}};
 $("tmtoggle").onclick=function(){toggleTimer(openId)};
+$("focusEnter").onclick=enterFocusMode;$("focusExit").onclick=exitFocusMode;$("focusRotateExit").onclick=exitFocusMode;
 $("tmReset").onclick=function(){
   if(openId===null)return;var id=openId;
   askConfirm("このタイマーをリセットしますか?","計測した時間が0分になり、その分の学習記録も元に戻ります。","リセットする",function(){resetTimer(id)});
