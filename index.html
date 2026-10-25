@@ -368,6 +368,8 @@ button.ib{display:inline-flex;align-items:center;justify-content:center}
 .plan-date{border:0;background:transparent;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:10px;color:var(--sub)}
 .plan-date b{font-size:1.35rem;color:inherit}.plan-date small{font-size:.75rem}
 .plan-date[aria-selected="true"]{background:var(--ink);color:var(--card)}
+.plan-date.is-past b{position:relative}
+.plan-date.is-past b::after{content:"";position:absolute;left:50%;top:50%;width:1.45em;border-top:2px solid currentColor;transform:translate(-50%,-50%) rotate(-45deg);opacity:.75;pointer-events:none}
 .plan-date.drop-target{outline:2px dashed var(--acc);outline-offset:-2px}
 #planbox .days{display:block;overflow:visible;padding:0;scroll-snap-type:none}
 #planbox .day{width:100%;padding:0;border:0;background:transparent}
@@ -1235,8 +1237,8 @@ function renderPlan(){
   if(!state.plan.some(function(day){return day.date===selectedPlanDate}))selectedPlanDate=state.plan.some(function(day){return day.date===todayStr})?todayStr:state.plan[0].date;
   var tabs=$("planDates");tabs.innerHTML="";
   state.plan.forEach(function(day,d){
-    var dt=new Date(day.date+"T00:00:00"),tab=document.createElement("button");tab.className="plan-date";
-    tab.setAttribute("role","tab");tab.setAttribute("aria-selected",day.date===selectedPlanDate?"true":"false");tab.setAttribute("aria-controls","plan-day-"+d);tab.setAttribute("aria-label",dayLabel(day.date));tab.dataset.planDay=d;
+    var dt=new Date(day.date+"T00:00:00"),tab=document.createElement("button");tab.className="plan-date"+(day.date<todayStr?" is-past":"");
+    tab.setAttribute("role","tab");tab.setAttribute("aria-selected",day.date===selectedPlanDate?"true":"false");tab.setAttribute("aria-controls","plan-day-"+d);tab.setAttribute("aria-label",dayLabel(day.date)+(day.date<todayStr?"（過ぎた日付）":""));tab.dataset.planDay=d;
     tab.innerHTML='<small></small><b></b>';tab.querySelector("small").textContent=DAYS[dt.getDay()];tab.querySelector("b").textContent=dt.getDate();
     tab.onclick=function(){selectedPlanDate=day.date;renderPlan()};
     tab.onkeydown=function(e){if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();var next=(d+(e.key==="ArrowRight"?1:-1)+state.plan.length)%state.plan.length;selectedPlanDate=state.plan[next].date;renderPlan();$("planDates").children[next].focus()}};
