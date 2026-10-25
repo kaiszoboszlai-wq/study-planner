@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const catalog={version:1,status:'draft',scope:'中学英語・高校英語・中学数学・高校数学ⅠA。書籍の現行版・目次の照合は未実施。',books:[
+const catalog={version:1,status:'draft',scope:'中学英語・高校英語・中学数学・高校文系数学・高校理系数学。書籍の現行版・目次の照合は未実施。',books:[
 {id:'em-basic',subject:'english',stage:'middle',rank:0,title:'中学英語をもう一度ひとつひとつわかりやすく。',kind:'文法の基礎',use:'説明と例文を読み、対応する基本問題を解く。間違えた問題は翌日に解き直す。',check:'学習した単元の基本問題を、理由を説明しながら8割程度解ける。'},
 {id:'eh-basic',subject:'english',stage:'high',rank:0,title:'大岩のいちばんはじめの英文法【超基礎文法編】',kind:'文法の基礎',use:'例文の意味と語順を説明してから、確認問題を解く。わからない中学範囲は教科書へ戻る。',check:'例文の主語・動詞・時制を示し、基本問題の答えの理由を言える。'},
 {id:'eh-words',subject:'english',stage:'high',rank:1,title:'英単語ターゲット1900',kind:'入試の語彙',use:'知っている語を除き、少量ずつ意味を隠して答える。翌日と数日後にも復習する。',check:'学習した範囲を順不同で確認し、8割程度の意味を見ずに答えられる。',parallel:true},
