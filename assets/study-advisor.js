@@ -2,7 +2,7 @@
 'use strict';
 const data=root.StudyRouteCatalog||(typeof require==='function'?require('./study-route-data.js'):null);
 function build(a){
- if(!['english','math'].includes(a.subject)||!(a.subject==='math'?['middle','humanities','science']:['middle','high']).includes(a.stage)||!data.levels.some(l=>l[0]===a.level)||!['school','exam'].includes(a.goal)||![15,30,60].includes(a.minutes)||![3,5,7].includes(a.days)||!['school','candidates'].includes(a.material))throw Error('教科・学習段階・目標・学習時間を選んでください。');
+ if(!['english','math'].includes(a.subject)||!(a.subject==='math'?['middle','humanities','science']:['middle','high']).includes(a.stage)||!data.levels.some(l=>l[0]===a.level)||!['school','exam'].includes(a.goal)||!['school','candidates'].includes(a.material))throw Error('教科・学習段階・目標・教材を選んでください。');
  const highMath=a.subject==='math'&&a.stage!=='middle',mathScope=a.stage==='science'?'数学Ⅰ・A・Ⅱ・B・Ⅲ・C':'数学Ⅰ・A・Ⅱ・B・C';
  const steps=[],rank={foundation:0,basic:1,standard:2}[a.level];
  const add=(title,kind,use,check,extra={})=>steps.push(Object.assign({title,kind,use,check},extra));
@@ -21,8 +21,7 @@ function build(a){
  if(a.goal==='exam')add('志望校・受験方式に合う過去問','到達点の確認','出題範囲と形式を確認する。未習部分は除き、解けない原因を前の教材へ戻して補う。','解説の暗記ではなく、別の年度でも方針と根拠を説明できる。');
  else school('テスト範囲の総仕上げ','学校の指定範囲から問題を選び、時間を測って解く。誤答は前の段階へ戻して確認する。','未確認の基本事項が残っていないか、別の日に再確認できる。');
  const parallel=steps.filter(s=>s.parallel),route=steps.filter(s=>!s.parallel);
- const split=a.minutes===15?[5,7,3]:a.minutes===30?[8,16,6]:[15,33,12];
- return {scope:a.subject==='english'?(a.stage==='middle'?'中学英語':'高校英語'):(a.stage==='middle'?'中学数学':a.stage==='science'?'高校理系数学':'高校文系数学'),route,parallel,weeklyMinutes:a.minutes*a.days,sessions:split,reason:rank===0?'基礎を確認してから演習へ進むルートです。':rank===1?'基本事項を確認できている前提で、典型問題から始めます。':'基本問題を解ける前提で、実戦につながる演習を中心にします。',note:(highMath?'文系・理系だけで入試範囲は確定しません。B・Cの単元を含め、学校の履修範囲と志望校の最新の募集要項に合わせて選んでください。':'')+'合わないと感じたら一つ前の段階へ戻ってください。新しい本を買う前に、現行版の目次・対象範囲・試し読みを確認し、手持ち教材で代用できないか確かめましょう。'};
+ return {scope:a.subject==='english'?(a.stage==='middle'?'中学英語':'高校英語'):(a.stage==='middle'?'中学数学':a.stage==='science'?'高校理系数学':'高校文系数学'),route,parallel,reason:rank===0?'基礎を確認してから演習へ進むルートです。':rank===1?'基本事項を確認できている前提で、典型問題から始めます。':'基本問題を解ける前提で、実戦につながる演習を中心にします。',note:(highMath?'文系・理系だけで入試範囲は確定しません。B・Cの単元を含め、学校の履修範囲と志望校の最新の募集要項に合わせて選んでください。':'')+'合わないと感じたら一つ前の段階へ戻ってください。新しい本を買う前に、現行版の目次・対象範囲・試し読みを確認し、手持ち教材で代用できないか確かめましょう。'};
 }
 const api={build,data};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.StudyRouteBuilder=api;
 if(typeof document==='undefined')return;
@@ -40,14 +39,12 @@ const questions=[
  {key:'stage',title:'学習する範囲は？',rows:()=>a.subject==='math'?[['middle','中学数学'],['humanities','高校文系数学'],['science','高校理系数学']]:[['middle','中学英語'],['high','高校英語']]},
  {key:'level',title:'今のレベルに近いものは？',rows:()=>data.levels.map(l=>[l[0],l[1]+'：'+l[2]]),note:'直近の問題演習を思い出して選んでください。迷ったら基礎から始められます。'},
  {key:'goal',title:'目標は？',rows:()=>[['school','授業・定期テスト'],['exam','入試に向けた学習']]},
- {key:'minutes',title:'1回の学習時間は？',rows:()=>[[15,'15分'],[30,'30分'],[60,'60分']]},
- {key:'days',title:'週に何日取り組む？',rows:()=>[[3,'週3日'],[5,'週5日'],[7,'週7日']]},
  {key:'material',title:'どんな教材で進めたい？',rows:()=>[['school','学校の教科書・手持ち教材で進める'],['candidates','市販の参考書候補も知りたい']],note:'同じ役割の教材を複数買う必要はありません。手持ちの教材で進めるルートも作れます。'}
 ];
-function render(){const box=$('advisorBody');box.replaceChildren();$('advisorError').textContent='';$('advisorProgress').textContent=step===7?'あなたの学習ルート':`${step+1} / 7`;$('advisorBack').hidden=step===0;$('advisorNext').textContent=step===7?'条件を変えて作り直す':step===6?'ルートを作成':'次へ';
- if(step<7){const q=questions[step];title(box,q.title);choices(box,q.key,q.rows());if(q.note)box.append(el('p',q.note,'note'));}
- if(step===7){const r=build(a);title(box,r.scope+'のルート');box.append(el('p',r.reason),el('p',`週${a.days}日 × ${a.minutes}分（週${r.weeklyMinutes}分）`,'advisor-callout'));r.route.forEach((s,i)=>card(box,s,i));r.parallel.forEach(s=>card(box,s,null));title(box,'1回の進め方');['説明・例題を確認','自分で解く・答える','答え合わせ・復習'].forEach((x,i)=>box.append(el('p',`${r.sessions[i]}分　${x}`)));box.append(el('p','完了日を一律には決めず、各段階の到達目安で次へ進みます。語彙の並行学習をする場合は、この時間内で配分してください。','note'),el('p',r.note,'note'));}
- $('advisorNext').disabled=step<7&&!questions[step].rows().some(row=>row[0]===a[questions[step].key]);
+function render(){const box=$('advisorBody');box.replaceChildren();$('advisorError').textContent='';$('advisorProgress').textContent=step===questions.length?'あなたの学習ルート':`${step+1} / ${questions.length}`;$('advisorBack').hidden=step===0;$('advisorNext').textContent=step===questions.length?'条件を変えて作り直す':step===questions.length-1?'ルートを作成':'次へ';
+ if(step<questions.length){const q=questions[step];title(box,q.title);choices(box,q.key,q.rows());if(q.note)box.append(el('p',q.note,'note'));}
+ if(step===questions.length){const r=build(a);title(box,r.scope+'のルート');box.append(el('p',r.reason));r.route.forEach((s,i)=>card(box,s,i));r.parallel.forEach(s=>card(box,s,null));box.append(el('p',r.note,'note'));}
+ $('advisorNext').disabled=step<questions.length&&!questions[step].rows().some(row=>row[0]===a[questions[step].key]);
 }
-$('advisorBack').onclick=()=>{step=Math.max(0,step-1);render()};$('advisorNext').onclick=()=>{if(step===7)step=0;else if(step===6){try{build(a);step++}catch(e){$('advisorError').textContent=e.message;return}}else step++;render();modal.querySelector('.tmbox').scrollTop=0;$('advisorTitle').focus({preventScroll:true})};
+$('advisorBack').onclick=()=>{step=Math.max(0,step-1);render()};$('advisorNext').onclick=()=>{if(step===questions.length)step=0;else if(step===questions.length-1){try{build(a);step++}catch(e){$('advisorError').textContent=e.message;return}}else step++;render();modal.querySelector('.tmbox').scrollTop=0;$('advisorTitle').focus({preventScroll:true})};
 })(typeof window!=='undefined'?window:globalThis);
