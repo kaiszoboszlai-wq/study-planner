@@ -4,5 +4,10 @@
       "source": "/__/auth/:path*",
       "destination": "https://study-planner-d2ee7.firebaseapp.com/__/auth/:path*"
     }
-  ]
+  ],
+  "functions": {
+    "api/rakuten-books.js": {
+      "includeFiles": "server/**"
+    }
+  }
 }
