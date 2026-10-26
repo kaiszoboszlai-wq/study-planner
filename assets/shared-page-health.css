@@ -84,3 +84,5 @@ body #bookRoutePage .route-saved-item>div>button{margin:8px 0 20px;padding:7px 1
 @media(prefers-reduced-motion:reduce){body #planbox .plan-date,body #bookRoutePage .route-saved-item>summary:after{transition:none}}
 
 body #bookRoutePage .registry-open{font-size:.73rem!important;min-height:34px;padding:4px 0;margin:-12px 0 12px auto;text-decoration:none;color:var(--acc)}
+
+body #bookRoutePage .route-library-heading{justify-content:flex-end}
