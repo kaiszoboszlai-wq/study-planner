@@ -1,6 +1,6 @@
-# 楽天ブックスAPIの接続準備
+# 楽天ブックスAPIの設定と検証記録
 
-2026-10-27更新。ユーザーの楽天アプリ登録・キー発行は完了。値は添付ファイルから受領し、Sitesのランタイムシークレットに登録済みです。ユーザーは将来の一般公開を予定していますが、現在の非公開プレビューの一般公開は指示されていません。実APIへの接続・表紙件数の増加は未確認です。
+2026-10-27更新。公開版 `https://study-planner-sigma-tawny.vercel.app/` で楽天ブックスAPIを有効化済みです。キー3項目はVercelのProduction専用Secretとして登録しました。公開版ブラウザーからのAPI照会、楽天の実表紙2冊の表示、商品リンク・指定クレジット、取得不可時のイラスト表示を確認済みです。非公開確認用Sitesの楽天APIは無効のまま維持します。
 
 ## 発行するもの
 
@@ -50,6 +50,8 @@ Sitesプレビューは非公開を維持し、既存のHTML・静的アセッ�
 
 ユーザーから、既に一般公開済みのURL `https://study-planner-sigma-tawny.vercel.app/` での有効化を指示されました。確認用Sitesの公開範囲は変更しません。VercelのAPI起動エラーを修正してGitHubに反映し、APIの登録ドメイン検証に渡すOrigin/Refererを正規の公開オリジンに固定しました。
 
-残作業は、楽天アプリの許可されたWebサイトへの `study-planner-sigma-tawny.vercel.app` の追加、Vercel側への既発行キー3項目と `RAKUTEN_APP_ORIGIN=https://study-planner-sigma-tawny.vercel.app`、`RAKUTEN_USE_CONTEXT=public` の設定・再デプロイです。Sitesに登録したシークレットはVercelへ自動共有されません。
+VercelのProductionに既発行キー3項目をSecretとして登録し、`RAKUTEN_APP_ORIGIN=https://study-planner-sigma-tawny.vercel.app`、`RAKUTEN_USE_CONTEXT=public` を設定して再デプロイしました。Sitesに登録したシークレットとは別に管理します。
 
-実リクエストでは、楽天から403 `HTTP_REFERRER_NOT_ALLOWED` を確認しました。公開版での表紙取得成功はまだ未確認です。キーの値はこの資料・ソース・ブラウザーに含めません。
+設定途中では403 `HTTP_REFERRER_NOT_ALLOWED` が発生しましたが、公開版の最終確認では取得に成功しています。「英単語ターゲット1200」「数学Ⅰ・A 基礎問題精講」の実画像と楽天商品リンク・指定クレジットをブラウザーで確認し、取得不可のISBNでは本のイラストへのフォールバックも確認しました。取得可能な書影の総数は未集計です。キーの値はこの資料・ソース・ブラウザーに含めません。
+
+既にページを開いている場合は、一度再読み込みすると接続可否の判定が更新されます。楽天からの応答・書影URLは保存ルートや静的カタログに保存しません。
