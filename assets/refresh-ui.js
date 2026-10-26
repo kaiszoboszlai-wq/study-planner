@@ -25,7 +25,7 @@ function context(){
  if(![3,4,5,6,8].includes(Number(state.page)))return null;
  const page=state.page,uid=FB.uid,epoch=authEpoch;return {key:'page/'+page,root:byId({3:'planbox',4:'stats',5:'mypage',6:'today',8:'bookRoutePage'}[page]),scroll:document.scrollingElement,task:async()=>{
    await syncRefresh();if(state.page!==page||FB.uid!==uid||authEpoch!==epoch)return;
-   if(page===4){renderStats();rankFetch55.at=0;await rankLoad();}else if(page===5){await renderFb();}else if(page===3)renderPlan();else if(page===6)renderToday();else if(page===8)showPage(8);
+   if(page===4){renderStats();}else if(page===5){await renderFb();}else if(page===3)renderPlan();else if(page===6){renderToday();rankFetch55.at=0;await rankLoad();}else if(page===8)showPage(8);
  }};
 }
 function top(ctx,target){if((ctx.scroll?.scrollTop||0)>0)return false;for(let n=target;n&&n!==ctx.root;n=n.parentElement){if(n.scrollTop>0)return false;}return true;}

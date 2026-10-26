@@ -2824,7 +2824,8 @@ function paintCounts(){
 async function fbPoll(){ // リクエストが来ているか、ときどき確認する
   if(!FB.uid||document.hidden)return;
   publishFollowerProfile(true);
-  try{FBN.req=(await fList("requests/"+FB.uid+"/from")).length;paintCounts()}catch(e){}
+  var uid=FB.uid,epoch=authEpoch;
+  try{var requests=await fList("requests/"+uid+"/from");if(uid!==FB.uid||epoch!==authEpoch)return;FBN.req=requests.length;paintCounts()}catch(e){}
   renderRank();
   dmCheck();
 }
@@ -4252,6 +4253,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/ranking-health.js"></script>
 <script src="assets/refresh-ui.js"></script>
 
+<script src="assets/header-notifications.js"></script>
 <script src="assets/app-announcement.js"></script>
 </body>
 </html>

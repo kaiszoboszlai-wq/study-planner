@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const root=document.getElementById('rankingPage54'),tabs=root?.querySelector('.rank-tabs61'),box=document.getElementById('tlBody');if(!root||!tabs||!box)return;
-document.getElementById('statsChart62')?.after(root);
+document.getElementById('today')?.append(root);
 const date=document.createElement('p');date.className='rank-date71';root.querySelector('.rank-title54').after(date);
 const thumb=document.createElement('span');thumb.className='rank-scope-thumb71';thumb.setAttribute('aria-hidden','true');tabs.prepend(thumb);
 let owner=FB.uid,scope=rankScope61,motions=[];
