@@ -1,0 +1,22 @@
+.async-placeholder72{padding:8px 0;pointer-events:none;user-select:none}
+.async-placeholder72[hidden]{display:none!important}
+.async-row72{display:flex;align-items:center;gap:12px;min-height:72px;padding:10px 0}
+.async-shape72{display:block;background:color-mix(in srgb,var(--ink) 8%,var(--card));border-radius:999px;position:relative;overflow:hidden}
+.async-shape72:after{content:'';position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--card) 65%,transparent),transparent);animation:async-shimmer72 1.5s ease-in-out infinite}
+.async-avatar72{width:40px;height:40px;flex:none}
+.async-copy72{flex:1;min-width:0}.async-copy72 .async-shape72{height:12px;width:62%;margin:8px 0}.async-copy72 .async-shape72:last-child{width:38%;height:9px}
+.async-value72{width:48px;height:14px;flex:none}
+.async-profile72{height:90px;margin:12px 0 20px;border-radius:20px}
+.async-covered72{display:none!important}
+.async-inline72{max-width:100%;height:12px;min-width:60px;color:transparent!important;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,var(--card));animation:async-pulse72 1.5s ease-in-out infinite}
+@keyframes async-shimmer72{to{transform:translateX(100%)}}
+@keyframes async-pulse72{50%{opacity:.4}}
+#pullRefresh72{position:fixed;z-index:45;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translate(-50%,calc(-80px + var(--pull-distance72,0px)));opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);box-shadow:0 3px 16px #00000010;font-size:.75rem;transition:opacity .15s;max-width:calc(100% - 32px)}
+#pullRefresh72.pull-visible72{opacity:1}
+#pullRefresh72 svg{width:19px;height:19px;flex:none;transform:rotate(var(--pull-rotation72,0deg))}
+#pullRefresh72.pull-busy72 svg{animation:pull-spin72 .8s linear infinite}
+.refresh-access72{position:fixed;left:50%;top:10px;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);z-index:46}
+.refresh-access72:focus-visible{width:auto;height:auto;clip-path:none;transform:translateX(-50%);padding:10px 18px;background:var(--card);color:var(--ink)}
+html.pull-active72,html.pull-active72 body{overscroll-behavior-y:contain}
+@keyframes pull-spin72{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.async-shape72:after,.async-inline72,#pullRefresh72.pull-busy72 svg{animation:none}#pullRefresh72{transition:none}}

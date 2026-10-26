@@ -1,0 +1,7 @@
+work/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.dev.vars*

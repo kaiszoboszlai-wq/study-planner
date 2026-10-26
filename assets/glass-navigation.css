@@ -1,0 +1,23 @@
+/* Floating glass navigation; retain the existing destinations and labels. */
+.app nav.side{--glass-ink:var(--ink);--glass-selection:rgba(70,86,103,.16);left:50%;right:auto;bottom:max(10px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:calc(100% - 20px);max-width:680px;box-sizing:border-box;gap:3px;padding:5px;background:linear-gradient(125deg,rgba(255,255,255,.66),rgba(255,255,255,.28) 55%,rgba(255,255,255,.55))!important;border:1.5px solid rgba(255,255,255,.85)!important;border-radius:42px;box-shadow:0 8px 30px rgba(24,43,61,.15),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 1px rgba(255,255,255,.45);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
+.app nav.side .nv,.app nav.side #navToday{position:relative;top:0;min-height:61px;min-width:0;flex:1 1 0;justify-content:center;gap:3px;margin:0;padding:6px 1px;border:1px solid transparent;border-radius:34px;background:transparent!important;color:var(--glass-ink)!important;font-size:clamp(.58rem,2.5vw,.69rem);font-weight:500;box-shadow:none;line-height:1.4;transition:background .18s,box-shadow .18s}
+.app nav.side .nv svg,.app nav.side #navToday svg{width:25px;height:25px;flex:none}
+.app nav.side .nv.on,.app nav.side #navToday.on{background:var(--glass-selection)!important;border-color:rgba(255,255,255,.55);box-shadow:inset 0 1px 2px rgba(255,255,255,.55),0 1px 5px rgba(30,46,62,.05);font-weight:700}
+.app nav.side .nv:focus-visible,.app nav.side #navToday:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+:root[data-app-theme=black] .app nav.side,:root[data-chrome-theme=navy] .app nav.side{--glass-ink:#f1f5fa;--glass-selection:rgba(255,255,255,.18);background:linear-gradient(125deg,rgba(56,67,81,.75),rgba(24,32,44,.5) 55%,rgba(48,61,78,.7))!important;border-color:rgba(255,255,255,.3)!important;box-shadow:0 8px 30px #0005,inset 0 1px 1px #ffffff40}
+:root[data-app-theme=black] .app nav.side .nv,:root[data-chrome-theme=navy] .app nav.side .nv{color:#f1f5fa!important}
+:root[data-app-theme=black] .app nav.side .nv.on,:root[data-chrome-theme=navy] .app nav.side .nv.on{background:rgba(255,255,255,.18)!important;border-color:rgba(255,255,255,.22)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.app nav.side{background:rgba(247,250,253,.96)!important}:root[data-app-theme=black] .app nav.side,:root[data-chrome-theme=navy] .app nav.side{background:rgba(27,38,52,.97)!important}}
+@media(prefers-reduced-motion:reduce){.app nav.side .nv{transition:none}}
+/* One shared selection surface glides between tabs. */
+.app nav.side{isolation:isolate;touch-action:pan-y}
+.app nav.side .nv{z-index:1;-webkit-tap-highlight-color:transparent}
+.app nav.side .nav-glass-indicator{position:absolute;left:0;top:0;z-index:0;pointer-events:none;border-radius:9999px;box-sizing:border-box;background:var(--glass-selection);border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 3px #ffffff80,0 2px 8px #182b3d0c;opacity:0;will-change:transform,width;}
+.app nav.side.nav-motion-ready .nav-glass-indicator{opacity:1}
+.app nav.side.nav-motion-animate .nav-glass-indicator{transition:transform .46s cubic-bezier(.22,1.28,.36,1),width .46s cubic-bezier(.22,1.28,.36,1),height .25s,background .2s,box-shadow .2s}
+:root .app nav.side.nav-motion-ready .nv.on,:root .app nav.side.nav-motion-ready #navToday.on{background:transparent!important;border-color:transparent;box-shadow:none}
+.app nav.side.nav-touching .nav-glass-indicator{box-shadow:inset 0 1px 5px #ffffffb3,0 3px 12px #182b3d16}
+.app nav.side.nav-dragging .nav-glass-indicator{transition:width .15s,height .15s,background .2s;}
+.app nav.side .nv svg{transition:transform .24s cubic-bezier(.2,1.6,.4,1)}
+.app nav.side .nv:active svg,.app nav.side .nv.nav-preview svg{transform:scale(1.12)}
+@media(prefers-reduced-motion:reduce){.app nav.side.nav-motion-animate .nav-glass-indicator,.app nav.side .nv svg{transition:none}.app nav.side .nv:active svg,.app nav.side .nv.nav-preview svg{transform:none}}

@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),c=require('../assets/book-catalog.json'),e=require('../assets/book-route-engine.js'),q=require('../assets/book-route-questions.js');
+const rows=c.books.filter(b=>b.verified&&!b.excludedReason);assert(rows.length>=1100);const seed={category:'大学入試',exam:'その他の大学',subject:'数学',baseSubject:'数学',level:'標準問題はある程度解ける',target:'得点率80%（8割）',currentStage:3,targetStage:3,days:90};
+const scoped=rows.find(b=>b.domain==='entrance'&&b.examScopes?.length);assert(scoped);const textbook=rows.find(b=>b.requiresTextbookMatch&&b.subject==='数学');assert(textbook);
+for(const route of e.recommend(seed,c).routes){assert(route.books.every(b=>!b.examScopes));assert(route.books.every(b=>!b.requiresTextbookMatch));}
+assert(!q.ownedBooks({category:'大学入試',exam:'その他の大学',subject:scoped.subject},c).some(b=>b.id===scoped.id));assert(q.ownedBooks({category:'大学入試',exam:scoped.examScopes[0],subject:scoped.subject},c).some(b=>b.id===scoped.id));
+const scopedInput={...seed,subject:scoped.subject,baseSubject:scoped.subject,targetStage:4,owned:scoped.title};assert(e.recommend({...scopedInput,exam:scoped.examScopes[0]},c).routes.some(r=>r.books.some(b=>b.id===scoped.id)));assert(e.recommend(scopedInput,c).routes.every(r=>r.books.every(b=>b.id!==scoped.id)));
+const date=new Date();date.setDate(date.getDate()+120);const dateText=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+const plus=q.conditions({category:'英検',exam:'英検準2級プラス',unit:'全範囲',level:'1',target:'1',date:dateText,owned:[]},c);assert.equal(plus.targetStage,3);assert(e.recommend(plus,c).routes.length>0);
+for(const [subject,unit] of [['情報','全範囲'],['地理','全範囲'],['化学','全範囲'],['生物','全範囲'],['国語','古文'],['英語','英文法']]){const input=q.conditions({category:'大学入試',exam:'その他の大学',examSubjects:[subject],subject,unit,level:'2',target:'rate-80',date:dateText,owned:[]},c);assert(e.recommend(input,c).routes.length,'Missing new coverage: '+subject);}
+console.log('PASS 10x catalog size, university scope, textbook prerequisite protection, Eiken new grade and expanded subjects');

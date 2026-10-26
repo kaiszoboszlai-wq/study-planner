@@ -1,0 +1,86 @@
+/* Shared with the quiet typography and surfaces of the learning record. */
+body:has(#today:not([hidden])),body:has(#planbox:not([hidden])),body:has(#bookRoutePage:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--card))}
+body #today,body #planbox,body #bookRoutePage{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--ink)}
+body #today .today-heading,body #planbox .plan-heading,body #bookRoutePage .route-library-heading{gap:10px;min-height:34px;margin:0 0 22px;align-items:center}
+body #today .today-heading h2,body #planbox .plan-heading h2,body #bookRoutePage .route-library-heading h2{margin:0;font-size:1.1rem;line-height:1.5;font-weight:650;letter-spacing:-.02em}
+body #today .today-heading{flex-wrap:wrap}
+body #today #tdTitle{font-size:.73rem;color:var(--sub)}
+body #today #adjustTodayPlan,body #bookRoutePage #routeCreateOpen{padding:7px 0 7px 10px;min-height:34px;border:0;box-shadow:none;background:transparent;color:var(--acc);font-size:.73rem!important;font-weight:500;white-space:normal;text-align:right;text-decoration:none}
+body #bookRoutePage #routeCreateOpen{max-width:52%}
+body #planbox #planSettingsOpen{border:0;background:transparent;box-shadow:none;color:var(--acc);width:34px;height:34px;min-height:34px;padding:7px}
+
+/* Numbers carry the hierarchy; the rest stays light and calm. */
+.health-caption74{display:block;color:var(--sub);font-size:.73rem;line-height:1.5;font-weight:400}
+body #today .today-summary{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);padding:0 0 22px;margin:0 0 26px;gap:7px 18px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
+body #today .today-summary>div:nth-child(2){border:0;padding-left:0;text-align:right;align-self:start}
+body #today .today-summary strong{display:block;margin:2px 0;color:var(--ink);font-size:2.1rem;line-height:1.3;letter-spacing:-.04em;font-weight:700;font-variant-numeric:tabular-nums}
+body #today .today-summary #tdPlanned{display:block;font-size:.73rem;color:var(--sub)}
+body #today .today-summary .barx{height:4px;margin:12px 0 0;background:color-mix(in srgb,var(--ink) 7%,var(--card))}
+body #today .section-heading62{margin:0 0 10px}
+body #today .section-heading62 h3{font-size:.8rem;font-weight:600}
+body #today #tdSum:empty{display:none}
+body #today #tdSum:not(:empty){padding:20px 0;margin:0;color:var(--sub);font-size:.8rem}
+body #today .tcard{position:relative;margin:0;padding:18px 0;gap:12px;border:0;border-bottom:1px solid color-mix(in srgb,var(--line) 65%,transparent);border-radius:0;background:transparent;box-shadow:none}
+body #today .tcard:last-child{border-bottom:0}
+body #today .tcard.is-running{background:transparent}
+body #today .tcard .item{min-width:0}
+body #today .today-subject{display:block;font-size:.95rem;font-weight:600;line-height:1.6;color:var(--ink)}
+body #today .today-subject:before{content:'';display:inline-block;vertical-align:middle;width:7px;height:7px;border-radius:50%;margin-right:8px;background:var(--subject-color)}
+body #today .today-detail{font-size:.75rem;color:var(--sub);line-height:1.6;margin-top:4px}
+body #today .today-progress{height:4px;background:color-mix(in srgb,var(--ink) 7%,var(--card))}
+body #today .today-block-percent{font-size:.68rem;color:var(--sub)}
+body #today .tcard .play{width:38px;height:38px;min-width:38px;border:0;background:color-mix(in srgb,var(--ink) 6%,var(--card));color:var(--ink);box-shadow:none}
+body #today .tcard.is-running .play{background:var(--accbg);color:var(--acc)}
+body #today .today-running-label{font-size:.65rem;color:var(--acc)}
+body #today .tcard input[type=checkbox],body #planbox .blk input[type=checkbox]{width:19px;height:19px;flex:none}
+
+body #planbox .plan-week62{display:flex;align-items:flex-start;flex-direction:column;gap:12px;margin:0 0 24px}
+body #planbox #planWeekRange62{font-size:.73rem;font-weight:400;color:var(--sub)}
+body #planbox .plan-week62>span{display:block;font-size:.73rem;color:var(--sub)}
+body #planbox #planWeekHours62{display:block;margin:2px 0 0;color:var(--ink);font-size:2.1rem;font-weight:700;line-height:1.3;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+body #planbox #planDates{gap:0;padding:3px;border:0;border-radius:999px;background:color-mix(in srgb,var(--ink) 7%,var(--card));margin:0 0 28px;isolation:isolate}
+body #planbox .plan-date{min-height:60px;padding:6px 1px;gap:3px;border:0;background:transparent;color:var(--sub);box-shadow:none;transition:background .25s,color .25s}
+body #planbox .plan-date b{font-size:1.05rem;font-weight:600;color:inherit;line-height:1.3}
+body #planbox .plan-date small{font-size:.65rem;line-height:1.3}
+body #planbox .plan-date:after{display:none}
+body #planbox .plan-date[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 5px #00000012}
+body #planbox .plan-date[aria-selected=true] b{color:var(--ink)}
+body #planbox .plan-day-heading62{margin:0;padding:0 0 12px;border-bottom:1px solid var(--line)}
+body #planbox .plan-day-heading62 h3{font-size:.8rem;font-weight:600}
+body #planbox .plan-summary .plan-total{font-size:1.05rem;font-weight:650;letter-spacing:-.02em}
+body #planbox .plan-summary small{font-size:.68rem}
+body #planbox .today{background:transparent;padding:0;color:var(--acc);font-weight:500}
+body #planbox .plan-items62{border:0;border-radius:0;background:transparent;overflow:visible}
+body #planbox .plan-items62 .blk{min-height:84px;padding:18px 0!important;gap:12px;border-bottom-color:color-mix(in srgb,var(--line) 65%,transparent)!important;box-shadow:none}
+body #planbox .plan-items62 .blk:before{display:none}
+body #planbox .blk .item span{font-size:.95rem;font-weight:600;line-height:1.6}
+body #planbox .blk .item span:before{content:'';display:inline-block;vertical-align:middle;width:7px;height:7px;border-radius:50%;margin-right:8px;background:var(--subject-color62)}
+body #planbox .blk .item .duration{margin-top:4px;font-size:.75rem}
+body #planbox .blk .edit{background:transparent}
+body #planbox .addb{margin:14px 0 0;border:0;background:color-mix(in srgb,var(--ink) 5%,var(--card));color:var(--acc);box-shadow:none}
+body #planbox #goTodayStudy{margin-top:26px;min-height:46px;background:var(--accbg);color:var(--acc);box-shadow:none;font-size:.85rem!important;font-weight:600}
+
+body #bookRoutePage .route-library-heading{margin-bottom:28px}
+body #bookRoutePage .route-empty{padding:48px 22px;border:0;background:color-mix(in srgb,var(--ink) 4%,var(--card));border-radius:24px}
+body #bookRoutePage .route-empty svg{width:48px;height:48px;margin-bottom:16px;stroke:var(--sub)}
+body #bookRoutePage .route-empty p{font-size:.8rem;line-height:1.8}
+body #bookRoutePage .route-empty p:first-of-type{font-size:.9rem;font-weight:600;color:var(--ink)}
+body #bookRoutePage .route-saved-item{padding:0;margin:0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
+body #bookRoutePage .route-saved-item:last-child{border-bottom:0}
+body #bookRoutePage .route-saved-item>summary{position:relative;display:block;list-style:none;min-height:80px;padding:20px 28px 20px 0;font-size:.95rem;font-weight:600;color:var(--ink)}
+body #bookRoutePage .route-saved-item>summary::-webkit-details-marker{display:none}
+body #bookRoutePage .route-saved-item>summary:after{content:'';position:absolute;right:7px;top:30px;width:7px;height:7px;border-right:1.5px solid var(--sub);border-bottom:1.5px solid var(--sub);transform:rotate(45deg);transition:transform .25s}
+body #bookRoutePage .route-saved-item[open]>summary:after{transform:rotate(225deg)}
+body #bookRoutePage .route-saved-meta{font-size:.72rem;margin-top:5px;color:var(--sub)}
+body #bookRoutePage .route-saved-item .route-card{margin:0;padding:0;background:transparent}
+body #bookRoutePage .route-books{margin:0}
+body #bookRoutePage .route-book-title{font-size:.95rem;font-weight:650}
+body #bookRoutePage .route-book-price{font-size:.8rem;font-weight:600}
+body #bookRoutePage .route-book-feature{font-size:.78rem;color:var(--sub);line-height:1.8}
+body #bookRoutePage .route-book-meta{font-size:.7rem}
+body #bookRoutePage .route-saved-item>div>button{margin:8px 0 20px;padding:7px 12px;border:0;background:color-mix(in srgb,var(--ink) 5%,var(--card));color:var(--sub);font-size:.73rem!important}
+@media(min-width:600px){body #today .today-summary strong,body #planbox #planWeekHours62{font-size:2.35rem}}
+@media(max-width:360px){body #today .today-heading{column-gap:8px}body #today #adjustTodayPlan{flex-basis:100%;padding:0;text-align:left;min-height:28px;margin-left:0!important}body #today .today-summary strong{font-size:1.9rem}body #bookRoutePage #routeCreateOpen{font-size:.68rem!important}}
+@media(prefers-reduced-motion:reduce){body #planbox .plan-date,body #bookRoutePage .route-saved-item>summary:after{transition:none}}
+
+body #bookRoutePage .registry-open{font-size:.73rem!important;min-height:34px;padding:4px 0;margin:-12px 0 12px auto;text-decoration:none;color:var(--acc)}

@@ -1,0 +1,754 @@
+{
+  "updated": "2026-10-26",
+  "queries": [
+    {
+      "label": "Y36",
+      "query": "ndlc=Y36 AND from=\"2024-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 432,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY36+AND+from%3D%222024-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y44",
+      "query": "ndlc=Y44 AND from=\"2024-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 122,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY44+AND+from%3D%222024-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEFL",
+      "query": "title=\"TOEFL\" AND from=\"2000-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 410,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEFL%22+AND+from%3D%222000-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "IELTS",
+      "query": "title=\"IELTS\" AND from=\"2000-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 100,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22IELTS%22+AND+from%3D%222000-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y53",
+      "query": "ndlc=Y53 AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 308,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY53+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y58",
+      "query": "ndlc=Y58 AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 65,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY58+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y59",
+      "query": "ndlc=Y59 AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 70,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY59+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y37",
+      "query": "ndlc=Y37 AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 339,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY37+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "漢検",
+      "query": "title=\"漢検\" AND from=\"2000-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 493,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E6%BC%A2%E6%A4%9C%22+AND+from%3D%222000-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "漢検",
+      "query": "title=\"漢検\" AND from=\"2014-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 409,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E6%BC%A2%E6%A4%9C%22+AND+from%3D%222014-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y52",
+      "query": "ndlc=Y52 AND from=\"2026-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 292,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY52+AND+from%3D%222026-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y56",
+      "query": "ndlc=Y56 AND from=\"2025-01-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 305,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY56+AND+from%3D%222025-01-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y56",
+      "query": "ndlc=Y56 AND from=\"2026-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 248,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY56+AND+from%3D%222026-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2026-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 496,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222026-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y37",
+      "query": "ndlc=Y37 AND from=\"2024-01-01\" AND until=\"2024-12-31\"",
+      "start": 1,
+      "total": 257,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY37+AND+from%3D%222024-01-01%22+AND+until%3D%222024-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2024-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 454,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222024-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2000-01-01\" AND until=\"2006-12-31\"",
+      "start": 1,
+      "total": 316,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222000-01-01%22+AND+until%3D%222006-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2021-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 288,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222021-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y52",
+      "query": "ndlc=Y52 AND from=\"2025-01-01\" AND until=\"2025-06-30\"",
+      "start": 1,
+      "total": 312,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY52+AND+from%3D%222025-01-01%22+AND+until%3D%222025-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y52",
+      "query": "ndlc=Y52 AND from=\"2025-07-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 275,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY52+AND+from%3D%222025-07-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2026-07-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 306,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222026-07-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2026-01-01\" AND until=\"2026-06-30\"",
+      "start": 1,
+      "total": 498,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222026-01-01%22+AND+until%3D%222026-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2026-07-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 122,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222026-07-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y57",
+      "query": "ndlc=Y57 AND from=\"2025-07-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 392,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY57+AND+from%3D%222025-07-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y57",
+      "query": "ndlc=Y57 AND from=\"2026-01-01\" AND until=\"2026-06-30\"",
+      "start": 1,
+      "total": 485,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY57+AND+from%3D%222026-01-01%22+AND+until%3D%222026-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y57",
+      "query": "ndlc=Y57 AND from=\"2026-07-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 102,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY57+AND+from%3D%222026-07-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2024-01-01\" AND until=\"2024-06-30\"",
+      "start": 1,
+      "total": 398,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222024-01-01%22+AND+until%3D%222024-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2024-07-01\" AND until=\"2024-12-31\"",
+      "start": 1,
+      "total": 142,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222024-07-01%22+AND+until%3D%222024-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2025-07-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 101,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222025-07-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2000-01-01\" AND until=\"2003-12-31\"",
+      "start": 1,
+      "total": 423,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222000-01-01%22+AND+until%3D%222003-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y37",
+      "query": "ndlc=Y37 AND from=\"2023-01-01\" AND until=\"2023-06-30\"",
+      "start": 1,
+      "total": 332,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY37+AND+from%3D%222023-01-01%22+AND+until%3D%222023-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y37",
+      "query": "ndlc=Y37 AND from=\"2023-07-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 177,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY37+AND+from%3D%222023-07-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2012-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 286,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222012-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2014-01-01\" AND until=\"2015-12-31\"",
+      "start": 1,
+      "total": 378,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222014-01-01%22+AND+until%3D%222015-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2016-01-01\" AND until=\"2017-12-31\"",
+      "start": 1,
+      "total": 341,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222016-01-01%22+AND+until%3D%222017-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2018-01-01\" AND until=\"2019-12-31\"",
+      "start": 1,
+      "total": 277,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222018-01-01%22+AND+until%3D%222019-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2020-01-01\" AND until=\"2021-12-31\"",
+      "start": 1,
+      "total": 340,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222020-01-01%22+AND+until%3D%222021-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y38",
+      "query": "ndlc=Y38 AND from=\"2022-01-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 435,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY38+AND+from%3D%222022-01-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2007-01-01\" AND until=\"2010-12-31\"",
+      "start": 1,
+      "total": 309,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222007-01-01%22+AND+until%3D%222010-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2011-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 286,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222011-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2014-01-01\" AND until=\"2017-12-31\"",
+      "start": 1,
+      "total": 453,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222014-01-01%22+AND+until%3D%222017-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2018-01-01\" AND until=\"2020-12-31\"",
+      "start": 1,
+      "total": 487,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222018-01-01%22+AND+until%3D%222020-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2024-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 434,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222024-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2000-01-01\" AND until=\"2003-12-31\"",
+      "start": 1,
+      "total": 394,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222000-01-01%22+AND+until%3D%222003-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2004-01-01\" AND until=\"2006-12-31\"",
+      "start": 1,
+      "total": 233,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222004-01-01%22+AND+until%3D%222006-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2007-01-01\" AND until=\"2010-12-31\"",
+      "start": 1,
+      "total": 349,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222007-01-01%22+AND+until%3D%222010-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2011-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 236,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222011-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2014-01-01\" AND until=\"2017-12-31\"",
+      "start": 1,
+      "total": 397,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222014-01-01%22+AND+until%3D%222017-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2018-01-01\" AND until=\"2020-12-31\"",
+      "start": 1,
+      "total": 356,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222018-01-01%22+AND+until%3D%222020-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2021-01-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 303,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222021-01-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "英検",
+      "query": "title=\"英検\" AND from=\"2024-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 394,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E8%8B%B1%E6%A4%9C%22+AND+from%3D%222024-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2000-01-01\" AND until=\"2003-12-31\"",
+      "start": 1,
+      "total": 381,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222000-01-01%22+AND+until%3D%222003-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2004-01-01\" AND until=\"2006-12-31\"",
+      "start": 1,
+      "total": 266,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222004-01-01%22+AND+until%3D%222006-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2007-01-01\" AND until=\"2010-12-31\"",
+      "start": 1,
+      "total": 460,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222007-01-01%22+AND+until%3D%222010-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2011-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 340,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222011-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2014-01-01\" AND until=\"2017-12-31\"",
+      "start": 1,
+      "total": 471,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222014-01-01%22+AND+until%3D%222017-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "TOEIC",
+      "query": "title=\"TOEIC\" AND from=\"2018-01-01\" AND until=\"2020-12-31\"",
+      "start": 1,
+      "total": 232,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22TOEIC%22+AND+from%3D%222018-01-01%22+AND+until%3D%222020-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2025-01-01\" AND until=\"2025-03-31\"",
+      "start": 1,
+      "total": 434,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222025-01-01%22+AND+until%3D%222025-03-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2025-04-01\" AND until=\"2025-06-30\"",
+      "start": 1,
+      "total": 368,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222025-04-01%22+AND+until%3D%222025-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2025-07-01\" AND until=\"2025-09-30\"",
+      "start": 1,
+      "total": 316,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222025-07-01%22+AND+until%3D%222025-09-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2025-10-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 328,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222025-10-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2026-01-01\" AND until=\"2026-03-31\"",
+      "start": 1,
+      "total": 421,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222026-01-01%22+AND+until%3D%222026-03-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y54",
+      "query": "ndlc=Y54 AND from=\"2026-04-01\" AND until=\"2026-06-30\"",
+      "start": 1,
+      "total": 330,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY54+AND+from%3D%222026-04-01%22+AND+until%3D%222026-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2025-01-01\" AND until=\"2025-03-31\"",
+      "start": 1,
+      "total": 332,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222025-01-01%22+AND+until%3D%222025-03-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2025-04-01\" AND until=\"2025-06-30\"",
+      "start": 1,
+      "total": 247,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222025-04-01%22+AND+until%3D%222025-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2025-10-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 366,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222025-10-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y57",
+      "query": "ndlc=Y57 AND from=\"2025-01-01\" AND until=\"2025-03-31\"",
+      "start": 1,
+      "total": 302,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY57+AND+from%3D%222025-01-01%22+AND+until%3D%222025-03-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y57",
+      "query": "ndlc=Y57 AND from=\"2025-04-01\" AND until=\"2025-06-30\"",
+      "start": 1,
+      "total": 203,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY57+AND+from%3D%222025-04-01%22+AND+until%3D%222025-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2022-01-01\" AND until=\"2022-06-30\"",
+      "start": 1,
+      "total": 481,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222022-01-01%22+AND+until%3D%222022-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2022-07-01\" AND until=\"2022-12-31\"",
+      "start": 1,
+      "total": 192,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222022-07-01%22+AND+until%3D%222022-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2023-01-01\" AND until=\"2023-06-30\"",
+      "start": 1,
+      "total": 406,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222023-01-01%22+AND+until%3D%222023-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2023-07-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 157,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222023-07-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2025-04-01\" AND until=\"2025-06-30\"",
+      "start": 1,
+      "total": 85,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222025-04-01%22+AND+until%3D%222025-06-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2004-01-01\" AND until=\"2005-12-31\"",
+      "start": 1,
+      "total": 483,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222004-01-01%22+AND+until%3D%222005-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2006-01-01\" AND until=\"2006-12-31\"",
+      "start": 1,
+      "total": 88,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222006-01-01%22+AND+until%3D%222006-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2009-01-01\" AND until=\"2010-12-31\"",
+      "start": 1,
+      "total": 200,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222009-01-01%22+AND+until%3D%222010-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2011-01-01\" AND until=\"2012-12-31\"",
+      "start": 1,
+      "total": 261,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222011-01-01%22+AND+until%3D%222012-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2013-01-01\" AND until=\"2013-12-31\"",
+      "start": 1,
+      "total": 328,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222013-01-01%22+AND+until%3D%222013-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2014-01-01\" AND until=\"2015-12-31\"",
+      "start": 1,
+      "total": 436,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222014-01-01%22+AND+until%3D%222015-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2016-01-01\" AND until=\"2017-12-31\"",
+      "start": 1,
+      "total": 445,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222016-01-01%22+AND+until%3D%222017-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2018-01-01\" AND until=\"2019-12-31\"",
+      "start": 1,
+      "total": 456,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222018-01-01%22+AND+until%3D%222019-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2020-01-01\" AND until=\"2020-12-31\"",
+      "start": 1,
+      "total": 138,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222020-01-01%22+AND+until%3D%222020-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2023-01-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 345,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222023-01-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2024-01-01\" AND until=\"2025-12-31\"",
+      "start": 1,
+      "total": 349,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222024-01-01%22+AND+until%3D%222025-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2026-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 296,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222026-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2021-01-01\" AND until=\"2022-12-31\"",
+      "start": 1,
+      "total": 360,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222021-01-01%22+AND+until%3D%222022-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y42",
+      "query": "ndlc=Y42 AND from=\"2023-01-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 159,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY42+AND+from%3D%222023-01-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2025-07-01\" AND until=\"2025-08-31\"",
+      "start": 1,
+      "total": 401,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222025-07-01%22+AND+until%3D%222025-08-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y55",
+      "query": "ndlc=Y55 AND from=\"2025-09-01\" AND until=\"2025-09-30\"",
+      "start": 1,
+      "total": 287,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY55+AND+from%3D%222025-09-01%22+AND+until%3D%222025-09-30%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2025-03-01\" AND until=\"2025-03-31\"",
+      "start": 1,
+      "total": 28,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222025-03-01%22+AND+until%3D%222025-03-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2007-01-01\" AND until=\"2007-12-31\"",
+      "start": 1,
+      "total": 352,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222007-01-01%22+AND+until%3D%222007-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2008-01-01\" AND until=\"2008-12-31\"",
+      "start": 1,
+      "total": 283,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222008-01-01%22+AND+until%3D%222008-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2021-01-01\" AND until=\"2021-12-31\"",
+      "start": 1,
+      "total": 160,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222021-01-01%22+AND+until%3D%222021-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y35",
+      "query": "ndlc=Y35 AND from=\"2022-01-01\" AND until=\"2022-12-31\"",
+      "start": 1,
+      "total": 422,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY35+AND+from%3D%222022-01-01%22+AND+until%3D%222022-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2025-01-01\" AND until=\"2025-01-31\"",
+      "start": 1,
+      "total": 498,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222025-01-01%22+AND+until%3D%222025-01-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "Y33",
+      "query": "ndlc=Y33 AND from=\"2025-02-01\" AND until=\"2025-02-28\"",
+      "start": 1,
+      "total": 106,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=ndlc%3DY33+AND+from%3D%222025-02-01%22+AND+until%3D%222025-02-28%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-小学受験",
+      "query": "title=\"小学受験\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 0,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E5%B0%8F%E5%AD%A6%E5%8F%97%E9%A8%93%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=1&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-小学校入試",
+      "query": "title=\"小学校入試\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 171,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E5%B0%8F%E5%AD%A6%E6%A0%A1%E5%85%A5%E8%A9%A6%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-大学院入試",
+      "query": "title=\"大学院入試\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 9,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E5%A4%A7%E5%AD%A6%E9%99%A2%E5%85%A5%E8%A9%A6%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-大学編入",
+      "query": "title=\"大学編入\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 4,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E5%A4%A7%E5%AD%A6%E7%B7%A8%E5%85%A5%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-看護学校入試",
+      "query": "title=\"看護学校入試\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 6,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E7%9C%8B%E8%AD%B7%E5%AD%A6%E6%A0%A1%E5%85%A5%E8%A9%A6%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-看護医療系",
+      "query": "title=\"看護医療系\" AND from=\"2022-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 42,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E7%9C%8B%E8%AD%B7%E5%8C%BB%E7%99%82%E7%B3%BB%22+AND+from%3D%222022-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-中学受験",
+      "query": "title=\"中学受験\" AND from=\"2022-01-01\" AND until=\"2024-12-31\"",
+      "start": 1,
+      "total": 354,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E4%B8%AD%E5%AD%A6%E5%8F%97%E9%A8%93%22+AND+from%3D%222022-01-01%22+AND+until%3D%222024-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-中学受験",
+      "query": "title=\"中学受験\" AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 200,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E4%B8%AD%E5%AD%A6%E5%8F%97%E9%A8%93%22+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-中学入試",
+      "query": "title=\"中学入試\" AND from=\"2025-01-01\" AND until=\"2026-12-31\"",
+      "start": 1,
+      "total": 430,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E4%B8%AD%E5%AD%A6%E5%85%A5%E8%A9%A6%22+AND+from%3D%222025-01-01%22+AND+until%3D%222026-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-中学入試",
+      "query": "title=\"中学入試\" AND from=\"2022-01-01\" AND until=\"2023-12-31\"",
+      "start": 1,
+      "total": 435,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E4%B8%AD%E5%AD%A6%E5%85%A5%E8%A9%A6%22+AND+from%3D%222022-01-01%22+AND+until%3D%222023-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    },
+    {
+      "label": "registry-中学入試",
+      "query": "title=\"中学入試\" AND from=\"2024-01-01\" AND until=\"2024-12-31\"",
+      "start": 1,
+      "total": 230,
+      "url": "https://ndlsearch.ndl.go.jp/api/sru?operation=searchRetrieve&version=1.2&query=title%3D%22%E4%B8%AD%E5%AD%A6%E5%85%A5%E8%A9%A6%22+AND+from%3D%222024-01-01%22+AND+until%3D%222024-12-31%22+AND+dpid%3Diss-ndl-opac&maximumRecords=500&startRecord=1&recordSchema=dcndl"
+    }
+  ]
+}

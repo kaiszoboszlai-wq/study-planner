@@ -1,0 +1,16 @@
+{
+  "updated": "2026-10-26",
+  "target": 10000,
+  "registryResources": 14147,
+  "registryEditions": 22535,
+  "catalogVerified": 10343,
+  "availabilityVerified": false,
+  "collectionPartitions": 96,
+  "failedPartitions": 0,
+  "source": "https://ndlsearch.ndl.go.jp/help/api",
+  "sourceSpecification": "https://ndlsearch.ndl.go.jp/file/help/api/specifications/ndlsearch_api_20260925.pdf",
+  "currentEditionBooks": 10009,
+  "currentSupportedBooks": 8342,
+  "supplementPartitions": 11,
+  "supplementFailedPartitions": 0
+}

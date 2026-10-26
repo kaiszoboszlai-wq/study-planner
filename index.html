@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>study planner</title>
+<title>StudyPlanner</title>
 <style>
 .save-status[hidden]{display:none}
 .active-timer{position:sticky;top:6px;z-index:6;display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:0 0 8px;background:var(--accbg);border:1px solid var(--line);border-radius:10px;color:var(--ink);text-align:left;font-size:.8rem}.active-timer[hidden]{display:none}.active-timer-dot{width:7px;height:7px;background:var(--acc);border-radius:50%;flex:none}.active-timer-link{margin-left:auto;white-space:nowrap;color:var(--acc);font-size:.75rem}#activeTimerText{min-width:0;overflow-wrap:anywhere}.timer-reading-label{text-align:center;font-size:.85rem;color:var(--sub);margin-top:10px}.timer-elapsed{text-align:center;font-size:1rem;font-weight:600;margin:8px 0}.timer-end-notice{padding:9px;border-radius:8px;background:var(--accbg);color:var(--ink);font-size:.85rem}#timerUndo{display:flex;align-items:center;justify-content:center;gap:8px}#timerUndo[hidden]{display:none}#idleReviewModal{z-index:42}.clock-step-buttons{justify-content:center}.clock-step-buttons button{min-width:80px}
@@ -536,14 +536,14 @@ button.follow-action:disabled{opacity:.6}
 <meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="study planner">
-<meta name="apple-mobile-web-app-title" content="study planner">
+<meta name="application-name" content="StudyPlanner">
+<meta name="apple-mobile-web-app-title" content="StudyPlanner">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/app-flag-64.png">
 <link rel="manifest" id="appManifest">
 <script>
 // Resolve app icon URLs against the installation root, including subdirectory hosting.
 (function(){
-  var manifest={"name": "study planner", "short_name": "study planner", "display": "standalone", "background_color": "#171719", "theme_color": "#b9e1f5", "lang": "ja", "icons": [{"src": "assets/app-flag-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}, {"src": "assets/app-flag-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}]};
+  var manifest={"name": "StudyPlanner", "short_name": "StudyPlanner", "display": "standalone", "background_color": "#171719", "theme_color": "#b9e1f5", "lang": "ja", "icons": [{"src": "assets/app-flag-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}, {"src": "assets/app-flag-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}]};
   var root=new URL("./",location.href).href;
   manifest.id=root;manifest.start_url=root;manifest.scope=root;
   manifest.icons.forEach(function(icon){icon.src=new URL(icon.src,root).href});
@@ -627,11 +627,27 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 #today .today-progress i{background:var(--subject-color)}
 #today>button{background:var(--card);border-color:var(--line);border-radius:12px}
 </style>
+<style id="app-header-removed">
+/* Keep legacy render targets available without reserving header space. */
+.sp-top{display:none!important}
+</style>
+<link rel="stylesheet" href="assets/book-route-ui.css">
+<link rel="stylesheet" href="assets/profile-question-design.css">
+<link rel="stylesheet" href="assets/glass-navigation.css">
+<link rel="stylesheet" href="assets/button-shapes.css">
+<link rel="stylesheet" href="assets/profile-editor.css">
+<link rel="stylesheet" href="assets/follow-list.css">
+<link rel="stylesheet" href="assets/scroll-header.css">
+<link rel="stylesheet" href="assets/login-row.css">
+<link rel="stylesheet" href="assets/stats-health.css">
+<link rel="stylesheet" href="assets/ranking-health.css">
+<link rel="stylesheet" href="assets/async-ui.css">
+<link rel="stylesheet" href="assets/shared-page-health.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
 <div class="sp-logo sp-icon-frame"><img src="assets/app-flag-180.png" width="120" height="120" alt="study plannerの山と旗のアイコン" decoding="sync"></div>
-<div class="sp-t">study planner</div>
+<div class="sp-t studyplanner-wordmark69">StudyPlanner</div>
 </div></div>
 <script>
 // Keep splash cleanup independent of application initialization and sync.
@@ -652,12 +668,12 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="app">
 <nav class="side" aria-label="メニュー">
 <button class="nv" id="navToday"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg><span>今日</span></button>
-<button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>プラン</span></button>
+<button class="nv on" id="navPlan"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>週間プラン</span></button>
 <button class="nv" id="navStats"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V11M12 21V4M19 21v-7"/></svg><span>学習記録</span></button>
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
-<div class="sp-top">
+<div class="sp-top" hidden aria-hidden="true" inert>
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
 <p class="goalbar"><img class="goal-icon" src="assets/goal-flag.png" width="32" height="32" alt="" aria-hidden="true"><span id="goalTxt"></span><button class="lnk" id="goalEdit" hidden>変更</button></p>
@@ -727,7 +743,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すと予定を編集できます。計測は「今日の勉強へ」から始めます</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
-<div class="mh"><h2>学習記録</h2><button class="main" id="mrOpen">記録</button></div>
+<div class="mh" style="justify-content:flex-end"><button class="main" id="mrOpen">記録</button></div>
 <div class="sum3"><div><small>今日</small><b id="sToday">0 分</b></div><div><small>今月</small><b id="sMonth">0 時間</b></div><div><small>累計</small><b id="sAll">0 時間</b></div></div>
 <div class="seg" id="seg"><button data-m="d" class="on">日</button><button data-m="w">週</button><button data-m="m">月</button></div>
 <div id="schart"></div>
@@ -737,8 +753,9 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 </section>
 <section id="today" hidden>
 <div class="today-heading"><h2>今日</h2><span id="tdTitle"></span><button id="adjustTodayPlan" class="lnk" type="button" style="margin-left:auto;font-size:.8rem">今日の予定を調整</button></div>
-<div id="tdSummary" class="today-summary"><div><strong aria-label="今日の学習時間" id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><strong aria-label="達成率" id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
+<div id="tdSummary" class="today-summary"><div><small class="health-caption74">学習時間</small><strong aria-label="今日の学習時間" id="tdMeasured">0分</strong><small id="tdPlanned">予定合計 0分</small></div><div><small class="health-caption74">達成率</small><strong aria-label="達成率" id="tdPercent">0%</strong></div><div class="barx" role="progressbar" aria-label="今日の達成率" aria-valuemin="0" aria-valuemax="100" id="tdMeter"><i id="tdBar"></i></div></div>
 <div class="note" id="tdSum"></div>
+<div class="section-heading62"><h3>今日の予定</h3></div>
 <div id="tdList"></div>
 </section>
 <section id="grades" hidden>
@@ -829,11 +846,10 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="tmname" id="appearanceTitle">設定</div>
 <h3 class="sh">プロフィール</h3>
 <div id="pfEdit">
-<div class="fld"><span class="lb">アイコン</span><div class="icons" id="iconPick"></div>
+<div class="fld"><span class="lb">プロフィール写真</span>
 <div class="actions"><button id="pfPhotoBtn">写真を選ぶ</button><button id="pfPhotoDel">写真を消す</button></div>
 <input type="file" id="pfPhoto" accept="image/*" style="display:none">
 <p class="err" id="pfNote"></p></div>
-<div class="fld"><span class="lb">テーマの色</span><div class="icons" id="colorPick"></div></div>
 <div class="fld"><label>名前<input type="text" id="pfName" maxlength="20" placeholder="例 たろう"></label></div>
 <div class="fld"><label>目標<input type="text" id="pfGoal55" maxlength="60" placeholder="例 第一志望に合格する"></label></div>
 <div class="fld"><label>学年<select id="pfGrade"><option value="">未設定</option><option>中1</option><option>中2</option><option>中3</option><option>高1</option><option>高2</option><option>高3</option><option>浪人</option><option>大学生</option><option>社会人</option><option>その他</option></select></label></div>
@@ -844,13 +860,8 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="fld"><label>生まれた年<input type="number" id="pfBY" min="1900" max="2100" placeholder="例 2008"></label></div>
 <div class="fld"><label>誕生日<span class="pair"><input type="number" id="pfBM" min="1" max="12" placeholder="月"><span>月</span><input type="number" id="pfBD" min="1" max="31" placeholder="日"><span>日</span></span></label></div>
 </div>
-<h3 class="sh">タイマー</h3>
-<p class="note">タイマーは操作がなくても計測を続けます。一時停止・完了すると、計測時間を自動で記録します。</p>
-<p class="note">ログイン中は、先に計測を開始した端末を優先します。別端末で開始する場合は、先の端末で一時停止してください。</p>
 <h3 class="sh">アプリのデザイン</h3>
 <div class="fld theme-settings">
-  <span class="lb">配色テーマ</span>
-  <p class="note">画面の配置や機能はそのまま、色だけを切り替えます。</p>
   <div class="theme-options" role="group" aria-label="配色テーマ">
     <button type="button" class="theme-choice" data-app-theme="sky"><span class="theme-swatches"><i style="background:#B9E1F5"></i><i style="background:#FFFFFF"></i><i style="background:#347DA5"></i></span><b>スカイブルー</b><small>爽やか・清潔感</small></button>
     <button type="button" class="theme-choice" data-app-theme="sage"><span class="theme-swatches"><i style="background:#D5E8D4"></i><i style="background:#FFFDF7"></i><i style="background:#63805B"></i></span><b>セージグリーン</b><small>落ち着く・自然</small></button>
@@ -859,7 +870,6 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
     <button type="button" class="theme-choice" data-app-theme="black"><span class="theme-swatches"><i style="background:#090909"></i><i style="background:#151515"></i><i style="background:#8dd9c1"></i></span><b>ブラック</b><small>黒ベース・目にやさしい</small></button>
   </div>
   </div>
-<h3 class="sh">アカウント</h3>
 <div class="actions"><button id="fbLogout" class="dng" hidden>ログアウト</button></div>
 <div class="actions"><button id="appearanceClose" class="main">完了</button></div>
 </div>
@@ -2316,23 +2326,13 @@ function pfMore(p){ // 高校名・出身校・性別・生まれた年・誕生
 function renderMy(){
   if(typeof renderFb==="function")renderFb();
   var p=state.profile=state.profile||{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""};
-  var av=$("meAv");av.innerHTML="";av.style.background=p.color||"#0b6e6e";
-  if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.textContent=p.icon||"📚";
+  var av=$("meAv");av.innerHTML="";av.style.background="var(--accbg)";av.style.color="var(--sub)";
+  if(p.photo){var im=document.createElement("img");im.src=p.photo;im.alt="プロフィール写真";av.appendChild(im)}else av.innerHTML='<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" aria-label="写真未設定"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
   $("pfPhotoDel").hidden=!p.photo;
   $("meName").textContent=p.name||"名前は未設定です";
   $("meSub").textContent=[p.grade,p.age?p.age+"歳":""].filter(Boolean).join("・");
   $("meSchool").textContent=p.school?"🎓 "+p.school:"";
   $("meMore").textContent=pfMore(p);
-  var ip=$("iconPick");ip.innerHTML="";
-  ICONS.forEach(function(ic){
-    var b=document.createElement("button");b.textContent=ic;b.className=(ic===p.icon&&!p.photo)?"on":"";b.setAttribute("aria-label","アイコン "+ic);
-    b.onclick=function(){p.icon=ic;p.photo="";p.photoS="";save();renderMy()};ip.appendChild(b);
-  });
-  var cp=$("colorPick");cp.innerHTML="";
-  COLORS.forEach(function(c){
-    var b=document.createElement("button");b.className="sw"+(c===p.color?" on":"");b.style.background=c;b.setAttribute("aria-label","色 "+c);
-    b.onclick=function(){p.color=c;save();renderMy()};cp.appendChild(b);
-  });
   if(document.activeElement!==$("pfName"))$("pfName").value=p.name||"";
   if(document.activeElement!==$("pfGoal55"))$("pfGoal55").value=state.goal||"";
   $("pfGrade").value=p.grade||"";
@@ -2583,11 +2583,18 @@ function protectSyncedRecords(remote,incoming){
   Object.keys(totals).forEach(function(key){var p=JSON.parse(key);if(!Object.prototype.hasOwnProperty.call(contrib,p[0]))Object.defineProperty(contrib,p[0],{value:[],enumerable:true,writable:true,configurable:true});contrib[p[0]].push({date:p[1],name:p[2],k:p[3],sec:totals[key]})});remote.contrib=contrib;
   return remote;
 }
+function protectSyncedBookRoutes(remote){
+  var base=null;try{base=JSON.parse(syncSig||localStorage.getItem(accountKey(dataOwner)+':sync-base')||'null')}catch(e){}
+  var local=Array.isArray(state.bookRoutes)?state.bookRoutes:[],incoming=Array.isArray(remote.bookRoutes)?remote.bookRoutes:[];
+  var old=new Map(((base&&base.bookRoutes)||[]).map(function(r){return [r.id,r]})),left=new Map(local.map(function(r){return [r.id,r]})),right=new Map(incoming.map(function(r){return [r.id,r]})),out=[];
+  new Set(Array.from(old.keys()).concat(Array.from(left.keys()),Array.from(right.keys()))).forEach(function(id){var b=old.get(id),l=left.get(id),r=right.get(id),chosen;if(!base)chosen=l||r;else chosen=JSON.stringify(l)===JSON.stringify(b)?r:l;if(chosen)out.push(chosen)});
+  remote.bookRoutes=out;return remote;
+}
 function syncApply(r){
   try{
     var remote=JSON.parse(r.data);
     if(!remote||typeof remote!=="object"||Array.isArray(remote))throw new Error("Invalid cloud data");
-    remote=protectSyncedRecords(protectSyncedPlan(remote),JSON.parse(r.data));
+    remote=protectSyncedBookRoutes(protectSyncedRecords(protectSyncedPlan(remote),JSON.parse(r.data)));
     var o=Object.assign(JSON.parse(initialState),remote);
     o.timer=state.timer;o.idleReview=state.idleReview||null;o.pendingTimerRelease=state.pendingTimerRelease||null;
     o.page=state.page;o.planPage=state.planPage;o.dataAt=Number(r.dataAt)||0;o.updatedAt=Date.now();
@@ -2691,10 +2698,10 @@ function mini7(L,colors){ // 直近7日の積み上げ棒(小さいグラフ)。
   });
   return svg+'</svg>';
 }
-function fbPaint(el,icon,color,photo){ // 写真があれば写真、なければ絵文字
-  el.innerHTML="";el.style.background=goodColor(color);
+function fbPaint(el,icon,color,photo){ // 写真、または写真未設定のプレースホルダー
+  el.innerHTML="";el.style.background="var(--accbg)";el.style.color="var(--sub)";
   var ph=goodPhoto(photo);
-  if(ph){var im=document.createElement("img");im.src=ph;im.alt="";el.appendChild(im)}else el.textContent=goodIcon(icon)||"👤";
+  if(ph){var im=document.createElement("img");im.src=ph;im.alt="";el.appendChild(im)}else el.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-label="写真未設定"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
 }
 function fbRow(prof,id){ // 一覧の1人分。アイコンか名前を押すと、プロフィールが開く
   var r=document.createElement("div");r.className="fbrow";
@@ -3150,7 +3157,7 @@ async function fillVie(vb){
         if(mine.indexOf(vid)>=0)profileRead("stats/"+vid).then(function(data){if(FB.uid!==uid||!card.isConnected)return;liveData=data;var fresh=followerProfileDetails(vp,shared,data);details.replaceWith(fresh);details=fresh}).catch(function(){});
       });
       vr.querySelector("b").textContent="読み込み中…";
-      try{vp=await profileRead("profiles/"+vid);if(FB.uid!==uid||!card.isConnected)return;fbPaint(vr.querySelector(".av"),vp&&vp.icon,vp&&vp.color,vp&&vp.photo);vr.querySelector("b").textContent=fbNm(vp);var fresh=followerProfileDetails(vp,shared,liveData);details.replaceWith(fresh);details=fresh}catch(e){if(FB.uid===uid&&card.isConnected){vr.querySelector("b").textContent="プロフィール";showReadError(card,e,function(){fillVie(vb)},true)}}
+      try{vp=await profileRead("profiles/"+vid);if(FB.uid!==uid||!card.isConnected)return;fbPaint(vr.querySelector(".av"),vp&&vp.icon,vp&&vp.color,vp&&vp.photo);vr.querySelector("b").textContent=fbNm(vp);vr.querySelector(".note").textContent=vp&&typeof vp.grade==="string"?vp.grade:"";var fresh=followerProfileDetails(vp,shared,liveData);details.replaceWith(fresh);details=fresh}catch(e){if(FB.uid===uid&&card.isConnected){vr.querySelector("b").textContent="プロフィール";showReadError(card,e,function(){fillVie(vb)},true)}}
     }));
   }catch(e){if(FB.uid===uid)showReadError(vb,e,function(){fillVie(vb)})}
 }
@@ -3237,7 +3244,7 @@ function carrySourceSignature(items){return JSON.stringify(items.map(function(x)
 function carryProposal(review,mode){var days=review.mode==='week'?buildPlanCandidate(planConfig(),0,null):planClone((state.plan||[]).filter(function(d){return d.date>=fmtDate(new Date())}));var a=appendWeekCarry(days,review.items.filter(function(x){return x.selected!==false}),mode);return {days:days,remaining:a.remaining}}
 function showCarryReview(){var r=state.carryReview;if(!r||carryModal36)return;var dlg=v36Dialog('繰り越す項目を確認');carryModal36=dlg;function close(){carryModal36=null;dlg.hide()}v36Text(dlg.box,'残り時間を表示しています。チェックを外した項目は、今回は繰り越しません。');r.items.forEach(function(x){var label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:8px;margin:12px 0';var cb=document.createElement('input');cb.type='checkbox';cb.style.cssText='width:18px;height:18px;flex:none;margin:0';cb.checked=x.selected!==false;cb.onchange=function(){x.selected=cb.checked;save();refresh()};label.appendChild(cb);label.appendChild(document.createTextNode(' '+x.name+' '+(Math.round(x.h*3600)%60?fmtT(x.h*3600):hm(x.h))+'（'+(x.carryFrom||x.sourceDate)+'から）'));dlg.box.appendChild(label)});var label=document.createElement('label');label.textContent='配分方法 ';var select=document.createElement('select');select.innerHTML='<option value="next">次の日から順に追加</option><option value="spread">予定が少ない日に分散（提案）</option>';select.value=state.carryDistribution||'next';label.appendChild(select);dlg.box.appendChild(label);var summary=document.createElement('div');summary.setAttribute('aria-live','polite');dlg.box.appendChild(summary);function refresh(){summary.innerHTML='';var selected=r.items.filter(function(x){return x.selected!==false});v36Text(summary,selected.length?'選択中 '+selected.length+'項目 · 残り '+hm(selected.reduce(function(n,x){return n+x.h},0)):'今回は繰り越しません。');var p=carryProposal(r,select.value);p.days.forEach(function(d){if(d.carryHours)v36Text(summary,dayLabel(d.date)+'：通常 '+hm(d.normalHours)+' ＋ 繰り越し '+hm(d.carryHours)+' ＝ '+hm(d.h))});var held=p.remaining.reduce(function(n,x){return n+x.h},0);if(held)v36Text(summary,'16時間を超える分 '+hm(held)+' は次の週へ保留します。');if(p.days.some(function(d){return d.carryHours>d.normalHours||d.h>10}))v36Text(summary,'1日の予定が多くなります。「予定が少ない日に分散」を選べます。')}select.onchange=refresh;refresh();v36Button(dlg.box,'この内容で確定',function(){if(state.idleReview){close();showIdleReview();return}pauseTimer();if(r.signature!==carrySourceSignature(r.items)){r.items=remainingWeekItems((state.plan||[]).filter(function(d){return r.sourceDates.indexOf(d.date)>=0}));r.signature=carrySourceSignature(r.items);save();close();showCarryReview();return}var selected=r.items.filter(function(x){return x.selected!==false});state.carryDistribution=select.value;r.sourceDates.forEach(function(date){var d=state.plan.find(function(y){return y.date===date});if(d)d.carryProcessed=true});if(r.mode==='week')state.weekCarry=(state.weekCarry||[]).concat(selected);else{var a=appendWeekCarry(state.plan,selected,select.value);state.weekCarry=(state.weekCarry||[]).concat(a.remaining)}state.carryReview=null;save();close();renderPlan();fillWeeklySetup()});v36Button(dlg.box,'あとで確認',function(){save();close();renderPlan()})}
 function showPendingPlanReview(){if(document.hidden)return;if(state.pendingWeekReview){if(weekModal36)return;var h=(state.planHistory||[]).find(function(h){return h.id===state.pendingWeekReview});if(!h){state.pendingWeekReview=null;save();showCarryReview();return}var dlg=v36Dialog('前週の振り返り');weekModal36=dlg;renderHistoryDetail(dlg.box,h);v36Button(dlg.box,'次の週の設定へ',function(){state.pendingWeekReview=null;h.reviewed=true;save();weekModal36=null;dlg.hide();fillWeeklySetup();showPage(1);showCarryReview()})}else showCarryReview()}
-rollForward=function(){if(!state.plan||!state.plan.length||state.idleReview||checkIdleTimer())return false;var today=fmtDate(new Date());if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;if(state.weekSetupPending||state.carryReview||state.planDaySeen===today)return false;var end=planWeekEnd(),weekly=(end&&today>=end)||(state.exam&&today>=state.exam),past=state.plan.filter(function(d){return d.date<today&&!d.carryProcessed});pauseTimer();if(weekly){var history=archivePlan('期間終了');state.pendingWeekReview=history&&history.id;state.weekSetupPending=true;state.planPage=1}var items=remainingWeekItems(past);if(items.length)state.carryReview={mode:weekly?'week':'daily',items:items,sourceDates:past.map(function(d){return d.date}),signature:carrySourceSignature(items)};else past.forEach(function(d){d.carryProcessed=true});state.planDaySeen=today;save();return true};
+rollForward=function(){if(!state.plan||!state.plan.length||state.idleReview||checkIdleTimer())return false;var today=fmtDate(new Date());if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;if(state.weekSetupPending||state.carryReview||state.planDaySeen===today)return false;var end=planWeekEnd(),weekly=(end&&today>=end)||(state.exam&&today>=state.exam),past=state.plan.filter(function(d){return d.date<today&&!d.carryProcessed});pauseTimer();if(weekly){var history=archivePlan('期間終了');state.pendingWeekReview=history&&history.id;state.weekSetupPending=true;state.planPage=1;deferFlow40(false)}var items=remainingWeekItems(past);if(items.length)state.carryReview={mode:weekly?'week':'daily',items:items,sourceDates:past.map(function(d){return d.date}),signature:carrySourceSignature(items)};else past.forEach(function(d){d.carryProcessed=true});state.planDaySeen=today;save();return true};
 var rollRender36=rollAndRender;rollAndRender=function(force){rollRender36(force);showPendingPlanReview()};
 function carryLabel(b){return b.carried?'（'+(b.carryFrom||'前日')+'からの繰り越し）':''}
 var renderPlan36=renderPlan;renderPlan=function(){syncPlanTotals(state.plan);renderPlan36();Array.from(document.querySelectorAll('[data-plan-summary]')).forEach(function(el){var d=(state.plan||[]).find(function(d){return d.date===el.dataset.planSummary});if(d&&d.carryHours){var p=document.createElement('small');p.style.gridColumn='1 / -1';p.textContent='通常 '+hm(d.normalHours)+' ＋ 繰り越し '+hm(d.carryHours);el.appendChild(p)}});(state.plan||[]).forEach(function(d){d.blocks.forEach(function(b){if(!b.carried)return;var row=Array.from(document.querySelectorAll('.blk')).find(function(el){return el.dataset.blockId===b.id});if(row){var small=row.querySelector('.duration');if(small)small.textContent=hm(b.h)+carryLabel(b)}})});var old=$('planReviewPending');if(old)old.remove();var banner=document.createElement('div');banner.id='planReviewPending';if(state.pendingWeekReview||state.carryReview)v36Button(banner,'振り返り・繰り越しを確認',showPendingPlanReview);if(state.weekCarry&&state.weekCarry.length)v36Text(banner,'次週へ保留：'+hm(state.weekCarry.reduce(function(n,x){return n+x.h},0)));$('plan').parentNode.insertBefore(banner,$('plan'))};
@@ -3479,8 +3486,7 @@ function installV38(){
   var remaining=document.createElement('small');remaining.id='tdRemaining38';remaining.hidden=true;$('tdPlanned').after(remaining);
   var metric=document.createElement('label');metric.textContent='グラフの表示 ';var select=document.createElement('select');select.id='gradeMetric38';select.innerHTML='<option value="score">点数</option><option value="percent">得点率（％）</option>';select.onchange=function(){gradeMetric38=this.value;renderGrades()};metric.appendChild(select);$('gchart').before(metric);
   var oldRow=addGmRow;addGmRow=function(){oldRow.apply(null,arguments);var row=gmRows[gmRows.length-1];row.s.max=row.m.value;row.m.max=10000;row.d.max=150;row.m.addEventListener('input',function(){row.s.max=row.m.value})};
-  v36Text($('pfEdit'),'名前・アイコン・写真・学年・志望校は、ログインした利用者が閲覧できます。目標・高校名は、送信したフォローリクエストの相手や、フォロー関係の画面で共有されます。年齢・性別・誕生日・成績は相手に表示しません。');$('pfPhoto').onchange=photoSelected38;
-  var settings=$('appearanceModal').querySelector('.tmbox'),heading=document.createElement('h3');heading.className='sh';heading.textContent='データの保存と復元';settings.insertBefore(heading,$('appearanceClose').parentNode);var actions=document.createElement('div');actions.className='backup-actions38';heading.after(actions);v36Button(actions,'バックアップを書き出す',downloadBackup38);var upload=document.createElement('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;upload.id='backupFile38';upload.onchange=chooseRestore38;actions.appendChild(upload);v36Button(actions,'バックアップから復元',function(){upload.click()});var backupStatus=v36Text(settings,'');backupStatus.id='backupStatus38';actions.after(backupStatus);var diagnostics=document.createElement('details'),title=document.createElement('summary');title.textContent='読み込み診断（開発用）';diagnostics.appendChild(title);var diagnosticRows=document.createElement('div');diagnosticRows.id='diagnosticRows38';function timings(){diagnosticRows.innerHTML='';readTimings38.slice(-30).reverse().forEach(function(r){v36Text(diagnosticRows,r.type+' '+r.path+' · '+r.seconds.toFixed(3)+'秒 · '+r.status)})}v36Button(diagnostics,'更新',timings);v36Button(diagnostics,'クリア',function(){readTimings38=[];timings()});diagnostics.appendChild(diagnosticRows);backupStatus.after(diagnostics);
+  $('pfPhoto').onchange=photoSelected38;
   var newer=v36Button($('dmm').querySelector('.tmbox'),'新しいメッセージへ',function(){if(dmCur){dmCur.atBottom=true;$('dmBody').scrollTop=$('dmBody').scrollHeight;newer.hidden=true;markDmRead38(dmCur)}});newer.id='dmNew38';newer.hidden=true;$('dmBody').after(newer);$('dmBody').addEventListener('scroll',function(){var c=dmCur;if(!c)return;c.atBottom=this.scrollTop+this.clientHeight>=this.scrollHeight-48;if(c.atBottom){newer.hidden=true;markDmRead38(c)}});$('dmIn').addEventListener('input',function(){saveDmDraft38()});
   var dmStop38=dmStop;dmStop=function(){if(dmCur)saveDmDraft38();dmStop38();newer.hidden=true};
   $('pxIn').addEventListener('input',saveCommentDraft38);
@@ -3524,9 +3530,7 @@ function priorityOptions59(select,weight){
 }
 function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
-  var steps=[];if(!state.goal||!state.goal.trim())steps.push({key:'goal'});if(!state.exam||state.exam<=fmtDate(new Date()))steps.push({key:'exam'});
-  ['weekday','weekend','subjects'].forEach(function(key){steps.push({key:key})});
-  steps.push({key:'allocation'},{key:'carry'});return steps;
+  return ['goal','exam','weekday','weekend','subjects','allocation','carry'].map(function(key){return {key:key}});
 }
 function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
@@ -3569,8 +3573,8 @@ function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w||!cand
 function flowField40(box,label,type,value,onInput,attrs){var wrap=document.createElement('label');wrap.className='flow-field40';wrap.textContent=label;var input=document.createElement('input');input.type=type;input.value=value==null?'':value;Object.keys(attrs||{}).forEach(function(k){input.setAttribute(k,attrs[k])});input.oninput=function(){onInput(input.value);persistFlow40();flowError40('')};wrap.appendChild(input);box.appendChild(wrap);return input}
 function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var body=$('flowBody40');body.innerHTML='';flowError40('');
   if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&key==='carry';
-  $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length;$('flowProgress40').style.width=(w.preview?100:(index+1)/steps.length*100)+'%';$('flowProgressWrap40').setAttribute('aria-valuenow',w.preview?100:Math.round((index+1)/steps.length*100));
-  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.preview?'この計画で始める':finalPlan?'計画を作成して始める':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
+  $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length+' 問';$('flowProgress40').style.width=(w.preview?100:(index+1)/steps.length*100)+'%';$('flowProgressWrap40').setAttribute('aria-valuenow',w.preview?100:Math.round((index+1)/steps.length*100));
+  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.preview?'この計画で始める':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
   var title=document.createElement('h1');title.id='flowTitle40';title.tabIndex=-1;body.appendChild(title);
   if(key==='goal'){title.textContent='どんな目標を目指しますか？';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
@@ -3593,7 +3597,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var bo
   if(focus){body.scrollTop=0;if(flowKeyboard40)title.focus({preventScroll:true});if($('flowAnnouncement40'))$('flowAnnouncement40').textContent=title.textContent}
 }
 function openWeeklyFlow40(mode){
-  mode=mode||'weekly';if(weeklyFlow40&&weeklyFlow40.owner===dataOwner&&weeklyFlow40.mode===mode){flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40();return}
+  mode=mode||'weekly';if(weeklyFlow40&&weeklyFlow40.owner===dataOwner&&weeklyFlow40.epoch===authEpoch&&weeklyFlow40.source===flowSource40()&&weeklyFlow40.mode===mode){flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40();return}
   var c=planConfig(),source=flowSource40(),saved=null;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){}
   var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0])}});
   if(saved&&saved.version===1&&saved.owner===dataOwner&&saved.source===source&&saved.mode===mode&&saved.config&&Array.isArray(saved.entries)&&saved.entries.every(function(e){return typeof e.name==='string'&&typeof e.key==='string'})){c=saved.config;entries=saved.entries}else saved=null;
@@ -3601,12 +3605,20 @@ function openWeeklyFlow40(mode){
   flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();
 }
 function installWeeklyFlow40(){
-  var style=document.createElement('style');style.textContent='body.weekly-flow-mode40{overflow:hidden}body.weekly-flow-mode40 .app{display:none!important}#weeklyFlow40{position:fixed;inset:0;top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh);z-index:18;background:var(--card);color:var(--ink);overflow:hidden}#weeklyFlow40[hidden]{display:none}#weeklyFlow40 .flow-shell40{max-width:720px;height:100%;margin:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 22px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;box-sizing:border-box}.flow-top40{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--sub)}#flowCount40{font-variant-numeric:tabular-nums}#flowProgressWrap40{height:4px;background:var(--line);border-radius:4px;margin-top:12px;flex:none;overflow:hidden}#flowProgress40{height:100%;background:var(--acc);transition:width .15s}.flow-body40{flex:1;min-height:0;overflow-y:auto;padding:32px 1px 18px;scroll-padding:20px}.flow-body40 h1{font-size:clamp(1.45rem,5vw,2rem);line-height:1.55;font-weight:600;margin:0 0 14px;overflow-wrap:anywhere}.flow-hint40{font-size:.9rem;color:var(--sub);line-height:1.8;margin:0 0 26px}.flow-field40{display:block;font-size:.9rem;margin:18px 0}.flow-field40 input{display:block;width:100%;margin-top:10px;box-sizing:border-box;font:inherit;font-size:1rem;min-height:48px;padding:12px;max-width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}.flow-field40 input[type=range]{padding:0;accent-color:var(--acc);border:0}.flow-ratio40{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);align-items:center;gap:10px}.flow-ratio40>span{padding-top:20px;text-align:center}.flow-value40{display:block;margin:26px 0;font-size:2.4rem;font-weight:600;font-variant-numeric:tabular-nums}.flow-subject40{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px;margin:12px 0}.flow-subject40 input[type=color]{width:44px;height:44px;padding:3px}.flow-subject40 input[type=text]{min-width:0;width:100%;height:48px;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;box-sizing:border-box}.flow-subject40 button{padding:8px;font-size:1.3rem;min-width:44px;min-height:44px}.flow-choice40{display:block;width:100%;text-align:left;padding:18px;margin:12px 0!important;border:1px solid var(--line);border-radius:14px;font-size:1rem}.flow-choice40.selected{border-color:var(--acc);background:var(--accbg)}.flow-footer40{display:grid;grid-template-columns:1fr 2fr;gap:12px;padding-top:12px;flex:none;background:var(--card)}.flow-footer40 button{min-height:48px;font-size:1rem;margin:0}.flow-footer40.flow-final40{grid-template-columns:1fr}.flow-final40 #flowNext40{grid-row:1;min-height:64px;font-size:1.15rem;font-weight:600}.flow-final40 #flowBack40{justify-self:start;min-height:44px}.flow-body40 details{border-bottom:1px solid var(--line);padding:14px 0}.flow-body40 summary{font-weight:600;line-height:1.8}.flow-suggestion40{font-size:.9rem;padding:10px 0}#flowError40{margin:6px 0;min-height:0;font-size:.85rem;color:var(--red);flex:none}#flowError40:empty{display:none}@media(max-width:480px){#weeklyFlow40 .flow-shell40{padding-left:18px;padding-right:18px}.flow-body40{padding-top:24px}.flow-subject40{gap:8px}.flow-footer40{gap:10px}}@media(prefers-reduced-motion:reduce){#flowProgress40{transition:none}}';document.head.appendChild(style);
-  flowNode40=document.createElement('div');flowNode40.id='weeklyFlow40';flowNode40.hidden=true;flowNode40.setAttribute('role','dialog');flowNode40.setAttribute('aria-modal','true');flowNode40.setAttribute('aria-labelledby','flowTitle40');flowNode40.innerHTML='<div class="flow-shell40"><p id="flowAnnouncement40" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></p><div class="flow-top40"><span id="flowCount40"></span><button id="flowLater40" type="button">あとで</button></div><div id="flowProgressWrap40" role="progressbar" aria-label="プラン設定の進み具合" aria-valuemin="0" aria-valuemax="100"><div id="flowProgress40"></div></div><div id="flowBody40" class="flow-body40"></div><p id="flowError40" role="alert"></p><div class="flow-footer40"><button id="flowBack40" type="button">戻る</button><button id="flowNext40" type="button" class="main">次へ</button></div></div>';document.body.appendChild(flowNode40);
+  var style=document.createElement('style');style.textContent='#p0,#p1,#p2{display:none!important}body.weekly-flow-mode40{overflow:hidden}body.weekly-flow-mode40 .app{display:none!important}#weeklyFlow40{position:fixed;inset:0;top:var(--visual-top,0px);bottom:auto;height:var(--visual-height,100dvh);z-index:18;background:var(--card);color:var(--ink);overflow:hidden}#weeklyFlow40[hidden]{display:none}#weeklyFlow40 .flow-shell40{max-width:720px;height:100%;margin:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 22px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;box-sizing:border-box}.flow-top40{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--sub)}#flowCount40{font-variant-numeric:tabular-nums}#flowProgressWrap40{height:4px;background:var(--line);border-radius:4px;margin-top:12px;flex:none;overflow:hidden}#flowProgress40{height:100%;background:var(--acc);transition:width .15s}.flow-body40{flex:1;min-height:0;overflow-y:auto;padding:32px 1px 18px;scroll-padding:20px}.flow-body40 h1{font-size:clamp(1.45rem,5vw,2rem);line-height:1.55;font-weight:600;margin:0 0 14px;overflow-wrap:anywhere}.flow-hint40{font-size:.9rem;color:var(--sub);line-height:1.8;margin:0 0 26px}.flow-field40{display:block;font-size:.9rem;margin:18px 0}.flow-field40 input{display:block;width:100%;margin-top:10px;box-sizing:border-box;font:inherit;font-size:1rem;min-height:48px;padding:12px;max-width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}.flow-field40 input[type=range]{padding:0;accent-color:var(--acc);border:0}.flow-ratio40{display:grid;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr);align-items:center;gap:10px}.flow-ratio40>span{padding-top:20px;text-align:center}.flow-value40{display:block;margin:26px 0;font-size:2.4rem;font-weight:600;font-variant-numeric:tabular-nums}.flow-subject40{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px;margin:12px 0}.flow-subject40 input[type=color]{width:44px;height:44px;padding:3px}.flow-subject40 input[type=text]{min-width:0;width:100%;height:48px;font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;box-sizing:border-box}.flow-subject40 button{padding:8px;font-size:1.3rem;min-width:44px;min-height:44px}.flow-choice40{display:block;width:100%;text-align:left;padding:18px;margin:12px 0!important;border:1px solid var(--line);border-radius:14px;font-size:1rem}.flow-choice40.selected{border-color:var(--acc);background:var(--accbg)}.flow-footer40{display:grid;grid-template-columns:1fr 2fr;gap:12px;padding-top:12px;flex:none;background:var(--card)}.flow-footer40 button{min-height:48px;font-size:1rem;margin:0}.flow-footer40.flow-final40{grid-template-columns:1fr}.flow-final40 #flowNext40{grid-row:1;min-height:64px;font-size:1.15rem;font-weight:600}.flow-final40 #flowBack40{justify-self:start;min-height:44px}.flow-body40 details{border-bottom:1px solid var(--line);padding:14px 0}.flow-body40 summary{font-weight:600;line-height:1.8}.flow-suggestion40{font-size:.9rem;padding:10px 0}#flowError40{margin:6px 0;min-height:0;font-size:.85rem;color:var(--red);flex:none}#flowError40:empty{display:none}@media(max-width:480px){#weeklyFlow40 .flow-shell40{padding-left:18px;padding-right:18px}.flow-body40{padding-top:24px}.flow-subject40{gap:8px}.flow-footer40{gap:10px}}@media(prefers-reduced-motion:reduce){#flowProgress40{transition:none}}';document.head.appendChild(style);
+  flowNode40=document.createElement('div');flowNode40.id='weeklyFlow40';flowNode40.hidden=true;flowNode40.setAttribute('role','dialog');flowNode40.setAttribute('aria-modal','true');flowNode40.setAttribute('aria-labelledby','flowTitle40');flowNode40.innerHTML='<div class="flow-shell40"><p id="flowAnnouncement40" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"></p><div class="flow-top40"><span id="flowCount40"></span><button id="flowLater40" type="button">あとで</button></div><div id="flowProgressWrap40" role="progressbar" aria-label="プラン設定の進み具合" aria-valuemin="0" aria-valuemax="100"><div id="flowProgress40"></div></div><div id="flowBody40" class="flow-body40"></div><p id="flowError40" role="alert"></p><div class="flow-footer40"><button id="flowBack40" type="button" aria-label="戻る" title="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><button id="flowNext40" type="button" class="main">次へ</button></div></div>';document.body.appendChild(flowNode40);
   document.addEventListener('keydown',function(e){if(e.key==='Tab'||e.key==='Enter')flowKeyboard40=true},true);document.addEventListener('pointerdown',function(){flowKeyboard40=false},true);
   $('flowBack40').onclick=flowBack40;$('flowLater40').onclick=function(){deferFlow40(true);var to=state.plan&&!state.weekSetupPending?3:6;leaveFlow40(false);showPage(to)};
-  var page40=showPage;showPage=function(n){if((n<=2||(n===3&&state.weekSetupPending))&&flowDeferred40())n=6;var result=page40(n);if(!$('p0').hidden||!$('p1').hidden||!$('p2').hidden){openWeeklyFlow40(n===0&&goalBack!==null?'goal':'weekly')}else if(weeklyFlow40){flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40')}return result};
-  openPlanDraft=function(){openWeeklyFlow40('rebuild')};$('back3').onclick=openPlanDraft;
+  // Legacy step numbers are navigation aliases only; never render their forms.
+  var page40=showPage;showPage=function(n){
+    var setup=n>=0&&n<=2||n===3&&state.weekSetupPending;
+    if(setup&&flowDeferred40()){n=6;setup=false}
+    var result=page40(n);['p0','p1','p2'].forEach(function(id){$(id).hidden=true});
+    if(setup)openWeeklyFlow40(n===0&&goalBack!==null?'goal':'weekly');
+    else if(weeklyFlow40){flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40')}
+    return result;
+  };
+  openPlanDraft=function(){deferFlow40(false);openWeeklyFlow40('rebuild')};$('back3').onclick=openPlanDraft;
   var preview40=generatePlanPreview;generatePlanPreview=function(){if(weeklyFlow40&&weeklyFlow40.preview){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}preview40()};
   var commit40=draftAdopt36;draftAdopt36=function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];commit40();if(state.plan===candidate){leaveFlow40(true);showPlanReady48(candidate)}else{state.weekCarry=queue}};
   var account40=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){closePlanReady48();leaveFlow40(false);goalBack=null}return account40(uid)};
@@ -3751,7 +3763,7 @@ rollForward=function(){
   var changed=consumeCarry54(),today=fmtDate(new Date());if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;
   if(state.weekSetupPending||state.planDaySeen===today){if(changed)save();return changed}
   var end=planWeekEnd(),weekly=(end&&today>=end)||(state.exam&&today>=state.exam),past=state.plan.filter(function(d){return d.date<today&&!d.carryProcessed});
-  pauseTimer();if(weekly){var history=archivePlan('期間終了');state.pendingWeekReview=history&&history.id;state.weekSetupPending=true;state.planPage=1}
+  pauseTimer();if(weekly){var history=archivePlan('期間終了');state.pendingWeekReview=history&&history.id;state.weekSetupPending=true;state.planPage=1;deferFlow40(false)}
   var items=remainingWeekItems(past);past.forEach(function(d){d.carryProcessed=true});
   if(weekly)state.weekCarry=(state.weekCarry||[]).concat(items);else{var a=appendWeekCarry(state.plan,items,'spread');state.weekCarry=(state.weekCarry||[]).concat(a.remaining)}
   state.planDaySeen=today;state.carryDistribution='spread';save();return true;
@@ -3798,7 +3810,7 @@ function installPageDesign62(){
   $('planSettingsOpen').setAttribute('aria-label','プラン設定');$('planSettingsOpen').title='プラン設定';
   var chart=document.createElement('div');chart.id='statsChart62';var navigation=$('statsPrev38').parentNode;$('schart').before(chart);chart.append(navigation,$('schart'));
   $('statsPrev38').textContent='‹';$('statsPrev38').setAttribute('aria-label','前の期間');$('statsNext38').textContent='›';$('statsNext38').setAttribute('aria-label','次の期間');$('mrOpen').textContent='＋ 記録';$('statsRecentMore62').onclick=openDm;
-  var profile=document.createElement('div');profile.className='card62 my-profile62';var me=$('meAv').closest('.me');me.before(profile);profile.append(me,$('cntRow'),$('pfView'));
+  var profile=document.createElement('div');profile.className='card62 my-profile62';var me=$('meAv').closest('.me');me.before(profile);profile.append(me,$('cntRow'),$('pfView'));var editProfile=document.createElement('button');editProfile.id='profileEdit63';editProfile.type='button';editProfile.textContent='プロフィールを編集';editProfile.onclick=function(){$('settingsBtn').click()};profile.appendChild(editProfile);
   var goalHeading=document.createElement('div');goalHeading.className='section-heading62';goalHeading.innerHTML='<h3>目標</h3><button id="myGoalEdit62" class="lnk" type="button">変更</button>';
   var goal=document.createElement('section');goal.id='myGoal62';goal.innerHTML='<div id="myGoalText62" class="goal-title62"></div><div class="goal-deadline62"><span id="myGoalDate62"></span><span>あと <b id="myGoalDays62"></b>日</span></div>';profile.after(goalHeading,goal);
   $('myGoalEdit62').onclick=function(){deferFlow40(false);goalBack=5;showPage(0)};
@@ -3818,7 +3830,7 @@ function queueFit55(){if(fitFrame55)return;fitFrame55=requestAnimationFrame(func
 function fitText55(){
   var nums=Array.from(document.querySelectorAll('#stats .sum3 b')).filter(function(el){return el.clientWidth>0});
   function fit(el,max,min){el.style.fontSize=max+'px';var lo=min,hi=max;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.fontSize=mid+'px';if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.fontSize=Math.floor(lo*2)/2+'px';return lo}
-  var rankTitle=$('tlt');if(rankTitle&&rankTitle.clientWidth)fit(rankTitle,33.5,12);
+  var rankTitle=$('tlt');if(rankTitle&&rankTitle.clientWidth&&!rankTitle.closest('#rankingPage54'))fit(rankTitle,33.5,12);
   if(nums.length){var size=Math.min.apply(null,nums.map(function(el){return fit(el,22,12)}));nums.forEach(function(el){el.style.fontSize=Math.floor(size*2)/2+'px'})}
   var goal=$('goalTxt');if(goal&&goal.parentNode.clientWidth){var el=goal.parentNode;el.style.removeProperty('--goal-size55');el.style.setProperty('--goal-size55','13px');var lo=13,hi=28;while(hi-lo>.25){var mid=(lo+hi)/2;el.style.setProperty('--goal-size55',mid+'px');if(el.scrollWidth>el.clientWidth)hi=mid;else lo=mid}el.style.setProperty('--goal-size55',Math.floor(lo*2)/2+'px')}
 }
@@ -4026,7 +4038,7 @@ $("pfBY").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bY",
 $("pfBM").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bM",v>=1&&v<=12?String(v):"")};
 $("pfBD").oninput=function(){var v=Math.floor(Number(this.value))||0;pfSet("bD",v>=1&&v<=31?String(v):"")};
 $("altPlan").onclick=function(){openPlanCandidate(false)};
-$("planSettingsOpen").onclick=function(){if(state.weekSetupPending){fillWeeklySetup();showPage(1);return}showCarry();openPlanDialog("planSettings")};
+$("planSettingsOpen").onclick=function(){if(state.weekSetupPending){deferFlow40(false);fillWeeklySetup();showPage(1);return}showCarry();openPlanDialog("planSettings")};
 $("draftPreview").onclick=function(){openPlanCandidate(true)};
 $("draftAdd").onclick=function(){addDraftSubject("",1)};
 $("draftCalc").onclick=calculateDraftHours;
@@ -4218,6 +4230,26 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
   apply();
 })();
 </script>
+
+<script src="assets/async-ui.js"></script>
+<script src="assets/book-route-policy.js"></script>
+<script src="assets/book-route-coverage.js"></script>
+<script src="assets/book-route-engine.js"></script>
+<script src="assets/book-route-admissions.js"></script>
+<script src="assets/book-route-questions.js"></script>
+<script src="assets/book-route-features.js"></script>
+<script src="assets/rakuten-covers.js"></script>
+<script src="assets/book-covers.js"></script>
+<script src="assets/book-route-ui.js"></script>
+<script src="assets/book-registry-ui.js"></script>
+<script src="assets/navigation-motion.js"></script>
+<script src="assets/profile-editor.js"></script>
+<script src="assets/follow-list.js"></script>
+<script src="assets/scroll-header.js"></script>
+<script src="assets/login-row.js"></script>
+<script src="assets/stats-health.js"></script>
+<script src="assets/ranking-health.js"></script>
+<script src="assets/refresh-ui.js"></script>
 
 </body>
 </html>

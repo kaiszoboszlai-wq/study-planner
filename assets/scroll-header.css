@@ -1,0 +1,16 @@
+:root{--app-header-height68:calc(64px + env(safe-area-inset-top,0px))}
+#appScrollHeader68{position:fixed;top:0;left:0;right:0;margin:auto;z-index:8;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px;max-width:720px;width:100%;height:var(--app-header-height68);padding:env(safe-area-inset-top,0px) 16px 0;background:var(--card);color:var(--ink);border:0;transform:translateY(calc(-1 * var(--header-offset68,0px)));will-change:transform}
+#appScrollHeader68[hidden]{display:none!important}#appScrollHeader68.header-away68{pointer-events:none}
+body.app-has-header68 main{padding-top:calc(var(--app-header-height68) + 12px)}
+.app-wordmark68{display:flex;align-items:center;justify-content:center;min-width:0;height:100%}.app-wordmark68 img{display:block;width:180px;height:54px;max-width:100%;object-fit:contain}
+.app-header-actions68{display:flex;align-items:center;justify-content:flex-end;min-width:0}#appScrollHeader68 .plane{position:relative;inset:auto;width:42px;height:42px;min-width:42px;margin:0;padding:10px;border:0;background:transparent;color:var(--ink);display:grid;place-items:center}#appScrollHeader68 .plane[hidden]{display:none!important}
+body.weekly-flow-mode40 #appScrollHeader68,body.route-creating #appScrollHeader68,body.profile-editing64 #appScrollHeader68{display:none!important}
+:root[data-app-theme=black] .app-wordmark68 img{filter:brightness(0) invert(1)}
+@media(prefers-reduced-motion:reduce){#appScrollHeader68{transition:none}}
+body.app-has-header68 .active-timer{top:calc(var(--header-visible-height68,var(--app-header-height68)) + 6px)}body.app-has-header68:has(#appScrollHeader68.header-away68) .active-timer{top:6px}
+
+/* Original wordmark typesetting using an OFL-licensed extra bold sans serif. */
+@font-face{font-family:StudyPlannerWordmark;src:url('studyplanner-wordmark-extrabold.woff') format('woff');font-style:normal;font-weight:800;font-display:swap}
+.studyplanner-wordmark69{font-family:StudyPlannerWordmark,Arial,Helvetica,sans-serif;font-style:normal;font-weight:800;letter-spacing:-.045em;line-height:1.15;color:var(--ink)}
+#appScrollHeader68 .studyplanner-wordmark69{font-size:clamp(1.45rem,6.8vw,2rem);white-space:nowrap}
+#splash .studyplanner-wordmark69{font-size:clamp(1.9rem,8vw,2.6rem);font-weight:800;color:var(--ink)}

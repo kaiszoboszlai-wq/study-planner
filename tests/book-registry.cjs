@@ -1,0 +1,4 @@
+const assert=require('node:assert/strict'),registry=require('../assets/book-registry.json');
+const resources=new Set(),isbns=new Set();let editions=0;
+for(const resource of registry.books){assert(!resources.has(resource.key));resources.add(resource.key);assert(resource.editions.length);assert.equal(resource.latestCollectedIsbn,resource.editions[0].isbn);for(const b of resource.editions){assert(!isbns.has(b.isbn));isbns.add(b.isbn);editions++;assert(/^97[89]\d{10}$/.test(b.isbn));assert.equal([...b.isbn].reduce((n,d,i)=>n+Number(d)*(i%2?3:1),0)%10,0);assert(b.title&&b.publisher&&b.published);assert.match(b.source,/^https:\/\/ndlsearch.ndl.go.jp\/books\//);assert.equal(b.availabilityStatus,'未確認');}}
+assert.equal(registry.resourceCount,resources.size);assert.equal(registry.editionCount,editions);console.log('PASS registry counts, distinct resources, unique ISBN editions, source provenance and unconfirmed sale status');

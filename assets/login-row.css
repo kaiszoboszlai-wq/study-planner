@@ -1,0 +1,5 @@
+#mypage .my-account62{padding:0;border:0;background:transparent;overflow:visible}
+.my-account62>.my-account-heading62,.my-account62>#fbOff,.my-account62>#fbSetup,.my-account62>#fbOutBox,.my-account62>#fbOn{display:none!important}
+#loginRow69{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;min-height:64px;margin:0;padding:16px 25px;border:0;background:var(--card);color:var(--ink);font-weight:650;text-align:left}
+.login-providers69{display:flex;align-items:center;gap:16px;flex:none}.login-providers69 img{display:block;width:24px;height:24px;max-width:24px;max-height:24px;object-fit:contain}
+#loginRowStatus69{padding:0 18px;margin:10px 0;font-size:.78rem}#loginRowStatus69[hidden]{display:none}#settingsSyncStatus:empty{display:none}
