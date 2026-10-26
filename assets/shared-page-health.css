@@ -93,5 +93,5 @@ body #today .today-subject:before{width:10px;height:10px}
 body #today .today-progress{height:6px;background:color-mix(in srgb,var(--subject-color) 15%,var(--card))}
 body #today .tcard .play,body #today .tcard.is-running .play{background:color-mix(in srgb,var(--subject-color) 17%,var(--card));color:var(--ink)}
 
-body #today .today-subject{font-size:2.85rem;line-height:1.25;font-weight:650;overflow-wrap:anywhere}body #today .tcard .item{flex:1}body #today .today-detail{margin-top:9px}body #today #rankingPage54{margin-top:36px}
+body #today .today-subject{font-size:2.25rem;line-height:1.25;font-weight:650;overflow-wrap:anywhere}body #today .tcard .item{flex:1}body #today .today-detail{margin-top:9px}body #today #rankingPage54{margin-top:36px}
 #appScrollHeader68 #planeBdg[hidden]{display:none!important}
