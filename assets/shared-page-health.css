@@ -86,3 +86,9 @@ body #bookRoutePage .route-saved-item>div>button{margin:8px 0 20px;padding:7px 1
 body #bookRoutePage .registry-open{font-size:.73rem!important;min-height:34px;padding:4px 0;margin:-12px 0 12px auto;text-decoration:none;color:var(--acc)}
 
 body #bookRoutePage .route-library-heading{justify-content:flex-end}
+/* Make each subject identifiable at a glance while retaining the quiet layout. */
+body #today .tcard,body #today .tcard.is-running{padding:18px 12px 18px 18px;margin:12px 0;border:0;border-radius:18px;background:color-mix(in srgb,var(--subject-color) 8%,var(--card))}
+body #today .tcard:before{content:'';position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--subject-color)}
+body #today .today-subject:before{width:10px;height:10px}
+body #today .today-progress{height:6px;background:color-mix(in srgb,var(--subject-color) 15%,var(--card))}
+body #today .tcard .play,body #today .tcard.is-running .play{background:color-mix(in srgb,var(--subject-color) 17%,var(--card));color:var(--ink)}
