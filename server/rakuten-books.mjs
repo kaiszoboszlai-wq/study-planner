@@ -28,7 +28,7 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
       upstream.search = new URLSearchParams({applicationId:env.RAKUTEN_APPLICATION_ID,affiliateId:env.RAKUTEN_AFFILIATE_ID,isbn,format:'json',formatVersion:'2',hits:'1',elements:'title,subTitle,isbn,publisherName,largeImageUrl,itemUrl,affiliateUrl',outOfStockFlag:'1'}).toString();
       const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 5000);
       try {
-        const response = await fetcher(upstream.href, {headers:{accessKey:env.RAKUTEN_ACCESS_KEY},signal:controller.signal,redirect:'error'});
+        const response = await fetcher(upstream.href, {headers:{accessKey:env.RAKUTEN_ACCESS_KEY,Origin:env.RAKUTEN_APP_ORIGIN,Referer:env.RAKUTEN_APP_ORIGIN+'/'},signal:controller.signal,redirect:'error'});
         if (!response.ok) {
           if ([401,403,429,503].includes(response.status)) {
             const retry = response.headers.get('Retry-After');

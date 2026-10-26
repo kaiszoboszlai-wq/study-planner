@@ -16,7 +16,7 @@ test('unconfigured/private preview makes no upstream calls or credential disclos
 });
 test('exact registered ISBN uses current endpoint and accessKey header; response is minimal/no-store',async()=>{
  const handle=make(async(url,options)=>{
-  const u=new URL(url);assert.equal(u.origin,'https://openapi.rakuten.co.jp');assert.equal(u.searchParams.get('applicationId'),env.RAKUTEN_APPLICATION_ID);assert.equal(u.searchParams.get('accessKey'),null);assert.equal(options.headers.accessKey,env.RAKUTEN_ACCESS_KEY);assert.equal(options.redirect,'error');
+  const u=new URL(url);assert.equal(u.origin,'https://openapi.rakuten.co.jp');assert.equal(u.searchParams.get('applicationId'),env.RAKUTEN_APPLICATION_ID);assert.equal(u.searchParams.get('accessKey'),null);assert.equal(options.headers.accessKey,env.RAKUTEN_ACCESS_KEY);assert.equal(options.headers.Origin,env.RAKUTEN_APP_ORIGIN);assert.equal(options.headers.Referer,env.RAKUTEN_APP_ORIGIN+'/');assert.equal(options.redirect,'error');
   return Response.json({Items:[item]});
  });
  const response=await handle(request(),env),body=await response.text();

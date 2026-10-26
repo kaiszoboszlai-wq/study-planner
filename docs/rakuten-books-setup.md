@@ -45,3 +45,11 @@ Sitesプレビューは非公開を維持し、既存のHTML・静的アセッ�
 ## 反映記録
 
 2026-10-27（日本時間）、確認用サイトのバージョン33にサーバーAPIを配置済み。公開範囲は所有者のみ、環境設定リビジョン1を反映済みです。実サイトの接続可否・ISBN照会エンドポイントはHTTP 200で応答し、無効状態を返すことを確認しました。楽天上流への実リクエストは行っていません。元のGitHubリポジトリには未反映です。
+
+## 公開版の接続作業（2026-10-27）
+
+ユーザーから、既に一般公開済みのURL `https://study-planner-sigma-tawny.vercel.app/` での有効化を指示されました。確認用Sitesの公開範囲は変更しません。VercelのAPI起動エラーを修正してGitHubに反映し、APIの登録ドメイン検証に渡すOrigin/Refererを正規の公開オリジンに固定しました。
+
+残作業は、楽天アプリの許可されたWebサイトへの `study-planner-sigma-tawny.vercel.app` の追加、Vercel側への既発行キー3項目と `RAKUTEN_APP_ORIGIN=https://study-planner-sigma-tawny.vercel.app`、`RAKUTEN_USE_CONTEXT=public` の設定・再デプロイです。Sitesに登録したシークレットはVercelへ自動共有されません。
+
+実リクエストでは、楽天から403 `HTTP_REFERRER_NOT_ALLOWED` を確認しました。公開版での表紙取得成功はまだ未確認です。キーの値はこの資料・ソース・ブラウザーに含めません。
