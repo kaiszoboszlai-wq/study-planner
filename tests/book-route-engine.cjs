@@ -13,3 +13,11 @@ assert.equal(engine.recommend({...input,category:'英検',exam:'英検準2級プ
 assert.throws(()=>engine.recommend({...input,days:-1},data));
 assert.deepEqual(engine.recommend(input,data),engine.recommend(input,data));
 console.log('PASS deterministic selection, exact scope, owned priority, verified-only, duration, unsupported exams and exam-level isolation');
+// Actual sales rank wins within compatible books, while scope and ownership remain constraints.
+const salesData={version:2,books:[book('a','英語',2,['文法'],{isbn:'9784010347478'}),book('b','英語',2,['文法'],{isbn:'9784010349182'})]};
+const sold={available:true,books:[{isbn:'9784010349182',rank:1}]};
+r=engine.recommend({...input,days:1,salesRanking:sold},salesData);assert.equal(r.routes[0].books[0].id,'b');assert.match(r.routes[0].reason,/楽天ブックスの売れ筋/);
+r=engine.recommend({...input,days:1,salesRanking:sold,owned:'教材a'},salesData);assert.equal(r.routes[0].books[0].id,'a');
+r=engine.recommend({...input,subject:'数学',baseSubject:'数学',examScope:{mathIII:false}},data);assert(r.routes.every(x=>x.books.every(b=>b.id!=='6')));assert.match(r.routes[0].reason,/数学Ⅲを出題範囲から除外/);
+assert.equal(salesData.books[1].rakutenSales,undefined);
+console.log('PASS live sales prioritization, ownership precedence, scope exclusions and concise reasons');

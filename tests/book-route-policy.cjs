@@ -17,3 +17,5 @@ const real=require('../assets/book-catalog.json'),ids=p.currentIds(real,now),row
 console.log('PASS known-series preference keeps fit/ownership first, publisher checks, old annual editions and superseded versions excluded, current long-sellers retained; eligible books:',rows.length);
 
 assert.equal(p.annualYear({title:'過去問題集',sourceVolume:'2024年度版'}),2024);assert.equal(p.annualYear({title:'数学問題集',sourceVolume:'1'}),null);
+
+for(const title of ['数学Ⅲ・C','数学演習Ⅲ・C','数学I・II・III','理系数学3'])assert.equal(p.bookFitsScope({title,subject:'数学'},{mathIII:false}),false);assert.equal(p.bookFitsScope({title:'数学Ⅰ・A',subject:'数学'},{mathIII:false}),true);

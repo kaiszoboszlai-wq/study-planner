@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-10-27",
+  "queries": [
+    "大学入試",
+    "共通テスト",
+    "高校入試",
+    "数学",
+    "英文法",
+    "英単語",
+    "物理",
+    "化学",
+    "生物",
+    "現代文",
+    "古文",
+    "日本史",
+    "世界史",
+    "英検",
+    "TOEIC",
+    "ITパスポート",
+    "基本情報技術者",
+    "簿記",
+    "FP",
+    "宅建",
+    "行政書士",
+    "漢検"
+  ],
+  "maxPagesPerQuery": 10,
+  "discoveredISBNs": 5630,
+  "alreadyRegistered": 1791,
+  "newNDLVerified": 647,
+  "unregisteredOrExcluded": 3192,
+  "errors": [
+    {
+      "ndlBatch": 1890
+    },
+    {
+      "ndlBatch": 1925
+    }
+  ],
+  "note": "売れ筋の生データ・順位・画像URLは公開カタログに保存しない。書誌はNDLで独立確認。"
+}

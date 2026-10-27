@@ -8,6 +8,10 @@
   "functions": {
     "api/rakuten-books.js": {
       "includeFiles": "server/**"
+    },
+    "api/book-sales.js": {
+      "includeFiles": "server/**",
+      "maxDuration": 30
     }
   }
 }

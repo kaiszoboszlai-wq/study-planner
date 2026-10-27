@@ -48,6 +48,8 @@ function recommend(c,catalog){
  const restricted=requested.length>0;
  if(restricted)pool=pool.filter(b=>requested.some(s=>b.skills.includes(s))||(subs.length>1&&!requested.some(s=>catalog.books.some(x=>x.subject===b.subject&&x.skills.includes(s)))));
  if(subs.includes('数学')){const scope=mathScope(c.subject);if(scope)pool=pool.filter(b=>b.subject!=='数学'||mathScope(b.title)===scope||b.skills.some(s=>mathScope(s)===scope));}
+ pool=pool.filter(b=>policy.bookFitsScope(b,c.examScope));
+ const sales=new Map((c.salesRanking?.books||[]).map(b=>[b.isbn,b]));pool=pool.map(b=>sales.has(b.isbn)?{...b,rakutenSales:sales.get(b.isbn)}:b);
  const ownedLines=String(c.owned||'').split(/[\n、]/).map(normalize).filter(Boolean),knownOwned=new Set();
  const owned=b=>ownedLines.some(line=>{const title=normalize(b.title);const matched=title===line||(title.length>=6&&line.includes(title));if(matched)knownOwned.add(line);return matched});
  pool=pool.map(b=>({...b,owned:owned(b)}));
@@ -59,12 +61,12 @@ function recommend(c,catalog){
  if(!Number(c.currentStage)||!Number(c.targetStage))warnings.push('得点の満点が不明な場合は標準レベルを仮定します。「実力の目安」「目標レベル」も指定すると選定を調整できます。');
  if(profile.domain==='qualification'&&['IELTS','TOEFL'].includes(profile.exam))warnings.push('この試験の収録教材は現在、単語対策が中心です。試験全体をカバーするルートではありません。');
  if(profile.domain==='qualification')warnings.push('資格試験は年度・法改正・出題範囲を確認し、受験年度に対応する版を選んでください。');
- if(profile.domain==='entrance'&&c.category==='大学入試')warnings.push('大学ごとの出題傾向・配点は自動判定していません。受験科目・単元と目標を選び、志望校の最新の募集要項・過去問も確認してください。');
+
  if(Number(c.days)<30||target-current>=2)warnings.push('目標達成を保証する提案ではありません。残り期間が短い場合は必要な章と復習を優先します。');
  const availableDays=Number(c.days),variants=[['所持教材を優先',8,2],['基礎から順番に',3,5],['教材を絞って学習',4,1]],routes=[],seen=new Set();
  for(const [name,ownWeight,baseWeight] of variants){
   const candidates=usable.slice().sort((a,b)=>score(b)-score(a)||Number(!!policy.recognition(b))-Number(!!policy.recognition(a))||(name.includes('絞って')?coverage.topics(b).filter(t=>coverage.required(c,b.subject).includes(t)).length-coverage.topics(a).filter(t=>coverage.required(c,a.subject).includes(t)).length:0)||a.id.localeCompare(b.id));
-  function score(b){return (b.owned?ownWeight*10:0)+focus.filter(s=>b.skills.includes(s)).length*(name.includes('絞って')?30:12)+(b.stage===current?baseWeight*5:0)+(b.stage===target?3:0)+((c.category==='共通テスト'||c.examStage==='common')&&b.skills.includes('共通テスト')?12:0);}
+  function score(b){return (b.owned?ownWeight*1000:0)+(c.examFocusSkills||[]).filter(t=>b.skills.includes(t)||includes(b.title,t)).length*500+(b.rakutenSales?200-Math.min(199,b.rakutenSales.rank):0)+focus.filter(s=>b.skills.includes(s)).length*(name.includes('絞って')?30:12)+(b.stage===current?baseWeight*5:0)+(b.stage===target?3:0)+((c.category==='共通テスト'||c.examStage==='common')&&b.skills.includes('共通テスト')?12:0);}
   const variantLimit=name.includes('絞って')?(usable.length<=2?1:2):name.includes('基礎')?4:3;
   const chosen=[],limit=Math.max(1,Math.min(variantLimit,Math.floor(availableDays/15)||1));
   for(const sub of subs){const first=candidates.find(b=>b.subject===sub);if(first&&chosen.length<limit)chosen.push(first);}
@@ -78,7 +80,8 @@ function recommend(c,catalog){
    const {days,minutes,...metadata}=b;
    return {...metadata,purpose:(restricted||(c.unit&&c.unit!=='全範囲')?'「'+c.subject+'」に対応する章のみを使用。':'')+(b.owned?'所持教材を活用。':'')+(focus.some(t=>b.skills.includes(t))?'苦手・優先分野を重点的に。':'')+(selective?'全冊完了ではなく、該当章の例題・弱点問題を選んで学習。':'例題→演習→間違い直しの順に取り組む。'),selective};});
   const absent=subs.filter(s=>!books.some(b=>b.subject===s));
-  routes.push({name,reason:'選択した実力と目標に合わせて、取り組む順番に並べています。'+(name.includes('所持')?'条件に合う所持教材を優先します。':name.includes('基礎')?'現在の段階に近い教材を重視します。':'教材数を絞り、苦手・優先分野への適合を重視します。')+(absent.length?' 今回含められない教科：'+absent.join('・')+'。教科別に作成してください。':''),books,catalogVersion:catalog.version});
+  const reasons=[];if(c.category==='大学入試'&&c.examStage==='individual'&&!c.trendVerified)reasons.push('大学別の傾向は未確認のため、受験科目と現在の実力を基準にしました');if(c.examScope?.mathIII===false&&subs.includes('数学'))reasons.push('数学Ⅲを出題範囲から除外');if(c.examScope?.listening===false&&subs.includes('英語'))reasons.push('リスニングを出題範囲から除外');const emphasis=(c.examFocusSkills||[]).filter(t=>books.some(b=>b.skills.includes(t)||includes(b.title,t))).slice(0,3);if(emphasis.length)reasons.push('志望校の傾向に合わせて'+emphasis.join('・')+'を重視');if(books.some(b=>b.rakutenSales))reasons.push('条件に合う楽天ブックスの売れ筋教材を優先');if(books.some(b=>b.owned))reasons.push('お持ちの教材を活用');reasons.push('今の実力から目標へ進める'+books.length+'冊を選びました');
+  routes.push({name,reason:reasons.join('。')+'。',trendSources:c.examTrendSources||[],salesChecked:!!c.salesRanking?.available,books,catalogVersion:catalog.version});
  }
  if(!routes.length)warnings.push('選んだ範囲を補える教材が不足しているため、一部の分野だけのルートは提案しません。');
  if(routes.length<2)warnings.push('条件に合う教材の組み合わせが限られるため、重複する案は表示していません。');

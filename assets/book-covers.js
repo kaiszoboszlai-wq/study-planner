@@ -18,7 +18,7 @@ function attach(book,item){
  function rakuten(){if(requestedRakuten||!active()||!window.RakutenCovers)return;requestedRakuten=true;window.RakutenCovers.show(book,{active,img,figure,info,caption,fallback}).catch(()=>{});}
  function show(src){if(!active())return;img.onerror=()=>{fallback();rakuten();};img.src=src;img.alt=book.title+'の表紙';figure.dataset.coverKind='licensed';caption.hidden=false;}
  fallback();if(!validISBN(book.isbn||''))return;
- (async()=>{const [manifest,denied]=await load();if(!active()||!Array.isArray(denied)||denied.includes(book.isbn))return;const entry=manifest?.entries?.[book.isbn],localPath=entry&&new RegExp('^assets/book-covers/'+book.isbn+'\\.(jpg|png|gif|webp)$').test(entry.path),valid=entry&&entry.isbn===book.isbn&&Date.parse(entry.validUntil)>Date.now()&&entry.catalogTitles?.includes(book.title)&&localPath;
+ (async()=>{const [manifest,denied]=await load();if(!active()||!Array.isArray(denied)||denied.includes(book.isbn))return;if(book.rakutenSales){rakuten();return;}const entry=manifest?.entries?.[book.isbn],localPath=entry&&new RegExp('^assets/book-covers/'+book.isbn+'\\.(jpg|png|gif|webp)$').test(entry.path),valid=entry&&entry.isbn===book.isbn&&Date.parse(entry.validUntil)>Date.now()&&entry.catalogTitles?.includes(book.title)&&localPath;
   if(entry?.provider==='TAC'){
    const policy=entry.terms==='https://www.tac-school.co.jp/copyright/permission.html'&&/^https:\/\/bookstore\.tac-school\.co\.jp\/book\/detail\/\d{6}$/.test(entry.productUrl||'')&&/^https:\/\/bookstore\.tac-school\.co\.jp\/storage\/common\/images\/cover\/\d+\/\d+\.(jpg|png|webp)$/.test(entry.source||'');
    if(valid&&policy){attribution.href=entry.productUrl;attribution.textContent='TAC公式書籍情報';show(entry.path);}else rakuten();return;

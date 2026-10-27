@@ -19,6 +19,7 @@ const knownSeries=[
 ];
 const text=s=>String(s||'').normalize('NFKC');
 function recognition(book){const title=text(book.title),publisher=text(book.publisher);if(/完成ノート|書き覚えノート/.test(title))return null;return knownSeries.find(r=>r.publisher.test(publisher)&&r.title.test(title))||null;}
+function bookFitsScope(book,scope={}){const title=text(book.title).replace(/Ⅲ/g,'3');if(scope.mathIII===false&&book.subject==='数学'&&/III|(?:数学|数|理系数学)\s*3|3\s*[+・]?\s*C/i.test(title))return false;if(scope.listening===false&&book.subject==='英語'&&/リスニング|listening|聞き取り/i.test(title)&&!/(?:長文|読解|文法)/.test(title))return false;return true;}
 function annualYear(book){
  // Prefer the displayed title, then explicit edition metadata, then source title.
  // A conflicting source title must never turn a visible old annual edition new.
@@ -40,5 +41,5 @@ function currentIds(catalog,now=new Date()){
  for(const b of rows){const key=family(b),y=annualYear(b),e=editionNumber(b),old=groups.get(key)||{year:0,edition:0};groups.set(key,{year:Math.max(old.year,y||0),edition:Math.max(old.edition,e||0)});}
  return new Set(rows.filter(b=>{const y=annualYear(b),e=editionNumber(b),latest=groups.get(family(b));return (!y||y>=year&&y>=latest.year)&&(!e||e>=latest.edition);}).map(b=>b.id));
 }
-root.BookRoutePolicy={recognition,annualYear,editionNumber,currentIds};if(typeof module!=='undefined')module.exports=root.BookRoutePolicy;
+root.BookRoutePolicy={recognition,annualYear,editionNumber,currentIds,bookFitsScope};if(typeof module!=='undefined')module.exports=root.BookRoutePolicy;
 })(typeof globalThis!=='undefined'?globalThis:this);
