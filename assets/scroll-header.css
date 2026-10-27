@@ -19,3 +19,5 @@ body.app-has-header68 .active-timer{top:calc(var(--header-visible-height68,var(-
 #appScrollHeader68 .app-wordmark68{justify-content:flex-start}
 #appScrollHeader68 .app-wordmark68{gap:9px}
 #appScrollHeader68 .app-wordmark68 img.app-icon68{width:34px;height:34px;max-width:34px;flex:none;object-fit:contain;border-radius:9px}
+
+body.app-has-header68 main:has(#mypage:not([hidden])){padding-top:calc(var(--app-header-height68) + 12px)}
