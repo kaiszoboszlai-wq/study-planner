@@ -918,10 +918,10 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 
 <div class="tm plan-dialog" id="planSettings" hidden role="dialog" aria-modal="true" aria-labelledby="planSettingsTitle"><div class="tmbox">
 <div class="plan-dialog-head"><h2 id="planSettingsTitle">プラン設定</h2><button data-plan-close="planSettings" aria-label="閉じる">×</button></div><p class="note">計画をどう変更しますか？</p>
-<button class="plan-choice" id="back3"><span class="choice-icon" aria-hidden="true">☷</span><span class="choice-copy"><b>計画を最初から立て直す</b><small>勉強時間・科目・配分を見直して、新しい計画を作ります。</small></span><span aria-hidden="true">›</span></button>
-<button class="plan-choice" id="altPlan"><span class="choice-icon" aria-hidden="true">⇄</span><span class="choice-copy"><b>別の計画を提案する</b><small>今の条件を使って、組み合わせや順番を変えた計画の候補を表示します。</small></span><span aria-hidden="true">›</span></button>
-<div class="carry-setting"><label class="chk"><input type="checkbox" id="carryOn" checked><span>未完了の予定を自動で繰り越す</span></label><p class="note">オンにすると、後日の予定が少ない日に残り時間を自動で分配します。オフにしても、すでに繰り越した予定や学習記録は消えません。</p></div>
-<div class="plan-assurance">✓ 学習記録・計測時間は消えません。<br>新しい計画を採用するまで、今の計画を残します。</div><button class="plan-cancel" data-plan-close="planSettings">キャンセル</button>
+<button class="plan-choice" id="back3"><span class="choice-icon" aria-hidden="true">☷</span><span class="choice-copy"><b>計画を最初から立て直す</b></span><span aria-hidden="true">›</span></button>
+<button class="plan-choice" id="altPlan"><span class="choice-icon" aria-hidden="true">⇄</span><span class="choice-copy"><b>別の計画を提案する</b></span><span aria-hidden="true">›</span></button>
+<div class="carry-setting"><label class="chk"><input type="checkbox" id="carryOn" checked><span>未完了の予定を自動で繰り越す</span></label></div>
+<button class="plan-cancel" data-plan-close="planSettings">キャンセル</button>
 </div></div>
 <div class="tm plan-dialog" id="planDraft" hidden role="dialog" aria-modal="true" aria-labelledby="planDraftTitle"><div class="tmbox">
 <div class="plan-dialog-head"><h2 id="planDraftTitle">計画を立て直す</h2><button data-plan-close="planDraft" aria-label="閉じる">×</button></div>
@@ -3780,7 +3780,6 @@ function installV54(){
   openRanking=function(){showPage(8)};rankButton.onclick=openRanking;$('tlClose').onclick=function(){showPage(5)};
   var header=document.querySelector('.sp-top'),card=document.querySelector('.sp-preview-head .sp-preview-card:not(.follow)'),goal=document.querySelector('.sp-top .goalbar'),deadline=document.createElement('div');deadline.className='header-deadline54';Array.from(card.children).forEach(function(el){deadline.appendChild(el)});card.append(goal,deadline);goal.classList.add('header-goal54');$('followingCard').hidden=true;document.querySelector('.sp-top > .count').hidden=true;
   var carry=$('carryOn'),label=carry.closest('label');label.className='carry-switch-row54';var copy=label.querySelector('span');copy.textContent='未完了の予定を自動で繰り越す';var stateLabel=document.createElement('span');stateLabel.id='carryState54';label.appendChild(stateLabel);carry.setAttribute('role','switch');carry.setAttribute('aria-label','未完了の予定を自動で繰り越す');
-  var carryNote=label.parentNode.querySelector('.note');carryNote.textContent='オンにすると、残り時間を後日の予定が少ない日に自動で分配します。';
   var originalShowCarry=showCarry;showCarry=function(){originalShowCarry();carry.setAttribute('aria-checked',carry.checked?'true':'false');stateLabel.textContent=carry.checked?'ON':'OFF'};
   var oldCarryChange=carry.onchange;carry.onchange=function(){state.carry=this.checked;state.carryDistribution='spread';save();showCarry()};$('setupCarry').onchange=carry.onchange;
   var preview54=generatePlanPreview;generatePlanPreview=function(){preview54();if(!planCandidateConfig)return;var audit=allocationAudit(planCandidate,planCandidateConfig),note=$('planPreviewNote');note.textContent=audit.ok?'':'設定時間を満たしていません。設定を確認してください。';note.hidden=audit.ok;
