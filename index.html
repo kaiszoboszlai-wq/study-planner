@@ -762,12 +762,11 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 </section>
 <section id="grades" hidden>
 <button id="gradesBackMy" class="lnk" type="button">← マイページへ戻る</button>
-<h2>模試・テストの成績</h2>
-<div class="actions"><button id="gAdd" class="main">成績を追加</button></div>
+<div class="grades-heading"><h2>模試・テストの成績</h2><button id="gAdd" class="main">成績を追加</button></div>
 <p class="note" id="gNote"></p>
-<div class="chips" id="gchips"></div>
+<div class="grades-chart-card"><div class="chips" id="gchips"></div>
 <div class="gc" id="gchart"></div>
-<div class="gc" id="grank"></div>
+<div class="gc" id="grank"></div></div>
 <div id="glist"></div>
 </section>
 <section id="mypage" hidden>
@@ -2241,7 +2240,7 @@ function renderGrades(){
     b.onclick=function(){gSel=nm;renderGrades()};chips.appendChild(b);
   });
   var hasPct=recs.some(function(e){return Object.keys(e.sc).some(function(nm){return e.sc[nm].s!=null})});
-  $("gchart").innerHTML=hasPct?gLine(recs,gSel):'<div class="note">成績を追加すると、点数のグラフが出ます。</div>';
+  $("gchart").innerHTML=hasPct?gLine(recs,gSel):'';
   $("grank").innerHTML=gRank(recs);
   var box=$("glist");box.innerHTML="";
   recs.slice().reverse().forEach(function(e){
@@ -2263,7 +2262,6 @@ function renderGrades(){
     card.querySelector(".ed").onclick=function(){openGrade(e.id)};
     box.appendChild(card);
   });
-  if(!recs.length)box.innerHTML='<div class="note">まだ成績がありません。「成績を追加」から入れてみましょう。</div>';
 }
 function addGmRow(name,s,m,d){
   var r=document.createElement("div");r.className="gmr";

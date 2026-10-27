@@ -127,3 +127,28 @@ body #em #emSkipCarryWrap input{width:19px;height:19px;margin:0;accent-color:var
 body #em .actions{position:sticky;bottom:-22px;background:var(--bg);padding:16px 0 4px;margin-top:18px;gap:10px;z-index:4}
 body #em #emdel{color:#c04444}
 @media(max-width:380px){body #em>.tmbox{padding:22px 18px}body #em .edit-duration{padding:14px}#tm:not(.focus-mode) #timerMainActions button,#em .actions button{padding:12px 17px}body #planbox .blk .item{gap:4px 12px;padding-inline:10px}}
+
+/* Exam records use the same typography, surfaces and capsule controls. */
+body:has(#grades:not([hidden])){background:var(--card)}
+body #grades{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:var(--ink)}
+body #gradesBackMy{display:inline-flex;align-items:center;margin:0 0 24px;padding:8px 0;min-height:40px;font-size:.78rem!important;color:var(--acc);text-decoration:none}
+.grades-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+#grades .grades-heading h2{margin:0;font-size:1.2rem;line-height:1.5;font-weight:650;letter-spacing:-.02em}
+#grades #gAdd{min-height:44px;padding:11px 18px;border:0;background:var(--acc);color:#fff;font-size:.8rem!important;font-weight:600;white-space:nowrap;flex:none}
+#grades .grades-chart-card{padding:22px;border:1px solid var(--line);border-radius:26px;background:var(--card);margin-bottom:24px;min-width:0}
+#grades #gchips{display:flex;overflow-x:auto;gap:7px;padding:3px;margin:0 0 22px;background:color-mix(in srgb,var(--ink) 5%,var(--card));border-radius:999px}
+#grades #gchips button{flex:1 0 auto;min-height:40px;margin:0;padding:9px 16px;border:0;color:var(--sub);background:transparent;font-size:.78rem!important}
+#grades #gchips button.on{background:var(--card);color:var(--acc);box-shadow:0 1px 6px #00000010;font-weight:650}
+#grades .grades-chart-card>label{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;font-size:.75rem;color:var(--sub)}
+#grades #gradeMetric38{width:auto;max-width:60%;min-height:42px;padding:9px 32px 9px 16px;border:0;border-radius:999px;background:var(--accbg);color:var(--acc);font:inherit;font-size:.8rem}
+#grades .gc:empty{display:none}
+#grades .gc svg{display:block;width:100%;max-height:360px;margin:20px 0 0;background:transparent;border-radius:0}
+#grades .gr{padding:22px;margin:14px 0;border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:none}
+#grades .gr h4{font-size:1.05rem;line-height:1.6;font-weight:650;overflow-wrap:anywhere;margin:0 0 6px}
+#grades .gl2{font-size:.72rem;color:var(--sub);margin:0 0 14px}
+#grades .gl{padding:12px 0;gap:9px;border-bottom:1px solid var(--line);font-size:.83rem}
+#grades .gl:last-child{border:0}#grades .gl i{width:8px;height:8px;border-radius:50%}
+#grades .gl span:nth-of-type(2){font-weight:600}#grades .gl span:last-child{font-size:.72rem}
+#grades .gr .actions{justify-content:flex-end;margin-top:12px}
+#grades .gr .ed{min-height:38px;padding:8px 17px;border:0;background:var(--accbg);color:var(--acc);font-size:.75rem!important}
+@media(max-width:380px){#grades .grades-heading{gap:10px}#grades .grades-heading h2{font-size:1.05rem}#grades #gAdd{padding-inline:14px;font-size:.72rem!important}#grades .grades-chart-card,#grades .gr{padding:18px}}

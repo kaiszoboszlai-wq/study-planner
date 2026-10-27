@@ -16,3 +16,15 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-empty-date{position:absolute;top:12px;padding-left:6px;font-size:.65rem;color:var(--sub);white-space:nowrap}
 #longTermPlanner .lt-empty-lane-message{position:sticky;left:12px;display:inline-block;max-width:calc(100vw - 180px);margin:60px 12px 0;font-size:.75rem;color:var(--sub);line-height:1.8}
 #longTermPlanner .lt-roadmap-empty{padding:8px 0 20px;background:transparent}
+
+#longTermPlanner .lt-axis{margin-left:var(--lt-label-width,88px)}
+#longTermPlanner .lt-subject-row h4{width:var(--lt-label-width,88px)}
+#longTermPlanner .lt-axis span{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;padding:4px 1px;overflow:hidden;text-align:center;font-size:clamp(.55rem,1.6vw,.72rem)}
+#longTermPlanner .lt-axis span small{font-size:.52rem;line-height:1.2;color:var(--sub)}
+#longTermPlanner .lt-axis span b{font-size:inherit;line-height:1.3;font-weight:500}
+#longTermPlanner .lt-lane{background:repeating-linear-gradient(90deg,transparent 0,transparent calc(var(--lt-week-width,56px) - 1px),color-mix(in srgb,var(--ink) 4%,transparent) calc(var(--lt-week-width,56px) - 1px),color-mix(in srgb,var(--ink) 4%,transparent) var(--lt-week-width,56px))}
+#longTermPlanner .lt-bar{min-width:2px}
+#longTermPlanner .lt-bar.is-compact .lt-bar-open{padding:10px 5px;font-size:.6rem!important}
+#longTermPlanner .lt-bar.is-compact .lt-bar-dates{display:none}
+#longTermPlanner .lt-bar.is-compact .lt-grip{width:5px}
+#longTermPlanner .lt-bar.is-compact .lt-grip:after{width:2px;left:1px}
