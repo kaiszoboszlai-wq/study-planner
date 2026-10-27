@@ -38,3 +38,18 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-roadmap-card>.lt-heading{justify-content:flex-end}
 #longTermPlanner .lt-goal>.lt-roadmap-card>.lt-scroll{width:calc(100% + 52px);margin-left:-26px;box-sizing:border-box}
 @media(max-width:380px){#longTermPlanner .lt-goal>.lt-roadmap-card>.lt-scroll{width:calc(100% + 44px);margin-left:-22px}}
+#longTermPlanner .lt-goal-with-plan{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 20px}
+#longTermPlanner .lt-goal-details{min-width:0}
+#longTermPlanner .lt-goal-with-plan>.lt-roadmap-card{grid-column:1/-1}
+#longTermPlanner .lt-goal-with-plan>.lt-current{margin:0;min-width:0}
+#longTermPlanner .lt-current h3{margin:0 0 12px;font-size:.9rem}
+#longTermPlanner .lt-current-row{display:grid;grid-template-columns:58px minmax(0,1fr);align-items:start;gap:10px;margin:8px 0}
+#longTermPlanner .lt-current-row .route-cover73{grid-column:1;grid-row:1;margin:0;min-width:0}
+#longTermPlanner .lt-current-row .route-cover73 img{display:block;width:100%;height:80px;object-fit:contain}
+#longTermPlanner .lt-current-row .route-cover73 figcaption{font-size:.55rem;line-height:1.35;overflow-wrap:anywhere}
+#longTermPlanner .lt-current-row .route-cover73 figcaption[hidden]{display:none}
+#longTermPlanner .lt-current-row .lt-current-card{grid-column:2;grid-row:1;min-width:0;min-height:80px;margin:0;padding:10px;border-left-width:3px;border-radius:18px;gap:5px}
+#longTermPlanner .lt-current-row .lt-current-card strong{font-size:.76rem;line-height:1.5;overflow-wrap:anywhere}
+#longTermPlanner .lt-current-row .lt-current-card small,#longTermPlanner .lt-current-row .lt-current-card span{font-size:.65rem;line-height:1.4;overflow-wrap:anywhere}
+@media(max-width:480px){#longTermPlanner .lt-goal-with-plan{gap:0 12px}#longTermPlanner .lt-current-row{grid-template-columns:38px minmax(0,1fr);gap:6px}#longTermPlanner .lt-current-row .route-cover73 img{height:60px}#longTermPlanner .lt-current-row .lt-current-card{min-height:60px;padding:7px}#longTermPlanner .lt-current-row .lt-current-card strong{font-size:.68rem}}
+#longTermPlanner .lt-goal-with-plan>.lt-current{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
