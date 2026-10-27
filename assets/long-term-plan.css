@@ -119,3 +119,5 @@ body.lt-calendar-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#longTermPlanner .lt-bar{transition:none}}
 #longTermPlanner .lt-bar button.lt-grip{width:min(22px,calc(50% - 8px));touch-action:none}
 #longTermPlanner .lt-grip:after{left:50%;top:16px;transform:translateX(-50%);width:5px;height:28px;border-radius:4px;opacity:.7}
+
+#longTermPlanner .lt-goal-detail-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}#longTermPlanner .lt-goal-detail-foot .lt-goal-edit{position:static;flex:none;margin-left:auto}
