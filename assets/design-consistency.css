@@ -1,0 +1,8 @@
+/* Shared visual language; sizing and placement remain owned by each screen. */
+:where(button,input[type=button],input[type=submit],input[type=reset]){font-family:inherit;transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease}
+:where(button,input[type=button],input[type=submit],input[type=reset]):focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+:where(button,input[type=button],input[type=submit],input[type=reset]):disabled{opacity:.55;cursor:not-allowed}
+body button.main:not(:disabled){background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:none}
+body :is(.tm,.lt-dialog,.plan-dialog) button:not(.main):not(.ib):not(.lt-bar-open):not(.lt-grip){border-color:var(--line);box-shadow:none}
+body :is(.tm,.lt-dialog,.plan-dialog) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=hidden]),select,textarea){border-color:var(--line);color:var(--ink)}
+@media(prefers-reduced-motion:reduce){:where(button,input[type=button],input[type=submit],input[type=reset]){transition:none}}
