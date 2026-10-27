@@ -81,3 +81,14 @@ body.route-creating{overflow:hidden}#routeCreation{position:fixed;inset:0;z-inde
 .route-cover-credit73[hidden]{display:none!important}
 @media(max-width:480px){.route-book{grid-template-columns:68px minmax(0,1fr);column-gap:12px}.route-book .route-cover73 img{width:68px;height:96px}.route-book-info .route-book-heading{flex-wrap:wrap;gap:3px 8px}.route-book-info .route-book-title{flex-basis:100%;font-size:.95rem;line-height:1.6}.route-book-info .route-book-price{margin-left:auto;max-width:100%;font-size:.8rem}.route-book-info .route-book-feature{font-size:.8rem;line-height:1.7}.route-book-info .route-book-meta{font-size:.68rem}}
 @media(max-width:350px){.route-book{grid-template-columns:56px minmax(0,1fr);column-gap:10px}.route-book .route-cover73 img{width:56px;height:80px}}
+
+#routeGenerating{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:70px 28px;box-sizing:border-box;text-align:center;background:var(--bg);color:var(--ink);outline:none}
+#routeGenerating h3{font-size:clamp(1.15rem,3vw,1.5rem);line-height:1.6;margin:0}
+#routeGenerating p{font-size:.85rem;color:var(--sub);margin:0}
+.route-spinner{display:block;width:56px;height:56px;box-sizing:border-box;border:5px solid var(--accbg);border-top-color:var(--acc);border-radius:50%;animation:routeSpinner 1s linear infinite}
+#routeCreation.route-is-generating>.route-flow-header{position:relative;z-index:6;background:transparent;border:0}
+#routeCreation.route-is-generating>.route-flow-content{visibility:hidden;pointer-events:none}
+#routeResults .route-proposal-title{display:flex;align-items:center;gap:14px;font-size:clamp(1.25rem,3.2vw,1.6rem);font-weight:750;line-height:1.5;margin:0 0 24px}
+.route-proposal-number{display:grid;place-items:center;flex:none;min-width:46px;height:46px;border-radius:50%;background:var(--acc);color:#fff;font-size:1.1rem;font-variant-numeric:tabular-nums}
+@keyframes routeSpinner{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.route-spinner{animation:none;border-right-color:var(--acc)}}

@@ -27,9 +27,7 @@ for(const exam of offeredQualifications){
  assert(qualificationAssessments[exam],'Add a specific assessment for '+exam);
  const current=q.context({category:'資格試験',exam}).current;assert.match(current.map(o=>o.label).join(),qualificationAssessments[exam]);assert(current.every(o=>!/標準問題|標準的な問題|応用問題|難関校/.test(o.label)));
 }
-assert.match(q.fields({category:'TOEIC'},catalog).find(f=>f.key==='level').title,/スコア/);
-assert.match(q.fields({category:'資格試験',exam:'IELTS'},catalog).find(f=>f.key==='level').title,/Overallバンド/);
-assert.match(q.fields({category:'資格試験',exam:'TOEFL'},catalog).find(f=>f.key==='level').note,/1〜6/);
+for(const a of [{category:'TOEIC'},{category:'資格試験',exam:'IELTS'},{category:'資格試験',exam:'TOEFL'}]){const fs=q.fields(a,catalog);assert(fs.some(f=>f.key==='purpose'));assert(!fs.some(f=>['level','target'].includes(f.key)));}
 const eikenConditions=q.conditions({category:'英検',exam:'英検2級',unit:'英語リスニング',level:'3',target:'1',date:'2027-02-01',owned:[]},catalog);assert.match(eikenConditions.level,/話の大意/);assert.equal(eikenConditions.currentStage,3);assert.equal(eikenConditions.targetStage,3);assert(engine.recommend(eikenConditions,catalog).routes.length);
 assert.notDeepEqual(q.context({category:'高校入試',subject:'数学'}).current,q.context({category:'大学入試',subject:'数学'}).current);
 assert(!q.fields(math,catalog).some(f=>['days','weakness','priority','minutes'].includes(f.key)));
@@ -44,3 +42,5 @@ let result=engine.recommend(c,catalog);assert(result.routes.length);assert(resul
 for(const b of catalog.books.filter(b=>b.verified)){assert(presentation.features(b).length>15);assert(!/例題→|取り組む|学習してください/.test(presentation.features(b)));assert(presentation.price(b).label);}
 const uni=require('../assets/university-admissions.json');catalog.admissions=uni;const fac=uni.universities.find(u=>u.name==='東京大学').faculties.find(f=>f.name==='理科一類'),dep=fac.departments[0],method=dep.methods.find(m=>m.stage==='individual');const hard=q.conditions({...math,date:'2027-03-01',category:'大学入試',exam:'東京大学',faculty:fac.id,department:dep.id,admissionMethod:method.id,level:'3',target:'rate-20'},catalog);assert.equal(hard.target,'得点率20%（2割）');assert(engine.recommend(hard,catalog).routes.some(r=>r.books.some(b=>b.stage===4)));
 console.log('PASS math skips unit, English/Japanese retain units, low target rates preserve hard-exam difficulty; score/criterion branches, calendar dates, removed questions, subject/grade ownership filters, recomputed days and concise book features');
+
+const basic=q.conditions({...math,category:'大学入試',exam:'東京大学',faculty:fac.id,department:dep.id,admissionMethod:method.id,date:'2028-03-01',purpose:'1'},catalog);assert.equal(basic.purpose,'基本知識を身につけたい');assert.equal(basic.targetStage,1);assert(engine.recommend(basic,catalog).routes.every(r=>r.books.every(b=>b.stage===1)));assert(engine.recommend(basic,catalog).routes.every(r=>!/年度は未確認|今の実力/.test(r.reason)));
