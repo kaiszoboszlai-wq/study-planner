@@ -11,3 +11,11 @@ body :is(.tm,.lt-dialog,.plan-dialog) :is(input:not([type=checkbox]):not([type=r
 :root{--ambient-light:radial-gradient(ellipse 85% 38% at 95% 0%,rgba(233,205,196,.22),transparent 78%),radial-gradient(ellipse 95% 45% at 0% 22%,rgba(193,212,228,.23),transparent 78%),radial-gradient(ellipse 70% 30% at 75% 48%,rgba(219,211,230,.13),transparent 80%)}
 html[data-app-theme="black"]{--ambient-light:radial-gradient(ellipse 85% 38% at 95% 0%,rgba(126,91,80,.12),transparent 78%),radial-gradient(ellipse 95% 45% at 0% 22%,rgba(78,110,136,.14),transparent 78%)}
 html body,html main,html :is(#today,#planbox,#stats,#mypage,#bookRoutePage,#grades,#weeklyFlow40,#routeCreation,dialog.lt-dialog){background-image:var(--ambient-light)!important;background-repeat:no-repeat!important;background-size:100% max(780px,100vh)!important}
+
+/* Keep copy comfortably inset from rounded borders. */
+body :is(.route-card,.lt-saved-route,.lt-custom-book){padding-inline:20px;box-sizing:border-box}
+body .lt-dialog .lt-manual-result{padding:10px 12px;box-sizing:border-box}
+body :is(.lt-dialog,.plan-dialog,.tm) :is(input[type=text],input[type=search],input[type=date],input[type=number],input[type=email],input[type=password],textarea,select){padding-inline:18px;box-sizing:border-box}
+body #today .tcard{padding-inline:16px;box-sizing:border-box}
+body #longTermPlanner .lt-subject-row h4{padding-inline:14px}
+@media(max-width:380px){body :is(.route-card,.lt-saved-route,.lt-custom-book){padding-inline:16px}}
