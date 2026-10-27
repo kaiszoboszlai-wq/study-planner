@@ -6,3 +6,8 @@ body button.main:not(:disabled){background:var(--acc);border-color:var(--acc);co
 body :is(.tm,.lt-dialog,.plan-dialog) button:not(.main):not(.ib):not(.lt-bar-open):not(.lt-grip){border-color:var(--line);box-shadow:none}
 body :is(.tm,.lt-dialog,.plan-dialog) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=hidden]),select,textarea){border-color:var(--line);color:var(--ink)}
 @media(prefers-reduced-motion:reduce){:where(button,input[type=button],input[type=submit],input[type=reset]){transition:none}}
+
+/* Soft ambient light across page backgrounds. */
+:root{--ambient-light:radial-gradient(ellipse 85% 38% at 95% 0%,rgba(233,205,196,.22),transparent 78%),radial-gradient(ellipse 95% 45% at 0% 22%,rgba(193,212,228,.23),transparent 78%),radial-gradient(ellipse 70% 30% at 75% 48%,rgba(219,211,230,.13),transparent 80%)}
+html[data-app-theme="black"]{--ambient-light:radial-gradient(ellipse 85% 38% at 95% 0%,rgba(126,91,80,.12),transparent 78%),radial-gradient(ellipse 95% 45% at 0% 22%,rgba(78,110,136,.14),transparent 78%)}
+html body,html main,html :is(#today,#planbox,#stats,#mypage,#bookRoutePage,#grades,#weeklyFlow40,#routeCreation,dialog.lt-dialog){background-image:var(--ambient-light)!important;background-repeat:no-repeat!important;background-size:100% max(780px,100vh)!important}
