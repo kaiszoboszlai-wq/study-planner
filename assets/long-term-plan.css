@@ -34,3 +34,7 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 
 /* Route creation and selection are accessed from the roadmap. */
 #bookRoutePage>.route-library-heading,#bookRoutePage>#routeSavedList,#bookRoutePage>.registry-open{display:none!important}
+
+#longTermPlanner .lt-roadmap-card>.lt-heading{justify-content:flex-end}
+#longTermPlanner .lt-goal>.lt-roadmap-card>.lt-scroll{width:calc(100% + 52px);margin-left:-26px;box-sizing:border-box}
+@media(max-width:380px){#longTermPlanner .lt-goal>.lt-roadmap-card>.lt-scroll{width:calc(100% + 44px);margin-left:-22px}}
