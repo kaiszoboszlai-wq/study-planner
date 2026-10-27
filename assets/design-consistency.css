@@ -23,3 +23,8 @@ body #longTermPlanner .lt-subject-row h4{padding-inline:14px}
 /* Page gutters apply to headings and charts as well as cards. */
 html body main{padding-left:28px;padding-right:28px;box-sizing:border-box}
 @media(max-width:360px){html body main{padding-left:24px;padding-right:24px}}
+
+/* Inset content inside each shaded surface, rather than moving its boundary. */
+html body main{padding-left:16px;padding-right:16px;background-image:none!important}
+html body main> :is(#today,#planbox,#stats,#mypage,#bookRoutePage,#grades){padding:22px 20px;box-sizing:border-box;border-radius:24px;background-clip:padding-box}
+@media(max-width:360px){html body main> :is(#today,#planbox,#stats,#mypage,#bookRoutePage,#grades){padding:20px 16px}}
