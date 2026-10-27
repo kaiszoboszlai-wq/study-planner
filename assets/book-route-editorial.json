@@ -421,6 +421,26 @@
       "checkedAt": "2026-10-27",
       "videos": [],
       "basis": "公式Web書評の推薦と対象レベル。2026年動画の内容を確認したという意味ではない。"
+    },
+    {
+      "id": "website-ukaroute-math",
+      "provider": "ウカルート",
+      "url": "https://www.ukaroute.com/blog/sugaku-sankosho-route-by-level",
+      "title": "数学の参考書ルート【2027年度】レベル別（基礎〜難関）・文系／理系の勉強の順番とおすすめ参考書",
+      "updatedAt": "2026-10-27T02:10:27.616Z",
+      "checkedAt": "2026-10-27",
+      "videos": [],
+      "basis": "段階別に紹介された数学教材シリーズを出版社・書名で照合。特定ISBNの版を保証する出典ではない。"
+    },
+    {
+      "id": "website-jukenlab-math",
+      "provider": "受験Lab",
+      "url": "https://juken-lab.com/reference/suugaku-sankousho-route/",
+      "title": "数学の参考書ルート完全版",
+      "updatedAt": null,
+      "checkedAt": "2026-10-27",
+      "videos": [],
+      "basis": "段階別に紹介された数学教材シリーズを出版社・書名で照合。特定ISBNの版を保証する出典ではない。"
     }
   ],
   "recommendations": [
@@ -3871,6 +3891,816 @@
       "position": 1,
       "lane": "review",
       "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053062925",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053056849",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784866154152",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154169",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154183",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154237",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154282",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866153568",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866152882",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866152936",
+      "sourceId": "website-ukaroute-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "book-032",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "book-035",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "ndl-9784410103650",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410103575",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410103957",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410730689",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410730788",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410108624",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410108549",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410106644",
+      "sourceId": "website-ukaroute-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784887422797",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422728",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422735",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422704",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422711",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422773",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784777227204",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "文系数学の良問プラチカ"
+    },
+    {
+      "bookId": "ndl-9784777227228",
+      "sourceId": "website-ukaroute-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "理系数学の良問プラチカ"
+    },
+    {
+      "bookId": "book-033",
+      "sourceId": "website-ukaroute-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "book-036",
+      "sourceId": "website-ukaroute-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "book-039",
+      "sourceId": "website-ukaroute-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "ndl-9784010349250",
+      "sourceId": "website-ukaroute-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "上級問題精講"
+    },
+    {
+      "bookId": "ndl-9784010349243",
+      "sourceId": "website-ukaroute-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "上級問題精講"
+    },
+    {
+      "bookId": "ndl-9784053062925",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053056849",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "やさしい高校数学"
+    },
+    {
+      "bookId": "ndl-9784866154152",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154169",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154183",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154237",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866154282",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866153568",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866152882",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "ndl-9784866152936",
+      "sourceId": "website-jukenlab-math",
+      "stage": 1,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "初めから始める数学"
+    },
+    {
+      "bookId": "book-031",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "入門問題精講"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "入門問題精講"
+    },
+    {
+      "bookId": "ndl-9784010349168",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "入門問題精講"
+    },
+    {
+      "bookId": "book-032",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "book-035",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "website-jukenlab-math",
+      "stage": 2,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "基礎問題精講"
+    },
+    {
+      "bookId": "ndl-9784410103650",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410103575",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410103957",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "青チャート"
+    },
+    {
+      "bookId": "ndl-9784410730689",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410730788",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410108624",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410108549",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784410106644",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "黄チャート"
+    },
+    {
+      "bookId": "ndl-9784402234836",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784402234867",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784402236212",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784402234829",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784402234874",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784402234850",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "Focus Gold"
+    },
+    {
+      "bookId": "ndl-9784887422797",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422728",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422735",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422704",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422711",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "ndl-9784887422773",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "1対1対応の演習"
+    },
+    {
+      "bookId": "book-033",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "book-036",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "book-039",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "標準問題精講"
+    },
+    {
+      "bookId": "ndl-9784777227204",
+      "sourceId": "website-jukenlab-math",
+      "stage": 3,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "文系数学の良問プラチカ"
+    },
+    {
+      "bookId": "ndl-9784010349250",
+      "sourceId": "website-jukenlab-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "上級問題精講"
+    },
+    {
+      "bookId": "ndl-9784010349243",
+      "sourceId": "website-jukenlab-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "上級問題精講"
+    },
+    {
+      "bookId": "ndl-9784777227228",
+      "sourceId": "website-jukenlab-math",
+      "stage": 4,
+      "position": 1,
+      "lane": "reference",
+      "mathTrack": null,
+      "evidenceType": "series",
+      "series": "理系数学の良問プラチカ"
     }
   ],
   "errors": [],
