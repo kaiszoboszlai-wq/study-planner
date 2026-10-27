@@ -65,9 +65,10 @@ function recommend(c,catalog){
  if(Number(c.days)<30||target-current>=2)warnings.push('目標達成を保証する提案ではありません。残り期間が短い場合は必要な章と復習を優先します。');
  const availableDays=Number(c.days),variants=[['所持教材を優先',8,2],['基礎から順番に',3,5],['教材を絞って学習',4,1]],routes=[],seen=new Set();
  for(const [name,ownWeight,baseWeight] of variants){
-  const candidates=usable.slice().sort((a,b)=>score(b)-score(a)||Number(!!policy.recognition(b))-Number(!!policy.recognition(a))||(name.includes('絞って')?coverage.topics(b).filter(t=>coverage.required(c,b.subject).includes(t)).length-coverage.topics(a).filter(t=>coverage.required(c,a.subject).includes(t)).length:0)||a.id.localeCompare(b.id));
+  const variantPool=usable.filter(b=>name==='所持教材を優先'||!b.owned);if(!variantPool.length)continue;
+  const candidates=variantPool.slice().sort((a,b)=>score(b)-score(a)||Number(!!policy.recognition(b))-Number(!!policy.recognition(a))||(name.includes('絞って')?coverage.topics(b).filter(t=>coverage.required(c,b.subject).includes(t)).length-coverage.topics(a).filter(t=>coverage.required(c,a.subject).includes(t)).length:0)||a.id.localeCompare(b.id));
   function score(b){return (b.owned?ownWeight*1000:0)+(c.examFocusSkills||[]).filter(t=>b.skills.includes(t)||includes(b.title,t)).length*500+(b.rakutenSales?200-Math.min(199,b.rakutenSales.rank):0)+focus.filter(s=>b.skills.includes(s)).length*(name.includes('絞って')?30:12)+(b.stage===current?baseWeight*5:0)+(b.stage===target?3:0)+((c.category==='共通テスト'||c.examStage==='common')&&b.skills.includes('共通テスト')?12:0);}
-  const variantLimit=name.includes('絞って')?(usable.length<=2?1:2):name.includes('基礎')?4:3;
+  const variantLimit=name.includes('絞って')?(variantPool.length<=2?1:2):name.includes('基礎')?4:3;
   const chosen=[],limit=Math.max(1,Math.min(variantLimit,Math.floor(availableDays/15)||1));
   for(const sub of subs){const first=candidates.find(b=>b.subject===sub);if(first&&chosen.length<limit)chosen.push(first);}
   for(const b of candidates){if(chosen.length>=limit)break;if(chosen.some(x=>x.id===b.id))continue;const duplicate=chosen.some(x=>x.subject===b.subject&&x.stage===b.stage&&x.skills.slice().sort().join()===b.skills.slice().sort().join());if(!duplicate)chosen.push(b);}

@@ -21,3 +21,5 @@ r=engine.recommend({...input,days:1,salesRanking:sold,owned:'教材a'},salesData
 r=engine.recommend({...input,subject:'数学',baseSubject:'数学',examScope:{mathIII:false}},data);assert(r.routes.every(x=>x.books.every(b=>b.id!=='6')));assert.match(r.routes[0].reason,/数学Ⅲを出題範囲から除外/);
 assert.equal(salesData.books[1].rakutenSales,undefined);
 console.log('PASS live sales prioritization, ownership precedence, scope exclusions and concise reasons');
+
+const ownedCatalog={version:1,books:[book('o','英語',2,['文法']),book('n1','英語',2,['文法']),book('n2','英語',3,['文法']),book('n3','英語',1,['文法'])]};const ownedRoutes=engine.recommend({...input,owned:'教材o'},ownedCatalog).routes;assert(ownedRoutes.some(r=>r.books.some(b=>b.owned)));assert.equal(ownedRoutes.filter(r=>r.books.some(b=>b.owned)).length,1);assert(ownedRoutes.slice(1).every(r=>r.books.every(b=>!b.owned)));const allOwned=engine.recommend({...input,owned:'教材o\n教材n1\n教材n2\n教材n3'},ownedCatalog).routes;assert.equal(allOwned.length,1);assert(allOwned.every(r=>r.books.length));console.log('PASS only one route includes owned materials, including all-owned catalog');
