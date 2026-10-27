@@ -100,3 +100,7 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-calendar-full{position:fixed;inset:0;z-index:900;background:var(--bg);padding:calc(16px + env(safe-area-inset-top)) 18px calc(16px + env(safe-area-inset-bottom));overflow:auto;margin:0;border-radius:0}#longTermPlanner .lt-full-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}#longTermPlanner .lt-full-toolbar strong{margin-right:auto}#longTermPlanner .lt-full-toolbar button{min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--ink)}#longTermPlanner .lt-full-toolbar .lt-zoom{width:44px;padding:0;font-size:1.3rem}#longTermPlanner .lt-heading .lt-expand{margin-right:8px}.lt-dialog .lt-route-edit{display:block;margin:8px 0 0 auto}#longTermPlanner .lt-calendar-full .lt-scroll{max-height:calc(100dvh - 220px);overflow:auto}
 
 #longTermPlanner .lt-subject-row h4{padding-left:5px;padding-right:5px;line-height:1.35}
+#longTermPlanner .lt-goal>.lt-roadmap-card.lt-calendar-full{position:fixed;inset:0;z-index:2147483000;box-sizing:border-box;width:100%;height:100dvh;margin:0;padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));border:0;background:var(--card);overflow:auto}
+#longTermPlanner .lt-goal>.lt-calendar-full>.lt-scroll{width:100%;margin:0}
+#longTermPlanner .lt-calendar-full .lt-controls .lt-tabs{min-width:0}
+body.lt-calendar-open{overflow:hidden}
