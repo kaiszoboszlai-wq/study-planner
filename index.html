@@ -644,6 +644,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/async-ui.css">
 <link rel="stylesheet" href="assets/shared-page-health.css">
 <link rel="stylesheet" href="assets/app-announcement.css">
+<link rel="stylesheet" href="assets/long-term-plan.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -950,7 +951,7 @@ var STEP=0.5;      // 時間の刻み
 var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
-var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
+var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,longTermPlan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 var initialState=JSON.stringify(state),dataOwner=null,authEpoch=0,accountNeedsCloud=false,legacyUnclaimed=false;
 function accountKey(uid){return KEY+(uid?":user:"+uid:":guest")}
 function readAccount(uid){try{return JSON.parse(localStorage.getItem(accountKey(uid))||"null")}catch(e){return null}}
@@ -4255,5 +4256,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 
 <script src="assets/header-notifications.js"></script>
 <script src="assets/app-announcement.js"></script>
+<script src="assets/long-term-plan.js"></script>
+<script src="assets/long-term-plan-ui.js"></script>
 </body>
 </html>
