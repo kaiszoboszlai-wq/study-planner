@@ -58,3 +58,4 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-current-row .lt-current-card strong{font-size:.82rem;line-height:1.55}
 #longTermPlanner .lt-current-row .lt-current-card small,#longTermPlanner .lt-current-row .lt-current-card span{font-size:.7rem;line-height:1.5}
 @media(max-width:480px){#longTermPlanner .lt-goal-with-plan{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}#longTermPlanner .lt-current-row{grid-template-columns:36px minmax(0,1fr);gap:8px}#longTermPlanner .lt-current-row .lt-current-card{padding:0}#longTermPlanner .lt-current-row .lt-current-card strong{font-size:.75rem}}
+#longTermPlanner .lt-goal-with-plan{grid-template-columns:minmax(0,1fr)}

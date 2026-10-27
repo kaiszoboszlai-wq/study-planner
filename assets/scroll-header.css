@@ -14,3 +14,6 @@ body.app-has-header68 .active-timer{top:calc(var(--header-visible-height68,var(-
 .studyplanner-wordmark69{font-family:StudyPlannerWordmark,Arial,Helvetica,sans-serif;font-style:normal;font-weight:800;letter-spacing:-.045em;line-height:1.15;color:var(--ink)}
 #appScrollHeader68 .studyplanner-wordmark69{font-size:clamp(1.45rem,6.8vw,2rem);white-space:nowrap}
 #splash .studyplanner-wordmark69{font-size:clamp(1.9rem,8vw,2.6rem);font-weight:800;color:var(--ink)}
+#appScrollHeader68{grid-template-columns:minmax(0,1fr) 44px}
+#appScrollHeader68>span[aria-hidden=true]{display:none}
+#appScrollHeader68 .app-wordmark68{justify-content:flex-start}
