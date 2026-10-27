@@ -69,3 +69,7 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-cover-credit-row{margin:8px 0;overflow-wrap:anywhere}
 #longTermPlanner .lt-cover-credit-row>span{display:block;font-weight:600}
 #longTermPlanner .lt-cover-credit-row .lt-cover-credit{margin:0}
+.lt-dialog .lt-edit-cover figure{margin:20px 0 0;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.lt-dialog .lt-edit-cover img{width:100px;height:140px;object-fit:contain;max-width:100%}
+.lt-dialog .lt-edit-cover figcaption{font-size:.7rem;line-height:1.6;overflow-wrap:anywhere}
+.lt-dialog .lt-edit-cover figcaption[hidden]{display:none}
