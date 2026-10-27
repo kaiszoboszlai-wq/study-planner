@@ -114,3 +114,6 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-goal-details{padding-right:0}#longTermPlanner .lt-goal-detail-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}#longTermPlanner .lt-goal-detail-head .lt-eyebrow{min-width:0;overflow-wrap:anywhere}#longTermPlanner .lt-goal-detail-head .lt-goal-edit{position:static;flex:none;margin-left:auto}@media(max-width:380px){#longTermPlanner .lt-goal-details{padding-right:0}}
 
 #longTermPlanner .lt-bar-open{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#longTermPlanner .lt-bar.lt-moving{z-index:6;box-shadow:0 5px 14px #16344a45;opacity:.9}
+#longTermPlanner .lt-bar{transition:transform .16s ease,box-shadow .16s ease}
+#longTermPlanner .lt-bar.lt-moving{transform:scale(.94);transform-origin:center}
+@media(prefers-reduced-motion:reduce){#longTermPlanner .lt-bar{transition:none}}
