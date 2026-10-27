@@ -1273,11 +1273,10 @@ function renderPlan(){
       per[x.name]=(per[x.name]||0)+x.h;
       var b=document.createElement("div");b.className="blk"+(on?" on":"");b.dataset.blockId=id;
       b.style.setProperty("--subject-color62",colorOf(x.name));
-      b.innerHTML='<input type="checkbox" aria-label="完了"'+(on?" checked":"")+'><button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
+      b.innerHTML='<button class="item"><span></span><small class="sp" data-sp="'+id+'"></small></button><button class="ib edit" aria-label="編集・他の日へ移動">⋯</button>';
       b.querySelector("span").textContent=x.name;
       var duration=document.createElement("small");duration.className="duration";duration.textContent=hm(x.h)+carryLabel(x);b.querySelector(".item").insertBefore(duration,b.querySelector(".sp"));
       b.querySelector(".sp").textContent=spText(id);
-      b.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
       b.querySelector(".item").onclick=function(){if(justDragged)return;openEdit(id,d)};
       bindDrag(b,id);
       b.querySelector(".edit").onclick=function(){openEdit(id,d)};
