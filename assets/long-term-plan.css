@@ -117,3 +117,5 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-bar{transition:transform .16s ease,box-shadow .16s ease}
 #longTermPlanner .lt-bar.lt-moving{transform:scale(.94);transform-origin:center}
 @media(prefers-reduced-motion:reduce){#longTermPlanner .lt-bar{transition:none}}
+#longTermPlanner .lt-bar button.lt-grip{width:min(22px,calc(50% - 8px));touch-action:none}
+#longTermPlanner .lt-grip:after{left:50%;top:16px;transform:translateX(-50%);width:5px;height:28px;border-radius:4px;opacity:.7}
