@@ -31,3 +31,6 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 
 #longTermPlanner .lt-goal>.lt-roadmap-card{margin:24px 0 0;padding:22px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent}
 #longTermPlanner .lt-goal>.lt-roadmap-card>.lt-heading{margin-top:0}
+
+/* Route creation and selection are accessed from the roadmap. */
+#bookRoutePage>.route-library-heading,#bookRoutePage>#routeSavedList,#bookRoutePage>.registry-open{display:none!important}
