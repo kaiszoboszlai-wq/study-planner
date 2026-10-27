@@ -92,3 +92,5 @@ body.route-creating{overflow:hidden}#routeCreation{position:fixed;inset:0;z-inde
 .route-proposal-number{display:grid;place-items:center;flex:none;min-width:46px;height:46px;border-radius:50%;background:var(--acc);color:#fff;font-size:1.1rem;font-variant-numeric:tabular-nums}
 @keyframes routeSpinner{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.route-spinner{animation:none;border-right-color:var(--acc)}}
+
+.registry-book{display:grid;grid-template-columns:70px minmax(0,1fr);gap:14px}.registry-book .route-cover73{grid-column:1;grid-row:1;margin:0}.registry-book-info{grid-column:2;grid-row:1;min-width:0}.registry-book .route-cover73 img{display:block;width:70px;height:96px;object-fit:contain}.registry-book .route-cover73 figcaption{font-size:.6rem;overflow-wrap:anywhere}.registry-book .route-cover73 [hidden]{display:none}@media(max-width:480px){.registry-book{grid-template-columns:54px minmax(0,1fr);gap:10px}.registry-book .route-cover73 img{width:54px;height:76px}}

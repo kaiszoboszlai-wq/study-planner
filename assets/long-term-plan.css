@@ -84,3 +84,5 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 #longTermPlanner .lt-controls{display:flex;align-items:center;gap:10px;margin:0 0 14px;min-width:0}
 #longTermPlanner .lt-controls .lt-tabs{flex:1;min-width:0;padding:0}
 #longTermPlanner .lt-controls .lt-heading{flex:none;margin:0!important}
+
+.lt-dialog .lt-manual-result,.lt-dialog .lt-manual-row{display:flex;align-items:center;gap:12px}.lt-dialog .lt-manual-result>button{flex:1;min-width:0}.lt-dialog .lt-manual-row>span{flex:1}.lt-dialog .lt-manual-cover{flex:0 0 54px;min-width:0}.lt-dialog .lt-manual-cover figure{margin:0}.lt-dialog .lt-manual-cover img{display:block;width:54px;height:76px;object-fit:contain}.lt-dialog .lt-manual-cover figcaption{font-size:.6rem;overflow-wrap:anywhere}.lt-dialog .lt-manual-cover [hidden]{display:none}
