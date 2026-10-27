@@ -159,3 +159,11 @@ body #gradesBackMy{display:inline-flex;align-items:center;margin:0 0 24px;paddin
 #planSettings #carryOn:checked:before{transform:translateX(20px)}
 #planSettings #carryOn:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#planSettings #carryOn:before{transition:none}}
+
+/* A brief entrance when the Today page becomes visible. */
+@media (prefers-reduced-motion: no-preference){
+  body #today:not([hidden]) #tdSummary > div{animation:today-summary-enter .42s cubic-bezier(.2,.7,.2,1) both}
+  body #today:not([hidden]) #tdSummary > div:nth-child(2){animation-delay:.06s}
+  body #today:not([hidden]) #tdSummary > div:nth-child(3){animation-delay:.1s}
+  @keyframes today-summary-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+}
