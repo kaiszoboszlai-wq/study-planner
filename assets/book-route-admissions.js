@@ -2,14 +2,17 @@
 'use strict';
 const fallbackSubjects=['国語','数学','英語','物理','化学','生物','地学','日本史','世界史','地理','公共','政治経済','倫理','情報','地理総合','地理総合／歴史総合／公共'];
 const choice=(value,label)=>({value,label});
+// Explicit institution list: retain common-test admission methods only at private universities.
+const privateUniversities=new Set(["早稲田大学", "慶應義塾大学", "上智大学", "東京理科大学", "国際基督教大学", "明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学", "学習院大学", "同志社大学", "立命館大学", "関西大学", "関西学院大学", "日本大学", "東洋大学", "駒澤大学", "専修大学", "京都産業大学", "近畿大学", "甲南大学", "龍谷大学", "成蹊大学", "成城大学", "明治学院大学", "南山大学", "西南学院大学", "福岡大学"]);
 function profile(a,catalog){
  const university=catalog.admissions?.universities.find(u=>u.name===a.exam);
  const year=Number((a.date||'').slice(0,4));
  const current=university&&(!year||year===university.year);
  const faculty=university?university.faculties.find(f=>f.id===a.faculty):null;
  const department=faculty&&(faculty.departments.length===1?faculty.departments[0]:faculty.departments.find(d=>d.id===a.department));
- const method=department&&(department.methods.length===1?department.methods[0]:department.methods.find(m=>m.id===a.admissionMethod));
- return {university,current,faculty,department,method,year};
+ const methods=department?(privateUniversities.has(university.name)?department.methods:department.methods.filter(m=>m.stage!=='common')):[];
+ const method=methods.length===1?methods[0]:methods.find(m=>m.id===a.admissionMethod);
+ return {university,current,faculty,department,method,methods,year};
 }
 function fields(a,catalog){
  if(a.category!=='大学入試')return [];
@@ -18,9 +21,9 @@ function fields(a,catalog){
  const result=[{key:'faculty',title:'志望する学部・学群・類は？',note:p.current?`${p.university.year}年度・一般選抜`:`学部・学科は${p.university.year}年度の収録情報です。受験年度の科目は未確認のため、この情報を参考に仮のルートを作成します。`,source:p.university.source,choices:[...p.university.faculties.map(f=>choice(f.id,f.name)),choice('manual','一覧にない学部・入試方式／学部未定')]}];
  if(a.faculty==='manual')return result;
  if(p.faculty&&(p.faculty.departments.length>1||p.faculty.departments[0].name!=='学部共通'))result.push({key:'department',title:'学科・専攻・募集区分を選んでください',choices:p.faculty.departments.map(d=>choice(d.id,d.name))});
- if(p.department?.methods.length>1){
-  const methods=p.department.methods;
-  result.push({key:'admissionMethod',title:'どの入試方式の対策をしますか？',note:'共通テストと個別試験を分けて選べます。',choices:methods.map(m=>{const stage=m.stage==='common'?'共通テスト':'個別試験';let label=m.name+' ／ '+stage;const same=methods.filter(x=>x.name===m.name&&x.stage===m.stage);if(same.length>1)label+=' ／ '+(m.required.length?'必須：'+m.required.join('・')+'／':'')+m.groups.map(g=>g.subjects.join('・')+'から'+(g.count||'使う')+'科目').join('／');return choice(m.id,label);})});
+ if(p.methods.length>1){
+  const methods=p.methods;
+  result.push({key:'admissionMethod',title:'どの入試方式の対策をしますか？',note:privateUniversities.has(p.university.name)?'一般方式・共通テスト利用方式から選べます。':'個別試験の入試方式を選んでください。',choices:methods.map(m=>{const stage=m.stage==='common'?'共通テスト':'個別試験';let label=m.name+' ／ '+stage;const same=methods.filter(x=>x.name===m.name&&x.stage===m.stage);if(same.length>1)label+=' ／ '+(m.required.length?'必須：'+m.required.join('・')+'／':'')+m.groups.map(g=>g.subjects.join('・')+'から'+(g.count||'使う')+'科目').join('／');return choice(m.id,label);})});
  }
 
  return result;
