@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const app=document.querySelector('.app'),main=app?.querySelector('main');if(!main)return;
-const header=document.createElement('header');header.id='appScrollHeader68';header.hidden=true;header.setAttribute('aria-label','StudyPlanner');header.innerHTML='<span aria-hidden="true"></span><div class="app-wordmark68"><span class="studyplanner-wordmark69">StudyPlanner</span></div><div class="app-header-actions68"></div>';app.insertBefore(header,main);
+const header=document.createElement('header');header.id='appScrollHeader68';header.hidden=true;header.setAttribute('aria-label','StudyPlanner');header.innerHTML='<span aria-hidden="true"></span><div class="app-wordmark68"><img class="app-icon68" src="assets/app-flag-64.png" alt="" aria-hidden="true"><span class="studyplanner-wordmark69">StudyPlanner</span></div><div class="app-header-actions68"></div>';app.insertBefore(header,main);
 const notifications=document.getElementById('planeBtn');if(notifications)header.querySelector('.app-header-actions68').append(notifications);
 const pages=new Set([3,4,6,8]);let previous=Math.max(0,window.scrollY),offset=0,frame=0;
 function setOffset(value){const height=header.offsetHeight;offset=Math.max(0,Math.min(value,height));header.style.setProperty('--header-offset68',offset+'px');document.body.style.setProperty('--header-visible-height68',Math.max(0,height-offset)+'px');const away=height>0&&offset>=height;header.classList.toggle('header-away68',away);header.inert=away;}

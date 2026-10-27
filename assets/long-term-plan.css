@@ -73,3 +73,11 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 .lt-dialog .lt-edit-cover img{width:100px;height:140px;object-fit:contain;max-width:100%}
 .lt-dialog .lt-edit-cover figcaption{font-size:.7rem;line-height:1.6;overflow-wrap:anywhere}
 .lt-dialog .lt-edit-cover figcaption[hidden]{display:none}
+#longTermPlanner .lt-goal>.lt-roadmap-card>.lt-heading{margin:0 0 12px}
+#longTermPlanner .lt-today{bottom:8px}
+.lt-dialog .lt-create-choices{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+.lt-dialog .lt-saved-route{margin:14px 0;padding:14px;background:var(--card);border-radius:20px}
+.lt-dialog .lt-saved-route .lt-route-choice{margin:0;padding:0;background:transparent}
+.lt-dialog .lt-book-strip{display:flex;gap:10px;overflow-x:auto;margin-top:12px;padding:0 0 6px;align-items:flex-start}
+.lt-dialog .lt-book-tile{flex:0 0 68px;min-width:0}.lt-dialog .lt-book-tile figure{margin:0}.lt-dialog .lt-book-tile img{display:block;width:68px;height:96px;object-fit:contain}.lt-dialog .lt-book-tile figcaption{font-size:.55rem;line-height:1.3;overflow-wrap:anywhere}.lt-dialog .lt-book-tile figcaption[hidden]{display:none}
+.lt-dialog .lt-manual-results{display:flex;flex-direction:column;gap:8px;max-height:32dvh;overflow:auto}.lt-dialog .lt-manual-results button{text-align:left;background:var(--card)}.lt-dialog .lt-manual-row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0}.lt-dialog .lt-manual-row span{overflow-wrap:anywhere;min-width:0}.lt-dialog select{display:block;margin-top:9px;padding:12px;border-radius:20px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
