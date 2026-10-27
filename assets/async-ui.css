@@ -20,3 +20,9 @@
 html.pull-active72,html.pull-active72 body{overscroll-behavior-y:contain}
 @keyframes pull-spin72{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.async-shape72:after,.async-inline72,#pullRefresh72.pull-busy72 svg{animation:none}#pullRefresh72{transition:none}}
+
+#pullRefresh72{top:calc(env(safe-area-inset-top,0px) + 54px);width:24px;height:24px;padding:0;border:0;background:transparent;box-shadow:none;color:#8b9097;transform:translate(-50%,clamp(-30px,calc(var(--pull-distance72,0px) * .32 - 30px),5px));max-width:none}
+#pullRefresh72 svg{width:22px;height:22px}
+#pullRefresh72.pull-visible72 svg{animation:pull-spin72 .85s steps(8,end) infinite}
+.pull-shift72{translate:0 var(--pull-content72,0px)}
+@media(prefers-reduced-motion:reduce){#pullRefresh72.pull-visible72 svg{animation:none}}
