@@ -1,0 +1,3986 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-27",
+  "sources": [
+    {
+      "id": "takeda-fbe744b65605",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_hma/r_hma_nihon/",
+      "title": "日大レベル-文系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=Iar88gMN4Ao"
+      ]
+    },
+    {
+      "id": "takeda-7d3726c5e407",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_pma/r_pma_nihon/",
+      "title": "日大レベル-理系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=cymm1QmLZTA"
+      ]
+    },
+    {
+      "id": "takeda-9a2df7c759be",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_la/r_la_nihon/",
+      "title": "日大レベル-現代文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dz4r3CWztjY"
+      ]
+    },
+    {
+      "id": "takeda-481ccdae7b2d",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_aw/r_aw_nihon/",
+      "title": "日大レベル-古文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=P-HWa4KRIAY"
+      ]
+    },
+    {
+      "id": "takeda-38712d74b725",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_ph/r_ph_nihon/",
+      "title": "日大レベル-物理の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=yGD6ZGOTe1A"
+      ]
+    },
+    {
+      "id": "takeda-937e42857fa4",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_ch/r_ch_nihon/",
+      "title": "日大レベル-化学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=H8ZkMy0i2Ds"
+      ]
+    },
+    {
+      "id": "takeda-a276d5d6aca5",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_wh/r_wh_nihon/",
+      "title": "日大レベル-世界史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dzs2R_qwF6U"
+      ]
+    },
+    {
+      "id": "takeda-31bde538f4b3",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_jh/r_jh_nihon/",
+      "title": "日大レベル-日本史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=1Hxs2bvYvs0"
+      ]
+    },
+    {
+      "id": "takeda-87c8665d2064",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_po/r_po_nihon/",
+      "title": "日大レベル-政治・経済の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=tkVokP50F40"
+      ]
+    },
+    {
+      "id": "takeda-3dbe9860781a",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_wh/r_wh_march/",
+      "title": "MARCHレベル-世界史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dzs2R_qwF6U"
+      ]
+    },
+    {
+      "id": "takeda-58dc458984c4",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_wh/r_wh_sokei/",
+      "title": "早慶レベル-世界史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dzs2R_qwF6U"
+      ]
+    },
+    {
+      "id": "takeda-0c48478ccb7a",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_ch/r_ch_before/",
+      "title": "基礎徹底ルート-化学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=H8ZkMy0i2Ds"
+      ]
+    },
+    {
+      "id": "takeda-88fffd96c99e",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_ch/r_ch_marchkokkouritu/",
+      "title": "MARCH・地方国公立レベル-化学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=H8ZkMy0i2Ds"
+      ]
+    },
+    {
+      "id": "takeda-12e75e2794d4",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_aw/r_aw_march/",
+      "title": "MARCHレベル-古文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=P-HWa4KRIAY"
+      ]
+    },
+    {
+      "id": "takeda-2640f4dd647d",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_aw/r_aw_sokei/",
+      "title": "早稲田レベル-古文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=P-HWa4KRIAY"
+      ]
+    },
+    {
+      "id": "takeda-c44a8ed3cfef",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_la/r_la_march/",
+      "title": "MARCHレベル-現代文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dz4r3CWztjY"
+      ]
+    },
+    {
+      "id": "takeda-0e2c998c682e",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_la/r_la_sokei/",
+      "title": "早稲田レベル-現代文の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=dz4r3CWztjY"
+      ]
+    },
+    {
+      "id": "takeda-0b495c1dabd7",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_go/r_go_march/",
+      "title": "MARCHレベル-地理の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=r7N77-LFUZg"
+      ]
+    },
+    {
+      "id": "takeda-c043851b94bd",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_po/r_po_march/",
+      "title": "MARCH・関関同立レベル-政治・経済の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=tkVokP50F40"
+      ]
+    },
+    {
+      "id": "takeda-2f93ff0d53b6",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_hma/r_hma_before/",
+      "title": "基礎・入門レベル-文系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=Iar88gMN4Ao"
+      ]
+    },
+    {
+      "id": "takeda-d2d3bd2a12d8",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_hma/r_hma_marchkokkouritu/",
+      "title": "MARCH・地方国公立レベル-文系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=Iar88gMN4Ao"
+      ]
+    },
+    {
+      "id": "takeda-bf1da0bff1f7",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_pma/r_pma_before/",
+      "title": "基礎・入門レベル-理系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=cymm1QmLZTA"
+      ]
+    },
+    {
+      "id": "takeda-38931772cf3b",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_pma/r_pma_marchkokkouritu/",
+      "title": "MARCH・地方国公立レベル-理系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=cymm1QmLZTA"
+      ]
+    },
+    {
+      "id": "takeda-22506cc92c37",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_pma/r_pma_sokei/",
+      "title": "早慶・旧帝大レベル-理系数学の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=cymm1QmLZTA"
+      ]
+    },
+    {
+      "id": "takeda-a221b0df54c0",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_jh/r_jh_kokkouritu/",
+      "title": "地方国公立レベル-日本史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=1Hxs2bvYvs0"
+      ]
+    },
+    {
+      "id": "takeda-3f68f61d3d20",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_jh/r_jh_march/",
+      "title": "MARCHレベル-日本史の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=1Hxs2bvYvs0"
+      ]
+    },
+    {
+      "id": "takeda-19524a3ef5a5",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_ph/r_ph_sokei/",
+      "title": "早慶・難関国公立レベル-物理の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=yGD6ZGOTe1A"
+      ]
+    },
+    {
+      "id": "takeda-3cd3f526d0c7",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_en/r_en_march/",
+      "title": "MARCH・関関同立レベル-英語の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=HGyRyRzwZO4"
+      ]
+    },
+    {
+      "id": "takeda-9b29eb94bde2",
+      "provider": "武田塾・逆転合格.com",
+      "url": "https://xn--8pr038b9h2am7a.com/root_en/r_en_sokei/",
+      "title": "早慶レベル-英語の参考書一覧",
+      "routeYear": 2026,
+      "checkedAt": "2026-10-27",
+      "videos": [
+        "https://www.youtube.com/watch?v=HGyRyRzwZO4"
+      ]
+    },
+    {
+      "id": "axiv-english_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/english_1",
+      "title": "【基礎〜最難関】英語の参考書ルート（メイン）紹介",
+      "updatedAt": "2026-10-05T07:17:58+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-mathematics_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/mathematics_1",
+      "title": "【基礎〜最難関】数学の参考書ルート紹介",
+      "updatedAt": "2025-10-16T13:57:39+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-physics_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/physics_1",
+      "title": "【基礎〜最難関】物理基礎・物理の参考書ルート紹介",
+      "updatedAt": "2025-10-16T15:44:55+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-chemistry_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/chemistry_1",
+      "title": "【基礎〜最難関】化学基礎・化学の参考書ルート紹介",
+      "updatedAt": "2025-10-16T16:57:58+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-contemporary_japanese_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/contemporary_japanese_1",
+      "title": "【基礎〜最難関】現代文の参考書ルート紹介",
+      "updatedAt": "2025-10-16T09:40:34+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-classics-japanese_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/classics-japanese_1",
+      "title": "【基礎〜最難関】古文の参考書ルート紹介",
+      "updatedAt": "2025-10-16T09:51:53+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-classics-chinese_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/classics-chinese_1",
+      "title": "【基礎〜最難関】漢文の参考書ルート紹介",
+      "updatedAt": "2025-10-16T12:49:34+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-biology_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/biology_1",
+      "title": "【基礎〜最難関】生物基礎・生物の参考書ルート紹介",
+      "updatedAt": "2025-10-16T16:40:30+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "axiv-information_1",
+      "provider": "アクシブアカデミー",
+      "url": "https://axivacademy.com/book_routes/information_1",
+      "title": "【基礎〜最難関】情報の参考書ルート紹介",
+      "updatedAt": "2025-10-16T13:42:38+00:00",
+      "checkedAt": "2026-10-27",
+      "videos": []
+    },
+    {
+      "id": "castdice-review-su-post-635",
+      "provider": "CASTDICE公式書評",
+      "url": "https://castdice.jp/%e5%a4%a7%e5%ad%a6%e5%85%a5%e8%a9%a6%e8%8b%b1%e4%bd%9c%e6%96%87%e3%83%8f%e3%82%a4%e3%83%91%e3%83%bc%e3%83%88%e3%83%ac%e3%83%bc%e3%83%8b%e3%83%b3%e3%82%b0%e5%92%8c%e6%96%87%e8%8b%b1%e8%a8%b3%e7%b7%a8/",
+      "title": "大学入試英作文ハイパートレーニング和文英訳編",
+      "published": "2020-04-16",
+      "checkedAt": "2026-10-27",
+      "videos": [],
+      "basis": "公式Web書評の推薦と対象レベル。2026年動画の内容を確認したという意味ではない。"
+    },
+    {
+      "id": "castdice-review-su-post-623",
+      "provider": "CASTDICE公式書評",
+      "url": "https://castdice.jp/%e5%a4%a7%e7%9f%a2%e5%be%a9-%e8%8b%b1%e4%bd%9c%e6%96%87%e8%ac%9b%e7%be%a9%e3%81%ae%e5%ae%9f%e6%b3%81%e4%b8%ad%e7%b6%99/",
+      "title": "大矢復 英作文講義の実況中継",
+      "published": "2020-04-16",
+      "checkedAt": "2026-10-27",
+      "videos": [],
+      "basis": "公式Web書評の推薦と対象レベル。2026年動画の内容を確認したという意味ではない。"
+    }
+  ],
+  "recommendations": [
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-fbe744b65605",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784410153891",
+      "sourceId": "takeda-fbe744b65605",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784410153907",
+      "sourceId": "takeda-fbe744b65605",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153891",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784010349168",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153907",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "takeda-7d3726c5e407",
+      "stage": 2,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "takeda-9a2df7c759be",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777222117",
+      "sourceId": "takeda-9a2df7c759be",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761274863",
+      "sourceId": "takeda-9a2df7c759be",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053031785",
+      "sourceId": "takeda-9a2df7c759be",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "takeda-481ccdae7b2d",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890853168",
+      "sourceId": "takeda-481ccdae7b2d",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243960",
+      "sourceId": "takeda-38712d74b725",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243977",
+      "sourceId": "takeda-38712d74b725",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243984",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243991",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056757",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271397",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271571",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056757",
+      "sourceId": "takeda-937e42857fa4",
+      "stage": 2,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241645",
+      "sourceId": "takeda-a276d5d6aca5",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347034",
+      "sourceId": "takeda-a276d5d6aca5",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859740",
+      "sourceId": "takeda-31bde538f4b3",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347027",
+      "sourceId": "takeda-31bde538f4b3",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053059772",
+      "sourceId": "takeda-87c8665d2064",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053063557",
+      "sourceId": "takeda-87c8665d2064",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241645",
+      "sourceId": "takeda-3dbe9860781a",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347034",
+      "sourceId": "takeda-3dbe9860781a",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-079",
+      "sourceId": "takeda-3dbe9860781a",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241645",
+      "sourceId": "takeda-58dc458984c4",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347034",
+      "sourceId": "takeda-58dc458984c4",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-079",
+      "sourceId": "takeda-58dc458984c4",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243984",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243991",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056757",
+      "sourceId": "takeda-0c48478ccb7a",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243984",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243991",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056757",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271397",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271571",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056757",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 2,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343753",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343760",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244585",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244615",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244608",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244592",
+      "sourceId": "takeda-88fffd96c99e",
+      "stage": 3,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "takeda-12e75e2794d4",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890853168",
+      "sourceId": "takeda-12e75e2794d4",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046068279",
+      "sourceId": "takeda-12e75e2794d4",
+      "stage": 3,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784816811951",
+      "sourceId": "takeda-12e75e2794d4",
+      "stage": 3,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "takeda-2640f4dd647d",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890853168",
+      "sourceId": "takeda-2640f4dd647d",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046068279",
+      "sourceId": "takeda-2640f4dd647d",
+      "stage": 3,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784816811951",
+      "sourceId": "takeda-2640f4dd647d",
+      "stage": 3,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777222117",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761274863",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053031785",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 3,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777222117",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 3,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053037770",
+      "sourceId": "takeda-c44a8ed3cfef",
+      "stage": 3,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777222117",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761274863",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053031785",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 3,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777222117",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 3,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053037770",
+      "sourceId": "takeda-0e2c998c682e",
+      "stage": 3,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010351390",
+      "sourceId": "takeda-0b495c1dabd7",
+      "stage": 3,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241676",
+      "sourceId": "takeda-0b495c1dabd7",
+      "stage": 3,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053059772",
+      "sourceId": "takeda-c043851b94bd",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053063557",
+      "sourceId": "takeda-c043851b94bd",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046077035",
+      "sourceId": "takeda-c043851b94bd",
+      "stage": 3,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-2f93ff0d53b6",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-d2d3bd2a12d8",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784410153891",
+      "sourceId": "takeda-d2d3bd2a12d8",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784410153907",
+      "sourceId": "takeda-d2d3bd2a12d8",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": "arts"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-bf1da0bff1f7",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "takeda-bf1da0bff1f7",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153891",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784010349168",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153907",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 2,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051271",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 3,
+      "position": 35,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051288",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 3,
+      "position": 36,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051288",
+      "sourceId": "takeda-38931772cf3b",
+      "stage": 3,
+      "position": 37,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153891",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784010349168",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784410153907",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-037",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 2,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051271",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 3,
+      "position": 35,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051288",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 3,
+      "position": 36,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "ndl-9784053051288",
+      "sourceId": "takeda-22506cc92c37",
+      "stage": 3,
+      "position": 37,
+      "lane": "main",
+      "mathTrack": "science"
+    },
+    {
+      "bookId": "sales-ndl-9784890859740",
+      "sourceId": "takeda-a221b0df54c0",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347027",
+      "sourceId": "takeda-a221b0df54c0",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859740",
+      "sourceId": "takeda-3f68f61d3d20",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010347027",
+      "sourceId": "takeda-3f68f61d3d20",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243960",
+      "sourceId": "takeda-19524a3ef5a5",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243977",
+      "sourceId": "takeda-19524a3ef5a5",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777227259",
+      "sourceId": "takeda-19524a3ef5a5",
+      "stage": 3,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-066",
+      "sourceId": "takeda-19524a3ef5a5",
+      "stage": 4,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-067",
+      "sourceId": "takeda-19524a3ef5a5",
+      "stage": 4,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053048684",
+      "sourceId": "takeda-3cd3f526d0c7",
+      "stage": 3,
+      "position": 27,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325248026",
+      "sourceId": "takeda-3cd3f526d0c7",
+      "stage": 3,
+      "position": 34,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053048684",
+      "sourceId": "takeda-9b29eb94bde2",
+      "stage": 3,
+      "position": 27,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325248026",
+      "sourceId": "takeda-9b29eb94bde2",
+      "stage": 3,
+      "position": 34,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784865310344",
+      "sourceId": "takeda-9b29eb94bde2",
+      "stage": 4,
+      "position": 36,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325248033",
+      "sourceId": "takeda-9b29eb94bde2",
+      "stage": 4,
+      "position": 43,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046064820",
+      "sourceId": "axiv-english_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046064820",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010351284",
+      "sourceId": "axiv-english_1",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010351284",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010344798",
+      "sourceId": "axiv-english_1",
+      "stage": 1,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010348550",
+      "sourceId": "axiv-english_1",
+      "stage": 1,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010350294",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046019264",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354872",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354872",
+      "sourceId": "axiv-english_1",
+      "stage": 3,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-006",
+      "sourceId": "axiv-english_1",
+      "stage": 2,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046019271",
+      "sourceId": "axiv-english_1",
+      "stage": 3,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-007",
+      "sourceId": "axiv-english_1",
+      "stage": 3,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784761230845",
+      "sourceId": "axiv-english_1",
+      "stage": 4,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046019288",
+      "sourceId": "axiv-english_1",
+      "stage": 4,
+      "position": 27,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046062406",
+      "sourceId": "axiv-english_1",
+      "stage": 3,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046062406",
+      "sourceId": "axiv-english_1",
+      "stage": 4,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354827",
+      "sourceId": "axiv-english_1",
+      "stage": 4,
+      "position": 29,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-008",
+      "sourceId": "axiv-english_1",
+      "stage": 4,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055958",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056825",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410106644",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 1,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410107344",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 1,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410106644",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410107344",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410106644",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410107344",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-033",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-033",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 4,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-036",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-036",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 4,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-039",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-039",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 4,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777227204",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 4,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777227228",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 4,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-032",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-035",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-038",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410103957",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410105951",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 2,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410103957",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410105951",
+      "sourceId": "axiv-mathematics_1",
+      "stage": 3,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241935",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243960",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410261053",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410261053",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875688402",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875688419",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-063",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-064",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777227259",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777227259",
+      "sourceId": "axiv-physics_1",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-066",
+      "sourceId": "axiv-physics_1",
+      "stage": 3,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-067",
+      "sourceId": "axiv-physics_1",
+      "stage": 3,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352588",
+      "sourceId": "axiv-physics_1",
+      "stage": 3,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352588",
+      "sourceId": "axiv-physics_1",
+      "stage": 4,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241942",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243977",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352557",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052230",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052247",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052254",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410260872",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 20,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047164",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047164",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254553",
+      "sourceId": "axiv-physics_1",
+      "stage": 2,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056467",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 25,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056450",
+      "sourceId": "axiv-physics_1",
+      "stage": 1,
+      "position": 26,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784315521535",
+      "sourceId": "axiv-physics_1",
+      "stage": 4,
+      "position": 27,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784315521542",
+      "sourceId": "axiv-physics_1",
+      "stage": 4,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241959",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859535",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859535",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578243984",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271397",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271397",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047232",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047232",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047232",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 3,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056641",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056627",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056788",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784297141486",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352595",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 3,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352595",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 4,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343753",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343760",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352953",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 20,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352953",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 20,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352960",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352960",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352977",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352977",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410271571",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047249",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 25,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047249",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 25,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784385261348",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 4,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254560",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 29,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010353844",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 1,
+      "position": 30,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010353844",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 30,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784010353851",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784010353851",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 3,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352984",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 2,
+      "position": 32,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010352984",
+      "sourceId": "axiv-chemistry_1",
+      "stage": 3,
+      "position": 32,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230630",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230630",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230630",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230630",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 4,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342302800",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "book-053",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053054746",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046040459",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230654",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230654",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046048059",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010345818",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784777225835",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890858880",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890858897",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890858897",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859061",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859313",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859313",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 13,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859375",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "sales-ndl-9784890859375",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 4,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777213603",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784816811999",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784816811968",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796114325",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 20,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777217854",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 4,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053037770",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053037770",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777219339",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796114592",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 25,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777230174",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 26,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342354106",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 27,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046066893",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 29,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796114264",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 30,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796114264",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 4,
+      "position": 30,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254492",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 1,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254492",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 2,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254492",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 3,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784325254492",
+      "sourceId": "axiv-contemporary_japanese_1",
+      "stage": 4,
+      "position": 31,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342353093",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342353093",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342353093",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342353093",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784864606738",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784864606738",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784864606738",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784864606738",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875687917",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875687917",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875687917",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875687917",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342354045",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342354045",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342354045",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342354045",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055705",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055705",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055705",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053055705",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890856022",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115230",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115230",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115230",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115230",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115247",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115247",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115247",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784796115247",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354117",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354117",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 10,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859436",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 14,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046022172",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046022172",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 15,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046022202",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046022202",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 16,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046056962",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046056962",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 17,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777215126",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777215126",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777212491",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777212491",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784860668686",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 1,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784860668686",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 2,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784860668686",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 3,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784860668686",
+      "sourceId": "axiv-classics-japanese_1",
+      "stage": 4,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053057105",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053057105",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230586",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230586",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 2,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761230586",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046064035",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046064035",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046064035",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777225859",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354131",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 1,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010354131",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 2,
+      "position": 7,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777230211",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784777230211",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 4,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046066671",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 2,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046066671",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 11,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244134",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 3,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244134",
+      "sourceId": "axiv-classics-chinese_1",
+      "stage": 4,
+      "position": 12,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859566",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859566",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859566",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046063656",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046063656",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046063656",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 2,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410283475",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410283475",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410283475",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244332",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244332",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047300",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784804047300",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 5,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241263",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241263",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058423",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058423",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 9,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407330083",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407330083",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407330083",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407330083",
+      "sourceId": "axiv-biology_1",
+      "stage": 4,
+      "position": 18,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010349380",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010349380",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 19,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056634",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 20,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052308",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052308",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052308",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 21,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244189",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244189",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244189",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 22,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241973",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241973",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 23,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053036001",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053054920",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053036001",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053054920",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 24,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410118869",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410118869",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410118869",
+      "sourceId": "axiv-biology_1",
+      "stage": 4,
+      "position": 28,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410283604",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 29,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784410283604",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 29,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343623",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 36,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784010343623",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 36,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052292",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 37,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052292",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 37,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784046052292",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 37,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244196",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 38,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244196",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 38,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244196",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 38,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241980",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578241980",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 39,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053038531",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 40,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056658",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 40,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053038531",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 40,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053056658",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 40,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244349",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 41,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784578244349",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 41,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859016",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 42,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859016",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 42,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784890859016",
+      "sourceId": "axiv-biology_1",
+      "stage": 4,
+      "position": 42,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407204766",
+      "sourceId": "axiv-biology_1",
+      "stage": 1,
+      "position": 49,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407204766",
+      "sourceId": "axiv-biology_1",
+      "stage": 2,
+      "position": 49,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784407204766",
+      "sourceId": "axiv-biology_1",
+      "stage": 3,
+      "position": 49,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231682",
+      "sourceId": "axiv-information_1",
+      "stage": 1,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231682",
+      "sourceId": "axiv-information_1",
+      "stage": 2,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231682",
+      "sourceId": "axiv-information_1",
+      "stage": 3,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231682",
+      "sourceId": "axiv-information_1",
+      "stage": 4,
+      "position": 1,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058034",
+      "sourceId": "axiv-information_1",
+      "stage": 1,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058034",
+      "sourceId": "axiv-information_1",
+      "stage": 2,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058034",
+      "sourceId": "axiv-information_1",
+      "stage": 3,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784053058034",
+      "sourceId": "axiv-information_1",
+      "stage": 4,
+      "position": 3,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784295018117",
+      "sourceId": "axiv-information_1",
+      "stage": 1,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784295018117",
+      "sourceId": "axiv-information_1",
+      "stage": 2,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784295018117",
+      "sourceId": "axiv-information_1",
+      "stage": 3,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784295018117",
+      "sourceId": "axiv-information_1",
+      "stage": 4,
+      "position": 4,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231675",
+      "sourceId": "axiv-information_1",
+      "stage": 1,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231675",
+      "sourceId": "axiv-information_1",
+      "stage": 2,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784761231675",
+      "sourceId": "axiv-information_1",
+      "stage": 3,
+      "position": 6,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784469273014",
+      "sourceId": "axiv-information_1",
+      "stage": 2,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784469273014",
+      "sourceId": "axiv-information_1",
+      "stage": 3,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784469273014",
+      "sourceId": "axiv-information_1",
+      "stage": 4,
+      "position": 8,
+      "lane": "main",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342207785",
+      "sourceId": "castdice-review-su-post-635",
+      "stage": 1,
+      "position": 1,
+      "lane": "review",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342207785",
+      "sourceId": "castdice-review-su-post-635",
+      "stage": 2,
+      "position": 1,
+      "lane": "review",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784342207785",
+      "sourceId": "castdice-review-su-post-635",
+      "stage": 3,
+      "position": 1,
+      "lane": "review",
+      "mathTrack": null
+    },
+    {
+      "bookId": "ndl-9784875687504",
+      "sourceId": "castdice-review-su-post-623",
+      "stage": 3,
+      "position": 1,
+      "lane": "review",
+      "mathTrack": null
+    }
+  ],
+  "errors": [],
+  "note": "教材名・掲載レベル・掲載順の事実だけを参照。動画は公式ページの埋込元。動画視聴・字幕の照合を意味しない。",
+  "relatedVideos": [
+    {
+      "channel": "CASTDICE TV",
+      "title": "【2026年最新版】CASTDICE 数学参考書ルートを紹介！",
+      "url": "https://www.youtube.com/watch?v=BgobfZTrjSQ",
+      "verificationUrl": "https://yutura.net/channel/16373/video/BgobfZTrjSQ/",
+      "published": "2026-04-13",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "数学"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "CASTDICE TV",
+      "title": "2026年最新版！CASTDICEの英語参考書ルートを紹介！",
+      "url": "https://www.youtube.com/watch?v=CD3gCAmo_VE",
+      "verificationUrl": "https://yutura.net/channel/16373/video/CD3gCAmo_VE/",
+      "published": "2026-04-20",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "英語"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "CASTDICE TV",
+      "title": "2026年最新版　CASTDICE 理科参考書ルート",
+      "url": "https://www.youtube.com/watch?v=Rrlfm3xEM1Y",
+      "verificationUrl": "https://yutura.net/channel/16373/video/Rrlfm3xEM1Y/",
+      "published": "2026-05-01",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "物理",
+        "化学",
+        "生物"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "CASTDICE TV",
+      "title": "2026年最新版！CASTDICE国語参考書ルートを紹介！",
+      "url": "https://www.youtube.com/watch?v=iIAmjp2TEzs",
+      "verificationUrl": "https://yutura.net/channel/16373/video/iIAmjp2TEzs/",
+      "published": "2026-04-27",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "国語"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "PASSLABO",
+      "title": "【完全保存版】数学参考書ルート【基礎〜難関大現役合格まで】",
+      "url": "https://www.youtube.com/watch?v=OzPGGAE6WgM",
+      "verificationUrl": "https://yutura.net/channel/23077/video/OzPGGAE6WgM/",
+      "published": "2026-03-14",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "数学"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "PASSLABO",
+      "title": "【完全保存版】化学参考書ルート【基礎〜難関大現役合格まで】",
+      "url": "https://www.youtube.com/watch?v=v6TXShA8ZDs",
+      "verificationUrl": "https://yutura.net/channel/23077/video/v6TXShA8ZDs/",
+      "published": "2026-03-16",
+      "checkedAt": "2026-10-27",
+      "domain": "entrance",
+      "subjects": [
+        "化学"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "Morite2 English Channel",
+      "title": "英検参考書ルート2026年度版【２級・準１級・１級】",
+      "url": "https://www.youtube.com/watch?v=1KIDpPz-fjY",
+      "verificationUrl": "https://yutura.net/channel/17550/video/1KIDpPz-fjY/",
+      "published": "2026-04-09",
+      "checkedAt": "2026-10-27",
+      "domain": "eiken",
+      "subjects": [
+        "英語"
+      ],
+      "selectionEligible": false
+    },
+    {
+      "channel": "Morite2 English Channel",
+      "title": "TOEIC参考書ルート2026年版【初級・500点・600点・700点・800点・900点・満点レベル】",
+      "url": "https://www.youtube.com/watch?v=8AsIaCdXl0w",
+      "verificationUrl": "https://yutura.net/channel/17550/video/8AsIaCdXl0w/",
+      "published": "2026-03-16",
+      "checkedAt": "2026-10-27",
+      "domain": "toeic",
+      "subjects": [
+        "英語"
+      ],
+      "selectionEligible": false
+    }
+  ]
+}
