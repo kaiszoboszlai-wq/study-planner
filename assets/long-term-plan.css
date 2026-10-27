@@ -92,3 +92,5 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 .lt-dialog .lt-custom-book{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card)}.lt-dialog .lt-custom-book label{margin:12px 0}.lt-dialog .lt-custom-actions{display:flex;flex-wrap:wrap;gap:8px}.lt-dialog .lt-custom-book .lt-muted{margin:8px 0}.lt-dialog .lt-manual-result-title{flex:1;min-width:0;overflow-wrap:anywhere}.lt-dialog .lt-manual-results .lt-manual-toggle,.lt-dialog .lt-manual-row>button{flex:0 0 44px;width:44px;min-width:44px;height:44px;padding:0;text-align:center;font-size:1.25rem!important}.lt-dialog .lt-manual-toggle[aria-pressed=true]{background:var(--acc);color:#fff}
 
 .lt-dialog .lt-custom-book input[hidden]{display:none}
+
+.lt-dialog input.lt-cover-input[hidden]{display:none}.lt-dialog .lt-custom-actions{display:flex;flex-wrap:wrap;gap:8px}
