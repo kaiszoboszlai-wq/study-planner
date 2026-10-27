@@ -88,3 +88,7 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 .lt-dialog .lt-manual-result,.lt-dialog .lt-manual-row{display:flex;align-items:center;gap:12px}.lt-dialog .lt-manual-result>button{flex:1;min-width:0}.lt-dialog .lt-manual-row>span{flex:1}.lt-dialog .lt-manual-cover{flex:0 0 54px;min-width:0}.lt-dialog .lt-manual-cover figure{margin:0}.lt-dialog .lt-manual-cover img{display:block;width:54px;height:76px;object-fit:contain}.lt-dialog .lt-manual-cover figcaption{font-size:.6rem;overflow-wrap:anywhere}.lt-dialog .lt-manual-cover [hidden]{display:none}
 
 .lt-dialog .lt-manual-row>button{flex:none;white-space:nowrap}
+
+.lt-dialog .lt-custom-book{margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--card)}.lt-dialog .lt-custom-book label{margin:12px 0}.lt-dialog .lt-custom-actions{display:flex;flex-wrap:wrap;gap:8px}.lt-dialog .lt-custom-book .lt-muted{margin:8px 0}.lt-dialog .lt-manual-result-title{flex:1;min-width:0;overflow-wrap:anywhere}.lt-dialog .lt-manual-results .lt-manual-toggle,.lt-dialog .lt-manual-row>button{flex:0 0 44px;width:44px;min-width:44px;height:44px;padding:0;text-align:center;font-size:1.25rem!important}.lt-dialog .lt-manual-toggle[aria-pressed=true]{background:var(--acc);color:#fff}
+
+.lt-dialog .lt-custom-book input[hidden]{display:none}
