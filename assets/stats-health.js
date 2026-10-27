@@ -3,7 +3,7 @@
 const root=document.getElementById('stats'),chart=document.getElementById('schart'),card=document.getElementById('statsChart62'),seg=document.getElementById('seg');
 if(!root||!chart||!card||!seg)return;
 const modes=[['y','年'],['h','6か月'],['m','月'],['w','週'],['d','日']];
-let mode='w',offset=0,selection=-1,lastKey='',lastOwner=dataOwner,animations=[],ghost=null;
+let mode='w',offset=0,selection=-1,lastKey='',lastOwner=dataOwner,animations=[],ghost=null,entryPending=false,entryFrame=0,lastWidth=0,renderedSignature='';
 const summary=document.createElement('div');summary.className='stats-summary70';summary.setAttribute('aria-live','polite');
 const selected=document.createElement('p');selected.className='stats-selection70';selected.setAttribute('aria-live','polite');selected.hidden=true;
 seg.replaceChildren();seg.setAttribute('role','tablist');seg.setAttribute('aria-label','学習記録の表示期間');
@@ -30,12 +30,13 @@ function model(log){
  return {items,start,end,total,average:total/days};
 }
 function svgEl(name,attrs={},text){const e=document.createElementNS('http://www.w3.org/2000/svg',name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
+function visualSignature(){return JSON.stringify([dataOwner,mode,offset,chart.clientWidth,fmtDate(new Date()),logData(),state.subjects,state.subjColors]);}
 function stopMotion(){animations.forEach(a=>a.cancel());animations=[];if(ghost)ghost.remove();ghost=null;}
-function draw(animate=false,old=null){
+function draw(animate=false,old=null,entry=false){
  if(dataOwner!==lastOwner){lastOwner=dataOwner;offset=0;selection=-1;lastKey='';animate=false;stopMotion();}
  const data=model(logData()),items=data.items,width=Math.max(280,chart.clientWidth||350),height=284,left=2,right=43,top=8,bottom=34,plotW=width-left-right,plotH=height-top-bottom,base=top+plotH;
  const maximum=Math.max(0,...items.map(b=>b.total/3600)),scale=niceTop(maximum),topValue=scale.top,slot=plotW/items.length,barWidth=Math.min(mode==='d'?52:40,slot*(items.length>15?.64:.62));
- const key=[mode,offset,width,fmtDate(data.end)].join('|');animate=animate&&key!==lastKey;lastKey=key;
+ const key=[mode,offset,width,fmtDate(data.end)].join('|');animate=animate&&(entry||key!==lastKey);lastKey=key;lastWidth=width;
  buttons.forEach((b,i)=>{const on=b.dataset.m===mode;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;if(on)seg.style.setProperty('--period-index70',i);});
  const metric=mode==='d'?data.total:data.average;summary.replaceChildren();const small=document.createElement('small');small.textContent=mode==='d'?'合計':'1日の平均';summary.append(small);
  const minutes=Math.round(metric/60),hours=Math.floor(minutes/60);function value(n,unit){const strong=document.createElement('strong');strong.textContent=n.toLocaleString('ja-JP');const u=document.createElement('span');u.className='stats-unit70';u.textContent=unit;summary.append(strong,u);}
@@ -54,7 +55,7 @@ function draw(animate=false,old=null){
   const show=items.length<=12||i===0||i===items.length-1||b.date.getDate()%7===0;if(show)svg.append(svgEl('text',{x,y:base+18,'text-anchor':'middle',class:i===selection?'selected70':''},b.label));
  });
  stopMotion();chart.replaceChildren(svg);chart.dataset.period=mode;chart.dataset.totalSeconds=String(data.total);chart.dataset.bucketCount=String(items.length);showSelection(data);
- renderPies(items,logData());
+ renderPies(items,logData());renderedSignature=visualSignature();
  if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
   if(old){ghost=document.createElement('div');ghost.className='stats-chart-ghost70';ghost.setAttribute('aria-hidden','true');ghost.append(old);chart.append(ghost);const fading=ghost;const a=fading.animate([{opacity:1},{opacity:0}],{duration:230,easing:'ease-out',fill:'forwards'});animations.push(a);a.onfinish=()=>fading.remove();}
   animations.push(svg.animate([{opacity:0},{opacity:1}],{duration:380,easing:'ease-out',fill:'both'}));
@@ -68,8 +69,10 @@ function openHistory(){
  dMode=monthly?'m':'d';dOff=Math.floor(Math.max(0,distance)/count);dSel=count-1-Math.max(0,distance)%count;mrLimit=15;mrSig='';document.getElementById('dm').hidden=false;renderDm();
 }
 function bindHistory(){chart.onclick=openHistory;chart.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openHistory();}};}
-const baseRender=renderStats;renderStats=function(){const old=chart.querySelector('.stats-plot70')?.cloneNode(true);baseRender.apply(this,arguments);draw(state.page===4,old);bindHistory();};
+function animateEntry(){cancelAnimationFrame(entryFrame);entryFrame=requestAnimationFrame(()=>{entryFrame=requestAnimationFrame(()=>{if(state.page===4){entryPending=false;draw(true,null,true);bindHistory();}});});}
+const baseRender=renderStats;renderStats=function(){if(!entryPending&&animations.some(a=>a.playState==='running')&&renderedSignature===visualSignature())return;const old=chart.querySelector('.stats-plot70')?.cloneNode(true);baseRender.apply(this,arguments);draw(state.page===4&&!entryPending,entryPending?null:old);bindHistory();if(entryPending)animateEntry();};
 const baseLive=updateStatsLive;updateStatsLive=function(){const before=statsLiveKey;baseLive.apply(this,arguments);if(statsLiveKey!==before)draw(false);};
-let resizeFrame=0;new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{if(state.page===4)draw(false);});}).observe(chart);
-root.setAttribute('aria-label','学習記録');draw(false);bindHistory();
+let resizeFrame=0;new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{if(state.page===4&&Math.max(280,chart.clientWidth||350)!==lastWidth)draw(false);});}).observe(chart);
+const baseShow=showPage;showPage=function(n){if(n===4&&state.page!==4)entryPending=true;if(n!==4){entryPending=false;cancelAnimationFrame(entryFrame);stopMotion();}return baseShow.apply(this,arguments);};
+root.setAttribute('aria-label','学習記録');draw(false);bindHistory();if(state.page===4){entryPending=true;animateEntry();}
 })();

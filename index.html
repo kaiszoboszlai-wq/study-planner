@@ -899,7 +899,6 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div id="clockEditPanel" hidden><p class="note" id="clockEditHint">まだ確定していません。円をゆっくり回すと1周で30分調整できます。</p><div class="actions clock-step-buttons"><button id="clockMinus" type="button">−15分</button><button id="clockPlus" type="button">＋15分</button></div><p id="clockEditPreview" aria-live="polite"></p><div class="actions"><button id="clockEditApply" class="main">この時間にする</button><button id="clockEditCancel">キャンセル</button></div></div>
 <div id="timerUndo" class="note" hidden><span>時間を変更しました。</span><button id="timerUndoButton" type="button">元に戻す</button></div>
 <div class="adj" id="clockEditOpenRow"><button id="timeAdjustOpen">時間を調整</button></div>
-<p class="note" id="timerCloseHint">「閉じる」は画面を閉じる操作です。計測を止めるには「一時停止」を押してください。</p>
 <div class="actions" id="timerMainActions"><button id="tmtoggle" class="main">開始</button><button id="tmdone">完了にする</button><button id="tmReset">リセット</button><button id="tmclose">閉じる</button><button id="focusEnter" type="button">集中モードにする</button><button id="focusExit" type="button" hidden>集中モードを終了</button></div>
 </div>
 </div>
@@ -1664,7 +1663,7 @@ function updateTimer(){
   $("timerElapsed").textContent="経過時間 "+fmtT(clockEdit?elapsed(openId):e);
   $("timerOvertimeHint").hidden=rm>=0;$("timerEndNotice").hidden=remain(openId)>0;
   $("timerEndNotice").textContent=running(openId)?"予定時間が終了しました。計測は続いています。":"予定時間が終了しました。現在は一時停止しています。";
-  $("timerCloseHint").textContent=running(openId)?"閉じても計測は続きます。止めるには「一時停止」を押してください。":"「閉じる」は画面だけを閉じます。「一時停止」は計測を止める操作です。";
+
   $("tmtoggle").disabled=timerStartBusy;
   var frac=Math.max(0,Math.min(1,rm/(x.h*3600)));
   $("tmarc").style.strokeDashoffset=565.49*(1-frac);

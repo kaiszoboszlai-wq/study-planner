@@ -3,3 +3,12 @@ dialog.lt-dialog{position:fixed;inset:0;max-width:none;max-height:none;width:100
 
 .lt-dialog .lt-exam-options{display:flex;flex-direction:column;gap:9px;max-height:45dvh;overflow:auto;padding:4px 0}.lt-dialog .lt-exam-options button{text-align:left;width:100%;flex:none;background:var(--card);color:var(--ink);border:1px solid var(--line)}.lt-dialog .lt-exam-options button[aria-checked=true]{border-color:var(--acc);background:var(--accbg)}
 #longTermPlanner .lt-goal .lt-eyebrow{display:block;font-size:.94rem;font-weight:650;letter-spacing:.02em;color:var(--ink);overflow-wrap:anywhere}
+
+#longTermPlanner .lt-target.lt-declaration{display:block;margin-top:16px}
+#longTermPlanner .lt-target.lt-declaration strong{display:block;font-size:clamp(1.35rem,4.5vw,1.9rem);line-height:1.6;font-weight:650;letter-spacing:-.025em;white-space:pre-wrap;overflow-wrap:anywhere}
+#longTermPlanner .lt-roadmap-card{min-width:0;padding:22px;border:1px solid var(--line);border-radius:26px;background:var(--card);margin:0 0 28px}
+#longTermPlanner .lt-roadmap-card>.lt-heading{margin-top:0}
+#longTermPlanner .lt-roadmap-card .lt-tabs button{background:var(--bg)}
+#longTermPlanner .lt-roadmap-card .lt-tabs button[aria-pressed=true]{background:var(--subject,var(--acc))}
+#longTermPlanner .lt-roadmap-card>.lt-muted{margin-bottom:0}
+@media(max-width:380px){#longTermPlanner .lt-roadmap-card{padding:16px}}
