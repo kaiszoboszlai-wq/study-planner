@@ -17,3 +17,4 @@ body #mypage{padding-top:0}
 #mypage .my-profile62>.me{pointer-events:none}#mypage .my-profile62>.me>*{pointer-events:auto}
 /* The profile cover meets the screen's top corners without gaps. */
 #mypage .my-profile62,#mypage .my-profile62:before,#profileCover65{border-top-left-radius:0!important;border-top-right-radius:0!important}
+#profileCover65{background:#e0e2e5}
