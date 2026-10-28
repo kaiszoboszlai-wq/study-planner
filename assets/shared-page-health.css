@@ -168,3 +168,5 @@ body #gradesBackMy{display:inline-flex;align-items:center;margin:0 0 24px;paddin
   @keyframes today-summary-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 }
 #planSettings #carryOn:checked{background:#2787d8!important;border-color:#2787d8!important}
+
+body #planbox .plan-heading{position:relative;justify-content:center;min-height:50px;border-bottom:1px solid var(--line);margin-bottom:20px}body #planbox .plan-heading h2,body #longTermPlanner .lt-page-title{position:relative;text-align:center;font-size:.85rem;font-weight:650;line-height:1.5;margin:0;padding:15px 48px;color:var(--ink)}body #planbox .plan-heading h2:after,body #longTermPlanner .lt-page-title:after{content:'';position:absolute;bottom:0;left:50%;width:40%;max-width:115px;height:3px;transform:translateX(-50%);border-radius:999px;background:var(--acc)}body #planbox #planSettingsOpen{position:absolute;right:0;top:8px}body #longTermPlanner .lt-page-title{border-bottom:1px solid var(--line);margin:0 0 20px}
