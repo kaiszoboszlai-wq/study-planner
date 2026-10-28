@@ -1621,6 +1621,13 @@ function openTimer(id){
   $("tmbox").style.borderTopColor=colorOf(x.name);
   $("tm").hidden=false;updateTimer();
 }
+function animateTimerEntry(origin){
+  var box=$("tmbox"),modal=$("tm");if(!box||modal.hidden||!origin||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var target=box.getBoundingClientRect();if(!target.width||!target.height)return;
+  var x=(origin.left+origin.width/2)-(target.left+target.width/2),y=(origin.top+origin.height/2)-(target.top+target.height/2),sx=Math.max(.04,origin.width/target.width),sy=Math.max(.04,origin.height/target.height);
+  box.animate([{transform:'translate('+x+'px,'+y+'px) scale('+sx+','+sy+')',borderRadius:'999px',opacity:.65},{transform:'translate(0,0) scale(1,1)',borderRadius:'24px',opacity:1}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+  Array.from(box.children).forEach(function(child){child.animate([{opacity:0},{opacity:0,offset:.35},{opacity:1}],{duration:380,easing:'ease-out'})});
+}
 function closeTimer(){exitFocusMode();closeClockAdjust(false);openId=null;$("tm").hidden=true;renderActiveTimer()}
 function updateFocusOrientation(){
   if(!$('tm').classList.contains('focus-mode'))return;
@@ -2174,7 +2181,7 @@ function renderToday(){
     c.querySelector(".today-subject").textContent=x.name+carryLabel(x);
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
     c.querySelector(".item").onclick=function(){openTimer(id)};
-    c.querySelector(".play").onclick=function(){var was=running(id);toggleTimer(id);if(!was)openTimer(id)};
+    c.querySelector(".play").onclick=function(){var was=running(id),origin=this.getBoundingClientRect();toggleTimer(id);if(!was){openTimer(id);animateTimerEntry(origin)}};
     box.appendChild(c);
   });todayBar();
 }
