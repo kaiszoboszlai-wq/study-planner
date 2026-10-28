@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<script src="assets/step-indicator.js"></script>
-<script src="assets/subject-book-picker.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#b9e1f5">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="light">
+<script>
+// Apply saved chrome before blocking assets or the first paint, including standalone launches.
+(function(){
+  var colors={sky:'#b9e1f5',sage:'#d5e8d4',lavender:'#d8c9f2',peach:'#f4d8c8',black:'#090909'};
+  function applyChrome(theme){
+    theme=Object.prototype.hasOwnProperty.call(colors,theme)?theme:'sky';var dark=theme==='black',root=document.documentElement;
+    root.setAttribute('data-app-theme',theme);root.setAttribute('data-chrome-theme','theme');
+    root.style.backgroundColor=dark?'#090909':'#f5f5f5';root.style.colorScheme=dark?'dark':'light';
+    document.querySelector('meta[name="theme-color"]').content=colors[theme];
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').content=dark?'black-translucent':'default';
+    document.querySelector('meta[name="color-scheme"]').content=dark?'dark':'light';
+    if(window.updateAppManifest75)window.updateAppManifest75(theme);
+  }
+  window.AppAppearance75={colors:colors,applyChrome:applyChrome};
+  var saved={};try{saved=JSON.parse(localStorage.getItem('study-planner-appearance-v1')||'{}')||{}}catch(e){}
+  applyChrome(saved.theme);
+})();
+</script>
+<script src="assets/step-indicator.js"></script>
+<script src="assets/subject-book-picker.js"></script>
 <title>StudyPlanner</title>
 <style>
-.save-status[hidden]{display:none}
+
 .active-timer{position:sticky;top:6px;z-index:6;display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;margin:0 0 8px;background:var(--accbg);border:1px solid var(--line);border-radius:10px;color:var(--ink);text-align:left;font-size:.8rem}.active-timer[hidden]{display:none}.active-timer-dot{width:7px;height:7px;background:var(--acc);border-radius:50%;flex:none}.active-timer-link{margin-left:auto;white-space:nowrap;color:var(--acc);font-size:.75rem}#activeTimerText{min-width:0;overflow-wrap:anywhere}.timer-reading-label{text-align:center;font-size:.85rem;color:var(--sub);margin-top:10px}.timer-elapsed{text-align:center;font-size:1rem;font-weight:600;margin:8px 0}.timer-end-notice{padding:9px;border-radius:8px;background:var(--accbg);color:var(--ink);font-size:.85rem}#timerUndo{display:flex;align-items:center;justify-content:center;gap:8px}#timerUndo[hidden]{display:none}#idleReviewModal{z-index:42}.clock-step-buttons{justify-content:center}.clock-step-buttons button{min-width:80px}
-.save-status{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-height:25px;margin:0 0 8px;color:var(--sub);font-size:.75rem;flex-wrap:wrap}.save-status:has(#saveStatusText:empty){display:none}.save-status button,.read-error button{font:inherit;padding:5px 9px;min-height:30px;white-space:nowrap}.save-status.has-error{color:var(--red)}.read-error{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.read-error span{flex:1 1 150px}
+.read-error button{font:inherit;padding:5px 9px;min-height:30px;white-space:nowrap}.read-error{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.read-error span{flex:1 1 150px}
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17232f;--sub:#5b6b7a;--line:#d9e0e6;--acc:#0b6e6e;--accbg:#dff1f0;--done:#9fb0bd;--red:#d62828;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--card:#18232d;--ink:#e8eef3;--sub:#93a4b3;--line:#2a3a47;--acc:#5fc4bf;--accbg:#173a3a;--done:#5d7080;--red:#ff6b6b}}
@@ -535,7 +556,6 @@ button.follow-action:disabled{opacity:.6}
 :root[data-app-theme="black"] #daysCard{color:var(--red)!important}
 
 </style>
-<meta name="theme-color" content="#b9e1f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="StudyPlanner">
@@ -544,13 +564,16 @@ button.follow-action:disabled{opacity:.6}
 <link rel="manifest" id="appManifest">
 <script>
 // Resolve app icon URLs against the installation root, including subdirectory hosting.
-(function(){
+window.updateAppManifest75=function(theme){
   var manifest={"name": "StudyPlanner", "short_name": "StudyPlanner", "display": "standalone", "background_color": "#171719", "theme_color": "#b9e1f5", "lang": "ja", "icons": [{"src": "assets/app-flag-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}, {"src": "assets/app-flag-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}]};
+  manifest.theme_color=AppAppearance75.colors[theme]||AppAppearance75.colors.sky;
+  manifest.background_color=theme==='black'?'#090909':'#f5f5f5';
   var root=new URL("./",location.href).href;
   manifest.id=root;manifest.start_url=root;manifest.scope=root;
   manifest.icons.forEach(function(icon){icon.src=new URL(icon.src,root).href});
   document.getElementById("appManifest").href="data:application/manifest+json;charset=utf-8,"+encodeURIComponent(JSON.stringify(manifest));
-})();
+};
+updateAppManifest75(document.documentElement.getAttribute('data-app-theme'));
 </script>
 <link rel="apple-touch-icon" sizes="180x180" href="assets/app-flag-180.png">
 
@@ -650,6 +673,8 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/subject-book-picker.css">
 <link rel="stylesheet" href="assets/step-indicator.css">
 <link rel="stylesheet" href="assets/comment-refinements.css">
+<link rel="stylesheet" href="assets/motion-ui.css">
+<link rel="stylesheet" href="assets/inbox-sheet.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -699,7 +724,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 </div>
 
 <button id="activeTimer" class="active-timer" type="button" hidden aria-label="計測中のタイマーに戻る"><span class="active-timer-dot" aria-hidden="true"></span><span id="activeTimerText"></span><span class="active-timer-link">タイマーへ</span></button>
-<div id="saveStatus" class="save-status" role="status" aria-live="polite"><span id="saveStatusText"></span><button id="saveRetry" type="button" hidden>再試行</button></div>
+
 
 <section id="p0" hidden>
 <p class="step">ステップ 1 / 4</p>
@@ -782,7 +807,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div class="actions" id="pfView"><button id="shareBtn" hidden>シェア</button></div>
 <button id="myGradesOpen" class="my-grades-card" type="button"><span>模試・テストの成績</span><span aria-hidden="true">›</span></button>
 <h3 class="sh">アカウント</h3>
-<p class="note" id="settingsSyncStatus" role="status" aria-live="polite"></p>
+<p class="note" id="settingsSyncStatus" hidden></p>
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
 <p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
@@ -995,19 +1020,8 @@ function showReadError(box,e,retry,append){
   if(!append)box.replaceChildren();box.appendChild(row);return row;
 }
 function paintSaveStatus(){
-  var el=$('saveStatusText'),box=$('saveStatus'),settings=$('settingsSyncStatus'),retry=$('saveRetry');
-  var error=saveHealth.localError||saveHealth.cloudError||saveHealth.writeError,text="";
-  if(saveHealth.localError)text=saveHealth.localError.message&&/プラン/.test(saveHealth.localError.message)?saveHealth.localError.message:"この端末に保存できませんでした。";
-  else if(FB&&FB.uid){
-    if(error)text="同期できませんでした。"+readErrorMessage(error);
-    else if(!FB.syncReady)text="同期を確認しています…";
-    else if(saveHealth.pending)text="変更を同期しています…";
-    else if(saveHealth.synced)text="同期済み";
-  }
-  if(el)el.textContent=text;
-  if(box){box.hidden=!text||(!error&&saveHealth.synced);box.classList.toggle('has-error',!!error)}
-  if(settings){settings.textContent=text;settings.hidden=!text}
-  if(retry)retry.hidden=!error;
+  // Keep synchronization state internal; this marker is retained for account layout setup.
+  var settings=$('settingsSyncStatus');if(settings){settings.textContent='';settings.hidden=true;}
 }
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
@@ -2714,7 +2728,10 @@ async function fbSocialSync(){ // 友達に見せる、フォロー中・フォ�
 }
 async function fbOnAuth(){
   var epoch=++authEpoch,uid=FB.uid;
-  FB.syncReady=false;switchAccountData(uid);
+  FB.syncReady=false;var ownerChanged=switchAccountData(uid);
+  // The initial signed-out callback (or a same-user refresh) is not an account change.
+  // Keep an in-progress questionnaire valid without resetting the user's inputs.
+  if(!ownerChanged&&weeklyFlow40&&weeklyFlow40.owner===dataOwner&&dataOwner===(uid||null))weeklyFlow40.epoch=epoch;
   if(profileCacheOwner!==FB.uid){profileCacheReset();closeProfile();closeList();$("lmBody").innerHTML="";$("tlm").hidden=true;$("tlBody").innerHTML=""}
   renderFb();
   if(!FB.uid){FB.code="";fbSig="";FB.syncReady=false;FBN.fol=FBN.fr=FBN.req=FBN.dm=0;dmStop();paintCounts();return}
@@ -3585,7 +3602,7 @@ function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();i
 function flowError40(text){$('flowError40').textContent=text||'';if(text)$('flowError40').scrollIntoView({block:'nearest'})}
 function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return [cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
 function validateFlow40(key){
-  var w=weeklyFlow40,c=w.config;if(w.owner!==dataOwner||w.epoch!==authEpoch){leaveFlow40(false);return false}
+  var w=weeklyFlow40,c=w.config;if(w.owner!==dataOwner||w.epoch!==authEpoch){leaveFlow40(false);showPage(typeof state.page==='number'?state.page:6);return false}
   var error='';
   if(key==='goal'&&!cleanSubject(c.goal))error='目標を入力してください。';
   if(key==='exam'&&(!validDate38(c.exam)||c.exam<=fmtDate(new Date())))error='試験日は明日以降の日付を選んでください。';
@@ -3763,7 +3780,7 @@ async function openGlobalRankProfile61(row){
   paint(row);
   var actions=document.createElement('div');actions.className='actions';box.appendChild(actions);var loading=document.createElement('button');loading.type='button';loading.disabled=true;loading.textContent='フォロー状態を確認中…';actions.appendChild(loading);
   await Promise.all([
-    myFollowIds(true).then(function(ids){if(!active())return;var button=makeFollowButton(id,ids);button.classList.add('main');button.onFollowState=function(status){followButtonState(button,status);if(status==='none')button.textContent='フォローリクエストを送る'};button.onFollowState(button.dataset.followState);actions.replaceChildren(button)}).catch(function(e){if(active()){actions.replaceChildren();showReadError(actions,e,null,true);var retry=document.createElement('button');retry.textContent='再試行';retry.onclick=function(){openGlobalRankProfile61(row)};actions.appendChild(retry)}}),
+    myFollowIds(true).then(function(ids){if(!active())return;var button=makeFollowButton(id,ids);button.classList.add('main');button.onFollowState=function(status){followButtonState(button,status);if(status==='none')button.textContent='フォローリクエストを送る'};button.onFollowState(button.dataset.followState);actions.replaceChildren(button)}).catch(function(e){if(active()){actions.replaceChildren();showReadError(actions,e,null,true);}}),
     profileRead('dailyRankings/'+day+'/users/'+id).then(function(data){if(!active()||!data)return;paint({name:data.name,icon:goodIcon(data.icon),color:goodColor(data.color),photo:goodPhoto(data.photo),s:data.seconds})}).catch(function(e){if(active()){var note=document.createElement('p');note.className='note';note.textContent='ランキング表示時の情報です。';box.appendChild(note)}})
   ]);
 }
@@ -4257,7 +4274,6 @@ installV57();
 installPageDesign62();
 installRecords58();
 fbInit();
-if($("saveRetry"))$("saveRetry").onclick=retrySaving;
 window.addEventListener("online",function(){if(!document.hidden&&ownsCurrentData(FB.uid))retrySaving()});
 window.addEventListener("offline",function(){if(ownsCurrentData(FB.uid)&&syncData()!==syncSig){saveHealth.pending=true;paintSaveStatus()}});
 setInterval(tickAll,1000);
@@ -4297,7 +4313,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
     document.documentElement.setAttribute("data-chrome-theme",chrome);
     document.querySelectorAll(".theme-choice").forEach(function(b){var on=b.getAttribute("data-app-theme")===theme;b.classList.toggle("selected",on);b.setAttribute("aria-pressed",on?"true":"false")});
     var sel=document.getElementById("chromeTheme");if(sel)sel.value=chrome;
-    var meta=document.querySelector('meta[name="theme-color"]');if(meta){var colors={sky:"#b9e1f5",sage:"#d5e8d4",lavender:"#d8c9f2",peach:"#f4d8c8",black:"#090909"};meta.content=chrome==="navy"?"#1d2d45":chrome==="white"?"#ffffff":colors[theme]}
+    AppAppearance75.applyChrome(theme);
   }
   function save(k,val){var v=read();v[k]=val;try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){saveHealth.localError=e;paintSaveStatus()}apply()}
   document.querySelectorAll(".theme-choice").forEach(function(b){b.addEventListener("click",function(){save("theme",b.getAttribute("data-app-theme"))})});
@@ -4334,5 +4350,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/long-term-plan.js"></script>
 <script src="assets/long-term-plan-ui.js"></script>
 <script src="assets/page-swipe.js"></script>
+<script src="assets/motion-ui.js"></script>
+<script src="assets/inbox-sheet.js"></script>
 </body>
 </html>

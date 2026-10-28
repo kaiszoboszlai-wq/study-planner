@@ -5,6 +5,7 @@ const byId=id=>document.getElementById(id),loading=window.AppLoading72;
 function wrap(name,id,kind='list',ready){const original=window[name];if(typeof original!=='function')return;window[name]=function(){const target=byId(id),keep=!!(ready&&ready(target,arguments)),result=original.apply(this,arguments),finish=loading.start(target,kind,keep);return Promise.resolve(result).finally(finish);};}
 wrap('fillList','lmBody');wrap('openDmList','dmBody');wrap('renderInboxReq','dmBody');wrap('openPost','pxBody');wrap('openProfile','pmBody','profile',(_target,args)=>!!profileCached('profiles/'+args[0]));
 wrap('rankLoad','tlBody','list');
+wrap('fbSearchUsers','fbUserResults','list',(_target,args)=>args[0]===true);
 const initialMessages=dmLoad;dmLoad=function(first){const result=initialMessages.apply(this,arguments);if(!first)return result;const target=byId('dmBody'),finish=loading.start(target,'list',!!target.querySelector('.msg'));return Promise.resolve(result).finally(finish);};
 // Individual names may arrive after their row. Keep its geometry instead of a loading label.
 const watched=['lmBody','dmBody','pmBody','pxBody'];let skeletonFrame=0;

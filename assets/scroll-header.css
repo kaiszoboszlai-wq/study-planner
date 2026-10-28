@@ -6,6 +6,8 @@ body.app-has-header68 main{padding-top:calc(var(--app-header-height68) + 12px)}
 .app-header-actions68{display:flex;align-items:center;justify-content:flex-end;min-width:0}#appScrollHeader68 .plane{position:relative;inset:auto;width:42px;height:42px;min-width:42px;margin:0;padding:10px;border:0;background:transparent;color:var(--ink);display:grid;place-items:center}#appScrollHeader68 .plane[hidden]{display:none!important}
 body.weekly-flow-mode40 #appScrollHeader68,body.route-creating #appScrollHeader68,body.profile-editing64 #appScrollHeader68{display:none!important}
 :root[data-app-theme=black] .app-wordmark68 img:not(.app-icon68){filter:brightness(0) invert(1)}
+:root[data-app-theme=black]{background:#090909;color-scheme:dark}
+:root[data-app-theme=black] #appScrollHeader68{background:#090909}
 @media(prefers-reduced-motion:reduce){#appScrollHeader68{transition:none}}
 body.app-has-header68 .active-timer{top:calc(var(--header-visible-height68,var(--app-header-height68)) + 6px)}body.app-has-header68:has(#appScrollHeader68.header-away68) .active-timer{top:6px}
 
