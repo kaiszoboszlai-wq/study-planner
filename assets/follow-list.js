@@ -15,7 +15,8 @@ function decorate(){scheduled=0;if(modal.hidden)return;const follow=listMode==='
  const text=[row.querySelector('b')?.textContent,row.querySelector('.fbrow>div:nth-child(2)>.note')?.textContent].join(' ');row.hidden=!!term&&!normalize(text).includes(term);if(!row.hidden)matches++;}
  if(sort.value==='name'){for(const group of new Set(rows.map(r=>r.parentElement))){const current=[...group.children].filter(r=>r.matches('.fcard'));const wanted=current.slice().sort((a,b)=>(a.querySelector('b')?.textContent||'').localeCompare(b.querySelector('b')?.textContent||'','ja'));if(current.some((r,i)=>r!==wanted[i]))wanted.forEach(r=>group.append(r));}}
  else for(const group of new Set(rows.map(r=>r.parentElement))){const current=[...group.children].filter(r=>r.matches('.fcard')),wanted=current.slice().sort((a,b)=>originalOrder.get(a)-originalOrder.get(b));if(current.some((r,i)=>r!==wanted[i]))wanted.forEach(r=>group.append(r));}
- status.textContent=term?(matches?'検索結果 '+matches+'人':'一致するユーザーがいません。'):'';
+ for(const more of content.querySelectorAll('.collection-more'))if(more.parentElement.lastElementChild!==more)more.parentElement.append(more);
+ const paged=!!content.querySelector('.collection-more');status.textContent=(term?(matches?'検索結果 '+matches+'人':'一致するユーザーがいません。'):'')+(paged?' 読み込んだ範囲で検索・並び替えしています。続きは「さらに50件表示」で確認できます。':'');
 }
 function schedule(){if(!scheduled)scheduled=requestAnimationFrame(decorate)}
 const observer=new MutationObserver(schedule);observer.observe(content,{subtree:true,childList:true,characterData:true});for(const id of ['nFol','nFr'])observer.observe(el(id),{subtree:true,childList:true,characterData:true});search.oninput=schedule;sort.onchange=schedule;

@@ -1,0 +1,35 @@
+/* Compact breadcrumbs for the weekly questionnaire. */
+#weeklyFlow40 #flowStepsIndicator40{margin-top:0}
+#weeklyFlow40 .flow-breadcrumbs40{display:flex;align-items:center;flex-wrap:wrap;gap:0;list-style:none;margin:0;padding:3px 0 8px;line-height:1.5}
+#weeklyFlow40 .flow-crumb40{display:flex;align-items:center;color:var(--qa-muted,var(--sub));font-size:.76rem;white-space:nowrap}
+#weeklyFlow40 .flow-crumb40:not(:last-child):after{content:'›';margin-inline:9px;color:color-mix(in srgb,var(--qa-muted,var(--sub)) 55%,transparent);font-size:1rem}
+#weeklyFlow40 .flow-crumb40 button{font:inherit;color:inherit;border:0;background:transparent;padding:9px 0;min-height:40px;cursor:pointer}
+#weeklyFlow40 .flow-crumb40.is-current{color:var(--qa-ink,var(--ink));font-weight:750}
+#weeklyFlow40 .flow-crumb40.is-upcoming{opacity:.65}
+#weeklyFlow40 .flow-crumb40 button:hover{text-decoration:underline;text-underline-offset:4px}
+#weeklyFlow40 .flow-crumb40 button:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:4px}
+#weeklyFlow40 .flow-book-search{display:flex;align-items:center;gap:12px}
+#weeklyFlow40 .flow-book-search svg{display:block;flex:none;width:26px;height:26px;max-width:26px!important;max-height:26px!important;color:var(--qa-ink,var(--ink))}
+
+/* Give the settings action a readable label and a comfortable hit area. */
+html body #planbox #planSettingsOpen{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;height:42px;min-height:42px;padding:9px 13px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);box-shadow:0 2px 8px rgb(26 46 66 / .04)}
+html body #planbox #planSettingsOpen span{display:inline;font-size:.74rem;font-weight:600}
+html body #planbox #planSettingsOpen svg{width:21px;height:21px;color:var(--acc)}
+html body #planbox .plan-week-top{min-height:42px;padding-right:118px;flex-wrap:wrap;gap:3px 10px}
+
+/* Separate rounded subjects while keeping the whole card editable. */
+html body #planbox .plan-items62{display:flex;flex-direction:column;gap:12px;border:0;border-radius:0;background:transparent;overflow:visible}
+html body #planbox .plan-items62 .blk{margin:0;border:0!important;border-radius:24px;overflow:hidden;padding:16px 18px!important;min-height:86px;background:color-mix(in srgb,var(--subject-color62) 13%,var(--card))}
+html body #planbox .plan-items62 .blk:before{left:0;top:22px;bottom:22px;width:4px;border-radius:0 4px 4px 0}
+html body #planbox .plan-items62 .blk .item{width:100%;padding:0;gap:4px 16px}
+
+/* Frosted surfaces only on the elements selected in the comments. */
+html{--comment-glass-fill:rgb(255 255 255 / .62);--comment-glass-line:rgb(255 255 255 / .82);--comment-glass-shadow:0 8px 25px rgb(35 63 89 / .06),inset 0 1px 0 rgb(255 255 255 / .9)}
+html[data-app-theme=black]{--comment-glass-fill:rgb(34 38 46 / .66);--comment-glass-line:rgb(255 255 255 / .15);--comment-glass-shadow:0 8px 25px rgb(0 0 0 / .18),inset 0 1px 0 rgb(255 255 255 / .06)}
+html body #mypage :is(#myGoal62,.my-menu62,#loginRow69),html body #planbox .day .addb,html body #longTermPlanner .lt-goal.lt-empty{background:linear-gradient(130deg,color-mix(in srgb,var(--acc) 9%,transparent),transparent 58%),var(--comment-glass-fill);border:1px solid var(--comment-glass-line);border-radius:24px;box-shadow:var(--comment-glass-shadow);-webkit-backdrop-filter:blur(22px) saturate(145%);backdrop-filter:blur(22px) saturate(145%);color:var(--ink)}
+html body #mypage .my-menu62 button{background:transparent}
+html body #mypage #myGoal62{padding:22px}
+html body #mypage #loginRow69{padding:17px 22px}
+html body #planbox .day .addb{min-height:48px;color:var(--acc)}
+html body #longTermPlanner .lt-goal.lt-empty{padding:26px 24px}
+@media(max-width:360px){#weeklyFlow40 .flow-crumb40{font-size:.7rem}#weeklyFlow40 .flow-crumb40:not(:last-child):after{margin-inline:6px}html body #planbox #planSettingsOpen{padding-inline:10px}html body #planbox .plan-week-top{padding-right:111px}}
