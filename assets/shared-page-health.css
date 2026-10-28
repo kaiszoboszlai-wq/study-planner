@@ -167,3 +167,4 @@ body #gradesBackMy{display:inline-flex;align-items:center;margin:0 0 24px;paddin
   body #today:not([hidden]) #tdSummary > div:nth-child(3){animation-delay:.1s}
   @keyframes today-summary-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 }
+#planSettings #carryOn:checked{background:#2787d8!important;border-color:#2787d8!important}
