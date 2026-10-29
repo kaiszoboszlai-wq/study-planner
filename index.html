@@ -774,7 +774,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div id="planDates" class="plan-dates" role="tablist" aria-label="計画の日付"></div>
 <div id="plan" class="days"></div>
 <button id="goTodayStudy" type="button">今日の勉強へ <span aria-hidden="true">→</span></button>
-<div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すと予定を編集できます。計測は「今日の勉強へ」から始めます</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>プラン設定から作り直す場合も、学習記録・計測済みの項目は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
+<div class="tips" id="tips" hidden><b>使い方</b><ul><li>上の日付を押すと、その日の計画を表示します</li><li>完了率は、計測時間 ÷ その日の予定時間です。チェックだけでは増えません</li><li>名前を押すと予定を編集できます。計測は「今日の勉強へ」から始めます</li><li>長押しして上の日付へドラッグすると移動できます。⋯からも編集・移動できます</li><li>最初から立て直すと元の予定は削除されます。学習記録は残ります</li></ul><button id="tipsOk" class="main">わかった</button></div>
 </section>
 <section id="stats" hidden>
 <div class="mh" style="justify-content:flex-end"><button class="main" id="mrOpen">記録</button></div>
@@ -3698,7 +3698,22 @@ function installWeeklyFlow40(){
     else if(weeklyFlow40){flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40')}
     return result;
   };
-  openPlanDraft=function(){deferFlow40(false);openWeeklyFlow40('rebuild')};$('back3').onclick=openPlanDraft;
+  openPlanDraft=function(){
+    function begin(){deferFlow40(false);openWeeklyFlow40('rebuild')}
+    if(!(state.plan||[]).some(function(d){return d.blocks.length})){begin();return}
+    var owner=dataOwner,epoch=authEpoch,source=JSON.stringify(state.plan);
+    askConfirm('元の週間プランを削除しますか？','元の予定をすべて削除して、週間プランを最初から立て直します。目標・試験日・教材・学習記録は残ります。','削除して立て直す',function(){
+      if(owner!==dataOwner||epoch!==authEpoch)return;
+      if(source!==JSON.stringify(state.plan)){openPlanDraft();return}
+      if(state.idleReview||checkIdleTimer()){showIdleReview();return}
+      pauseTimer();closeTimer();
+      var previous={plan:state.plan,weekCarry:state.weekCarry,carryReview:state.carryReview,pendingWeekReview:state.pendingWeekReview,weekSetupPending:state.weekSetupPending,planCycleStart:state.planCycleStart,planDaySeen:state.planDaySeen};
+      state.plan=state.plan.map(function(d){return {date:d.date,h:0,blocks:[]}});
+      state.weekCarry=[];state.carryReview=null;state.pendingWeekReview=null;state.weekSetupPending=false;state.planCycleStart=fmtDate(new Date());state.planDaySeen=fmtDate(new Date());
+      if(!store()){Object.assign(state,previous);store();showTimerMessage('プランを削除できませんでした。','端末の空き容量を確認して、もう一度お試しください。');return}
+      leaveFlow40(true);timerUndoState=null;moveUndo36=null;save();renderPlan();begin();
+    });
+  };$('back3').onclick=openPlanDraft;
   var preview40=generatePlanPreview;generatePlanPreview=function(){if(weeklyFlow40&&weeklyFlow40.preview){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}preview40()};
   var commit40=draftAdopt36;draftAdopt36=function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];commit40();if(state.plan===candidate){leaveFlow40(true);showPlanReady48(candidate)}else{state.weekCarry=queue}};
   var account40=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){closePlanReady48();leaveFlow40(false);goalBack=null}return account40(uid)};
