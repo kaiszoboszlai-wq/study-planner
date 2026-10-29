@@ -1,6 +1,6 @@
-html body #dmm{align-items:flex-end;padding:0;background:rgb(10 20 35 / .38);backdrop-filter:blur(4px)}
-html body #dmm>.tmbox{display:flex;flex-direction:column;box-sizing:border-box;width:100%;max-width:720px;height:calc(100dvh - max(12px,env(safe-area-inset-top)));max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));margin:0 auto;padding:10px 20px max(16px,env(safe-area-inset-bottom));border-radius:28px 28px 0 0;overflow:hidden;background:var(--bg)}
-.inbox-sheet-handle{display:block;flex:none;width:36px;height:4px;margin:0 auto 10px;border-radius:99px;background:color-mix(in srgb,var(--ink) 20%,transparent)}
+html body #dmm{align-items:stretch;padding:0;z-index:60;background:rgb(10 20 35 / .38);backdrop-filter:blur(4px)}
+html body #dmm>.tmbox{display:flex;flex-direction:column;box-sizing:border-box;width:100%;max-width:none;height:100dvh;max-height:none;min-height:100dvh;margin:0;padding:max(12px,env(safe-area-inset-top)) 20px max(16px,env(safe-area-inset-bottom));border:0;border-radius:0;animation:none!important;overflow:hidden;background:var(--bg)}
+.inbox-sheet-handle{display:none;flex:none;width:36px;height:4px;margin:0 auto 10px;border-radius:99px;background:color-mix(in srgb,var(--ink) 20%,transparent)}
 .inbox-sheet-header{display:flex;align-items:center;gap:12px;flex:none;border-bottom:1px solid var(--line)}
 html body #dmm #inboxTabs{display:flex;flex:1;position:relative;margin:0;padding:0;border:0;border-radius:0;background:transparent;gap:0}
 html body #dmm #inboxTabs button{position:relative;flex:1;min-height:54px;border:0;background:transparent;color:var(--sub);font-weight:600;box-shadow:none}

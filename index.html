@@ -675,6 +675,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/comment-refinements.css">
 <link rel="stylesheet" href="assets/motion-ui.css">
 <link rel="stylesheet" href="assets/inbox-sheet.css">
+<link rel="stylesheet" href="assets/header-slide.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -3595,7 +3596,7 @@ function priorityOptions59(select,weight){
 }
 function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
-  return ['goal','exam','weekday','weekend','subjects','allocation','carry'].map(function(key){return {key:key}});
+  return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry']:['goal','exam','weekday','weekend','subjects','allocation','carry']).map(function(key){return {key:key}});
 }
 function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
@@ -3622,7 +3623,7 @@ function flowBack40(){var w=weeklyFlow40;if(!w)return;if(w.preview){w.preview=fa
 function prepareFlowCandidate40(message){
   var w=weeklyFlow40;if(!w)return;
   if(state.pendingWeekReview||state.carryReview){flowError40('前週の振り返り・繰り越しの確認を終えてから進めてください。');showPendingPlanReview();return}
-  var c=flowConfig40();if(!c.goal||!validDate38(c.exam)||c.exam<=fmtDate(new Date())){w.key=!c.goal?'goal':'exam';w.preview=false;renderFlow40(true);flowError40('目標と試験日を確認してください。');return}
+  var c=flowConfig40();if(!c.goal||!validDate38(c.exam)||c.exam<=fmtDate(new Date())){if(w.mode==='rebuild'){flowError40('設定済みの目標・試験日を確認してください。変更はマイページから行えます。');return false}w.key=!c.goal?'goal':'exam';w.preview=false;renderFlow40(true);flowError40('目標と試験日を確認してください。');return}
   if(!c.subjects.length||duplicateSubject(c.subjects)){w.key='subjects';w.preview=false;renderFlow40(true);flowError40('科目名を確認してください。');return}
   var carry=state.weekSetupPending&&c.carry?(state.weekCarry||[]):[];
   planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);
@@ -3636,6 +3637,16 @@ function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w||!cand
   planCandidate=candidate.plan;planCandidateBase=candidate.source;planCandidateConfig=flowConfig40();planCandidateResetWeek=true;adoptPlanCandidate();
 }
 function flowField40(box,label,type,value,onInput,attrs){var wrap=document.createElement('label');wrap.className='flow-field40';wrap.textContent=label;var input=document.createElement('input');input.type=type;input.value=value==null?'':value;Object.keys(attrs||{}).forEach(function(k){input.setAttribute(k,attrs[k])});input.oninput=function(){onInput(input.value);persistFlow40();flowError40('')};wrap.appendChild(input);box.appendChild(wrap);return input}
+function flowCustomMaterial40(body,w,list){
+  var form=document.createElement('form');form.className='flow-custom-material79';
+  var heading=document.createElement('h2');heading.textContent='独自教材を追加';
+  var label=document.createElement('label');label.textContent='教材名';
+  var input=document.createElement('input');input.type='text';input.maxLength=30;input.placeholder='例 学校のプリント・自作ノート';input.required=true;
+  label.appendChild(input);var add=document.createElement('button');add.type='submit';add.textContent='独自教材を追加';
+  form.append(heading,label,add);body.insertBefore(form,list);
+  form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var row=$('flowSubjects40').lastElementChild;row.scrollIntoView({block:'nearest'});row.querySelector('input[type=text]').focus()};
+  input.oninput=function(){input.setCustomValidity('');flowError40('')};
+}
 function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var body=$('flowBody40');body.innerHTML='';flowError40('');
   if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&key==='carry';
   $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length+' 問';StepIndicator.render($('flowStepsIndicator40'),steps,w.preview?steps.length-1:index);
@@ -3644,7 +3655,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var bo
   if(key==='goal'){title.textContent='目標を設定しよう';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
   }else if(key==='weekday'||key==='weekend'){var field=key==='weekday'?'wd':'we';title.textContent=(key==='weekday'?'平日':'休日')+'は1日どのくらい勉強しますか？';var output=document.createElement('output');output.className='flow-value40';output.textContent=hm(Number(c[field]));body.appendChild(output);var range=flowField40(body,'1日の勉強時間','range',c[field],function(v){c[field]=Number(v);output.textContent=hm(c[field]);range.setAttribute('aria-valuetext',hm(c[field]))},{min:0,max:16,step:.5,'aria-label':key==='weekday'?'平日の勉強時間':'休日の勉強時間'});range.setAttribute('aria-valuetext',hm(Number(c[field])));
-  }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';var list=document.createElement('div');list.id='flowSubjects40';body.appendChild(list);w.entries.forEach(function(e,i){var row=document.createElement('div');row.className='flow-subject40';var color=document.createElement('input');color.type='color';color.value=e.color;color.setAttribute('aria-label','科目'+(i+1)+'の色');color.oninput=function(){e.color=color.value;persistFlow40()};var name=document.createElement('input');name.type='text';name.value=e.name;name.maxLength=30;name.placeholder='科目・教材名';name.setAttribute('aria-label','科目'+(i+1)+'の名前');name.oninput=function(){e.name=name.value;persistFlow40();flowError40(duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]}))?'同じ名前の科目があります。':'')};name.onchange=function(){e.name=cleanSubject(e.name);name.value=e.name;persistFlow40()};var del=document.createElement('button');del.textContent='×';del.setAttribute('aria-label',(e.name||'科目')+'を削除');del.onclick=function(){w.entries=w.entries.filter(function(x){return x!==e});persistFlow40();renderFlow40()};row.append(color,name,del);list.appendChild(row);if(e.book&&window.BookCovers73){row.classList.add('flow-book-row');BookCovers73.attach(e.book,row)}});var searchBtn=v36Button(body,'⌕　参考書を検索',function(){openSubjectBookPicker(function(book){if(w.entries.some(e=>e.name===book.title)){flowError40('この教材は追加済みです。');return;}w.entries.push({key:rid(),name:book.title,book:{id:book.id,title:book.title,isbn:book.isbn,publisher:book.publisher},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();},function(){w.entries.push({key:rid(),name:'',weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var input=$('flowSubjects40').lastElementChild.querySelector('input[type=text]');if(input)input.focus()});});searchBtn.className='flow-book-search';searchBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>参考書を検索</span>';body.insertBefore(searchBtn,list);
+  }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';var list=document.createElement('div');list.id='flowSubjects40';body.appendChild(list);w.entries.forEach(function(e,i){var row=document.createElement('div');row.className='flow-subject40';var color=document.createElement('input');color.type='color';color.value=e.color;color.setAttribute('aria-label','科目'+(i+1)+'の色');color.oninput=function(){e.color=color.value;persistFlow40()};var name=document.createElement('input');name.type='text';name.value=e.name;name.maxLength=30;name.placeholder='科目・教材名';name.setAttribute('aria-label','科目'+(i+1)+'の名前');name.oninput=function(){e.name=name.value;persistFlow40();flowError40(duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]}))?'同じ名前の科目があります。':'')};name.onchange=function(){e.name=cleanSubject(e.name);name.value=e.name;persistFlow40()};var del=document.createElement('button');del.textContent='×';del.setAttribute('aria-label',(e.name||'科目')+'を削除');del.onclick=function(){w.entries=w.entries.filter(function(x){return x!==e});persistFlow40();renderFlow40()};row.append(color,name,del);list.appendChild(row);if(e.book&&window.BookCovers73){row.classList.add('flow-book-row');BookCovers73.attach(e.book,row)}});var searchBtn=v36Button(body,'⌕　参考書を検索',function(){openSubjectBookPicker(function(book){if(w.entries.some(e=>e.name===book.title)){flowError40('この教材は追加済みです。');return;}w.entries.push({key:rid(),name:book.title,book:{id:book.id,title:book.title,isbn:book.isbn,publisher:book.publisher},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();},function(){w.entries.push({key:rid(),name:'',weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var input=$('flowSubjects40').lastElementChild.querySelector('input[type=text]');if(input)input.focus()});});searchBtn.className='flow-book-search';searchBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>参考書を検索</span>';body.insertBefore(searchBtn,list);flowCustomMaterial40(body,w,list);
   }else if(key==='allocation'){
     title.textContent='科目・教材の優先度を選んでください';normalizeRatios53(w.entries);
     var rows=[];w.entries.forEach(function(e){
@@ -3666,6 +3677,7 @@ function openWeeklyFlow40(mode){
   var c=planConfig(),source=flowSource40(),saved=null;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){}
   var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0])}});
   if(saved&&saved.version===1&&saved.owner===dataOwner&&saved.source===source&&saved.mode===mode&&saved.config&&Array.isArray(saved.entries)&&saved.entries.every(function(e){return typeof e.name==='string'&&typeof e.key==='string'})){c=saved.config;entries=saved.entries}else saved=null;
+  if(mode==='rebuild'){c.goal=state.goal;c.exam=state.exam}
   closePlanDialogs();weeklyFlow40={owner:dataOwner,epoch:authEpoch,mode:mode,config:c,entries:entries,key:saved?saved.key:'',source:source,returnPage:goalBack!==null?goalBack:state.plan&&!state.weekSetupPending?3:6,preview:false,style:0};if(mode!=='goal'&&weeklyFlow40.key==='review')weeklyFlow40.key='carry';var steps=flowSteps40(weeklyFlow40);if(!steps.some(function(s){return s.key===weeklyFlow40.key}))weeklyFlow40.key=steps[0].key;
   flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();
 }
@@ -4352,5 +4364,6 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/page-swipe.js"></script>
 <script src="assets/motion-ui.js"></script>
 <script src="assets/inbox-sheet.js"></script>
+<script src="assets/header-slide.js"></script>
 </body>
 </html>

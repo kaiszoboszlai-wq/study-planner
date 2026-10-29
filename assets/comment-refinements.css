@@ -33,3 +33,30 @@ html body #mypage #loginRow69{padding:17px 22px}
 html body #planbox .day .addb{min-height:48px;color:var(--acc)}
 html body #longTermPlanner .lt-goal.lt-empty{padding:26px 24px}
 @media(max-width:360px){#weeklyFlow40 .flow-crumb40{font-size:.7rem}#weeklyFlow40 .flow-crumb40:not(:last-child):after{margin-inline:6px}html body #planbox #planSettingsOpen{padding-inline:10px}html body #planbox .plan-week-top{padding-right:111px}}
+
+/* Profile details: quiet gray canvas and solid white cards. */
+html:not([data-app-theme=black]) body:has(#mypage:not([hidden])),
+html:not([data-app-theme=black]) body main:has(#mypage:not([hidden])){--bg:#f2f2f7;background:#f2f2f7!important}
+html body #mypage{--profile-detail-card78:#fff;background:transparent}
+html[data-app-theme=black] body #mypage{--profile-detail-card78:#1c1c1e}
+html body #mypage :is(#myGoal62,.my-menu62,#loginRow69){background:var(--profile-detail-card78);border:0;border-radius:28px;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+html body #mypage #myGoal62{padding:24px;margin-bottom:24px}
+html body #mypage .my-menu62{overflow:hidden;margin-bottom:24px}
+html body #mypage .my-menu62 button{min-height:76px;padding:20px 24px;background:transparent;border-color:color-mix(in srgb,var(--ink) 7%,transparent)}
+html body #mypage .menu-icon62{background:transparent;color:var(--ink);width:32px;height:32px}
+html body #mypage .menu-icon62 svg{width:24px;height:24px}
+html body #mypage .menu-chevron62{color:color-mix(in srgb,var(--ink) 28%,transparent)}
+html body #mypage .my-account62{background:transparent;padding:0;box-shadow:none;border:0}
+html body #mypage #loginRow69{min-height:76px;padding:22px 24px}
+html body #mypage .my-profile62 #meAv{border-color:var(--bg)}
+html body #mypage #loginRow69{border-radius:28px!important}
+/* Keep profile detail frames flat, including nested menu buttons. */
+html body #mypage :is(#myGoal62,.my-menu62,#loginRow69,.my-menu62 button){box-shadow:none!important;filter:none!important;background-image:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:not([data-app-theme=black]) body #mypage :is(#myGoal62,.my-menu62,#loginRow69,.my-menu62 button){background-color:#fff!important}
+html body #mypage :is(#myGoal62,.my-menu62,#loginRow69)::before,
+html body #mypage :is(#myGoal62,.my-menu62,#loginRow69)::after{box-shadow:none!important;background-image:none!important}
+#weeklyFlow40 .flow-custom-material79{padding:18px;margin:16px 0 24px;background:var(--qa-card,var(--card));border:1px solid var(--line);border-radius:22px}
+#weeklyFlow40 .flow-custom-material79 h2{font-size:1rem;margin:0 0 16px}
+#weeklyFlow40 .flow-custom-material79 label{display:block;font-size:.85rem;color:var(--qa-muted,var(--sub))}
+#weeklyFlow40 .flow-custom-material79 input{display:block;width:100%;box-sizing:border-box;min-height:48px;margin:8px 0 14px;padding:12px 14px;font:inherit;font-size:1rem;border:1px solid var(--line);border-radius:14px;background:var(--qa-card,var(--card));color:var(--qa-ink,var(--ink))}
+#weeklyFlow40 .flow-custom-material79 button{min-height:44px;padding:10px 18px;background:var(--qa-selected,var(--accbg));color:var(--qa-ink,var(--ink));border:0;border-radius:16px;font-weight:650}

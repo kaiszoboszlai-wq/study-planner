@@ -21,15 +21,15 @@
 #pullRefresh72{position:fixed;z-index:45;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translate(-50%,calc(-80px + var(--pull-distance72,0px)));opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);box-shadow:0 3px 16px #00000010;font-size:.75rem;transition:opacity .15s;max-width:calc(100% - 32px)}
 #pullRefresh72.pull-visible72{opacity:1}
 #pullRefresh72 svg{width:19px;height:19px;flex:none;transform:rotate(var(--pull-rotation72,0deg))}
-#pullRefresh72.pull-busy72 svg{animation:pull-spin72 .8s linear infinite}
+#pullRefresh72.pull-busy72 svg{animation:pull-spin72 .55s linear infinite}
 .refresh-access72{position:fixed;left:50%;top:10px;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);z-index:46}
 .refresh-access72:focus-visible{width:auto;height:auto;clip-path:none;transform:translateX(-50%);padding:10px 18px;background:var(--card);color:var(--ink)}
 html.pull-active72,html.pull-active72 body{overscroll-behavior-y:contain}
-@keyframes pull-spin72{to{transform:rotate(360deg)}}
+@keyframes pull-spin72{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.async-shape72:after,.async-inline72,#pullRefresh72.pull-busy72 svg{animation:none}#pullRefresh72{transition:none}}
 
 #pullRefresh72{top:calc(env(safe-area-inset-top,0px) + 54px);width:24px;height:24px;padding:0;border:0;background:transparent;box-shadow:none;color:#8b9097;transform:translate(-50%,clamp(-30px,calc(var(--pull-distance72,0px) * .32 - 30px),5px));max-width:none}
 #pullRefresh72 svg{width:22px;height:22px}
-#pullRefresh72.pull-visible72 svg{animation:pull-spin72 .85s steps(8,end) infinite}
+#pullRefresh72.pull-visible72 svg{animation:pull-spin72 .55s linear infinite}
 .pull-shift72{translate:0 var(--pull-content72,0px)}
 @media(prefers-reduced-motion:reduce){#pullRefresh72.pull-visible72 svg{animation:none}}
