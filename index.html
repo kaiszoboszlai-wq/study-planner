@@ -676,6 +676,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/comment-refinements.css">
 <link rel="stylesheet" href="assets/motion-ui.css">
 <link rel="stylesheet" href="assets/inbox-sheet.css">
+<link rel="stylesheet" href="assets/app-announcements.css">
 <link rel="stylesheet" href="assets/header-slide.css">
 <link rel="stylesheet" href="assets/plan-materials.css">
 <link rel="stylesheet" href="assets/flow-materials.css">
@@ -2881,9 +2882,9 @@ async function openProfile(id,push){ // 他の人のプロフィール: アイ�
 var FBN={fol:0,fr:0,req:0,dm:0},listMode=null,FBSENT={};
 function paintCounts(){
   $("nFol").textContent=FBN.fol;$("nFr").textContent=FBN.fr;
-  var b=$("planeBdg"),n=FBN.req+FBN.dm;b.hidden=n<1;b.textContent=n>99?"99+":n;
+  var announcements=window.AppAnnouncements86?AppAnnouncements86.unread():0;var b=$("planeBdg"),n=FBN.req+FBN.dm+announcements;b.hidden=n<1;b.textContent=n>99?"99+":n;
   $("navBdg").hidden=true;
-  var tb=$("inboxTabs");tb.children[0].textContent="メッセージ"+(FBN.dm?"("+FBN.dm+")":"");tb.children[1].textContent="通知"+(FBN.req?"("+FBN.req+")":"");
+  var tb=$("inboxTabs");tb.children[0].textContent="メッセージ"+(FBN.dm?"("+FBN.dm+")":"");tb.children[1].textContent="通知"+((FBN.req+announcements)?"("+(FBN.req+announcements)+")":"");
 }
 async function fbPoll(){ // リクエストが来ているか、ときどき確認する
   if(!FB.uid||document.hidden)return;
@@ -2983,7 +2984,8 @@ function setInboxTab(t){openInbox(t)}
 async function renderInboxReq(){
   dmStop();inboxPaint(true);$("dmBack").hidden=true;$("dmForm").hidden=true;$("dmT").textContent="通知";
   var box=$("dmBody"),out=document.createElement("div");box.innerHTML='<div class="note">読み込み中…</div>';
-  box.replaceChildren(out);await fillReq(out);
+  box.replaceChildren(out);if(window.AppAnnouncements86)AppAnnouncements86.render(out);
+  if(!FB.uid)return;var requests=document.createElement("div");requests.id="inboxRequests86";out.appendChild(requests);var finish=window.AppLoading72?AppLoading72.start(requests,"list"):function(){};try{await fillReq(requests)}finally{finish()}
 }
 // ---- メッセージ(DM)。2人の組ごとに dm/(小さいuid_大きいuid) を作る。相手が読むと「既読」が出る ----
 function dmId(a,b){return a<b?a+"_"+b:b+"_"+a}
@@ -2999,6 +3001,7 @@ async function openDmList(){
   var uid=FB.uid,request=++dmListRequest;
   inboxTab="dm";dmStop();$("dmm").hidden=false;inboxPaint(true);$("dmBack").hidden=true;$("dmForm").hidden=true;$("dmT").textContent="メッセージ";
   var box=$("dmBody"),active=function(){return uid===FB.uid&&request===dmListRequest&&!dmCur&&!$("dmm").hidden&&inboxTab==="dm"};box.innerHTML='<div class="note">読み込み中…</div>';
+  if(!uid){box.innerHTML='<div class="note">メッセージを使うにはログインしてください。</div>';return}
   try{
     var cs=await fMem(uid);if(!active())return;
     cs.sort(function(a,b){return (b.data.updated||0)-(a.data.updated||0)});box.innerHTML="";
@@ -4405,6 +4408,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/refresh-ui.js"></script>
 
 <script src="assets/header-notifications.js"></script>
+<script src="assets/app-announcements.js"></script>
 <script src="assets/long-term-plan.js"></script>
 <script src="assets/long-term-plan-ui.js"></script>
 <script src="assets/page-swipe.js"></script>
