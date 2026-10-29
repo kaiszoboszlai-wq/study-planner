@@ -3599,6 +3599,22 @@ function priorityOptions59(select,weight){
   if(!priorityLevels59.some(function(item){return item[0]===Number(weight)})){var option=document.createElement('option');option.value=weight;option.textContent='';select.appendChild(option)}
   select.value=weight;
 }
+function quotaError85(error){return error&&(error.name==='QuotaExceededError'||error.name==='NS_ERROR_DOM_QUOTA_REACHED'||error.code===22||error.code===1014)}
+async function archiveLocalSnapshot85(key,value){
+  var db=await new Promise(function(resolve,reject){var request=indexedDB.open('studyplanner-local-recovery-v1',1);request.onupgradeneeded=function(){request.result.createObjectStore('snapshots',{keyPath:'id'})};request.onsuccess=function(){resolve(request.result)};request.onerror=function(){reject(request.error)};request.onblocked=function(){reject(new Error('バックアップ保存先を開けませんでした。'))}});
+  try{await new Promise(function(resolve,reject){var tx=db.transaction('snapshots','readwrite');tx.objectStore('snapshots').put({id:key+':'+Date.now()+':'+rid(),sourceKey:key,json:value,savedAt:Date.now()});tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error)};tx.onabort=function(){reject(tx.error||new Error('バックアップの保存が中断されました。'))}})}finally{db.close()}
+}
+async function savePlanReset85(owner,epoch,source){
+  var key=legacyUnclaimed?KEY+':legacy-backup':accountKey(dataOwner),error=null;
+  function attempt(){if(owner!==dataOwner||epoch!==authEpoch||source!==JSON.stringify(state.plan))return 'changed';var changes={plan:state.plan.map(function(d){return {date:d.date,h:0,blocks:[]}}),weekCarry:[],carryReview:null,pendingWeekReview:null,weekSetupPending:false,planCycleStart:fmtDate(new Date()),planDaySeen:fmtDate(new Date())};try{localStorage.setItem(key,JSON.stringify(Object.assign({},state,changes)));Object.assign(state,changes);saveHealth.localError=null;saveHealth.localSaved=true;return 'saved'}catch(e){error=e;return 'failed'}}
+  var result=attempt();if(result!=='failed')return {status:result};
+  if(quotaError85(error)&&window.indexedDB){
+    // Only move recovery snapshots after their IndexedDB transaction commits.
+    // Current account data, sync merge bases, other accounts and photos remain intact.
+    for(var suffix of [':before-sync',':sync-backup']){var backupKey=accountKey(owner)+suffix;try{var value=localStorage.getItem(backupKey);if(!value)continue;await archiveLocalSnapshot85(backupKey,value);if(owner!==dataOwner||epoch!==authEpoch)return {status:'changed'};if(localStorage.getItem(backupKey)===value)localStorage.removeItem(backupKey);result=attempt();if(result!=='failed')return {status:result}}catch(e){break}}
+  }
+  saveHealth.localError=error;return {status:'failed',error:error};
+}
 function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
   return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
@@ -3715,15 +3731,14 @@ function installWeeklyFlow40(){
     function begin(){deferFlow40(false);openWeeklyFlow40('rebuild')}
     if(!(state.plan||[]).some(function(d){return d.blocks.length})){begin();return}
     var owner=dataOwner,epoch=authEpoch,source=JSON.stringify(state.plan);
-    askConfirm('元の週間プランを削除しますか？','元の予定をすべて削除して、週間プランを最初から立て直します。目標・試験日・教材・学習記録は残ります。','削除して立て直す',function(){
+    askConfirm('元の週間プランを削除しますか？','元の予定をすべて削除して、週間プランを最初から立て直します。目標・試験日・教材・学習記録は残ります。','削除して立て直す',async function(){
       if(owner!==dataOwner||epoch!==authEpoch)return;
       if(source!==JSON.stringify(state.plan)){openPlanDraft();return}
       if(state.idleReview||checkIdleTimer()){showIdleReview();return}
       pauseTimer();closeTimer();
-      var previous={plan:state.plan,weekCarry:state.weekCarry,carryReview:state.carryReview,pendingWeekReview:state.pendingWeekReview,weekSetupPending:state.weekSetupPending,planCycleStart:state.planCycleStart,planDaySeen:state.planDaySeen};
-      state.plan=state.plan.map(function(d){return {date:d.date,h:0,blocks:[]}});
-      state.weekCarry=[];state.carryReview=null;state.pendingWeekReview=null;state.weekSetupPending=false;state.planCycleStart=fmtDate(new Date());state.planDaySeen=fmtDate(new Date());
-      if(!store()){Object.assign(state,previous);store();showTimerMessage('プランを削除できませんでした。','端末の空き容量を確認して、もう一度お試しください。');return}
+      var result=await savePlanReset85(owner,epoch,source);
+      if(result.status==='changed'){if(owner===dataOwner&&epoch===authEpoch)openPlanDraft();return}
+      if(result.status!=='saved'){var detail=quotaError85(result.error)?'端末内の保存容量が不足しています。元のプランと学習記録は残しています。':'ブラウザが端末内への保存を許可していません。元のプランと学習記録は残しています。';showTimerMessage('変更を保存できませんでした。',detail);return}
       leaveFlow40(true);timerUndoState=null;moveUndo36=null;save();renderPlan();begin();
     });
   };$('back3').onclick=openPlanDraft;
