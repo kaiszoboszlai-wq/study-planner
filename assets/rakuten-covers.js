@@ -12,15 +12,15 @@ function lookup(isbn,active){
  if(!book||book.isbn!==isbn||!allowed(book.cover,['thumbnail.image.rakuten.co.jp','image.books.rakuten.co.jp'])||!allowed(book.url,['hb.afl.rakuten.co.jp'])||!/^\/hgc\//.test(new URL(book.url).pathname))return null;recent.set(isbn,{book,until:Date.now()+60000});return book;});
  queue=work.then(()=>{},()=>{});inflight.set(isbn,{work,active});work.finally(()=>inflight.delete(isbn));return work;
 }
-window.RakutenCovers={async show(book,{active,img,figure,info,caption,fallback}){
+window.RakutenCovers={async show(book,{active,img,figure,info,caption,fallback,links:showLinks=true}){
  const provided=book.rakutenSales;const result=provided&&provided.isbn===book.isbn&&allowed(provided.url,['hb.afl.rakuten.co.jp'])&&/^\/hgc\//.test(new URL(provided.url).pathname)&&(!provided.cover||allowed(provided.cover,['thumbnail.image.rakuten.co.jp','image.books.rakuten.co.jp']))?provided:await lookup(book.isbn,active);if(!result||!active())return;
  // Keep the API-used book area free of links to other retailers/providers.
  const links=[...(info?.querySelectorAll(':scope > a')||[])],hidden=links.map(link=>link.hidden);
  function restore(){if(book.rakutenSales){fallback();caption.hidden=false;return;}links.forEach((link,i)=>{link.hidden=hidden[i];});fallback();}
  links.forEach(link=>{link.hidden=true;});
- caption.replaceChildren();const product=document.createElement('a');product.href=result.url;product.textContent='楽天ブックスで見る';product.target='_blank';product.rel='noopener noreferrer';caption.append(product,document.createElement('br'));
+ caption.replaceChildren();if(showLinks){const product=document.createElement('a');product.href=result.url;product.textContent='楽天ブックスで見る';product.target='_blank';product.rel='noopener noreferrer';caption.append(product,document.createElement('br'));}
  // Rakuten's required attribution snippet, unchanged.
- const credit=document.createElement('span');credit.innerHTML='<!-- Rakuten Web Services Attribution Snippet FROM HERE -->\n<a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>\n<!-- Rakuten Web Services Attribution Snippet TO HERE -->';caption.append(credit);
+ const credit=document.createElement('span');credit.innerHTML='<!-- Rakuten Web Services Attribution Snippet FROM HERE -->\n<a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>\n<!-- Rakuten Web Services Attribution Snippet TO HERE -->';if(!showLinks)credit.textContent='Supported by Rakuten Developers';caption.append(credit);
  if(!result.cover){fallback();caption.hidden=false;return;}img.onerror=restore;img.src=result.cover;img.alt=book.title+'の表紙';figure.dataset.coverKind='rakuten';caption.hidden=false;
 }};
 })();

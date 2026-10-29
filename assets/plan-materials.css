@@ -6,3 +6,5 @@
 body #today .has-material80 .today-subject{font-size:1rem;line-height:1.5}
 body #today .has-material80 .today-subject:before,body #planbox .has-material80>span:before{display:none}
 body #today .has-material80 .today-detail{margin-top:0;font-size:.8rem}
+.material-color-palette81{display:flex;flex-wrap:wrap;gap:4px;margin:-8px 0 18px}.material-color-palette81 button{display:grid;place-items:center;width:40px;height:44px;padding:7px;border:0;background:transparent;box-shadow:none;border-radius:12px}.material-color-palette81 button:before{content:'';display:block;width:26px;height:26px;border-radius:50%;background:var(--material-color81);border:2px solid var(--card);box-sizing:border-box}.material-color-palette81 button[aria-pressed=true]:before{outline:2px solid var(--material-color81);outline-offset:2px}.material-color-palette81 button:focus-visible{outline:2px solid var(--ink)}
+.plan-material-preview80 figure{display:inline-block;border-left:4px solid var(--material-color81,var(--acc));padding-left:12px}
