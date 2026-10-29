@@ -26,6 +26,7 @@
 </script>
 <script src="assets/step-indicator.js"></script>
 <script src="assets/subject-book-picker.js"></script>
+<script src="assets/flow-materials.js"></script>
 <title>StudyPlanner</title>
 <style>
 
@@ -677,6 +678,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/inbox-sheet.css">
 <link rel="stylesheet" href="assets/header-slide.css">
 <link rel="stylesheet" href="assets/plan-materials.css">
+<link rel="stylesheet" href="assets/flow-materials.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -3658,7 +3660,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var bo
   if(key==='goal'){title.textContent='目標を設定しよう';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
   }else if(key==='weekday'||key==='weekend'){var field=key==='weekday'?'wd':'we';title.textContent=(key==='weekday'?'平日':'休日')+'は1日どのくらい勉強しますか？';var output=document.createElement('output');output.className='flow-value40';output.textContent=hm(Number(c[field]));body.appendChild(output);var range=flowField40(body,'1日の勉強時間','range',c[field],function(v){c[field]=Number(v);output.textContent=hm(c[field]);range.setAttribute('aria-valuetext',hm(c[field]))},{min:0,max:16,step:.5,'aria-label':key==='weekday'?'平日の勉強時間':'休日の勉強時間'});range.setAttribute('aria-valuetext',hm(Number(c[field])));
-  }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';var list=document.createElement('div');list.id='flowSubjects40';body.appendChild(list);w.entries.forEach(function(e,i){var row=document.createElement('div');row.className='flow-subject40';var color=document.createElement('input');color.type='color';color.value=e.color;color.setAttribute('aria-label','科目'+(i+1)+'の色');color.oninput=function(){e.color=color.value;persistFlow40()};var name=document.createElement('input');name.type='text';name.value=e.name;name.maxLength=30;name.placeholder='科目・教材名';name.setAttribute('aria-label','科目'+(i+1)+'の名前');name.oninput=function(){e.name=name.value;persistFlow40();flowError40(duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]}))?'同じ名前の科目があります。':'')};name.onchange=function(){e.name=cleanSubject(e.name);name.value=e.name;persistFlow40()};var del=document.createElement('button');del.textContent='×';del.setAttribute('aria-label',(e.name||'科目')+'を削除');del.onclick=function(){w.entries=w.entries.filter(function(x){return x!==e});persistFlow40();renderFlow40()};row.append(color,name,del);list.appendChild(row);if(e.book&&window.BookCovers73){row.classList.add('flow-book-row');BookCovers73.attach(e.book,row,{links:false})}});var searchBtn=v36Button(body,'⌕　参考書を検索',function(){openSubjectBookPicker(function(book){if(w.entries.some(e=>e.name===book.title)){flowError40('この教材は追加済みです。');return;}w.entries.push({key:rid(),name:book.title,book:{id:book.id,title:book.title,isbn:book.isbn,publisher:book.publisher},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();},function(){w.entries.push({key:rid(),name:'',weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var input=$('flowSubjects40').lastElementChild.querySelector('input[type=text]');if(input)input.focus()});});searchBtn.className='flow-book-search';searchBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>参考書を検索</span>';body.insertBefore(searchBtn,list);flowCustomMaterial40(body,w,list);
+  }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';FlowMaterials83.render(body,w);
   }else if(key==='allocation'){
     title.textContent='科目・教材の優先度を選んでください';normalizeRatios53(w.entries);
     var rows=[];w.entries.forEach(function(e){

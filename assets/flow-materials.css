@@ -1,0 +1,19 @@
+#weeklyFlow40 #flowBody40{overflow-anchor:none}
+#weeklyFlow40 .flow-inline-search83{display:flex;align-items:center;gap:12px;min-height:52px;margin:0 0 16px;padding:0 16px;border:1px solid var(--line);border-radius:26px;background:var(--qa-card,var(--card));color:var(--qa-muted,var(--sub));box-sizing:border-box}
+#weeklyFlow40 .flow-inline-search83 svg{width:26px;height:26px;flex:none}
+#weeklyFlow40 .flow-inline-search83 input{display:block;min-width:0;flex:1;width:100%;min-height:50px;padding:10px 0;border:0!important;border-radius:0;background:transparent!important;box-shadow:none;font:inherit;font-size:1rem;color:var(--qa-ink,var(--ink))}
+#weeklyFlow40 .flow-inline-search83:focus-within{outline:2px solid var(--qa-accent,var(--acc));outline-offset:2px}
+#weeklyFlow40 .flow-search-results83{height:260px;max-height:35dvh;min-height:150px;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;margin:0 0 18px;padding:0 12px;border:1px solid var(--line);border-radius:18px;background:var(--qa-card,var(--card));scrollbar-width:thin}
+#weeklyFlow40 .flow-search-results83[hidden]{display:none!important}
+#weeklyFlow40 .flow-search-status83{font-size:.75rem;color:var(--qa-muted,var(--sub));margin:12px 0}
+#weeklyFlow40 .subject-picker-book{grid-template-columns:44px minmax(0,1fr) 44px;gap:10px}
+#weeklyFlow40 .subject-picker-book img{width:44px;height:62px}
+#weeklyFlow40 .subject-picker-book button{width:44px;min-height:44px;padding:6px;border:1px solid var(--line);border-radius:50%;background:var(--qa-card,var(--card));color:var(--qa-ink,var(--ink));font-size:1.25rem}
+#weeklyFlow40 .route-cover-credit73{display:none!important}
+#weeklyFlow40 .flow-subject40.flow-book-row{grid-template-columns:32px 48px minmax(0,1fr) 36px;gap:8px}
+#weeklyFlow40 .flow-subject40>input[type=color]{grid-column:1;width:32px;height:44px}
+#weeklyFlow40 .flow-subject40>.flow-cover83{grid-column:2;grid-row:1;display:block;min-width:0;width:48px;min-height:66px;margin:0;padding:2px;border:0;border-radius:8px;background:var(--qa-card,var(--card));cursor:pointer}
+#weeklyFlow40 .flow-cover83 figure{margin:0}#weeklyFlow40 .flow-cover83 img{display:block;width:44px;height:62px;object-fit:contain}
+#weeklyFlow40 .flow-subject40>.flow-remove83{grid-column:4;min-width:36px}
+#weeklyFlow40 .flow-cover83:focus-visible{outline:2px solid var(--qa-accent,var(--acc));outline-offset:2px}
+.flow-photo83 h2{font-size:1rem;overflow-wrap:anywhere}.flow-photo83>button{display:block;width:100%;margin:10px 0;min-height:48px}.flow-photo83 input[hidden]{display:none}
