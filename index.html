@@ -676,6 +676,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/motion-ui.css">
 <link rel="stylesheet" href="assets/inbox-sheet.css">
 <link rel="stylesheet" href="assets/header-slide.css">
+<link rel="stylesheet" href="assets/plan-materials.css">
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -1297,7 +1298,7 @@ function renderPlan(){
       b.querySelector(".sp").textContent=spText(id);
       b.querySelector(".item").onclick=function(){if(justDragged)return;openEdit(id,d)};
       bindDrag(b,id);
-      items.appendChild(b);
+      items.appendChild(b);if(window.PlanMaterials80)PlanMaterials80.attach(x,b.querySelector(".item"));
     });
     if(!day.blocks.length)items.insertAdjacentHTML("beforeend",'<div class="note">予定なし</div>');
     var ab=document.createElement("button");ab.className="addb";ab.textContent="＋ 項目を追加";
@@ -1745,6 +1746,7 @@ function saveEdit(){
     state.plan[nd].blocks.push({id:newId(),name:name,h:h,manual:true});
   }
   state.subjColors=state.subjColors||{};state.subjColors[name]=$("emcolor").value;
+  if(window.PlanMaterials80)PlanMaterials80.commit(edit,name);
   save();closeEdit();renderSubjects();renderPlan();
 }
 function deleteEdit(){
@@ -2190,7 +2192,7 @@ function renderToday(){
     c.querySelector("input").onchange=function(e){setDone(id,e.target.checked);renderPlan()};
     c.querySelector(".item").onclick=function(){openTimer(id)};
     c.querySelector(".play").onclick=function(){var was=running(id);toggleTimer(id);if(!was)openTimer(id)};
-    box.appendChild(c);
+    box.appendChild(c);if(window.PlanMaterials80)PlanMaterials80.attach(x,c.querySelector(".item"));
   });todayBar();
 }
 function todayBar(){
@@ -3524,9 +3526,10 @@ function validateBackup38(raw){
   function number(v,max){if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>max)throw new Error('時間・数値データの範囲が正しくありません。');return v}
   function date(v){if(!validDate38(v))throw new Error('日付データが正しくありません。');return v}
   function items(v){if(!Array.isArray(v)||v.length>100000)throw new Error('項目の形式が正しくありません。');return v}
+  function material(v){object(v);var b={title:text(v.title,200)};['id','isbn','publisher'].forEach(function(k){if(typeof v[k]==='string')b[k]=text(v[k],500)});if(v.custom)b.custom=true;if(v.customCover!=null){var cover=text(v.customCover,1000000);if(!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(cover))throw Error('表紙の写真が正しくありません。');b.customCover=cover}return b}
   function carry(v){return items(v||[]).map(function(x){object(x);var b={name:text(x.name,100),h:number(x.h,100000)};['sourceId','sourceDate','carryFrom'].forEach(function(k){if(x[k]!=null)b[k]=text(x[k],120)});if(x.selected!=null)b.selected=!!x.selected;return b})}
   function plan(v){if(v==null)return null;var ids=new Set();return items(v).map(function(d){object(d);var blocks=items(d.blocks).map(function(b){if(++count>100000)throw new Error('項目が多すぎます。');object(b);var next={id:text(b.id,120),name:text(b.name,100),h:number(b.h,100000)};if(ids.has(next.id))throw new Error('計画の項目IDが重複しています。');ids.add(next.id);['manual','carried','skipCarry'].forEach(function(k){if(b[k]!=null)next[k]=!!b[k]});['carryFrom','sourceId'].forEach(function(k){if(b[k]!=null)next[k]=text(b[k],120)});return next});return {date:date(d.date),blocks:blocks,h:blocks.reduce(function(n,b){return n+b.h},0),carryProcessed:!!d.carryProcessed}})}
-  out.subjects=items(src.subjects).map(function(s){if(!Array.isArray(s)||s.length<2)throw new Error('科目の形式が正しくありません。');return [cleanSubject(text(s[0],100)),number(Number(s[1]),7)||1]});if(duplicateSubject(out.subjects))throw new Error('科目名が重複しています。');
+  out.subjects=items(src.subjects).map(function(s){if(!Array.isArray(s)||s.length<2)throw new Error('科目の形式が正しくありません。');var row=[cleanSubject(text(s[0],100)),number(Number(s[1]),7)||1];if(s[2])row.push(material(s[2]));return row});if(duplicateSubject(out.subjects))throw new Error('科目名が重複しています。');
   ['goal','exam','start','planCycleStart','planDaySeen','pendingWeekReview'].forEach(function(k){if(src[k]!=null)out[k]=text(src[k],k==='goal'?200:120)});['exam','start','planCycleStart','planDaySeen'].forEach(function(k){if(out[k])date(out[k])});
   ['wd','we','tot','rwd','rwe','timerIdleMinutes','planStyle'].forEach(function(k){if(src[k]!=null)out[k]=number(Number(src[k]),k==='wd'||k==='we'?16:k==='timerIdleMinutes'?480:100000)});
   ['carry','weekSetupPending','legacyOff','hideCompleted'].forEach(function(k){if(src[k]!=null)out[k]=!!src[k]});out.carryDistribution=src.carryDistribution==='spread'?'spread':'next';
@@ -3601,7 +3604,7 @@ function flowSteps40(w){
 function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
 function flowError40(text){$('flowError40').textContent=text||'';if(text)$('flowError40').scrollIntoView({block:'nearest'})}
-function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return [cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
+function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return e.book?[cleanSubject(e.name),Number(e.weight),Object.assign({},e.book,{title:cleanSubject(e.name)})]:[cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
 function validateFlow40(key){
   var w=weeklyFlow40,c=w.config;if(w.owner!==dataOwner||w.epoch!==authEpoch){leaveFlow40(false);showPage(typeof state.page==='number'?state.page:6);return false}
   var error='';
@@ -3644,7 +3647,7 @@ function flowCustomMaterial40(body,w,list){
   var input=document.createElement('input');input.type='text';input.maxLength=30;input.placeholder='例 学校のプリント・自作ノート';input.required=true;
   label.appendChild(input);var add=document.createElement('button');add.type='submit';add.textContent='独自教材を追加';
   form.append(heading,label,add);body.insertBefore(form,list);
-  form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var row=$('flowSubjects40').lastElementChild;row.scrollIntoView({block:'nearest'});row.querySelector('input[type=text]').focus()};
+  form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,book:{id:rid(),title:name,custom:true},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var row=$('flowSubjects40').lastElementChild;row.scrollIntoView({block:'nearest'});row.querySelector('input[type=text]').focus()};
   input.oninput=function(){input.setCustomValidity('');flowError40('')};
 }
 function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var body=$('flowBody40');body.innerHTML='';flowError40('');
@@ -3675,7 +3678,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var bo
 function openWeeklyFlow40(mode){
   mode=mode||'weekly';if(weeklyFlow40&&weeklyFlow40.owner===dataOwner&&weeklyFlow40.epoch===authEpoch&&weeklyFlow40.source===flowSource40()&&weeklyFlow40.mode===mode){flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40();return}
   var c=planConfig(),source=flowSource40(),saved=null;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){}
-  var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0])}});
+  var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0]),book:s[2]||null}});
   if(saved&&saved.version===1&&saved.owner===dataOwner&&saved.source===source&&saved.mode===mode&&saved.config&&Array.isArray(saved.entries)&&saved.entries.every(function(e){return typeof e.name==='string'&&typeof e.key==='string'})){c=saved.config;entries=saved.entries}else saved=null;
   if(mode==='rebuild'){c.goal=state.goal;c.exam=state.exam}
   closePlanDialogs();weeklyFlow40={owner:dataOwner,epoch:authEpoch,mode:mode,config:c,entries:entries,key:saved?saved.key:'',source:source,returnPage:goalBack!==null?goalBack:state.plan&&!state.weekSetupPending?3:6,preview:false,style:0};if(mode!=='goal'&&weeklyFlow40.key==='review')weeklyFlow40.key='carry';var steps=flowSteps40(weeklyFlow40);if(!steps.some(function(s){return s.key===weeklyFlow40.key}))weeklyFlow40.key=steps[0].key;
@@ -4365,5 +4368,6 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/motion-ui.js"></script>
 <script src="assets/inbox-sheet.js"></script>
 <script src="assets/header-slide.js"></script>
+<script src="assets/plan-materials.js"></script>
 </body>
 </html>
