@@ -5,8 +5,8 @@ let catalogIndex;
 async function attach(block,item){
  const owner=dataOwner,epoch=authEpoch;let book=block.book||material(block.name);await Promise.resolve();if(owner!==dataOwner||epoch!==authEpoch)return;
  if(!book){if((DEFAULT_SUBJECTS||[]).some(s=>s[0]===block.name))return;try{const data=await loadSubjectBookCatalog80();if(!catalogIndex)catalogIndex=new Map(data.books.filter(b=>b.verified&&!b.excludedReason).map(b=>[b.title,b]));book=catalogIndex.get(block.name);}catch{return;}}
- if(!book||owner!==dataOwner||epoch!==authEpoch||!item.isConnected||item.querySelector('.plan-material-cover80'))return;
- const cover=document.createElement('span');cover.className='plan-material-cover80';item.prepend(cover);item.classList.add('has-material80');BookCovers73.attach(book,cover);
+ if(!book||owner!==dataOwner||epoch!==authEpoch||!item.isConnected||item.parentElement.querySelector('.plan-material-cover80'))return;
+ const cover=document.createElement('span');cover.className='plan-material-cover80';item.before(cover);item.classList.add('has-material80');BookCovers73.attach(book,cover);
 }
 const controls=document.createElement('section');controls.className='plan-material-controls80';controls.innerHTML='<div class="plan-material-actions80"><button type="button" data-search>教材を検索</button><button type="button" data-custom>独自教材を追加</button></div><div class="plan-material-preview80"></div><div class="plan-material-photos80" hidden><button type="button" data-camera>表紙を撮影</button><button type="button" data-photo>表紙の写真を選ぶ</button><input type="file" accept="image/*" capture="environment" data-camera-input hidden><input type="file" accept="image/*" data-photo-input hidden></div><p role="status"></p>';
 $('emname').closest('label').before(controls);

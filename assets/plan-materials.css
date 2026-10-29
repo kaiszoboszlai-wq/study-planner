@@ -1,8 +1,8 @@
 .plan-material-actions80,.plan-material-photos80{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.plan-material-controls80 [hidden]{display:none!important}.plan-material-controls80 button{min-height:44px;padding:10px 16px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}.plan-material-preview80:empty{display:none}.plan-material-preview80 figure{margin:12px 0}.plan-material-preview80 img{width:72px;height:96px;object-fit:contain}.plan-material-preview80 figcaption,.plan-material-controls80 p{font-size:.75rem;color:var(--sub)}
-#planbox .blk .item.has-material80,#today .tcard .item.has-material80{display:grid!important;grid-template-columns:48px minmax(0,1fr);column-gap:12px;align-content:center;text-align:left;min-width:0}
-#planbox .has-material80>span:not(.plan-material-cover80),#planbox .has-material80>small,#today .has-material80>span:not(.plan-material-cover80),#today .has-material80>small{grid-column:2;min-width:0;overflow-wrap:anywhere}
-.has-material80>.plan-material-cover80{grid-column:1;grid-row:1 / span 4;align-self:center;min-width:0}.plan-material-cover80 figure{margin:0!important}.plan-material-cover80 img{display:block;width:48px!important;height:66px!important;max-width:none;object-fit:contain;border-radius:4px}.plan-material-cover80 figcaption{font-size:8px;line-height:1.2;font-weight:400;overflow-wrap:anywhere}.plan-material-cover80 [hidden]{display:none!important}
-@media(max-width:360px){#today .tcard .item.has-material80{grid-template-columns:38px minmax(0,1fr);column-gap:8px}#today .plan-material-cover80 img{width:38px!important;height:53px!important}}
+#planbox .blk .item.has-material80,#today .tcard .item.has-material80{min-width:0;flex:1}
+.plan-material-cover80{display:block;flex:0 0 48px;min-width:0;align-self:center}
+.plan-material-cover80 figure{margin:0!important}.plan-material-cover80 img{display:block;width:48px!important;height:66px!important;max-width:none;object-fit:contain;border-radius:4px}.plan-material-cover80 figcaption{font-size:8px;line-height:1.2;font-weight:400;overflow-wrap:anywhere}.plan-material-cover80 [hidden]{display:none!important}
+@media(max-width:360px){#today .plan-material-cover80{flex-basis:38px}#today .plan-material-cover80 img{width:38px!important;height:53px!important}}
 body #today .has-material80 .today-subject{font-size:1rem;line-height:1.5}
 body #today .has-material80 .today-subject:before,body #planbox .has-material80>span:before{display:none}
 body #today .has-material80 .today-detail{margin-top:0;font-size:.8rem}
