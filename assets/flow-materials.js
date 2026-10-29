@@ -44,5 +44,10 @@ function render(body,w){
  rows();
 }
 addEventListener('DOMContentLoaded',()=>{const change=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner&&photoDialog)photoDialog.close();return change.apply(this,arguments);};},{once:true});
-window.FlowMaterials83={render};
+addEventListener('DOMContentLoaded',()=>{
+ const viewport=window.visualViewport;let baseHeight=viewport?.height||innerHeight,baseWidth=viewport?.width||innerWidth;
+ function updateKeyboard(){const root=document.getElementById('weeklyFlow40');if(!root)return;const height=viewport?.height||innerHeight,width=viewport?.width||innerWidth;if(Math.abs(width-baseWidth)>80){baseWidth=width;baseHeight=height;}else baseHeight=Math.max(baseHeight,height);const active=document.activeElement,typing=active&&root.contains(active)&&active.matches('textarea,input:not([type=range]):not([type=color]):not([type=file]):not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit])');root.classList.toggle('flow-keyboard84',!!(navigator.maxTouchPoints&&typing&&!root.hidden&&baseHeight-height>120));}
+ document.addEventListener('focusin',updateKeyboard);document.addEventListener('focusout',()=>setTimeout(updateKeyboard,0));viewport?.addEventListener('resize',updateKeyboard,{passive:true});addEventListener('resize',updateKeyboard,{passive:true});document.addEventListener('visibilitychange',updateKeyboard);
+},{once:true});
+window.FlowMaterials83={render,cover:attachCover};
 })();

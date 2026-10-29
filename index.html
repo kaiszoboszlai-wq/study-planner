@@ -3601,7 +3601,7 @@ function priorityOptions59(select,weight){
 }
 function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
-  return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry']:['goal','exam','weekday','weekend','subjects','allocation','carry']).map(function(key){return {key:key}});
+  return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
 }
 function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
@@ -3621,7 +3621,7 @@ function validateFlow40(key){
   flowError40(error);return !error;
 }
 function flowNext40(){var w=weeklyFlow40;if(!w||!validateFlow40(w.key))return;
-  if(w.key==='review'||(w.mode!=='goal'&&w.key==='carry')){if(w.mode==='goal'){state.goal=cleanSubject(w.config.goal);state.exam=w.config.exam;$('goal').value=state.goal;$('exam').value=state.exam;var to=w.returnPage;goalBack=null;save();countdown();leaveFlow40(true);showPage(to>=3?to:state.plan&&!state.weekSetupPending?3:6);return}if(prepareFlowCandidate40())adoptFlow40();return}
+  if(w.key==='review'||(w.mode!=='goal'&&w.key==='carry')){if(w.mode==='goal'){state.goal=cleanSubject(w.config.goal);state.exam=w.config.exam;$('goal').value=state.goal;$('exam').value=state.exam;var to=w.returnPage;goalBack=null;save();countdown();leaveFlow40(true);showPage(to>=3?to:state.plan&&!state.weekSetupPending?3:6);return}if(prepareFlowCandidate40()){w.key='plan';w.preview=true;persistFlow40();renderFlow40(true);}return}
   var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});w.key=steps[Math.min(index+1,steps.length-1)].key;persistFlow40();renderFlow40(true);
 }
 function flowBack40(){var w=weeklyFlow40;if(!w)return;if(w.preview){w.preview=false;flowCandidate40=null;w.key=w.mode==='goal'?'review':'carry';renderFlow40(true);return}var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index>0){w.key=steps[index-1].key;persistFlow40();renderFlow40(true)}}
@@ -3633,7 +3633,7 @@ function prepareFlowCandidate40(message){
   var carry=state.weekSetupPending&&c.carry?(state.weekCarry||[]):[];
   planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);
   var audit=allocationAudit(planCandidate,c);if(!planCandidate.length||!audit.ok){flowError40('設定時間を満たす計画を作れませんでした。時間と科目を確認してください。');return}
-  flowCandidate40={plan:planCandidate,owner:dataOwner,epoch:authEpoch,usedCarry:!!(state.weekSetupPending&&c.carry),source:planCandidateBase};w.preview=false;w.audit=audit;w.previewMessage=message||'';if(message){renderFlow40(true);flowError40(message)}return true;
+  flowCandidate40={plan:planCandidate,owner:dataOwner,epoch:authEpoch,usedCarry:!!(state.weekSetupPending&&c.carry),source:planCandidateBase};w.preview=w.key==='plan';w.audit=audit;w.previewMessage=message||'';if(message){renderFlow40(true);flowError40(message)}return true;
 }
 function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w||!candidate)return;if(candidate.owner!==dataOwner||candidate.epoch!==authEpoch){leaveFlow40(false);return}
   if(state.pendingWeekReview||state.carryReview){showPendingPlanReview();return}
@@ -3652,10 +3652,20 @@ function flowCustomMaterial40(body,w,list){
   form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,book:{id:rid(),title:name,custom:true},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var row=$('flowSubjects40').lastElementChild;row.scrollIntoView({block:'nearest'});row.querySelector('input[type=text]').focus()};
   input.oninput=function(){input.setCustomValidity('');flowError40('')};
 }
-function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var body=$('flowBody40');body.innerHTML='';flowError40('');
-  if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&key==='carry';
+function renderFlowPlan84(body,w,title){
+  title.textContent='プランを作成しました';title.className='flow-created-title84';
+  var badge=document.createElement('div');badge.className='flow-created-badge84';badge.setAttribute('aria-hidden','true');badge.innerHTML='<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30"/><path d="m18 32 10 10 19-21"/></svg>';title.before(badge);
+  var plan=flowCandidate40&&flowCandidate40.plan||[],total=document.createElement('p');total.className='flow-created-total84';total.textContent='週間合計 '+hm(plan.reduce(function(sum,d){return sum+d.blocks.reduce(function(n,b){return n+b.h},0)},0));body.appendChild(total);
+  var list=document.createElement('div');list.className='flow-plan-overview84';list.setAttribute('aria-label','作成した週間プランの一覧');body.appendChild(list);
+  plan.forEach(function(day,i){var card=document.createElement('section');card.className='flow-plan-day84';card.style.setProperty('--day-delay84',Math.min(i*45,270)+'ms');var head=document.createElement('h2');head.textContent=dayLabel(day.date);var hours=document.createElement('span');hours.textContent=hm(day.blocks.reduce(function(n,b){return n+b.h},0));head.appendChild(hours);card.appendChild(head);list.appendChild(card);
+    day.blocks.forEach(function(block){var entry=w.entries.find(function(e){return cleanSubject(e.name)===block.name}),row=document.createElement('div');row.className='flow-plan-block84';row.style.setProperty('--block-color84',entry?entry.color:colorOf(block.name));var cover=document.createElement('div');cover.className='flow-plan-cover84';var name=document.createElement('strong');name.textContent=block.name;var time=document.createElement('span');time.textContent=hm(block.h);row.append(cover,name,time);card.appendChild(row);FlowMaterials83.cover(Object.assign({},entry&&entry.book||{},{title:block.name}),cover);});
+    if(!day.blocks.length){var empty=document.createElement('p');empty.textContent='予定なし';card.appendChild(empty);}
+  });
+}
+function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.key==='plan'&&w.mode!=='goal'){if(!flowCandidate40){if(!prepareFlowCandidate40()){if(w.key==='plan')w.key='carry';}else w.preview=true;}else w.preview=true;}var body=$('flowBody40');body.innerHTML='';body.classList.toggle('flow-subjects-fixed84',w.key==='subjects');flowError40('');
+  if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&(key==='carry'||key==='plan');
   $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length+' 問';StepIndicator.render($('flowStepsIndicator40'),steps,w.preview?steps.length-1:index);
-  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.preview?'この計画で始める':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
+  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.preview?'このプランで始める':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
   var title=document.createElement('h1');title.id='flowTitle40';title.tabIndex=-1;body.appendChild(title);
   if(key==='goal'){title.textContent='目標を設定しよう';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
@@ -3673,6 +3683,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;var bo
     });
     v36Button(body,'均等に分ける',function(){w.entries.forEach(function(e,i){e.weight=1;rows[i].value=1});persistFlow40()});
   }else if(key==='carry'){title.textContent='その日のうちに終わらなかった教科を自動で別の日に繰り越しますか？';[['繰り越す',true],['繰り越さない',false]].forEach(function(option){var b=v36Button(body,option[0],function(){c.carry=option[1];persistFlow40();renderFlow40()});b.className='flow-choice40'+(c.carry===option[1]?' selected':'');b.setAttribute('aria-pressed',c.carry===option[1]?'true':'false')});
+  }else if(key==='plan'){renderFlowPlan84(body,w,title);
   }else if(key==='review'){title.textContent='この目標に変更しますか？';v36Text(body,'目標：'+c.goal);v36Text(body,'試験日：'+c.exam)}
 
   if(focus){body.scrollTop=0;if(flowKeyboard40)title.focus({preventScroll:true});if($('flowAnnouncement40'))$('flowAnnouncement40').textContent=title.textContent}

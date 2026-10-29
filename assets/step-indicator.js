@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const labels={goal:'目標',exam:'試験',review:'確認',weekday:'平日',weekend:'休日',subjects:'科目',allocation:'配分',carry:'繰り越し',category:'試験',date:'試験日',subject:'科目',unit:'分野',purpose:'目的',owned:'所持教材',faculty:'学部',department:'学科',method:'入試方式',start:'開始',end:'終了'};
+const labels={goal:'目標',exam:'試験',review:'確認',weekday:'平日',weekend:'休日',subjects:'科目',allocation:'配分',carry:'繰り越し',plan:'プラン',category:'試験',date:'試験日',subject:'科目',unit:'分野',purpose:'目的',owned:'所持教材',faculty:'学部',department:'学科',method:'入試方式',start:'開始',end:'終了'};
 const crumbStates=new WeakMap(),reduce=matchMedia('(prefers-reduced-motion: reduce)');
 function renderBreadcrumb(host,items,current){
  let state=crumbStates.get(host);if(!state){const list=document.createElement('ol');list.className='flow-breadcrumbs40';list.setAttribute('aria-label','設定のパンくずリスト');host.replaceChildren(list);host.setAttribute('role','navigation');host.setAttribute('aria-label','プラン設定の進行状況');state={list,animations:new Set(),nodes:new Map(),frame:0};crumbStates.set(host,state);}
