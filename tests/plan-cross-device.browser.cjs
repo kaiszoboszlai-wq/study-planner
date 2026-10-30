@@ -22,7 +22,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await pages[1].evaluate(()=>state.bookRoutes?.[0]?.books?.[0]?.customCover),photo,'first sync must restore the photo even with a later local timestamp');
  assert.equal(await pages[1].evaluate(()=>state.longTermPlan.blocks[0].bookId),'book-photo');
  assert.equal(cloud.data,photoSnapshot.data,'initial read must not replace the populated cloud with empty local plans');
- assert(await pages[1].locator('#appSyncStatus').isVisible());
+ assert(await pages[1].locator('#appSyncStatus').count());
  assert.equal(await pages[1].locator('.lt-bar-cover img').first().getAttribute('src'),photo);
  // A legacy cloud snapshot without a weekly plan must not block all other sync.
  cloud={...photoSnapshot,data:JSON.stringify({...JSON.parse(photoSnapshot.data),plan:null,longTermPlan:{...JSON.parse(photoSnapshot.data).longTermPlan,goal:{...JSON.parse(photoSnapshot.data).longTermPlan.goal,declaration:'クラウドの更新'}}})};
@@ -34,8 +34,17 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const legacy=JSON.parse(cloud.data);delete legacy.bookRoutes;delete legacy.longTermPlan;cloud={...cloud,data:JSON.stringify(legacy)};
  await pages[0].evaluate(()=>syncPull());assert.equal(await pages[0].evaluate(()=>state.bookRoutes[0].books[0].customCover),photo);
  await pages[0].evaluate(()=>syncPull());assert.equal(JSON.parse(cloud.data).bookRoutes[0].books[0].customCover,photo);
- for(const width of [360,1280]){await pages[1].setViewportSize({width,height:800});for(const tab of ['#navMy','#navRank54','#navToday']){await pages[1].locator(tab).click();const button=pages[1].locator('#appSyncButton');assert(await button.isVisible(),tab+' must expose sync');const rect=await button.boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width&&rect.y>=0&&rect.y+rect.height<800,tab+' sync button must fit the viewport');}}
+ for(const width of [360,1280]){await pages[1].setViewportSize({width,height:800});await pages[1].locator('#navMy').click();const button=pages[1].locator('.my-account62 #appSyncButton');await button.scrollIntoViewIfNeeded();assert(await button.isVisible());const rect=await button.boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width);for(const tab of ['#navRank54','#navToday']){await pages[1].locator(tab).click();assert.equal(await pages[1].locator('#appSyncButton').isVisible(),false);}}
+ await pages[1].locator('#navMy').click();
  await pages[1].evaluate(()=>{window.manualReadCount=0;const read=fGet;fGet=(...args)=>{manualReadCount++;return read(...args)};});
  await pages[1].locator('#appSyncButton').click();assert(await pages[1].evaluate(()=>manualReadCount>0),'visible button must actually fetch cloud data');
- assert.deepEqual(errors,[]);console.log('PASS photo sync and recovery; global sync button visible on mobile/desktop navigation and fetches cloud data');
+ // Reproduce Firestore's document limit with real JPEGs, not placeholder strings.
+ const large=await pages[0].evaluate(async()=>{const c=document.createElement('canvas');c.width=600;c.height=800;const ctx=c.getContext('2d'),pixels=ctx.createImageData(600,800);let seed=7;for(let i=0;i<pixels.data.length;i+=4){for(let j=0;j<3;j++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;pixels.data[i+j]=seed>>>24;}pixels.data[i+3]=255;}ctx.putImageData(pixels,0,0);const photo=c.toDataURL('image/jpeg',.95);state.bookRoutes[0].books=Array.from({length:4},(_,i)=>({id:'large-'+i,title:'写真付き教材'+i,subject:'数学',customCover:photo}));save();clearTimeout(syncTimer);const before=new TextEncoder().encode(syncData()).length;await syncPull();return {before,after:new TextEncoder().encode(syncData()).length,error:saveHealth.cloudError?.message,original:photo};});
+ assert(large.before>1048576);assert(large.after<900000,large.error);assert.equal(new TextEncoder().encode(cloud.data).length,large.after);
+ assert(await pages[0].evaluate(async original=>{const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('studyplanner-account-storage-v1');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});try{const rows=await new Promise((resolve,reject)=>{const r=db.transaction('backups').objectStore('backups').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return rows.some(r=>r.sourceKey.endsWith(':original-photos')&&JSON.parse(r.json).bookRoutes[0].books[0].customCover===original);}finally{db.close()}},large.original),'original photo must be durably backed up');
+ await pages[1].evaluate(()=>syncPull());assert.equal(await pages[1].evaluate(()=>state.bookRoutes[0].books.length),4);const compressed=cloud.data;await pages[0].evaluate(()=>syncPull());assert.equal(cloud.data,compressed);
+ // Failed original-photo backup must prevent upload and leave the source unchanged.
+ await pages[0].evaluate(async original=>{state.bookRoutes[0].books.forEach(b=>b.customCover=original);const before=syncData(),backup=AccountStorage88.backupDurable;AccountStorage88.backupDurable=async()=>{throw new Error('backup unavailable')};await syncPush();AccountStorage88.backupDurable=backup;if(syncData()!==before)throw new Error('original modified on backup failure');},large.original);assert.equal(cloud.data,compressed);
+ console.log('Photo payload bytes:',large.before,'->',large.after);
+ assert.deepEqual(errors,[]);console.log('PASS photo compression, durable originals, second-device sync, backup failure protection, account sync card and button');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

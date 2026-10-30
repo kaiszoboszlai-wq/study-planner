@@ -25,7 +25,7 @@
 })();
 </script>
 <link rel="stylesheet" href="assets/account-storage.css">
-<script src="assets/account-storage.js"></script>
+<script src="assets/account-storage.js?v=photo-sync-20261030"></script>
 <script src="assets/step-indicator.js"></script>
 <script src="assets/subject-book-picker.js"></script>
 <script src="assets/flow-materials.js"></script>
@@ -710,10 +710,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <button class="nv" id="navMy"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>マイページ</span><i class="nbdg" id="navBdg" hidden></i></button>
 </nav>
 <main>
-<div id="appSyncPanel" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 20px;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card)">
-<span id="appSyncStatus" role="status" style="font-size:.75rem;overflow-wrap:anywhere">同期状態を確認中</span>
-<button id="appSyncButton" type="button" onclick="manualAppSync()" style="flex:none;min-height:44px">今すぐ同期</button>
-</div>
+
 <div class="sp-top" hidden aria-hidden="true" inert>
 <button class="plane" id="planeBtn" aria-label="メッセージと通知" hidden><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="bdg" id="planeBdg" hidden></span></button>
 <div class="sp-brand">study planner</div>
@@ -817,6 +814,10 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <button id="myGradesOpen" class="my-grades-card" type="button"><span>模試・テストの成績</span><span aria-hidden="true">›</span></button>
 <h3 class="sh">アカウント</h3>
 <p class="note" id="settingsSyncStatus" hidden></p>
+<div id="appSyncPanel" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 0;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card)">
+<div><strong style="display:block;font-size:.85rem;margin-bottom:5px">データの同期</strong><span id="appSyncStatus" role="status" style="font-size:.75rem;overflow-wrap:anywhere">同期状態を確認中</span></div>
+<button id="appSyncButton" type="button" onclick="manualAppSync()" style="flex:none;min-height:44px">今すぐ同期</button>
+</div>
 <p class="note" id="fbOff" hidden></p>
 <div id="fbSetup" hidden>
 <p class="note">Googleでログインするには、Firebaseの設定が必要です。Firebaseの画面に出る「firebaseConfig」の中身を、ここに貼り付けてください(パスワードではない、公開しても問題のない設定です)。</p>
@@ -2621,6 +2622,26 @@ function followerProfileDetails(prof,shared,data){
 }
 // ---- 別の端末との同期: 自分だけが読み書きできる privateData/(自分のuid) に、データを丸ごと預ける ----
 var syncTimer=null,syncSig="",syncFlight=null,syncPullFlight=null;
+async function compactSyncPhotos(data){
+  var limit=900000,bytes=function(s){return new TextEncoder().encode(s).length};
+  if(bytes(data)<=limit)return data;
+  var copy=JSON.parse(data),photos=[];
+  function scan(value){if(!value||typeof value!=='object')return;Object.keys(value).forEach(function(k){var v=value[k];if(['customCover','photo','photoS'].indexOf(k)>=0&&typeof v==='string'&&/^data:image\//.test(v))photos.push({parent:value,key:k,original:v});else if(v&&typeof v==='object')scan(v)})}scan(copy);
+  var originals=new Map();
+  for(var tier of [[450,600,.65],[320,430,.6],[220,300,.55],[150,200,.5],[100,140,.45]]){
+    var encoded=new Map();
+    for(var photo of photos){
+      if(!encoded.has(photo.original)){
+        var im=originals.get(photo.original);
+        if(!im){im=new Image();im.src=photo.original;try{await im.decode()}catch(e){throw new Error('写真を読み込めないため同期を中止しました。元の写真は変更していません。')}originals.set(photo.original,im)}
+        var scale=Math.min(1,tier[0]/im.naturalWidth,tier[1]/im.naturalHeight),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(im.naturalWidth*scale));canvas.height=Math.max(1,Math.round(im.naturalHeight*scale));var ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0,canvas.width,canvas.height);var reduced=canvas.toDataURL('image/jpeg',tier[2]);encoded.set(photo.original,reduced.length<photo.original.length?reduced:photo.original);
+      }
+      photo.parent[photo.key]=encoded.get(photo.original);
+    }
+    var result=JSON.stringify(copy);if(bytes(result)<=limit)return result;
+  }
+  throw new Error('写真を縮小しても保存容量を超えています。元データは変更していません。');
+}
 function isBlank(){return !state.plan&&!(state.goal||"").trim()&&!Object.keys(state.log||{}).length&&!(state.exams||[]).length} // まだ何も入れていない端末は、預けない(別の端末のデータを上書きしないため)
 function syncSchedule(){if(!ownsCurrentData(FB.uid))return;if(syncData()===syncSig||isBlank())return;saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus();if(!FB.syncReady)return;clearTimeout(syncTimer);syncTimer=setTimeout(syncPull,4000)}
 async function syncPush(){
@@ -2631,7 +2652,18 @@ async function syncPush(){
   if(!state.dataAt){state.dataAt=Date.now();store()}var dataAt=state.dataAt;
   saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus();
   var flight={uid:uid,epoch:epoch,promise:null};syncFlight=flight;
-  flight.promise=(async function(){try{await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});if(ownsCurrentData(uid)&&epoch===authEpoch){syncSig=d;rememberSyncBase(d);saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus()}}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null;if(ownsCurrentData(uid)&&epoch===authEpoch&&!saveHealth.cloudError&&!saveHealth.pending&&state.pendingTimerRelease)setTimeout(function(){if(ownsCurrentData(uid)&&state.pendingTimerRelease&&!timerReleaseTask)releaseTimerLease(state.pendingTimerRelease)},0)}})();
+  flight.promise=(async function(){try{
+    var original=d;d=await compactSyncPhotos(d);
+    if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
+    if(d!==original)await AccountStorage88.backupDurable(accountKey(uid)+':original-photos',JSON.parse(original));
+    if(!ownsCurrentData(uid)||epoch!==authEpoch)return;
+    if(syncData()!==original){syncSchedule();return}
+    await fSet("privateData/"+uid,{data:d,dataAt:dataAt,saved:Date.now()});
+    if(ownsCurrentData(uid)&&epoch===authEpoch){
+      if(d!==original&&syncData()===original){var compact=JSON.parse(d);Object.keys(compact).forEach(function(k){state[k]=compact[k]});lastData=d;store();if(window.LongTermPlannerUI)LongTermPlannerUI.render()}
+      syncSig=d;rememberSyncBase(d);saveHealth.cloudError=null;saveHealth.pending=syncData()!==d;saveHealth.synced=!saveHealth.pending;if(saveHealth.pending)syncSchedule();paintSaveStatus();
+    }
+  }catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;saveHealth.pending=true;paintSaveStatus()}}finally{if(syncFlight===flight)syncFlight=null;if(ownsCurrentData(uid)&&epoch===authEpoch&&!saveHealth.cloudError&&!saveHealth.pending&&state.pendingTimerRelease)setTimeout(function(){if(ownsCurrentData(uid)&&state.pendingTimerRelease&&!timerReleaseTask)releaseTimerLease(state.pendingTimerRelease)},0)}})();
   return flight.promise;
 }
 function rememberSyncBase(data){try{localStorage.setItem(accountKey(dataOwner)+":sync-base",data)}catch(e){}}
@@ -3863,7 +3895,7 @@ function installPageDesign62(){
   menuContent(grades,'<path d="M4 20V4M4 20h16M7 15l4-4 3 3 5-6"/>','模試・テストの成績');
   var friend=document.createElement('button');friend.id='myFriends62';friend.type='button';menuContent(friend,'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M19 8v6M16 11h6"/>','友達を追加');friend.onclick=openFriend;
   var settings=document.createElement('button');settings.id='mySettings62';settings.type='button';menuContent(settings,'<circle cx="12" cy="12" r="3"/><path d="M9 3h6l1 4 4 2v6l-4 2-1 4H9l-1-4-4-2V9l4-2z"/>','プロフィール・設定');settings.onclick=function(){$('settingsBtn').click()};menu.append(friend,settings);
-  var account=document.createElement('div');account.className='card62 my-account62';var accountTitle=$('settingsSyncStatus').previousElementSibling;accountTitle.className='section-heading62';accountTitle.after(account);var accountHead=document.createElement('div');accountHead.className='my-account-heading62';accountHead.innerHTML='<span class="google62" aria-hidden="true">G</span><span>Googleアカウント</span><span id="myAccountState62"></span>';account.appendChild(accountHead);['settingsSyncStatus','fbOff','fbSetup','fbOutBox','fbOn'].forEach(function(id){account.appendChild($(id))});
+  var account=document.createElement('div');account.className='card62 my-account62';var accountTitle=$('settingsSyncStatus').previousElementSibling;accountTitle.className='section-heading62';accountTitle.after(account);var accountHead=document.createElement('div');accountHead.className='my-account-heading62';accountHead.innerHTML='<span class="google62" aria-hidden="true">G</span><span>Googleアカウント</span><span id="myAccountState62"></span>';account.appendChild(accountHead);['settingsSyncStatus','appSyncPanel','fbOff','fbSetup','fbOutBox','fbOn'].forEach(function(id){account.appendChild($(id))});
   var stats=renderStats;renderStats=function(){stats();renderRecentDesign62()};var live=updateStatsLive;updateStatsLive=function(){live();if(state.page===4)renderRecentDesign62()};
   var my=renderMy;renderMy=function(){my();renderGoalDesign62()};var oldGoal=showGoal;showGoal=function(){oldGoal();renderGoalDesign62()};
   renderGoalDesign62();renderRecentDesign62();
