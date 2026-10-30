@@ -1,6 +1,5 @@
 (function(){'use strict';const P=LongTermPlan,by=id=>document.getElementById(id),page=by('bookRoutePage');if(!page)return;
 const root=document.createElement('div');root.id='longTermPlanner';page.prepend(root);let filter='全科目',dialog=null,refreshDate='',layoutWidth=0,layoutFrame=0,calendarFull=false,calendarZoom=1;
-const syncPanel=document.createElement('div');syncPanel.className='lt-sync-panel';const syncStatus=document.createElement('p');syncStatus.id='planSyncStatus';syncStatus.className='lt-muted';const syncButton=document.createElement('button');syncButton.type='button';syncButton.textContent='今すぐ同期';syncPanel.append(syncStatus,syncButton);page.insertBefore(syncPanel,root);syncButton.onclick=async()=>{syncButton.disabled=true;try{await syncRefresh();}catch(e){saveHealth.cloudError=e;}finally{syncButton.disabled=false;paintSaveStatus();}};paintSaveStatus();
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 function node(tag,text,parent,cls){const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;if(parent)parent.append(n);return n;}
 function button(text,parent,click,cls){const b=node('button',text,parent,cls);b.type='button';b.onclick=click;return b;}

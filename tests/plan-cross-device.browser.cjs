@@ -22,7 +22,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await pages[1].evaluate(()=>state.bookRoutes?.[0]?.books?.[0]?.customCover),photo,'first sync must restore the photo even with a later local timestamp');
  assert.equal(await pages[1].evaluate(()=>state.longTermPlan.blocks[0].bookId),'book-photo');
  assert.equal(cloud.data,photoSnapshot.data,'initial read must not replace the populated cloud with empty local plans');
- assert(await pages[1].locator('#planSyncStatus').isVisible());
+ assert(await pages[1].locator('#appSyncStatus').isVisible());
  assert.equal(await pages[1].locator('.lt-bar-cover img').first().getAttribute('src'),photo);
  // A legacy cloud snapshot without a weekly plan must not block all other sync.
  cloud={...photoSnapshot,data:JSON.stringify({...JSON.parse(photoSnapshot.data),plan:null,longTermPlan:{...JSON.parse(photoSnapshot.data).longTermPlan,goal:{...JSON.parse(photoSnapshot.data).longTermPlan.goal,declaration:'クラウドの更新'}}})};
@@ -34,5 +34,8 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  const legacy=JSON.parse(cloud.data);delete legacy.bookRoutes;delete legacy.longTermPlan;cloud={...cloud,data:JSON.stringify(legacy)};
  await pages[0].evaluate(()=>syncPull());assert.equal(await pages[0].evaluate(()=>state.bookRoutes[0].books[0].customCover),photo);
  await pages[0].evaluate(()=>syncPull());assert.equal(JSON.parse(cloud.data).bookRoutes[0].books[0].customCover,photo);
- assert.deepEqual(errors,[]);console.log('PASS isolated devices: first-login photo/books, later clocks, empty legacy weekly plan, UI image rendering, merged upload, recovery from omitted library');
+ for(const width of [360,1280]){await pages[1].setViewportSize({width,height:800});for(const tab of ['#navMy','#navRank54','#navToday']){await pages[1].locator(tab).click();const button=pages[1].locator('#appSyncButton');assert(await button.isVisible(),tab+' must expose sync');const rect=await button.boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width&&rect.y>=0&&rect.y+rect.height<800,tab+' sync button must fit the viewport');}}
+ await pages[1].evaluate(()=>{window.manualReadCount=0;const read=fGet;fGet=(...args)=>{manualReadCount++;return read(...args)};});
+ await pages[1].locator('#appSyncButton').click();assert(await pages[1].evaluate(()=>manualReadCount>0),'visible button must actually fetch cloud data');
+ assert.deepEqual(errors,[]);console.log('PASS photo sync and recovery; global sync button visible on mobile/desktop navigation and fetches cloud data');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
