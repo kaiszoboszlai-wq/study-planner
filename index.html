@@ -2618,6 +2618,18 @@ async function syncPush(){
   return flight.promise;
 }
 function rememberSyncBase(data){try{localStorage.setItem(accountKey(dataOwner)+":sync-base",data)}catch(e){}}
+function sharedSyncBase(){
+  if(syncSig)return syncSig;
+  try{return localStorage.getItem(accountKey(dataOwner)+':sync-base')||null}catch(e){return null}
+}
+function remoteSyncChanged(r,before,needsCloud){
+  if(!r||typeof r.data!=='string'||r.data===before)return false;
+  if(needsCloud||isBlank())return true;
+  var base=sharedSyncBase();
+  // A phone and a PC need not have the same clock. Compare against the last shared data.
+  if(base!==null)return r.data!==base;
+  return (Number(r.dataAt)||0)>(state.dataAt||0);
+}
 function protectSyncedPlan(remote){
   var current=state.plan,hasCurrent=Array.isArray(current)&&current.some(function(d){return d.blocks&&d.blocks.length});
   if(remote.plan!=null&&(!Array.isArray(remote.plan)||remote.plan.some(function(d){return !d||typeof d.date!=='string'||!Array.isArray(d.blocks)})))throw new Error('クラウドのプラン形式が正しくありません。');
@@ -2678,7 +2690,7 @@ function syncApply(r){
     saveHealth.localError=null;saveHealth.cloudError=null;saveHealth.pending=lastData!==syncSig;saveHealth.synced=!saveHealth.pending;
     timerUndoState=null;mrSig='';
     closePlanDialogs();fillWeeklySetup();countdown();renderSubjects();renderPlan();
-    showPage(typeof state.page==='number'?state.page:6);paintSaveStatus();return true;
+    showPage(typeof state.page==='number'?state.page:6);paintSaveStatus();if(saveHealth.pending)syncSchedule();return true;
   }catch(e){saveHealth.localError=e;paintSaveStatus();return false}
 }
 async function syncPull(){
@@ -2700,7 +2712,7 @@ async function syncPullOnce(){
     syncSig=before;rememberSyncBase(before);state.dataAt=Math.max(Number(r.dataAt)||0,state.dataAt||0);store();
     saveHealth.cloudError=null;saveHealth.pending=false;saveHealth.synced=true;paintSaveStatus();return;
   }
-  if(r&&typeof r.data==="string"&&(Number(r.dataAt)||0)>(state.dataAt||0)){
+  if(remoteSyncChanged(r,before,false)){
     // Preserve unsent local work before accepting the newer cloud snapshot.
     if(before!==syncSig&&!isBlank()){
       try{localStorage.setItem(accountKey(uid)+":sync-backup",JSON.stringify(state))}
@@ -2718,7 +2730,7 @@ async function syncStart(){if(!AccountStorage88.hydrated)await AccountStorage88.
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return false;
   if(syncData()!==before){saveHealth.cloudError={code:"sync-local-edit"};paintSaveStatus();return false}
   var needsCloud=accountNeedsCloud;accountNeedsCloud=false;
-  if(r&&typeof r.data==="string"&&(needsCloud||(isBlank()&&r.data!==syncData())||(Number(r.dataAt)||0)>(state.dataAt||0))){if(syncApply(r))return true;return false}
+  if(remoteSyncChanged(r,before,needsCloud)){if(syncApply(r))return true;return false}
   FB.syncReady=true;saveHealth.cloudError=null;
   if(r&&r.data===syncData()){syncSig=syncData();rememberSyncBase(syncSig);saveHealth.pending=false;saveHealth.synced=true}else if(isBlank()){saveHealth.pending=false;saveHealth.synced=false}
   paintSaveStatus();await syncPush();
@@ -2729,7 +2741,7 @@ async function syncRefresh(){
   if(syncRefreshFlight)return syncRefreshFlight;
   // Do not reload over an active timer, a dialog, or an unfinished form edit.
   if(FB.syncReady&&(state.timer||state.idleReview||state.pendingTimerRelease||
-    document.querySelector('[role="dialog"]:not([hidden])')||
+    document.querySelector('[role="dialog"]:not([hidden]), dialog[open]')||
     /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement&&document.activeElement.tagName)))return;
   var task=(async function(){if(!FB.syncReady)await fbOnAuth();else await syncPull()})();
   syncRefreshFlight=task;
