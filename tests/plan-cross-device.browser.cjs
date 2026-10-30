@@ -30,5 +30,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  assert.equal(await pages[0].evaluate(()=>state.longTermPlan.goal.declaration),'クラウドの更新');
  assert.equal(await pages[0].evaluate(()=>state.plan[0].blocks[0].id),'phone-math');
  await pages[0].evaluate(()=>syncPull());assert.equal(JSON.parse(cloud.data).plan[0].blocks[0].id,'phone-math');
- assert.deepEqual(errors,[]);console.log('PASS isolated devices: first-login photo/books, later clocks, empty legacy weekly plan, UI image rendering, merged upload');
+ // Recover a library still present on this device after an old client omitted it.
+ const legacy=JSON.parse(cloud.data);delete legacy.bookRoutes;delete legacy.longTermPlan;cloud={...cloud,data:JSON.stringify(legacy)};
+ await pages[0].evaluate(()=>syncPull());assert.equal(await pages[0].evaluate(()=>state.bookRoutes[0].books[0].customCover),photo);
+ await pages[0].evaluate(()=>syncPull());assert.equal(JSON.parse(cloud.data).bookRoutes[0].books[0].customCover,photo);
+ assert.deepEqual(errors,[]);console.log('PASS isolated devices: first-login photo/books, later clocks, empty legacy weekly plan, UI image rendering, merged upload, recovery from omitted library');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

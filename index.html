@@ -2677,6 +2677,8 @@ function protectSyncedRecords(remote,incoming){
 function protectSyncedBookRoutes(remote){
   var base=null;try{base=JSON.parse(syncSig||localStorage.getItem(accountKey(dataOwner)+':sync-base')||'null')}catch(e){}
   var local=Array.isArray(state.bookRoutes)?state.bookRoutes:[],incoming=Array.isArray(remote.bookRoutes)?remote.bookRoutes:[];
+  // Old/empty clients omit this field; absence is not an explicit library deletion.
+  if(!Array.isArray(remote.bookRoutes)&&local.length){remote.bookRoutes=JSON.parse(JSON.stringify(local));return remote;}
   var old=new Map(((base&&base.bookRoutes)||[]).map(function(r){return [r.id,r]})),left=new Map(local.map(function(r){return [r.id,r]})),right=new Map(incoming.map(function(r){return [r.id,r]})),out=[];
   new Set(Array.from(old.keys()).concat(Array.from(left.keys()),Array.from(right.keys()))).forEach(function(id){var b=old.get(id),l=left.get(id),r=right.get(id),chosen;if(!base)chosen=l||r;else chosen=JSON.stringify(l)===JSON.stringify(b)?r:l;if(chosen)out.push(chosen)});
   remote.bookRoutes=out;return remote;
