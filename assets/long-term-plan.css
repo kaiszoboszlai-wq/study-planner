@@ -125,3 +125,30 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-width-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 0 12px;font-size:.75rem;color:var(--sub)}#longTermPlanner .lt-width-controls button{min-width:40px;min-height:40px;padding:6px 12px;background:var(--card);border:1px solid var(--line)}
 
 #longTermPlanner .lt-grid>.lt-subject-row{padding:0;box-sizing:border-box}#longTermPlanner .lt-date-axis{position:sticky;top:42px;height:24px;z-index:5;background:var(--card);border-bottom:1px solid var(--line);box-sizing:border-box}#longTermPlanner .lt-date-tick{position:absolute;top:0;height:100%;padding:2px 0 0 4px;border-left:1px solid var(--line);font-size:.62rem;line-height:1.4;color:var(--sub);white-space:nowrap;box-sizing:border-box}
+
+/* Readable touch roadmap: dates stay at the top, titles beside larger covers. */
+#longTermPlanner .lt-bar{height:84px;border-radius:18px}
+#longTermPlanner .lt-bar button.lt-bar-open{padding:10px 30px 22px 70px;border-radius:18px;touch-action:pan-y}
+#longTermPlanner .lt-bar-open .lt-bar-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.75rem;line-height:1.5}
+#longTermPlanner .lt-bar-cover{inset:8px auto 22px 30px;width:34px}
+#longTermPlanner .lt-bar-open .lt-bar-dates{font-size:.65rem;left:12px;bottom:5px}
+#longTermPlanner .lt-bar.is-compact .lt-bar-title{display:none}
+#longTermPlanner .lt-bar.is-compact .lt-bar-cover{inset:8px 18px 22px;width:auto}
+#longTermPlanner .lt-bar button.lt-grip{width:min(28px,calc(50% - 10px))}
+#longTermPlanner .lt-grip:after{top:24px;height:30px;width:5px;opacity:.9}
+#longTermPlanner .lt-scroll{touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#longTermPlanner .lt-date-tick{font-size:.7rem}
+#longTermPlanner .lt-axis span{font-size:.8rem}
+#longTermPlanner .lt-width-controls button,#longTermPlanner .lt-controls button{min-height:44px;min-width:44px}
+@media(max-width:600px){
+ #longTermPlanner .lt-controls{flex-wrap:nowrap;align-items:center;gap:8px}
+ #longTermPlanner .lt-controls .lt-tabs{flex:1;min-width:0;padding-bottom:0;scrollbar-width:none}
+ #longTermPlanner .lt-controls .lt-heading{margin-left:auto!important}
+ #longTermPlanner .lt-controls .lt-heading button{padding-inline:12px;font-size:.7rem!important;white-space:nowrap}
+ #longTermPlanner .lt-width-controls{gap:12px}
+ #longTermPlanner .lt-goal>.lt-roadmap-card>.lt-scroll{width:100%;margin-left:0;border-radius:16px}
+ #longTermPlanner .lt-goal{padding:18px 12px}
+ #longTermPlanner .lt-full-toolbar{gap:6px;flex-wrap:wrap}
+ #longTermPlanner .lt-full-toolbar strong{font-size:.85rem}
+ #longTermPlanner .lt-goal>.lt-roadmap-card.lt-calendar-full{padding-left:10px;padding-right:10px}
+}
