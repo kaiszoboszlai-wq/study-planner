@@ -1411,10 +1411,11 @@ function adoptPlanCandidate(){
   if(planCandidateBase!==planBaseSignature()||(state.plan||[]).some(function(d){return d.blocks.some(function(b){return d.date>=fmtDate(new Date())&&keepPlannedBlock(b)&&!ids.has(b.id)})})){
     generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
   }
-  var c=planCandidateConfig;state.plan=planCandidate;state.planStyle=planCandidateStyle;
-  if(planCandidateResetWeek||!state.planCycleStart)state.planCycleStart=fmtDate(new Date());state.planDaySeen=fmtDate(new Date());state.weekSetupPending=false;state.weekCarry=[];
-  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){state[k]=c[k]});
-  if(!state.start)state.start=fmtDate(new Date());
+  var c=planCandidateConfig,next=Object.assign({},state,{plan:planCandidate,planStyle:planCandidateStyle,planCycleStart:planCandidateResetWeek||!state.planCycleStart?fmtDate(new Date()):state.planCycleStart,planDaySeen:fmtDate(new Date()),weekSetupPending:false,weekCarry:(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]),start:state.start||fmtDate(new Date()),updatedAt:Date.now(),dataAt:Date.now()});
+  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){next[k]=c[k]});
+  // Never show a successful creation until the entire plan is durable on this device.
+  try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(next));saveHealth.localError=null;saveHealth.localSaved=true;}catch(e){saveHealth.localError=e;var message='プランを保存できませんでした。元のプランは残しています。端末の保存容量やブラウザの保存設定を確認してください。';if(weeklyFlow40)flowError40(message);else $("planPreviewNote").textContent=message;return false;}
+  Object.assign(state,next);
   // done / spent / credit / contrib / log と実行中のタイマーはそのまま保持する。
   ["goal","exam","tot","wd","we","rwd","rwe"].forEach(function(k){$(k).value=state[k]});
   closePlanDialogs();save();renderSubjects();countdown();calcNeed();renderPlan();showPage(3);
@@ -2611,9 +2612,10 @@ function protectSyncedPlan(remote){
   if(hasCurrent&&(!Array.isArray(remote.plan)||!remote.plan.length))throw new Error('同期先にプランがありません。端末のプランを保護しました。');
   // Three-way comparison: a newer remote timestamp must not erase unsent plan edits.
   var base=null;try{base=JSON.parse(syncSig||(typeof localStorage!=="undefined"?localStorage.getItem(accountKey(dataOwner)+":sync-base"):null)||"null")}catch(e){}
-  if(base&&JSON.stringify(current)!==JSON.stringify(base.plan)){
+  var emptyIncoming=Array.isArray(remote.plan)&&!remote.plan.some(function(d){return d.blocks.length});
+  if((base&&JSON.stringify(current)!==JSON.stringify(base.plan))||(!base&&hasCurrent&&emptyIncoming)){
     remote.plan=JSON.parse(JSON.stringify(current));
-    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
+    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
   }
   return remote;
 }
@@ -3588,7 +3590,10 @@ function flowSource40(){return JSON.stringify([state.goal,state.exam,state.planC
 // Brief completion animation, shown only after the plan has actually been adopted.
 var planReady48=null,planReadyTimeout48=null;
 function closePlanReady48(){if(planReadyTimeout48)clearTimeout(planReadyTimeout48);planReadyTimeout48=null;if(planReady48){planReady48.remove();planReady48=null}document.body.classList.remove('plan-ready-page49');var app=document.querySelector('.app');if(app)app.inert=false}
-function showPlanReady48(){closePlanReady48();showPage(3);}
+function showPlanReady48(plan,setup){closePlanReady48();showPage(3);if(!setup)return;weeklyFlow40=Object.assign({},setup,{key:'plan',created:true,preview:false,source:flowSource40(),owner:dataOwner,epoch:authEpoch});flowCandidate40={plan:state.plan,owner:dataOwner,epoch:authEpoch,source:planBaseSignature()};flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();}
+function finishCreatedFlow87(){leaveFlow40(true);showPage(3)}
+function recoverCreatedDraft87(){if((state.plan||[]).some(function(d){return d.blocks.length})||flowDeferred40())return;var saved;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){return}if(!saved||saved.created||saved.key!=='plan'||saved.owner!==dataOwner||saved.source!==flowSource40()||!['weekly','rebuild'].includes(saved.mode))return;openWeeklyFlow40(saved.mode);if(weeklyFlow40&&weeklyFlow40.key==='plan'&&flowCandidate40)adoptFlow40();}
+addEventListener('load',recoverCreatedDraft87,{once:true});
 function normalizeRatios53(entries){
   if(entries.every(function(e){return Number.isFinite(Number(e.weight))&&Number(e.weight)>=.5&&Number(e.weight)<=10})){entries.forEach(function(e){e.weight=Number(e.weight)});return}
   var max=Math.max.apply(null,entries.map(function(e){return Number(e.weight)||1}));
@@ -3622,7 +3627,7 @@ function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
   return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
 }
-function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,config:w.config,entries:w.entries}))}catch(e){}}
+function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,created:!!w.created,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
 function flowError40(text){$('flowError40').textContent=text||'';if(text)$('flowError40').scrollIntoView({block:'nearest'})}
 function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return e.book?[cleanSubject(e.name),Number(e.weight),Object.assign({},e.book,{title:cleanSubject(e.name)})]:[cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
@@ -3640,10 +3645,10 @@ function validateFlow40(key){
   flowError40(error);return !error;
 }
 function flowNext40(){var w=weeklyFlow40;if(!w||!validateFlow40(w.key))return;
-  if(w.key==='review'||(w.mode!=='goal'&&w.key==='carry')){if(w.mode==='goal'){state.goal=cleanSubject(w.config.goal);state.exam=w.config.exam;$('goal').value=state.goal;$('exam').value=state.exam;var to=w.returnPage;goalBack=null;save();countdown();leaveFlow40(true);showPage(to>=3?to:state.plan&&!state.weekSetupPending?3:6);return}if(prepareFlowCandidate40()){w.key='plan';w.preview=true;persistFlow40();renderFlow40(true);}return}
+  if(w.key==='review'||(w.mode!=='goal'&&w.key==='carry')){if(w.mode==='goal'){state.goal=cleanSubject(w.config.goal);state.exam=w.config.exam;$('goal').value=state.goal;$('exam').value=state.exam;var to=w.returnPage;goalBack=null;save();countdown();leaveFlow40(true);showPage(to>=3?to:state.plan&&!state.weekSetupPending?3:6);return}if(prepareFlowCandidate40())adoptFlow40();return}
   var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});w.key=steps[Math.min(index+1,steps.length-1)].key;persistFlow40();renderFlow40(true);
 }
-function flowBack40(){var w=weeklyFlow40;if(!w)return;if(w.preview){w.preview=false;flowCandidate40=null;w.key=w.mode==='goal'?'review':'carry';renderFlow40(true);return}var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index>0){w.key=steps[index-1].key;persistFlow40();renderFlow40(true)}}
+function flowBack40(){var w=weeklyFlow40;if(!w)return;if(w.created){w.created=false;w.preview=false;flowCandidate40=null;w.key='carry';persistFlow40();renderFlow40(true);return;}if(w.preview){w.preview=false;flowCandidate40=null;w.key=w.mode==='goal'?'review':'carry';renderFlow40(true);return}var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index>0){w.key=steps[index-1].key;persistFlow40();renderFlow40(true)}}
 function prepareFlowCandidate40(message){
   var w=weeklyFlow40;if(!w)return;
   if(state.pendingWeekReview||state.carryReview){flowError40('前週の振り返り・繰り越しの確認を終えてから進めてください。');showPendingPlanReview();return}
@@ -3672,7 +3677,7 @@ function flowCustomMaterial40(body,w,list){
   input.oninput=function(){input.setCustomValidity('');flowError40('')};
 }
 function renderFlowPlan84(body,w,title){
-  title.textContent='プランを作成しました';title.className='flow-created-title84';
+  title.textContent=w.created?'プランを作成しました':'プランの確認';title.className='flow-created-title84';
   var badge=document.createElement('div');badge.className='flow-created-badge84';badge.setAttribute('aria-hidden','true');badge.innerHTML='<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30"/><path d="m18 32 10 10 19-21"/></svg>';title.before(badge);
   var plan=flowCandidate40&&flowCandidate40.plan||[],total=document.createElement('p');total.className='flow-created-total84';total.textContent='週間合計 '+hm(plan.reduce(function(sum,d){return sum+d.blocks.reduce(function(n,b){return n+b.h},0)},0));body.appendChild(total);
   var list=document.createElement('div');list.className='flow-plan-overview84';list.setAttribute('aria-label','作成した週間プランの一覧');body.appendChild(list);
@@ -3681,10 +3686,10 @@ function renderFlowPlan84(body,w,title){
     if(!day.blocks.length){var empty=document.createElement('p');empty.textContent='予定なし';card.appendChild(empty);}
   });
 }
-function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.key==='plan'&&w.mode!=='goal'){if(!flowCandidate40){if(!prepareFlowCandidate40()){if(w.key==='plan')w.key='carry';}else w.preview=true;}else w.preview=true;}var body=$('flowBody40');body.innerHTML='';body.classList.toggle('flow-subjects-fixed84',w.key==='subjects');flowError40('');
+function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.key==='plan'&&w.mode!=='goal'){if(w.created){flowCandidate40={plan:state.plan,owner:dataOwner,epoch:authEpoch,source:planBaseSignature()};w.preview=false;}else if(!flowCandidate40){if(!prepareFlowCandidate40()){if(w.key==='plan')w.key='carry';}else w.preview=true;}else w.preview=true;}var body=$('flowBody40');body.innerHTML='';body.classList.toggle('flow-subjects-fixed84',w.key==='subjects');flowError40('');
   if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&(key==='carry'||key==='plan');
   $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length+' 問';StepIndicator.render($('flowStepsIndicator40'),steps,w.preview?steps.length-1:index);
-  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.preview?'このプランで始める':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
+  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.created?'週間プランを開く':w.preview?'保存して週間プランを開く':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.created?finishCreatedFlow87:w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
   var title=document.createElement('h1');title.id='flowTitle40';title.tabIndex=-1;body.appendChild(title);
   if(key==='goal'){title.textContent='目標を設定しよう';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
@@ -3713,7 +3718,7 @@ function openWeeklyFlow40(mode){
   var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0]),book:s[2]||null}});
   if(saved&&saved.version===1&&saved.owner===dataOwner&&saved.source===source&&saved.mode===mode&&saved.config&&Array.isArray(saved.entries)&&saved.entries.every(function(e){return typeof e.name==='string'&&typeof e.key==='string'})){c=saved.config;entries=saved.entries}else saved=null;
   if(mode==='rebuild'){c.goal=state.goal;c.exam=state.exam}
-  closePlanDialogs();weeklyFlow40={owner:dataOwner,epoch:authEpoch,mode:mode,config:c,entries:entries,key:saved?saved.key:'',source:source,returnPage:goalBack!==null?goalBack:state.plan&&!state.weekSetupPending?3:6,preview:false,style:0};if(mode!=='goal'&&weeklyFlow40.key==='review')weeklyFlow40.key='carry';var steps=flowSteps40(weeklyFlow40);if(!steps.some(function(s){return s.key===weeklyFlow40.key}))weeklyFlow40.key=steps[0].key;
+  closePlanDialogs();weeklyFlow40={owner:dataOwner,epoch:authEpoch,mode:mode,config:c,entries:entries,key:saved?saved.key:'',source:source,returnPage:goalBack!==null?goalBack:state.plan&&!state.weekSetupPending?3:6,preview:false,created:!!(saved&&saved.created&&saved.key==='plan'),style:0};if(mode!=='goal'&&weeklyFlow40.key==='review')weeklyFlow40.key='carry';var steps=flowSteps40(weeklyFlow40);if(!steps.some(function(s){return s.key===weeklyFlow40.key}))weeklyFlow40.key=steps[0].key;
   flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();
 }
 function installWeeklyFlow40(){
@@ -3746,7 +3751,7 @@ function installWeeklyFlow40(){
     });
   };$('back3').onclick=openPlanDraft;
   var preview40=generatePlanPreview;generatePlanPreview=function(){if(weeklyFlow40&&weeklyFlow40.preview){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}preview40()};
-  var commit40=draftAdopt36;draftAdopt36=function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];commit40();if(state.plan===candidate){leaveFlow40(true);showPlanReady48(candidate)}else{state.weekCarry=queue}};
+  var commit40=draftAdopt36;draftAdopt36=function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];commit40();if(state.plan===candidate){var completedSetup=weeklyFlow40;leaveFlow40(true);showPlanReady48(candidate,completedSetup)}else{state.weekCarry=queue}};
   var account40=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){closePlanReady48();leaveFlow40(false);goalBack=null}return account40(uid)};
 }
 
