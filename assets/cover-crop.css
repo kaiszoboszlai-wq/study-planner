@@ -1,0 +1,17 @@
+html body .cover-crop89{width:min(520px,calc(100% - 24px));overflow-x:hidden;padding:20px 26px}
+.cover-crop89 .crop-hint89{font-size:.8rem;line-height:1.7;margin:10px 0 18px}
+.cover-crop89 [hidden]{display:none!important}
+.crop-loading89{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;min-height:220px;font-size:.85rem;color:var(--sub)}
+.crop-spinner89{display:block;width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:cropSpin89 .55s linear infinite}
+.cover-crop89 .crop-stage89{position:relative;width:fit-content;max-width:100%;margin:26px auto;user-select:none;-webkit-user-select:none}
+.cover-crop89 .crop-stage89>img{display:block;width:auto;height:auto;max-width:100%;max-height:min(48dvh,440px);pointer-events:none;-webkit-user-drag:none}
+.crop-shades89{position:absolute;inset:0;pointer-events:none}.crop-shades89 i{position:absolute;background:rgb(0 0 0 / .5)}
+.crop-frame89{position:absolute;border:2px solid #fff;box-sizing:border-box;touch-action:none;cursor:move;outline:none}
+.crop-frame89:before,.crop-frame89:after{content:'';position:absolute;pointer-events:none}.crop-frame89:before{inset:33.333% 0;border-block:1px solid #fff6}.crop-frame89:after{inset:0 33.333%;border-inline:1px solid #fff6}
+html body .cover-crop89 .crop-frame89 button{position:absolute;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;margin:-22px 0 0 -22px;border:0;border-radius:50%;background:transparent;box-shadow:none;touch-action:none;cursor:nwse-resize}
+.crop-frame89 button:after{content:'';position:absolute;left:14px;top:14px;width:16px;height:16px;box-sizing:border-box;background:#fff;border:2px solid var(--acc);border-radius:4px;box-shadow:0 1px 6px #0005}
+.crop-frame89 [data-corner=nw]{left:0;top:0}.crop-frame89 [data-corner=ne]{left:100%;top:0;cursor:nesw-resize!important}.crop-frame89 [data-corner=sw]{left:0;top:100%;cursor:nesw-resize!important}.crop-frame89 [data-corner=se]{left:100%;top:100%}
+.crop-frame89 button:focus-visible{outline:2px solid var(--acc)!important;outline-offset:0}.crop-frame89:focus-visible{border-color:var(--acc)}
+.crop-error89:empty{display:none}.crop-error89{color:var(--red,#b42318)!important}
+@keyframes cropSpin89{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.crop-spinner89{animation:none}}

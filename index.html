@@ -672,6 +672,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/async-ui.css">
 <link rel="stylesheet" href="assets/shared-page-health.css">
 <link rel="stylesheet" href="assets/long-term-plan.css">
+<link rel="stylesheet" href="assets/cover-crop.css">
 <link rel="stylesheet" href="assets/design-consistency.css">
 <link rel="stylesheet" href="assets/subject-book-picker.css">
 <link rel="stylesheet" href="assets/step-indicator.css">
@@ -986,7 +987,7 @@ var STEP=0.5;      // 時間の刻み
 var KEY="study-planner-v1";
 
 // ===== 保存(localStorageが使えない場合も動く) =====
-var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,longTermPlan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
+var state={subjects:DEFAULT_SUBJECTS,dailySubjects:[],exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,longTermPlan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 var initialState=JSON.stringify(state),dataOwner=null,authEpoch=0,accountNeedsCloud=false,legacyUnclaimed=false;
 function accountKey(uid){return KEY+(uid?":user:"+uid:":guest")}
 function readAccount(uid){return AccountStorage88.read(accountKey(uid))}
@@ -1335,7 +1336,7 @@ function closePlanDialogs(){
   planCandidate=null;planCandidateConfig=null;
   if(planDialogFocus&&planDialogFocus.isConnected)planDialogFocus.focus();
 }
-function planConfig(){return {goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjColors:Object.assign({},state.subjColors||{}),subjects:state.subjects.map(function(s){return s.slice()})}}
+function planConfig(){return {dailySubjects:(state.dailySubjects||[]).slice(),goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjColors:Object.assign({},state.subjColors||{}),subjects:state.subjects.map(function(s){return s.slice()})}}
 function addDraftSubject(name,weight){
   var row=document.createElement("div");row.className="draft-subject";
   row.innerHTML='<input type="color" aria-label="科目・教材の色"><input type="text" maxlength="30" aria-label="科目・教材名" placeholder="科目・教材名"><input type="number" min="1" max="7" aria-label="配分"><button aria-label="科目を削除">×</button>';
@@ -1380,9 +1381,10 @@ function buildPlanCandidate(c,style,carry,cycleStart){
   plan.forEach(function(day){
     if(day.date<fmtDate(today))return;
     var left=Math.max(0,day.h-day.blocks.reduce(function(n,x){return n+x.h},0)),made=[];
+    subs.forEach(function(sub,i){if((c.dailySubjects||[]).indexOf(sub[0])<0||day.blocks.some(function(b){return b.name===sub[0]&&b.h>0})||left<.25-.00001)return;made.push({id:newId(),name:sub[0],h:.25});target[i]-=.25;left-=.25;});
     while(left>0.00001&&subs.length){
       var batch=allocDay(left,subs,target,style),used=batch.reduce(function(n,x){return n+x.h},0);if(used<=0)break;
-      batch.forEach(function(x){x.id=newId();made.push(x)});left-=used;
+      batch.forEach(function(x){var existing=made.find(function(b){return b.name===x.name});if(existing)existing.h+=x.h;else{x.id=newId();made.push(x)}});left-=used;
     }
     if(made.length>1){var shift=style%made.length;made=made.slice(shift).concat(made.slice(0,shift))}
     day.blocks=day.blocks.concat(made);
@@ -1414,7 +1416,7 @@ async function adoptPlanCandidate(){
     generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
   }
   var c=planCandidateConfig,next=Object.assign({},state,{plan:planCandidate,planStyle:planCandidateStyle,planCycleStart:planCandidateResetWeek||!state.planCycleStart?fmtDate(new Date()):state.planCycleStart,planDaySeen:fmtDate(new Date()),weekSetupPending:false,weekCarry:(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]),start:state.start||fmtDate(new Date()),updatedAt:Date.now(),dataAt:Date.now()});
-  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){next[k]=c[k]});
+  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors","dailySubjects"].forEach(function(k){next[k]=c[k]});
   // Never show a successful creation until the entire plan is durable on this device.
   var committingOwner=dataOwner,committingEpoch=authEpoch,committingState=state,committingSource=planBaseSignature();
   try{await AccountStorage88.write(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),next);saveHealth.localError=null;saveHealth.localSaved=true;}catch(e){saveHealth.localError=e;var hasOriginal=(state.plan||[]).some(function(d){return d.blocks.length});var message=hasOriginal?'新しいプランを保存できませんでした。現在の予定は変更していません。':'新しいプランを保存できませんでした。以前の予定は削除済みです。入力した設定と学習記録は残っています。';if(weeklyFlow40)flowError40(message);else $("planPreviewNote").textContent=message;return false;}
@@ -2620,7 +2622,7 @@ function protectSyncedPlan(remote){
   var emptyIncoming=Array.isArray(remote.plan)&&!remote.plan.some(function(d){return d.blocks.length});
   if((base&&JSON.stringify(current)!==JSON.stringify(base.plan))||(!base&&hasCurrent&&emptyIncoming)){
     remote.plan=JSON.parse(JSON.stringify(current));
-    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
+    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle','dailySubjects'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
   }
   return remote;
 }
@@ -3542,6 +3544,7 @@ function validateBackup38(raw){
   function carry(v){return items(v||[]).map(function(x){object(x);var b={name:text(x.name,100),h:number(x.h,100000)};['sourceId','sourceDate','carryFrom'].forEach(function(k){if(x[k]!=null)b[k]=text(x[k],120)});if(x.selected!=null)b.selected=!!x.selected;return b})}
   function plan(v){if(v==null)return null;var ids=new Set();return items(v).map(function(d){object(d);var blocks=items(d.blocks).map(function(b){if(++count>100000)throw new Error('項目が多すぎます。');object(b);var next={id:text(b.id,120),name:text(b.name,100),h:number(b.h,100000)};if(ids.has(next.id))throw new Error('計画の項目IDが重複しています。');ids.add(next.id);['manual','carried','skipCarry'].forEach(function(k){if(b[k]!=null)next[k]=!!b[k]});['carryFrom','sourceId'].forEach(function(k){if(b[k]!=null)next[k]=text(b[k],120)});return next});return {date:date(d.date),blocks:blocks,h:blocks.reduce(function(n,b){return n+b.h},0),carryProcessed:!!d.carryProcessed}})}
   out.subjects=items(src.subjects).map(function(s){if(!Array.isArray(s)||s.length<2)throw new Error('科目の形式が正しくありません。');var row=[cleanSubject(text(s[0],100)),number(Number(s[1]),7)||1];if(s[2])row.push(material(s[2]));return row});if(duplicateSubject(out.subjects))throw new Error('科目名が重複しています。');
+  out.dailySubjects=items(src.dailySubjects||[]).map(function(name){return cleanSubject(text(name,100))});
   ['goal','exam','start','planCycleStart','planDaySeen','pendingWeekReview'].forEach(function(k){if(src[k]!=null)out[k]=text(src[k],k==='goal'?200:120)});['exam','start','planCycleStart','planDaySeen'].forEach(function(k){if(out[k])date(out[k])});
   ['wd','we','tot','rwd','rwe','timerIdleMinutes','planStyle'].forEach(function(k){if(src[k]!=null)out[k]=number(Number(src[k]),k==='wd'||k==='we'?16:k==='timerIdleMinutes'?480:100000)});
   ['carry','weekSetupPending','legacyOff','hideCompleted'].forEach(function(k){if(src[k]!=null)out[k]=!!src[k]});out.carryDistribution=src.carryDistribution==='spread'?'spread':'next';
@@ -3633,9 +3636,9 @@ function flowSteps40(w){
   return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
 }
 function persistFlow40(){if(!AccountStorage88.hydrated)return;var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,created:!!w.created,config:w.config,entries:w.entries}))}catch(e){}}
-function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
+function leaveFlow40(clear){if(!weeklyFlow40){if(clear)try{sessionStorage.removeItem(flowStorageKey40())}catch(e){}return;}var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
 function flowError40(text){$('flowError40').textContent=text||'';if(text)$('flowError40').scrollIntoView({block:'nearest'})}
-function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return e.book?[cleanSubject(e.name),Number(e.weight),Object.assign({},e.book,{title:cleanSubject(e.name)})]:[cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
+function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);c.dailySubjects=w.entries.filter(function(e){return e.daily}).map(function(e){return cleanSubject(e.name)});if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return e.book?[cleanSubject(e.name),Number(e.weight),Object.assign({},e.book,{title:cleanSubject(e.name)})]:[cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
 function validateFlow40(key){
   var w=weeklyFlow40,c=w.config;if(w.owner!==dataOwner||w.epoch!==authEpoch){leaveFlow40(false);showPage(typeof state.page==='number'?state.page:6);return false}
   var error='';
@@ -3646,6 +3649,7 @@ function validateFlow40(key){
   if(key==='subjects'&&(!w.entries.length||w.entries.some(function(e){return !cleanSubject(e.name)})))error='科目名を1つ以上入力してください。空欄の行は入力するか削除してください。';
   if(key==='subjects'&&duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]})))error='同じ名前の科目があります。名前を変更するか、重複した行を削除してください。';
   if(key==='allocation'&&(!w.entries.length||w.entries.some(function(e){return !Number.isFinite(Number(e.weight))||Number(e.weight)<.5||Number(e.weight)>10})))error='科目の配分を確認してください。';
+  if(key==='allocation'){var daily=w.entries.filter(function(e){return e.daily}).length;if(daily&&(Number(c.wd)<daily*.25-.00001||Number(c.we)<daily*.25-.00001))error='毎日の教材には1冊あたり15分以上が必要です。平日・休日ともに'+hm(daily*.25)+'以上に設定するか、毎日の教材を減らしてください。';}
   if(key==='subjects'&&w.entries.length>100)error='科目・教材は100個以内にしてください。';
   flowError40(error);return !error;
 }
@@ -3659,8 +3663,10 @@ function prepareFlowCandidate40(message){
   if(state.pendingWeekReview||state.carryReview){flowError40('前週の振り返り・繰り越しの確認を終えてから進めてください。');showPendingPlanReview();return}
   var c=flowConfig40();if(!c.goal||!validDate38(c.exam)||c.exam<=fmtDate(new Date())){if(w.mode==='rebuild'){flowError40('設定済みの目標・試験日を確認してください。変更はマイページから行えます。');return false}w.key=!c.goal?'goal':'exam';w.preview=false;renderFlow40(true);flowError40('目標と試験日を確認してください。');return}
   if(!c.subjects.length||duplicateSubject(c.subjects)){w.key='subjects';w.preview=false;renderFlow40(true);flowError40('科目名を確認してください。');return}
+  if(c.dailySubjects.length&&(Number(c.wd)<c.dailySubjects.length*.25-.00001||Number(c.we)<c.dailySubjects.length*.25-.00001)){w.key='allocation';renderFlow40(true);flowError40('毎日の教材を入れるための学習時間が足りません。平日・休日の時間か、毎日の教材の数を見直してください。');return false;}
   var carry=state.weekSetupPending&&c.carry?(state.weekCarry||[]):[];
   planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);
+  if(planCandidate.some(function(d){return d.date>=fmtDate(new Date())&&c.dailySubjects.some(function(name){return !d.blocks.some(function(b){return b.name===name&&b.h>0})})})){flowError40('毎日の教材を入れる時間が不足しています。既存の予定か学習時間を見直してください。');return false;}
   var audit=allocationAudit(planCandidate,c);if(!planCandidate.length||!audit.ok){flowError40('設定時間を満たす計画を作れませんでした。時間と科目を確認してください。');return}
   flowCandidate40={plan:planCandidate,owner:dataOwner,epoch:authEpoch,usedCarry:!!(state.weekSetupPending&&c.carry),source:planCandidateBase};w.preview=w.key==='plan';w.audit=audit;w.previewMessage=message||'';if(message){renderFlow40(true);flowError40(message)}return true;
 }
@@ -3701,10 +3707,11 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.k
   }else if(key==='weekday'||key==='weekend'){var field=key==='weekday'?'wd':'we';title.textContent=(key==='weekday'?'平日':'休日')+'は1日どのくらい勉強しますか？';var output=document.createElement('output');output.className='flow-value40';output.textContent=hm(Number(c[field]));body.appendChild(output);var range=flowField40(body,'1日の勉強時間','range',c[field],function(v){c[field]=Number(v);output.textContent=hm(c[field]);range.setAttribute('aria-valuetext',hm(c[field]))},{min:0,max:16,step:.5,'aria-label':key==='weekday'?'平日の勉強時間':'休日の勉強時間'});range.setAttribute('aria-valuetext',hm(Number(c[field])));
   }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';FlowMaterials83.render(body,w);
   }else if(key==='allocation'){
-    title.textContent='科目・教材の優先度を選んでください';normalizeRatios53(w.entries);
+    title.textContent='科目・教材の優先度を選んでください';normalizeRatios53(w.entries);var dailyHint=document.createElement('p');dailyHint.className='flow-daily-hint90';dailyHint.textContent='チェックした教材を毎日15分以上入れ、残りの時間を優先度に応じて配分します。';body.appendChild(dailyHint);
     var rows=[];w.entries.forEach(function(e){
       var card=document.createElement('div');card.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) 120px;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:16px 0';
       var text=document.createElement('div');text.style.cssText='min-width:0;border-left:4px solid '+e.color+';padding-left:10px;overflow-wrap:anywhere';v36Text(text,cleanSubject(e.name));
+      var dailyLabel=document.createElement('label');dailyLabel.className='flow-daily90';var dailyCheck=document.createElement('input');dailyCheck.type='checkbox';dailyCheck.checked=!!e.daily;dailyCheck.setAttribute('aria-label',cleanSubject(e.name)+'を毎日プランに入れる');dailyCheck.onchange=function(){e.daily=dailyCheck.checked;persistFlow40();flowError40('')};dailyLabel.append(dailyCheck,document.createTextNode('毎日プランに入れる'));text.appendChild(dailyLabel);
       var label=document.createElement('label');label.textContent='優先度';label.style.cssText='font-size:.8rem;color:var(--sub)';
       var select=document.createElement('select');select.setAttribute('aria-label',cleanSubject(e.name)+'の優先度');select.style.cssText='display:block;width:100%;min-height:44px;font:inherit;font-size:1rem;margin-top:5px;padding:8px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px';
       priorityOptions59(select,e.weight);select.onchange=function(){e.weight=Number(select.value);persistFlow40();flowError40('')};
@@ -3720,7 +3727,7 @@ function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.k
 function openWeeklyFlow40(mode){
   mode=mode||'weekly';if(weeklyFlow40&&weeklyFlow40.owner===dataOwner&&weeklyFlow40.epoch===authEpoch&&weeklyFlow40.source===flowSource40()&&weeklyFlow40.mode===mode){flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40();return}
   var c=planConfig(),source=flowSource40(),saved=null;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){}
-  var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0]),book:s[2]||null}});
+  var entries=state.subjects.map(function(s){return {key:rid(),name:cleanSubject(s[0]),weight:Number(s[1])||1,color:colorOf(s[0]),oldName:cleanSubject(s[0]),book:s[2]||null,daily:(state.dailySubjects||[]).indexOf(cleanSubject(s[0]))>=0}});
   if(saved&&saved.version===1&&saved.owner===dataOwner&&saved.source===source&&saved.mode===mode&&saved.config&&Array.isArray(saved.entries)&&saved.entries.every(function(e){return typeof e.name==='string'&&typeof e.key==='string'})){c=saved.config;entries=saved.entries}else saved=null;
   if(mode==='rebuild'){c.goal=state.goal;c.exam=state.exam}
   closePlanDialogs();weeklyFlow40={owner:dataOwner,epoch:authEpoch,mode:mode,config:c,entries:entries,key:saved?saved.key:'',source:source,returnPage:goalBack!==null?goalBack:state.plan&&!state.weekSetupPending?3:6,preview:false,created:!!(saved&&saved.created&&saved.key==='plan'),style:0};if(mode!=='goal'&&weeklyFlow40.key==='review')weeklyFlow40.key='carry';var steps=flowSteps40(weeklyFlow40);if(!steps.some(function(s){return s.key===weeklyFlow40.key}))weeklyFlow40.key=steps[0].key;
@@ -4420,6 +4427,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/header-notifications.js"></script>
 <script src="assets/app-announcements.js"></script>
 <script src="assets/long-term-plan.js"></script>
+<script src="assets/cover-crop.js"></script>
 <script src="assets/long-term-plan-ui.js"></script>
 <script src="assets/page-swipe.js"></script>
 <script src="assets/motion-ui.js"></script>

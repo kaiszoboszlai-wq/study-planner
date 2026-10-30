@@ -41,3 +41,9 @@ body #weeklyFlow40 #flowBody40{width:100%;min-width:0;max-width:100%;box-sizing:
 /* The next button stays out of the keyboard's typing area. */
 #weeklyFlow40.flow-keyboard84 .flow-footer40{display:none!important}
 #weeklyFlow40 .flow-cover83 img{max-height:none}
+#weeklyFlow40 .flow-inline-search83 input:focus,#weeklyFlow40 .flow-inline-search83 input:focus-visible{outline:none!important;box-shadow:none!important}
+#weeklyFlow40 .flow-inline-search83:focus-within{outline:none;box-shadow:none;border-color:var(--qa-accent,var(--acc))}
+#weeklyFlow40 .flow-subject40[tabindex="-1"]:focus{outline:none}
+#weeklyFlow40 .flow-daily90{display:flex;align-items:center;gap:8px;min-height:44px;margin-top:8px;font-size:.78rem;line-height:1.5;color:var(--qa-ink,var(--ink));cursor:pointer}
+#weeklyFlow40 .flow-daily90 input{width:22px;height:22px;min-height:22px;flex:none;accent-color:var(--qa-accent,var(--acc));margin:0}
+#weeklyFlow40 .flow-daily-hint90{font-size:.8rem;line-height:1.8;color:var(--qa-muted,var(--sub));margin:0 0 18px}
