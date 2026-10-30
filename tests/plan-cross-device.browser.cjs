@@ -13,5 +13,22 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  await pages[0].evaluate(async()=>{state.longTermPlan.goal.declaration='スマホで更新した目標';save();await syncPull();});
  await pages[1].evaluate(()=>syncPull());assert(await pages[1].evaluate(()=>state.longTermPlan.blocks.some(b=>b.id==='pc-book')));assert(await pages[1].evaluate(()=>saveHealth.pending&&syncTimer!==null));
  await pages[1].evaluate(()=>syncPull());await pages[0].evaluate(()=>syncPull());assert(await pages[0].evaluate(()=>state.longTermPlan.blocks.some(b=>b.id==='pc-book')));
- assert.deepEqual(errors,[]);console.log('PASS two isolated browser contexts: weekly and long-term plans sync despite clock skew; UI refresh; unsent edits survive and merge is uploaded back');
+ // A device without a baseline may already have a local goal and a later clock.
+ // It must fetch the existing library rather than upload its empty library.
+ const photo=await pages[0].evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=20;const ctx=c.getContext('2d');ctx.fillStyle='red';ctx.fillRect(0,0,20,20);return c.toDataURL('image/jpeg');});
+ await pages[0].evaluate(async photo=>{state.bookRoutes=[{id:'route-photo',name:'写真付き教材',books:[{id:'book-photo',title:'手持ちの教材',subject:'数学',customCover:photo}]}];state.longTermPlan.blocks=[{id:'block-photo',routeId:'route-photo',bookId:'book-photo',title:'手持ちの教材',subject:'数学',start:'2027-01-01',end:'2027-02-01'}];save();await syncPull();},photo);
+ const photoSnapshot=structuredClone(cloud);
+ await pages[1].evaluate(async()=>{state=JSON.parse(initialState);state.goal='この端末の目標';state.dataAt=Date.now()+86400000;syncSig='';localStorage.removeItem(accountKey(dataOwner)+':sync-base');FB.syncReady=false;accountNeedsCloud=false;await syncStart();showPage(8);});
+ assert.equal(await pages[1].evaluate(()=>state.bookRoutes?.[0]?.books?.[0]?.customCover),photo,'first sync must restore the photo even with a later local timestamp');
+ assert.equal(await pages[1].evaluate(()=>state.longTermPlan.blocks[0].bookId),'book-photo');
+ assert.equal(cloud.data,photoSnapshot.data,'initial read must not replace the populated cloud with empty local plans');
+ assert(await pages[1].locator('#planSyncStatus').isVisible());
+ assert.equal(await pages[1].locator('.lt-bar-cover img').first().getAttribute('src'),photo);
+ // A legacy cloud snapshot without a weekly plan must not block all other sync.
+ cloud={...photoSnapshot,data:JSON.stringify({...JSON.parse(photoSnapshot.data),plan:null,longTermPlan:{...JSON.parse(photoSnapshot.data).longTermPlan,goal:{...JSON.parse(photoSnapshot.data).longTermPlan.goal,declaration:'クラウドの更新'}}})};
+ await pages[0].evaluate(()=>syncPull());
+ assert.equal(await pages[0].evaluate(()=>state.longTermPlan.goal.declaration),'クラウドの更新');
+ assert.equal(await pages[0].evaluate(()=>state.plan[0].blocks[0].id),'phone-math');
+ await pages[0].evaluate(()=>syncPull());assert.equal(JSON.parse(cloud.data).plan[0].blocks[0].id,'phone-math');
+ assert.deepEqual(errors,[]);console.log('PASS isolated devices: first-login photo/books, later clocks, empty legacy weekly plan, UI image rendering, merged upload');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

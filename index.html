@@ -1024,15 +1024,20 @@ function showReadError(box,e,retry,append){
   if(!append)box.replaceChildren();box.appendChild(row);return row;
 }
 function paintSaveStatus(){
-  // Keep synchronization state internal; this marker is retained for account layout setup.
-  var settings=$('settingsSyncStatus');if(settings){settings.textContent='';settings.hidden=true;}
+  var message='ログインすると別端末と同期できます。';
+  if(typeof FB!=='undefined'&&FB.uid){
+    var error=saveHealth.cloudError||saveHealth.localError;
+    message=error?'同期できませんでした。'+(error.code==='invalid-argument'?'写真などのデータ容量が大きすぎる可能性があります。':error.message||readErrorMessage(error)):
+      saveHealth.pending?'この端末に保存済み・クラウドへの同期待ち':saveHealth.synced?'クラウドと同期済み':'クラウドのデータを確認中';
+  }
+  ['settingsSyncStatus','planSyncStatus'].forEach(function(id){var el=$(id);if(el){el.textContent=message;el.hidden=false;el.setAttribute('role','status');}});
 }
 async function retrySaving(){
   if(!store())return;if(!ownsCurrentData(FB.uid))return;
   if(!FB.syncReady){await fbOnAuth();return}
   var failed=saveHealth.writeError;
   if(failed&&failed.retry&&!/^(privateData|profiles)\//.test(failed.path)&&failed.path!=="stats/"+FB.uid){try{await failed.retry()}catch(e){return}}
-  await syncPush();if(state.pendingTimerRelease)await releaseTimerLease(state.pendingTimerRelease);await fbPublish(true);
+  await syncPull();if(state.pendingTimerRelease)await releaseTimerLease(state.pendingTimerRelease);await fbPublish(true);
   if(!saveHealth.cloudError&&!saveHealth.writeError)paintSaveStatus();
 }
 function limitRead(task){return new Promise(function(resolve,reject){var timer=setTimeout(function(){var e=new Error("timeout");e.code="deadline-exceeded";reject(e)},12000);Promise.resolve(task).then(function(v){clearTimeout(timer);resolve(v)},function(e){clearTimeout(timer);reject(e)})})}
@@ -2628,16 +2633,18 @@ function remoteSyncChanged(r,before,needsCloud){
   var base=sharedSyncBase();
   // A phone and a PC need not have the same clock. Compare against the last shared data.
   if(base!==null)return r.data!==base;
-  return (Number(r.dataAt)||0)>(state.dataAt||0);
+  // With no shared baseline, a local timestamp is not evidence of a newer cloud snapshot.
+  // Merge first so an empty/new device cannot overwrite existing books and photos.
+  return true;
 }
 function protectSyncedPlan(remote){
   var current=state.plan,hasCurrent=Array.isArray(current)&&current.some(function(d){return d.blocks&&d.blocks.length});
   if(remote.plan!=null&&(!Array.isArray(remote.plan)||remote.plan.some(function(d){return !d||typeof d.date!=='string'||!Array.isArray(d.blocks)})))throw new Error('クラウドのプラン形式が正しくありません。');
-  if(hasCurrent&&(!Array.isArray(remote.plan)||!remote.plan.length))throw new Error('同期先にプランがありません。端末のプランを保護しました。');
+  var missingIncoming=hasCurrent&&(!Array.isArray(remote.plan)||!remote.plan.length);
   // Three-way comparison: a newer remote timestamp must not erase unsent plan edits.
   var base=null;try{base=JSON.parse(syncSig||(typeof localStorage!=="undefined"?localStorage.getItem(accountKey(dataOwner)+":sync-base"):null)||"null")}catch(e){}
   var emptyIncoming=Array.isArray(remote.plan)&&!remote.plan.some(function(d){return d.blocks.length});
-  if((base&&JSON.stringify(current)!==JSON.stringify(base.plan))||(!base&&hasCurrent&&emptyIncoming)){
+  if(missingIncoming||(base&&JSON.stringify(current)!==JSON.stringify(base.plan))||(!base&&hasCurrent&&emptyIncoming)){
     remote.plan=JSON.parse(JSON.stringify(current));
     ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle','dailySubjects'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
   }
@@ -2715,8 +2722,7 @@ async function syncPullOnce(){
   if(remoteSyncChanged(r,before,false)){
     // Preserve unsent local work before accepting the newer cloud snapshot.
     if(before!==syncSig&&!isBlank()){
-      try{localStorage.setItem(accountKey(uid)+":sync-backup",JSON.stringify(state))}
-      catch(e){saveHealth.localError=e;paintSaveStatus();return}
+      if(!AccountStorage88.backup(accountKey(uid)+':sync-backup',state)){saveHealth.localError=new Error('同期前のバックアップを保存できませんでした。');paintSaveStatus();return}
     }
     clearTimeout(syncTimer);syncTimer=null;syncApply(r);return;
   }
