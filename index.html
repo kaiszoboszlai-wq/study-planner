@@ -24,6 +24,8 @@
   applyChrome(saved.theme);
 })();
 </script>
+<link rel="stylesheet" href="assets/account-storage.css">
+<script src="assets/account-storage.js"></script>
 <script src="assets/step-indicator.js"></script>
 <script src="assets/subject-book-picker.js"></script>
 <script src="assets/flow-materials.js"></script>
@@ -987,13 +989,13 @@ var KEY="study-planner-v1";
 var state={subjects:DEFAULT_SUBJECTS,exam:"",wd:3,we:6,tot:"",rwd:3,rwe:4,plan:null,longTermPlan:null,done:{},spent:{},timer:null,log:{},credit:{},contrib:{},goal:"",start:"",subjColors:{},exams:[],profile:{icon:"📚",color:"#0b6e6e",name:"",grade:"",age:"",school:""},back:1};
 var initialState=JSON.stringify(state),dataOwner=null,authEpoch=0,accountNeedsCloud=false,legacyUnclaimed=false;
 function accountKey(uid){return KEY+(uid?":user:"+uid:":guest")}
-function readAccount(uid){try{return JSON.parse(localStorage.getItem(accountKey(uid))||"null")}catch(e){return null}}
+function readAccount(uid){return AccountStorage88.read(accountKey(uid))}
 function ownsCurrentData(uid){return !!uid&&uid===dataOwner&&uid===FB.uid}
-var SYNC_SKIP=["timer","idleReview","pendingTimerRelease","page","planPage","updatedAt","dataAt"],lastData="",saveRevision=0;
+var SYNC_SKIP=["_persistedAt88","timer","idleReview","pendingTimerRelease","page","planPage","updatedAt","dataAt"],lastData="",saveRevision=0;
 function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
 function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);loadTimerRuntime();repairLog58(state);}catch(e){}lastData=syncData()}
 function loadTimerRuntime(){try{var r=JSON.parse(sessionStorage.getItem(accountKey(dataOwner)+":timer-runtime")||"null");if(r){state.timer=r.timer;state.idleReview=r.idleReview;state.pendingTimerRelease=r.pendingTimerRelease}else{if(state.timer&&state.timer.lease&&state.timer.lease.tab!==timerTabId)state.timer=null;if(state.idleReview&&state.idleReview.lease&&state.idleReview.lease.tab!==timerTabId)state.idleReview=null}}catch(e){}}
-function store(){try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(state));try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
+function store(){if(!AccountStorage88.hydrated)return true;try{if(!AccountStorage88.sync(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),state))return false;try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
 function switchAccountData(uid){
   uid=uid||null;
   if(dataOwner===uid){try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}return false}
@@ -1405,7 +1407,7 @@ function generatePlanPreview(){
   $("planAdopt").disabled=!planCandidate.length;openPlanDialog("planPreview");
 }
 function anotherPlanCandidate(){if(!planCandidateConfig)return;planCandidateStyle=(planCandidateStyle+1)%PLAN_STYLES.length;generatePlanPreview()}
-function adoptPlanCandidate(){
+async function adoptPlanCandidate(){
   if(!planCandidate||!planCandidateConfig)return;
   var ids=new Set();planCandidate.forEach(function(d){d.blocks.forEach(function(b){ids.add(b.id)})});
   if(planCandidateBase!==planBaseSignature()||(state.plan||[]).some(function(d){return d.blocks.some(function(b){return d.date>=fmtDate(new Date())&&keepPlannedBlock(b)&&!ids.has(b.id)})})){
@@ -1414,7 +1416,10 @@ function adoptPlanCandidate(){
   var c=planCandidateConfig,next=Object.assign({},state,{plan:planCandidate,planStyle:planCandidateStyle,planCycleStart:planCandidateResetWeek||!state.planCycleStart?fmtDate(new Date()):state.planCycleStart,planDaySeen:fmtDate(new Date()),weekSetupPending:false,weekCarry:(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]),start:state.start||fmtDate(new Date()),updatedAt:Date.now(),dataAt:Date.now()});
   ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors"].forEach(function(k){next[k]=c[k]});
   // Never show a successful creation until the entire plan is durable on this device.
-  try{localStorage.setItem(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),JSON.stringify(next));saveHealth.localError=null;saveHealth.localSaved=true;}catch(e){saveHealth.localError=e;var message='プランを保存できませんでした。元のプランは残しています。端末の保存容量やブラウザの保存設定を確認してください。';if(weeklyFlow40)flowError40(message);else $("planPreviewNote").textContent=message;return false;}
+  var committingOwner=dataOwner,committingEpoch=authEpoch,committingState=state,committingSource=planBaseSignature();
+  try{await AccountStorage88.write(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),next);saveHealth.localError=null;saveHealth.localSaved=true;}catch(e){saveHealth.localError=e;var hasOriginal=(state.plan||[]).some(function(d){return d.blocks.length});var message=hasOriginal?'新しいプランを保存できませんでした。現在の予定は変更していません。':'新しいプランを保存できませんでした。以前の予定は削除済みです。入力した設定と学習記録は残っています。';if(weeklyFlow40)flowError40(message);else $("planPreviewNote").textContent=message;return false;}
+  if(committingOwner!==dataOwner||committingEpoch!==authEpoch)return false;
+  if(state!==committingState||committingSource!==planBaseSignature()){await AccountStorage88.write(legacyUnclaimed?KEY+':legacy-backup':accountKey(dataOwner),state);if(weeklyFlow40)flowError40('保存中にデータが更新されました。内容を確認してから作成してください。');return false;}
   Object.assign(state,next);
   // done / spent / credit / contrib / log と実行中のタイマーはそのまま保持する。
   ["goal","exam","tot","wd","we","rwd","rwe"].forEach(function(k){$(k).value=state[k]});
@@ -2661,8 +2666,7 @@ function syncApply(r){
     if(!ownsCurrentData(FB.uid))return false;
     repairLog58(o);
     // Persist successfully before replacing the live state; never reload into setup.
-    localStorage.setItem(accountKey(dataOwner)+":before-sync",JSON.stringify(state));
-    localStorage.setItem(accountKey(dataOwner),JSON.stringify(o));
+    if(!AccountStorage88.backup(accountKey(dataOwner)+':before-sync',state)||!AccountStorage88.sync(accountKey(dataOwner),o))throw new Error('端末内に保存できませんでした。');
     state=o;lastData=syncData();syncSig=r.data;rememberSyncBase(r.data);accountNeedsCloud=false;FB.syncReady=true;
     saveHealth.localError=null;saveHealth.cloudError=null;saveHealth.pending=lastData!==syncSig;saveHealth.synced=!saveHealth.pending;
     timerUndoState=null;mrSig='';
@@ -2676,6 +2680,7 @@ async function syncPull(){
   try{return await flight.promise}finally{if(syncPullFlight===flight)syncPullFlight=null;}
 }
 async function syncPullOnce(){
+  if(!AccountStorage88.hydrated)await AccountStorage88.hydration;
   var uid=FB.uid,epoch=authEpoch;if(!ownsCurrentData(uid)||!FB.syncReady)return;
   clearTimeout(syncTimer);syncTimer=null;
   // Finish an existing write, but read before sending a queued or failed write.
@@ -2700,7 +2705,7 @@ async function syncPullOnce(){
   if(before!==syncSig&&!isBlank())await syncPush();
   else{saveHealth.cloudError=null;paintSaveStatus()}
 }
-async function syncStart(){ // ログインしたとき: クラウドのほうが新しければ取り込む。なければ、この端末のデータを預ける
+async function syncStart(){if(!AccountStorage88.hydrated)await AccountStorage88.hydration; // ログインしたとき: クラウドのほうが新しければ取り込む。なければ、この端末のデータを預ける
   var uid=FB.uid,epoch=authEpoch,r=null,before=syncData();if(!ownsCurrentData(uid))return false;
   try{r=await fGet("privateData/"+uid)}catch(e){if(ownsCurrentData(uid)&&epoch===authEpoch){saveHealth.cloudError=e;paintSaveStatus()}return false} // 読めなかったときは、上書きしないように、同期を始めない
   if(!ownsCurrentData(uid)||epoch!==authEpoch)return false;
@@ -3305,7 +3310,7 @@ var renderSubjects36=renderSubjects;renderSubjects=function(){renderSubjects36()
 var build36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){c=planClone(c);c.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});var p=build36(c,style,null,start);syncPlanTotals(p);var subs=c.subjects.filter(function(s){return s[0]});p.forEach(function(d){if(d.date<fmtDate(new Date()))return;var date=new Date(d.date+'T00:00:00'),required=Number(date.getDay()%6===0?c.we:c.wd)||0,left=Math.max(0,required-d.normalHours);if(left>0.00001&&subs.length){var targets=makeTargets(subs,left);allocDay(left,subs,targets,style).forEach(function(b){b.id=newId();d.blocks.push(b)})}});syncPlanTotals(p);var applied=appendWeekCarry(p,carry||[],'spread');p.carryRemaining=applied.remaining;syncPlanTotals(p);return p};
 var make36=makePlan;makePlan=function(){if(state.carryReview||state.pendingWeekReview){showPendingPlanReview();return false}state.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});if(duplicateSubject(state.subjects)){$('planMakeError').hidden=false;$('planMakeError').textContent='同じ名前の科目があります。科目名を変更するか、重複を削除してください。';return false}archivePlan('計画の更新');var before=planClone(state.weekCarry||[]),usedCarry=state.weekSetupPending&&state.carry!==false,ok=make36();if(ok){state.weekCarry=usedCarry?(state.plan.carryRemaining||[]):before;var a=allocationAudit(state.plan,planConfig());state.lastAllocationAudit=a;save();renderPlan()}return ok};
 var preview36=generatePlanPreview;generatePlanPreview=function(){preview36();var a=allocationAudit(planCandidate,planCandidateConfig);$('planPreviewNote').textContent+=' '+a.text;$('planAdopt').disabled=!planCandidate.length||!a.ok};
-var adopt36=adoptPlanCandidate;adoptPlanCandidate=function(){if(!planCandidate)return;var a=allocationAudit(planCandidate,planCandidateConfig);if(!a.ok){$('planPreviewNote').textContent='設定時間を満たしていません。設定を確認してください。';return}archivePlan('計画の更新');var held=(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]);adopt36();state.weekCarry=held;state.lastAllocationAudit=a;save();renderPlan()};
+var adopt36=adoptPlanCandidate;adoptPlanCandidate=async function(){if(!planCandidate)return;var a=allocationAudit(planCandidate,planCandidateConfig);if(!a.ok){$('planPreviewNote').textContent='設定時間を満たしていません。設定を確認してください。';return}archivePlan('計画の更新');var held=(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]);await adopt36();state.weekCarry=held;state.lastAllocationAudit=a;save();renderPlan()};
 remainingWeekItems=function(days){var items=[];if(state.carry===false)return items;days.forEach(function(d){if(d.carryProcessed)return;d.blocks.forEach(function(b){if(state.done[b.id]||b.skipCarry)return;var h=Math.max(0,b.h-elapsed(b.id)/3600);if(h>1/3600)items.push({sourceId:b.id,sourceDate:d.date,carryFrom:b.carryFrom||d.date,name:b.name,h:Math.round(h*3600)/3600,selected:true})})});return items};
 appendWeekCarry=function(plan,items,mode){syncPlanTotals(plan);var days=plan.filter(function(d){return d.date>=fmtDate(new Date())}),remaining=[],touched=[];items.forEach(function(source){var left=Number(source.h)||0;while(left>.000001){var available=days.filter(function(d){return d.h<16-.000001});if(mode==='spread')available.sort(function(a,b){return a.h-b.h||a.date.localeCompare(b.date)});var day=available[0];if(!day){remaining.push(Object.assign({},source,{h:left}));break}var h=Math.min(left,16-day.h,mode==='spread'?.5:left);day.blocks.push({id:newId(),name:cleanSubject(source.name),h:h,manual:true,carried:true,carryFrom:source.carryFrom||source.sourceDate||'',sourceId:source.sourceId});day.h+=h;left-=h;if(touched.indexOf(day)<0)touched.push(day)}});syncPlanTotals(plan);return {remaining:remaining,touched:touched}};
 function archivePlan(reason){if(!state.plan||!state.plan.length)return null;state.planHistory=state.planHistory||[];var signature=JSON.stringify(state.plan.map(function(d){return [d.date,d.blocks.map(function(b){return [b.id,b.name,b.h]})]}));var found=state.planHistory.find(function(h){return h.signature===signature});if(found)return found;var h={id:rid(),signature:signature,reason:reason,created:Date.now(),goal:state.goal,exam:state.exam,plan:planClone(state.plan),done:planClone(state.done)};state.planHistory.push(h);return h}
@@ -3337,7 +3342,7 @@ setTimeout(function(){syncPlanTotals(state.plan);if(state.weekSetupPending&&!sta
 var draftOpen36=openPlanDraft;openPlanDraft=function(){draftOpen36();Array.from($('draftSubjects').children).forEach(function(row){row.dataset.originalName=cleanSubject(row.children[1].value)})};
 var draftRead36=readPlanDraft;readPlanDraft=function(){var c=draftRead36();c.nameChanges=Array.from($('draftSubjects').children).map(function(row){return {old:row.dataset.originalName||'',name:cleanSubject(row.children[1].value)}}).filter(function(x){return x.old&&x.name&&x.old!==x.name});return c};
 var draftBuild36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){var p=draftBuild36(c,style,carry,start);var nameMap={};(c.nameChanges||[]).forEach(function(change){nameMap[change.old]=change.name});p.forEach(function(d){if(d.date>=fmtDate(new Date()))d.blocks.forEach(function(b){if(findBlock(b.id))b.name=nameMap[b.name]||b.name})});return p};
-var draftAdopt36=adoptPlanCandidate;adoptPlanCandidate=function(){var c=planCandidateConfig;if(!c||!planCandidate)return;if(planCandidateBase!==planBaseSignature()){draftAdopt36();return}var changes=c.nameChanges||[],index=0,choices=[];function next(){if(index<changes.length){var change=changes[index++];chooseRename(change.old,change.name,function(past){if(past)choices.push(change);next()});return}if(changes.length)pauseTimer();var selected=planCandidate;draftAdopt36();if(state.plan!==selected)return;renamePastBatch(choices);save();renderPlan()}next()};
+var draftAdopt36=adoptPlanCandidate;adoptPlanCandidate=async function(){var c=planCandidateConfig;if(!c||!planCandidate)return;if(planCandidateBase!==planBaseSignature()){await draftAdopt36();return}var changes=c.nameChanges||[],index=0,choices=[];async function next(){if(index<changes.length){var change=changes[index++];return new Promise(function(resolve){chooseRename(change.old,change.name,async function(past){if(past)choices.push(change);await next();resolve()})})}if(changes.length)pauseTimer();var selected=planCandidate;await draftAdopt36();if(state.plan!==selected)return;renamePastBatch(choices);save();renderPlan()}return next()};
 var accountSwitch36=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){document.querySelectorAll('.plan-dialog[style*="32"]').forEach(function(el){el.remove()});carryModal36=null;weekModal36=null;renameDialog36=null;moveUndo36=null;var undo=$('planMoveUndo');if(undo)undo.remove()}return accountSwitch36(uid)};
 
 function renamePastBatch(changes){if(!changes.length)return;var names={};changes.forEach(function(c){names[c.old]=c.name});Object.keys(state.log||{}).forEach(function(date){var row={};Object.keys(state.log[date]).forEach(function(n){var next=names[n]||n;row[next]=(row[next]||0)+state.log[date][n]});state.log[date]=row});Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){e.name=names[e.name]||e.name})});Object.keys(state.credit||{}).forEach(function(id){var c=state.credit[id];if(c&&typeof c==='object')c.name=names[c.name]||c.name});(state.planHistory||[]).forEach(function(h){h.plan.forEach(function(d){d.blocks.forEach(function(b){b.name=names[b.name]||b.name})})});(state.plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))d.blocks.forEach(function(b){b.name=names[b.name]||b.name})})}
@@ -3590,10 +3595,10 @@ function flowSource40(){return JSON.stringify([state.goal,state.exam,state.planC
 // Brief completion animation, shown only after the plan has actually been adopted.
 var planReady48=null,planReadyTimeout48=null;
 function closePlanReady48(){if(planReadyTimeout48)clearTimeout(planReadyTimeout48);planReadyTimeout48=null;if(planReady48){planReady48.remove();planReady48=null}document.body.classList.remove('plan-ready-page49');var app=document.querySelector('.app');if(app)app.inert=false}
-function showPlanReady48(plan,setup){closePlanReady48();showPage(3);if(!setup)return;weeklyFlow40=Object.assign({},setup,{key:'plan',created:true,preview:false,source:flowSource40(),owner:dataOwner,epoch:authEpoch});flowCandidate40={plan:state.plan,owner:dataOwner,epoch:authEpoch,source:planBaseSignature()};flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();}
+function showPlanReady48(plan,setup){closePlanReady48();showPage(3);if(!setup)return;weeklyFlow40=Object.assign({},setup,{key:'plan',created:true,preview:false,saving:false,source:flowSource40(),owner:dataOwner,epoch:authEpoch});flowCandidate40={plan:state.plan,owner:dataOwner,epoch:authEpoch,source:planBaseSignature()};flowNode40.hidden=false;document.body.classList.add('weekly-flow-mode40');renderFlow40(true);persistFlow40();}
 function finishCreatedFlow87(){leaveFlow40(true);showPage(3)}
 function recoverCreatedDraft87(){if((state.plan||[]).some(function(d){return d.blocks.length})||flowDeferred40())return;var saved;try{saved=JSON.parse(sessionStorage.getItem(flowStorageKey40())||'null')}catch(e){return}if(!saved||saved.created||saved.key!=='plan'||saved.owner!==dataOwner||saved.source!==flowSource40()||!['weekly','rebuild'].includes(saved.mode))return;openWeeklyFlow40(saved.mode);if(weeklyFlow40&&weeklyFlow40.key==='plan'&&flowCandidate40)adoptFlow40();}
-addEventListener('load',recoverCreatedDraft87,{once:true});
+addEventListener('load',function(){AccountStorage88.hydration.then(recoverCreatedDraft87)},{once:true});
 function normalizeRatios53(entries){
   if(entries.every(function(e){return Number.isFinite(Number(e.weight))&&Number(e.weight)>=.5&&Number(e.weight)<=10})){entries.forEach(function(e){e.weight=Number(e.weight)});return}
   var max=Math.max.apply(null,entries.map(function(e){return Number(e.weight)||1}));
@@ -3614,12 +3619,12 @@ async function archiveLocalSnapshot85(key,value){
 }
 async function savePlanReset85(owner,epoch,source){
   var key=legacyUnclaimed?KEY+':legacy-backup':accountKey(dataOwner),error=null;
-  function attempt(){if(owner!==dataOwner||epoch!==authEpoch||source!==JSON.stringify(state.plan))return 'changed';var changes={plan:state.plan.map(function(d){return {date:d.date,h:0,blocks:[]}}),weekCarry:[],carryReview:null,pendingWeekReview:null,weekSetupPending:false,planCycleStart:fmtDate(new Date()),planDaySeen:fmtDate(new Date())};try{localStorage.setItem(key,JSON.stringify(Object.assign({},state,changes)));Object.assign(state,changes);saveHealth.localError=null;saveHealth.localSaved=true;return 'saved'}catch(e){error=e;return 'failed'}}
-  var result=attempt();if(result!=='failed')return {status:result};
+  async function attempt(){if(owner!==dataOwner||epoch!==authEpoch||source!==JSON.stringify(state.plan))return 'changed';var changes={plan:state.plan.map(function(d){return {date:d.date,h:0,blocks:[]}}),weekCarry:[],carryReview:null,pendingWeekReview:null,weekSetupPending:false,planCycleStart:fmtDate(new Date()),planDaySeen:fmtDate(new Date())};try{var next=Object.assign({},state,changes);await AccountStorage88.write(key,next);if(owner!==dataOwner||epoch!==authEpoch||source!==JSON.stringify(state.plan))return 'changed';Object.assign(state,next);saveHealth.localError=null;saveHealth.localSaved=true;return 'saved'}catch(e){error=e;return 'failed'}}
+  var result=await attempt();if(result!=='failed')return {status:result};
   if(quotaError85(error)&&window.indexedDB){
     // Only move recovery snapshots after their IndexedDB transaction commits.
     // Current account data, sync merge bases, other accounts and photos remain intact.
-    for(var suffix of [':before-sync',':sync-backup']){var backupKey=accountKey(owner)+suffix;try{var value=localStorage.getItem(backupKey);if(!value)continue;await archiveLocalSnapshot85(backupKey,value);if(owner!==dataOwner||epoch!==authEpoch)return {status:'changed'};if(localStorage.getItem(backupKey)===value)localStorage.removeItem(backupKey);result=attempt();if(result!=='failed')return {status:result}}catch(e){break}}
+    for(var suffix of [':before-sync',':sync-backup']){var backupKey=accountKey(owner)+suffix;try{var value=localStorage.getItem(backupKey);if(!value)continue;await archiveLocalSnapshot85(backupKey,value);if(owner!==dataOwner||epoch!==authEpoch)return {status:'changed'};if(localStorage.getItem(backupKey)===value)localStorage.removeItem(backupKey);result=await attempt();if(result!=='failed')return {status:result}}catch(e){break}}
   }
   saveHealth.localError=error;return {status:'failed',error:error};
 }
@@ -3627,7 +3632,7 @@ function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
   return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
 }
-function persistFlow40(){var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,created:!!w.created,config:w.config,entries:w.entries}))}catch(e){}}
+function persistFlow40(){if(!AccountStorage88.hydrated)return;var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,created:!!w.created,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40)return;var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
 function flowError40(text){$('flowError40').textContent=text||'';if(text)$('flowError40').scrollIntoView({block:'nearest'})}
 function flowConfig40(){var w=weeklyFlow40;if(w.mode!=='goal')normalizeRatios53(w.entries);var c=planClone(w.config);c.goal=cleanSubject(c.goal);if(w.mode!=='goal')c.tot='';c.subjects=w.entries.map(function(e){return e.book?[cleanSubject(e.name),Number(e.weight),Object.assign({},e.book,{title:cleanSubject(e.name)})]:[cleanSubject(e.name),Number(e.weight)]});c.subjColors=Object.assign({},c.subjColors||{});w.entries.forEach(function(e){c.subjColors[cleanSubject(e.name)]=e.color});c.nameChanges=w.entries.filter(function(e){return e.oldName&&cleanSubject(e.name)!==e.oldName}).map(function(e){return {old:e.oldName,name:cleanSubject(e.name)}});return c}
@@ -3659,11 +3664,11 @@ function prepareFlowCandidate40(message){
   var audit=allocationAudit(planCandidate,c);if(!planCandidate.length||!audit.ok){flowError40('設定時間を満たす計画を作れませんでした。時間と科目を確認してください。');return}
   flowCandidate40={plan:planCandidate,owner:dataOwner,epoch:authEpoch,usedCarry:!!(state.weekSetupPending&&c.carry),source:planCandidateBase};w.preview=w.key==='plan';w.audit=audit;w.previewMessage=message||'';if(message){renderFlow40(true);flowError40(message)}return true;
 }
-function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w||!candidate)return;if(candidate.owner!==dataOwner||candidate.epoch!==authEpoch){leaveFlow40(false);return}
+async function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w||!candidate||w.saving)return;if(candidate.owner!==dataOwner||candidate.epoch!==authEpoch){leaveFlow40(false);return}
   if(state.pendingWeekReview||state.carryReview){showPendingPlanReview();return}
   var ids=new Set(candidate.plan.flatMap(function(d){return d.blocks.map(function(b){return b.id})}));
   if(candidate.source!==planBaseSignature()||(state.plan||[]).some(function(d){return d.date>=fmtDate(new Date())&&d.blocks.some(function(b){return keepPlannedBlock(b)&&!ids.has(b.id)})})){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。内容を確認してください。');return}
-  planCandidate=candidate.plan;planCandidateBase=candidate.source;planCandidateConfig=flowConfig40();planCandidateResetWeek=true;adoptPlanCandidate();
+  planCandidate=candidate.plan;planCandidateBase=candidate.source;planCandidateConfig=flowConfig40();planCandidateResetWeek=true;w.saving=true;$('flowNext40').disabled=true;$('flowBack40').disabled=true;try{await adoptPlanCandidate()}finally{w.saving=false;if(weeklyFlow40){$('flowNext40').disabled=false;$('flowBack40').disabled=false}}
 }
 function flowField40(box,label,type,value,onInput,attrs){var wrap=document.createElement('label');wrap.className='flow-field40';wrap.textContent=label;var input=document.createElement('input');input.type=type;input.value=value==null?'':value;Object.keys(attrs||{}).forEach(function(k){input.setAttribute(k,attrs[k])});input.oninput=function(){onInput(input.value);persistFlow40();flowError40('')};wrap.appendChild(input);box.appendChild(wrap);return input}
 function flowCustomMaterial40(body,w,list){
@@ -3751,7 +3756,7 @@ function installWeeklyFlow40(){
     });
   };$('back3').onclick=openPlanDraft;
   var preview40=generatePlanPreview;generatePlanPreview=function(){if(weeklyFlow40&&weeklyFlow40.preview){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}preview40()};
-  var commit40=draftAdopt36;draftAdopt36=function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];commit40();if(state.plan===candidate){var completedSetup=weeklyFlow40;leaveFlow40(true);showPlanReady48(candidate,completedSetup)}else{state.weekCarry=queue}};
+  var commit40=draftAdopt36;draftAdopt36=async function(){var candidate=planCandidate,context=flowCandidate40,queue=state.weekCarry;if(!context||context.plan!==candidate)return commit40();if(context.source!==planBaseSignature()){prepareFlowCandidate40('元の計画が更新されたため、候補を作り直しました。');return}if(context.usedCarry)state.weekCarry=[];await commit40();if(state.plan===candidate){var completedSetup=weeklyFlow40;leaveFlow40(true);showPlanReady48(candidate,completedSetup)}else{state.weekCarry=queue}};
   var account40=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){closePlanReady48();leaveFlow40(false);goalBack=null}return account40(uid)};
 }
 
@@ -4421,5 +4426,6 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/inbox-sheet.js"></script>
 <script src="assets/header-slide.js"></script>
 <script src="assets/plan-materials.js"></script>
+<script src="assets/account-storage-init.js"></script>
 </body>
 </html>
