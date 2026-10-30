@@ -124,7 +124,9 @@ body #em .edit-color{display:flex;align-items:center;justify-content:space-betwe
 body #em input[type=color]{height:42px;width:56px;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:5px}
 body #em #emSkipCarryWrap{display:flex;gap:10px;align-items:center;margin:20px 0}
 body #em #emSkipCarryWrap input{width:19px;height:19px;margin:0;accent-color:var(--acc);flex:none}
-body #em .actions{position:sticky;bottom:-22px;background:var(--bg);padding:16px 0 4px;margin-top:18px;gap:10px;z-index:4}
+body #em .actions{position:static;background:var(--bg);padding:16px 0 4px;margin-top:18px;gap:10px;z-index:4}
+/* Keep the editor actions out of the typing area; restore after keyboard dismissal. */
+body #em.em-keyboard56 .actions{display:none}
 body #em #emdel{color:#c04444}
 @media(max-width:380px){body #em>.tmbox{padding:22px 18px}body #em .edit-duration{padding:14px}#tm:not(.focus-mode) #timerMainActions button,#em .actions button{padding:12px 17px}body #planbox .blk .item{gap:4px 12px;padding-inline:10px}}
 
