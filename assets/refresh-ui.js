@@ -3,12 +3,11 @@
 const byId=id=>document.getElementById(id),loading=window.AppLoading72;
 // Wrap existing readers: their permissions, request guards and error handling stay intact.
 function wrap(name,id,kind='list',ready){const original=window[name];if(typeof original!=='function')return;window[name]=function(){const target=byId(id),keep=!!(ready&&ready(target,arguments)),result=original.apply(this,arguments),finish=loading.start(target,kind,keep);return Promise.resolve(result).finally(finish);};}
-wrap('fillList','lmBody');wrap('openDmList','dmBody');wrap('openPost','pxBody');wrap('openProfile','pmBody','profile',(_target,args)=>!!profileCached('profiles/'+args[0]));
+wrap('fillList','lmBody');wrap('openProfile','pmBody','profile',(_target,args)=>!!profileCached('profiles/'+args[0]));
 wrap('rankLoad','tlBody','list');
 wrap('fbSearchUsers','fbUserResults','list',(_target,args)=>args[0]===true);
-const initialMessages=dmLoad;dmLoad=function(first){const result=initialMessages.apply(this,arguments);if(!first)return result;const target=byId('dmBody'),finish=loading.start(target,'list',!!target.querySelector('.msg'));return Promise.resolve(result).finally(finish);};
 // Individual names may arrive after their row. Keep its geometry instead of a loading label.
-const watched=['lmBody','dmBody','pmBody','pxBody'];let skeletonFrame=0;
+const watched=['lmBody','dmBody','pmBody'];let skeletonFrame=0;
 function markNames(){skeletonFrame=0;for(const id of watched){const target=byId(id);if(!target)continue;for(const node of target.querySelectorAll('b,.note')){const pending=node.childElementCount===0&&/^(読み込み中|検索中)[…\.]*$/.test(node.textContent.trim());node.classList.toggle('async-inline72',pending);}}}
 const observer=new MutationObserver(()=>{if(!skeletonFrame)skeletonFrame=requestAnimationFrame(markNames);});for(const id of watched)if(byId(id))observer.observe(byId(id),{subtree:true,childList:true,characterData:true});
 const indicator=document.createElement('div');indicator.id='pullRefresh72';indicator.setAttribute('aria-hidden','true');indicator.innerHTML='<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M16 3v5" opacity=".95"/><path d="M16 3v5" transform="rotate(45 16 16)" opacity=".85"/><path d="M16 3v5" transform="rotate(90 16 16)" opacity=".72"/><path d="M16 3v5" transform="rotate(135 16 16)" opacity=".6"/><path d="M16 3v5" transform="rotate(180 16 16)" opacity=".48"/><path d="M16 3v5" transform="rotate(225 16 16)" opacity=".36"/><path d="M16 3v5" transform="rotate(270 16 16)" opacity=".25"/><path d="M16 3v5" transform="rotate(315 16 16)" opacity=".15"/></g></svg>';document.body.append(indicator);
@@ -20,8 +19,7 @@ function context(){
  if(state.timer||state.idleReview||state.pendingTimerRelease||/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)||document.activeElement?.isContentEditable)return null;
  if(document.body.matches('.route-creating,.weekly-flow-mode40,.profile-editing64,.registry-open-mode'))return null;
  if(visible('lm'))return FB.uid?{key:'list/'+listMode,root:byId('lm'),scroll:byId('lmBody'),task:()=>fillList()}:null;
- if(visible('dmm'))return FB.uid&&!dmCur?{key:'inbox/'+inboxTab,root:byId('dmm'),scroll:byId('dmBody'),task:()=>inboxTab==='req'?renderInboxReq():openDmList()}:null;
- if(visible('pxm'))return FB.uid&&pxCur?{key:'comments/'+pxCur.pid,root:byId('pxm'),scroll:byId('pxm').querySelector('.tmbox'),task:()=>openPost(pxCur.pid,pxCur.it)}:null;
+ if(visible('dmm'))return FB.uid?{key:'inbox/req',root:byId('dmm'),scroll:byId('dmBody'),task:()=>renderInboxReq()}:null;
  if(document.querySelector('[role="dialog"]:not([hidden]),dialog[open]'))return null;
  if(![3,4,5,6,8].includes(Number(state.page)))return null;
  const page=state.page,uid=FB.uid,epoch=authEpoch;return {key:'page/'+page,root:byId({3:'planbox',4:'stats',5:'mypage',6:'today',8:'bookRoutePage'}[page]),scroll:document.scrollingElement,task:async()=>{

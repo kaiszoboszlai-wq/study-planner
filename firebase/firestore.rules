@@ -65,44 +65,9 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['at']);
       allow delete: if signedIn() && request.auth.uid == liker;
     }
-    match /posts/{postId}/comments/{cid} {
-      allow read: if signedIn();
-      allow create: if canInteract(postId)
-        && request.resource.data.keys().hasOnly(['uid', 'text', 'at'])
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 300;
-      allow delete: if signedIn() && (resource.data.uid == request.auth.uid || authorOf(postId) == request.auth.uid);
-    }
-    // 会話の個別確認は、作成前も会話IDに含まれる2人だけ許可。
-    // 一覧の取得は保存済みmembersに自分が含まれる会話だけ許可。
-    match /dm/{chatId} {
-      allow get: if inChat(chatId);
-      allow list: if signedIn() && request.auth.uid in resource.data.members;
-      allow create, update: if inChat(chatId) && connected(chatId)
-        && request.resource.data.keys().hasOnly(['members', 'updated', 'last', 'lastFrom'])
-        && request.resource.data.members.size() == 2
-        && request.resource.data.members.hasAll(chatId.split('_'))
-        && request.resource.data.lastFrom == request.auth.uid
-        && request.resource.data.last is string
-        && request.resource.data.last.size() <= 100;
-      match /messages/{mid} {
-        allow read: if inChat(chatId);
-        allow create: if inChat(chatId) && connected(chatId)
-          && request.resource.data.keys().hasOnly(['from', 'text', 'at'])
-          && request.resource.data.from == request.auth.uid
-          && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 1000
-          && request.resource.data.at is number;
-      }
-      match /reads/{reader} {
-        allow read: if inChat(chatId);
-        allow write: if inChat(chatId) && request.auth.uid == reader
-          && request.resource.data.keys().hasOnly(['at']);
-      }
-    }
+    // DM and comments retired. Old clients cannot read or write these paths.
+    match /posts/{postId}/comments/{cid} { allow read, write: if false; }
+    match /dm/{document=**} { allow read, write: if false; }
 
     // 承認済みの閲覧者が、自分の共有プロフィールだけを更新できる。
     match /stats/{owner}/viewers/{viewer} {

@@ -12,3 +12,5 @@ html body #dmm #dmmClose{flex:none;width:40px;height:40px;padding:0;border:0;bac
 html body #dmm #dmBody{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding-top:20px;padding-bottom:20px}
 #dmm #dmForm{flex:none}#dmm>.tmbox>.actions:empty{display:none}
 @media(prefers-reduced-motion:reduce){#dmm #inboxTabs:after{transition:none}}
+
+#dmm #inboxTabs:after{left:40%;width:20%}

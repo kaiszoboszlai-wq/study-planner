@@ -23,21 +23,5 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   const rows=await globalRankRows61(()=>{},e=>{throw e});rankPaint54(document.getElementById('tlBody'),rows,false);
  });
  assert.equal(await page.locator('#tlBody .rkrow').count(),2);assert.equal(await page.locator('#rankCount59').innerText(),'2人中');
- await page.evaluate(async()=>{
-  document.getElementById('dmm').hidden=false;inboxTab='dm';
-  const c={uid:FB.uid,epoch:authEpoch,cid:'cost-test_other',other:'other',messages:new Map(),atBottom:true};dmCur=c;window.costChat=c;window.costReads=0;
-  fGet=async p=>{costReads++;return p.includes('/reads/')?{at:0}:{updated:1,lastFrom:'other',last:'最初'}};
-  fQ=async()=>[{id:'one',data:{from:'other',text:'最初',at:1}}];markDmRead38=()=>{};await dmLoad(true);await dmLoad(false);
- });
- assert.match(await page.locator('#dmBody').innerText(),/最初/);
- await page.evaluate(async()=>{fGet=async()=>({updated:2,lastFrom:'other',last:'新着'});fQ=async()=>[{id:'two',data:{from:'other',text:'新着',at:2}},{id:'one',data:{from:'other',text:'最初',at:1}}];await dmLoad(false);});
- assert.match(await page.locator('#dmBody').innerText(),/新着/);assert.match(await page.locator('#dmBody').innerText(),/最初/);
- await page.evaluate(async()=>{
-  const c=costChat,p={id:'own-message',text:'時刻差のある送信',at:1.5};state.dmOutbox={[c.cid]:p};
-  fSet=async(path,data)=>{if(path.includes('/messages/'))fQ=async()=>[{id:'two',data:{from:'other',text:'新着',at:2}},{id:p.id,data},{id:'one',data:{from:'other',text:'最初',at:1}}]};
-  await sendDmPending38(c,p);
- });
- assert.match(await page.locator('#dmBody').innerText(),/時刻差のある送信/);
- await page.evaluate(()=>dmStop());assert.equal(await page.evaluate(()=>dmCur),null);assert.deepEqual(errors,[]);
- console.log('PASS bounded ranking UI, outside-top label, small ranking count, cached DM and new message display, chat cleanup, no browser errors');
+ assert.deepEqual(errors,[]);console.log('PASS bounded ranking, own rank, ties and pagination without comments');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
