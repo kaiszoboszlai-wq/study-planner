@@ -156,3 +156,41 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-goal-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-left:auto}
 #longTermPlanner .lt-route-add{min-height:44px;padding:8px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);white-space:nowrap}
 #longTermPlanner .lt-controls .lt-heading[hidden]{display:none}
+
+/* Material timeline and roadmap share the app's sliding two-tab header. */
+#longTermPlanner .lt-view-tabs{position:sticky;top:var(--header-visible-height68,var(--app-header-height68));z-index:7;display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:20px}
+#longTermPlanner .lt-view-tabs button{min-width:0;min-height:52px;padding:12px 6px;border:0;border-radius:0;background:transparent;color:var(--sub);font-size:.8rem!important}
+#longTermPlanner .lt-view-tabs button[aria-selected=true]{color:var(--ink);font-weight:650}
+#longTermPlanner .lt-view-body{min-width:0}
+#longTermPlanner .lt-planner-actions{display:flex;justify-content:flex-end;margin:0 0 20px}
+#longTermPlanner .lt-planner-actions[hidden]{display:none}
+#longTermPlanner .lt-roadmap-shell{padding:0;margin:0;background:transparent;box-shadow:none;border:0;border-radius:0}
+#longTermPlanner .lt-roadmap-shell>.lt-roadmap-card{margin:0;border:0;padding:0}
+#longTermPlanner .lt-roadmap-shell>.lt-roadmap-card>.lt-scroll{width:100%;margin-left:0}
+#longTermPlanner .lt-timeline{list-style:none;margin:0;padding:0 0 24px}
+#longTermPlanner .lt-timeline-item{position:relative;display:grid;grid-template-columns:56px minmax(0,1fr);gap:20px;padding:0 0 22px}
+#longTermPlanner .lt-timeline-item:before{content:'';position:absolute;left:65px;top:24px;bottom:-24px;width:2px;background:var(--line)}
+#longTermPlanner .lt-timeline-item:last-child:before{display:none}
+#longTermPlanner .lt-timeline-item:after{content:'';position:absolute;left:60px;top:22px;width:12px;height:12px;border:3px solid var(--bg);border-radius:50%;box-sizing:border-box;background:var(--sub)}
+#longTermPlanner .lt-timeline-item.is-active:after,#longTermPlanner .lt-timeline-item.is-done:after{background:var(--acc);box-shadow:0 0 0 3px var(--accbg)}
+#longTermPlanner .lt-timeline-item.is-overdue:after{background:#d85a55}
+#longTermPlanner .lt-timeline-deadline{padding-top:14px;text-align:center;color:var(--sub);font-variant-numeric:tabular-nums}
+#longTermPlanner .lt-timeline-deadline small{display:block;font-size:.62rem;line-height:1.5}
+#longTermPlanner .lt-timeline-deadline b{display:block;font-size:.82rem;line-height:1.7;color:var(--ink)}
+#longTermPlanner .lt-timeline-card{min-width:0;display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:center;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:20px}
+#longTermPlanner .lt-timeline-cover{min-width:0}
+#longTermPlanner .lt-timeline-cover figure{margin:0}
+#longTermPlanner .lt-timeline-cover img{display:block;width:52px;height:74px;object-fit:contain}
+#longTermPlanner .lt-timeline-cover figcaption{font-size:8px;line-height:1.4;color:var(--sub);overflow-wrap:anywhere}
+#longTermPlanner button.lt-timeline-open{display:block;width:100%;min-width:0;padding:0;border:0;border-radius:8px;background:transparent;text-align:left;color:var(--ink)}
+#longTermPlanner .lt-timeline-open strong{display:block;font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;margin:6px 0}
+#longTermPlanner .lt-timeline-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:space-between}
+#longTermPlanner .lt-timeline-meta>small{color:var(--subject);font-size:.68rem}
+#longTermPlanner .lt-timeline-status{padding:3px 7px;border-radius:999px;background:var(--bg);color:var(--sub);font-size:.6rem;white-space:nowrap}
+#longTermPlanner .is-active .lt-timeline-status{color:var(--acc);background:var(--accbg)}
+#longTermPlanner .is-done .lt-timeline-status{color:#16775e;background:#e5f5ed}
+#longTermPlanner .is-overdue .lt-timeline-status{color:#ae403d;background:#fff0ee}
+#longTermPlanner .lt-timeline-period{display:block;font-size:.62rem;line-height:1.6;color:var(--sub)}
+#longTermPlanner .lt-timeline-empty{padding:36px 20px;text-align:center;border-radius:22px;background:var(--card);border:1px solid var(--line)}
+#longTermPlanner .lt-timeline-empty p{font-size:.84rem;line-height:1.8;color:var(--sub);margin:14px 0 24px}
+@media(max-width:360px){#longTermPlanner .lt-timeline-item{grid-template-columns:44px minmax(0,1fr);gap:16px}#longTermPlanner .lt-timeline-item:before{left:51px}#longTermPlanner .lt-timeline-item:after{left:46px}#longTermPlanner .lt-timeline-card{grid-template-columns:40px minmax(0,1fr);padding:12px;gap:10px}#longTermPlanner .lt-timeline-cover img{width:40px;height:58px}#longTermPlanner .lt-timeline-open strong{font-size:.82rem}}
