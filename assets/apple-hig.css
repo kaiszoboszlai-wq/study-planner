@@ -1,0 +1,101 @@
+/* Apple HIG-inspired visual layer for the web.
+   References: developer.apple.com/design/human-interface-guidelines/
+   Appearance only: no DOM changes, sizing, spacing, positioning or layout rules.
+   Existing theme choices, subject colors, navigation, gestures and transitions remain intact. */
+html:root[data-app-theme]{
+ background:var(--bg)!important;
+ --app-font:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Noto Sans JP",sans-serif;
+ --bg:#f2f2f7;--card:#fff;--ink:#1c1c1e;--sub:#636366;--line:rgb(60 60 67 / .2);
+ --acc:#0066cc;--accbg:#e7f1ff;--done:#8e8e93;--red:#c93428;
+ --hig-fill:#e9e9ef;--hig-field:#f0f0f5;--hig-action-ink:#fff;
+ --hig-glass:rgb(255 255 255 / .86);--hig-glass-line:rgb(255 255 255 / .7);
+ --hig-shadow:0 4px 20px rgb(0 0 0 / .06);--hig-separator:rgb(60 60 67 / .2);
+ --theme-header:var(--card);--theme-header-ink:var(--ink);
+ --action-bg:var(--acc);--action-ink:var(--hig-action-ink);--selection-bg:var(--accbg);--selection-ink:var(--acc);
+ --ui-ease:cubic-bezier(.2,.75,.25,1);
+}
+html:root[data-app-theme=sage]{--acc:#28734d;--accbg:#e6f2eb}
+html:root[data-app-theme=lavender]{--acc:#6c47b8;--accbg:#f0eafb}
+html:root[data-app-theme=peach]{--acc:#9e4e2a;--accbg:#faece5}
+html:root[data-app-theme=black]{
+ color-scheme:dark;--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--sub:#aeaeb2;--line:rgb(84 84 88 / .65);
+ --acc:#0a84ff;--accbg:#102d4b;--done:#98989d;--red:#ff6961;
+ --hig-fill:#2c2c2e;--hig-field:#2c2c2e;--hig-action-ink:#000;
+ --hig-glass:rgb(28 28 30 / .88);--hig-glass-line:rgb(255 255 255 / .12);
+ --hig-shadow:0 4px 24px rgb(0 0 0 / .2);--hig-separator:rgb(84 84 88 / .65);
+ background:var(--bg);
+}
+html[data-app-theme] body main{background:var(--bg)!important;color:var(--ink)}
+html[data-app-theme] body{font-family:var(--app-font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+html[data-app-theme] :is(button,input,textarea,select){font-family:var(--app-font)}
+html[data-app-theme] :is(h1,h2,h3,.tmname,.lt-page-title){font-family:var(--app-font);font-weight:650;letter-spacing:-.015em;color:var(--ink)}
+html[data-app-theme] :is(.note,.lt-muted,.route-question-note,.flow-hint40){color:var(--sub)}
+html[data-app-theme] :is(#tdMeasured,#tdPercent,.stats-summary70,.timer-value,.plan-total){font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+
+/* Glass belongs to navigation and overlay chrome; content stays legible and quiet. */
+html[data-app-theme] body #appScrollHeader68{background:var(--hig-glass);color:var(--ink);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%)}
+html:root[data-app-theme] body .app nav.side{background:var(--hig-glass)!important;border-color:var(--hig-glass-line)!important;box-shadow:var(--hig-shadow);backdrop-filter:blur(26px) saturate(160%);-webkit-backdrop-filter:blur(26px) saturate(160%)}
+html:root[data-app-theme] body .app nav.side :is(.nv,#navToday){color:var(--sub)!important}
+html:root[data-app-theme] body .app nav.side :is(.nv.on,#navToday.on){color:var(--acc)!important;box-shadow:none}
+html[data-app-theme] body .app nav.side .nav-glass-indicator{background:var(--hig-fill);border-color:var(--hig-glass-line);box-shadow:inset 0 1px 0 var(--hig-glass-line)}
+html[data-app-theme] :is(.today-view-tabs,.lt-view-tabs,.following-tabs66,.inbox-sheet-header){background:var(--bg);border-color:var(--line)}
+html[data-app-theme] body :is(#inboxTabs,.today-view-tabs,.lt-view-tabs,.following-tabs66) button{background:transparent;color:var(--sub);font-weight:500}
+html[data-app-theme] body :is(#inboxTabs,.today-view-tabs,.lt-view-tabs,.following-tabs66) button[aria-selected=true]{color:var(--ink);font-weight:650}
+html[data-app-theme] body #stats #seg{background:var(--hig-fill);border-color:var(--line);border-radius:999px}
+html[data-app-theme] body #stats #seg button{background:transparent;color:var(--sub)}
+html[data-app-theme] body #stats #seg button.on{background:transparent;color:var(--ink)}
+html[data-app-theme] .stats-period-thumb70{background:var(--card);box-shadow:0 1px 4px #00000016}
+html[data-app-theme] :is(.rank-scope-thumb71,.rank-tabs61 button[aria-pressed=true]){background:var(--hig-fill);color:var(--ink)}
+
+/* Consistent action hierarchy without changing hit boxes or button placement. */
+html[data-app-theme] body button{border-color:var(--line);-webkit-tap-highlight-color:transparent}
+html[data-app-theme] body :is(button.main,#flowNext40,#routeQuestionNext,#goTodayStudy,#profileEdit63,.follow-action){background:var(--acc)!important;color:var(--hig-action-ink)!important;border-color:var(--acc)!important;box-shadow:none!important}
+html[data-app-theme] body #mypage #profileShare64{background:var(--accbg);color:var(--acc);border-color:transparent;box-shadow:none}
+html[data-app-theme] body :is(.actions,.lt-dialog>footer,.lt-crop-actions)>button:not(.main):not(.dng){background:var(--hig-fill);color:var(--acc);border-color:transparent;box-shadow:none}
+html[data-app-theme] body :is(.lt-route-add,#planSettingsOpen,.plan-material-actions80 button,.plan-material-photos80 button,.registry-open,.lt-custom-actions button){background:var(--accbg);color:var(--acc);border-color:transparent;box-shadow:none}
+html[data-app-theme] body :is(.lnk,.lt-route-edit){color:var(--acc)}
+html[data-app-theme] body :is(#emdel,.dng,.read-error){color:var(--red)}
+html[data-app-theme] body button:disabled{opacity:.45;cursor:default}
+html[data-app-theme] body button:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+html[data-app-theme] body button:not(:disabled):active{opacity:.7}
+@media(hover:hover){html[data-app-theme] body button.main:not(:disabled):hover{background:color-mix(in srgb,var(--acc) 88%,var(--ink))!important}}
+
+/* Quiet system-like fields and native selection colors. */
+html[data-app-theme] body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=hidden]):not([type=file]),select,textarea){background:var(--hig-field);color:var(--ink);border-color:var(--line);caret-color:var(--acc)}
+html[data-app-theme] body :is(input,select,textarea):focus-visible{outline-color:var(--acc)}
+html[data-app-theme] :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--acc)}
+html[data-app-theme] ::selection{background:var(--accbg);color:var(--ink)}
+html[data-app-theme] body :is(.flow-inline-search83,.subject-picker-search){background:var(--hig-field);border-color:transparent;box-shadow:none}
+html[data-app-theme] body .flow-inline-search83 input{background:transparent!important;box-shadow:none!important;outline:none!important}
+
+/* Grouped content, consistent corner treatment, and fine separators. */
+html[data-app-theme] body :is(.card62,.route-card,.lt-timeline-card,.lt-saved-route,.fcard,.my-grades-card,.theme-choice){background:var(--card);color:var(--ink);border-color:var(--line);border-radius:20px;box-shadow:none}
+html[data-app-theme] body #stats #pies>.pie{background:var(--card);border-color:var(--line);border-radius:20px;box-shadow:none}
+html[data-app-theme] body :is(#statsRecent62,.my-menu62){background:var(--card);border-color:var(--line);box-shadow:none}
+html[data-app-theme] body #mypage .my-menu62>button{background:var(--card)!important;color:var(--ink);border-color:var(--line)}
+html[data-app-theme] body #mypage :is(#myGoal62,.my-menu62,#loginRow69){background:var(--card)!important;color:var(--ink)}
+html[data-app-theme] body :is(.stats-record62,.following-header66,.rank-list-head59){border-color:var(--line)}
+html[data-app-theme] body #today #tdSummary{border-color:color-mix(in srgb,var(--acc) 20%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 13%,var(--card)),color-mix(in srgb,var(--acc) 4%,var(--card)));box-shadow:inset 0 1px 0 var(--hig-glass-line)}
+html[data-app-theme] body :is(#statsPrev38,#statsNext38){background:var(--hig-glass);color:var(--acc);border-color:var(--hig-glass-line);box-shadow:inset 0 1px 0 var(--hig-glass-line),0 2px 8px #0000000a}
+html[data-app-theme] body #today #tdMeter{background:var(--hig-fill)}
+html[data-app-theme] body #today #tdBar{background:var(--acc)}
+html[data-app-theme] body .tmbox{background:var(--card);color:var(--ink);border-color:var(--line);box-shadow:var(--hig-shadow)}
+html[data-app-theme] body :is(.lt-dialog,.subject-book-picker,#profileEditor64,#dmm>.tmbox){background:var(--bg);color:var(--ink)}
+html[data-app-theme] :is(.tm,dialog)::backdrop{background:rgb(0 0 0 / .28)}
+
+/* The same palette extends to both question flows and the book library. */
+html[data-app-theme] body :is(#weeklyFlow40,#routeCreation){--qa-ink:var(--ink);--qa-accent:var(--acc);--qa-card:var(--card);--qa-selected:var(--accbg);--qa-muted:var(--sub);--route-accent:var(--acc);--route-option:var(--card);--route-selected:var(--accbg);--route-marker:var(--line);background:var(--bg)!important;color:var(--ink)!important}
+html[data-app-theme] body :is(#flowBack40,#flowLater40,#routeCreateClose,#routeQuestionBack){background:var(--hig-fill);color:var(--sub);box-shadow:none}
+html[data-app-theme] body #weeklyFlow40 .flow-body40 .flow-choice40{border-radius:18px;background:var(--card);color:var(--ink);border-color:transparent}
+html[data-app-theme] body #weeklyFlow40 .flow-body40 .flow-choice40.selected{background:var(--accbg);border-color:var(--acc)}
+html[data-app-theme] body #routeCreation .route-question-options button{border-radius:18px;background:var(--card);color:var(--ink);box-shadow:none}
+html[data-app-theme] body #routeCreation .route-question-options button[aria-pressed=true]{background:var(--accbg);border-color:var(--acc)}
+html[data-app-theme] .theme-choice.selected{background:var(--accbg);outline-color:var(--acc)}
+html[data-app-theme] :is(.rank-self59,.advisor-entry,.advisor-callout){border-color:var(--line);box-shadow:none}
+
+@media(prefers-reduced-transparency:reduce){html[data-app-theme]{--hig-glass:var(--card)}html[data-app-theme] body :is(#appScrollHeader68,.app nav.side,.tmbox,#tdSummary){backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-contrast:more){html[data-app-theme]{--line:var(--sub);--hig-glass:var(--card)}html[data-app-theme] body button:focus-visible{outline-width:3px}}
+@media(forced-colors:active){html[data-app-theme] body button{border-color:ButtonText}html[data-app-theme] body button:focus-visible{outline-color:Highlight}}
+@media(prefers-reduced-motion:reduce){html[data-app-theme] body :is(button,input,select,textarea){transition:none!important}html[data-app-theme] body button:active{opacity:1}}
+
+html[data-app-theme] body #planSettings #carryOn:checked{background:var(--acc)!important;border-color:var(--acc)!important}
