@@ -21,7 +21,7 @@ function context(){
  if(visible('lm'))return FB.uid?{key:'list/'+listMode,root:byId('lm'),scroll:byId('lmBody'),task:()=>fillList()}:null;
  if(visible('dmm'))return FB.uid?{key:'inbox/req',root:byId('dmm'),scroll:byId('dmBody'),task:()=>renderInboxReq()}:null;
  if(document.querySelector('[role="dialog"]:not([hidden]),dialog[open]'))return null;
- if(![3,4,5,6,8].includes(Number(state.page)))return null;
+ if(![3,4,6,8].includes(Number(state.page)))return null;
  const page=state.page,uid=FB.uid,epoch=authEpoch;return {key:'page/'+page,root:byId({3:'planbox',4:'stats',5:'mypage',6:'today',8:'bookRoutePage'}[page]),scroll:document.scrollingElement,task:async()=>{
    await syncRefresh();if(state.page!==page||FB.uid!==uid||authEpoch!==epoch)return;
    if(page===4){renderStats();}else if(page===5){await renderFb();}else if(page===3)renderPlan();else if(page===6){renderToday();rankFetch55.at=0;await rankLoad();}else if(page===8)showPage(8);
@@ -42,4 +42,5 @@ document.addEventListener('touchend',()=>{const current=gesture;gesture=null;if(
 const account=switchAccountData;switchAccountData=function(uid){if(uid!==dataOwner){refreshGeneration++;flight=null;gesture=null;clearTimeout(resetTimer);hide();status.textContent='';loading.clear();}return account.apply(this,arguments);};
 const show=showPage;showPage=function(){gesture=null;if(!flight)hide();const result=show.apply(this,arguments);access.hidden=!context();return result;};
 access.hidden=!context();
+const previousPage=showPage;showPage=function(){const result=previousPage.apply(this,arguments);if(Number(state.page)===5){gesture=null;clearTimeout(resetTimer);hide();}return result;};
 })();

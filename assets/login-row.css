@@ -3,3 +3,8 @@
 #loginRow69{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;min-height:64px;margin:0;padding:16px 25px;border:0;background:var(--card);color:var(--ink);font-weight:650;text-align:left}
 .login-providers69{display:flex;align-items:center;gap:16px;flex:none}.login-providers69 img{display:block;width:24px;height:24px;max-width:24px;max-height:24px;object-fit:contain}
 #loginRowStatus69{padding:0 18px;margin:10px 0;font-size:.78rem}#loginRowStatus69[hidden]{display:none}#settingsSyncStatus:empty{display:none}
+
+html body #mypage .my-menu62>button{border-radius:0!important;border-bottom:1px solid var(--line);box-shadow:none}
+html body #mypage .my-menu62>button:last-child{border-bottom:0}
+html body #mypage .my-menu62>#loginRow69{border-radius:0!important;min-height:76px;padding:20px 24px}
+html:has(#mypage:not([hidden])),body:has(#mypage:not([hidden])){overscroll-behavior-y:none}

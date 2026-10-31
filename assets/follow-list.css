@@ -8,10 +8,13 @@ body.follow-list-open66{overflow:hidden}
 #lm.follow-list66 .fbrow>.actions{flex:none;margin:0;gap:0}#lm.follow-list66 .fbrow button{width:auto;max-width:102px;min-width:76px;min-height:32px;padding:6px 12px;background:var(--bg);border:0;color:var(--ink);font-size:.7rem!important;white-space:normal}#lm.follow-list66 .fbrow button.follow-action{background:#5c5aeb;color:#fff}#lm.follow-list66 .fbrow>button{min-width:42px;margin-left:0;font-size:.65rem!important}
 #lm.follow-list66 #lmBody>div>.note:first-child{font-size:.75rem;color:var(--sub)}#lm.follow-list66 #lmBody>div>.note:first-child:not(:only-child){display:none}.following-status66:empty{display:none}.following-status66{font-size:.8rem;text-align:center;padding:10px 18px;color:var(--sub);flex:none}
 body.follow-list-open66 #pm,body.follow-list-open66 #fm{z-index:30}#lm.follow-list66>.tmbox>.actions{display:none}
-@media(prefers-reduced-motion:no-preference){#lm.follow-list66 .tmbox{animation:followingIn66 .22s ease-out}@keyframes followingIn66{from{opacity:.7;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}}
+@media(prefers-reduced-motion:no-preference){#lm.follow-list66 .tmbox{animation:followingIn66 .46s cubic-bezier(.16,1,.3,1)}@keyframes followingIn66{from{opacity:.7;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}}
 #lm.follow-list66 .fbrow b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #lm.follow-list66 .fbrow>.actions{order:2}#lm.follow-list66 .fbrow>.following-more66{order:3;min-width:32px;width:32px;max-width:32px;padding:4px;background:transparent;font-size:1.05rem!important}
 #lm.follow-list66 .following-controls66 input{background:color-mix(in srgb,var(--ink) 6%,var(--card))}
 #lm.follow-list66 .fbrow>.actions button{width:104px;min-width:104px;max-width:104px;padding:6px 8px;font-size:.68rem!important;white-space:nowrap;background:color-mix(in srgb,var(--ink) 6%,var(--card))}
 #lm.follow-list66 .fbrow>.actions button.follow-action{background:#5c5aeb;color:#fff}
 #lm.follow-list66 .fbrow b[role=button]{border-radius:0!important}#lm.follow-list66 .fbrow b:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+
+#lm.follow-list66{background:rgb(10 20 35 / .38);justify-content:flex-end;padding:0}
+#lm.follow-list66>.tmbox{margin:0 0 0 auto;animation-fill-mode:both;background:var(--bg)}

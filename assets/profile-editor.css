@@ -18,3 +18,6 @@ body #mypage{padding-top:0}
 /* The profile cover meets the screen's top corners without gaps. */
 #mypage .my-profile62,#mypage .my-profile62:before,#profileCover65{border-top-left-radius:0!important;border-top-right-radius:0!important}
 #profileCover65{background:#e0e2e5}
+.profile-request91{margin:18px 0;padding:16px 0;border-bottom:1px solid var(--line)}
+.profile-request91 button{min-height:44px;padding:12px 18px;border-radius:999px}
+.profile-request91 p{line-height:1.7;font-size:.8rem}
