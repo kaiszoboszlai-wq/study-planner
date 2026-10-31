@@ -63,14 +63,9 @@ function draw(animate=false,old=null,entry=false){
  }
 }
 function showSelection(data){const b=data.items[selection];selected.hidden=!b;if(!b)return;selected.textContent=(mode==='h'||mode==='y'?b.date.getFullYear()+'年'+(b.date.getMonth()+1)+'月':dateLabel(b.date))+'　'+fmtDur(b.total);}
-function openHistory(){
- const data=model(logData()),bucket=data.items[selection>=0?selection:data.items.length-1],now=new Date(),date=bucket.date;
- const monthly=mode==='h'||mode==='y',distance=monthly?(now.getFullYear()-date.getFullYear())*12+now.getMonth()-date.getMonth():Math.round((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())-Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()))/86400000),count=monthly?6:7;
- dMode=monthly?'m':'d';dOff=Math.floor(Math.max(0,distance)/count);dSel=count-1-Math.max(0,distance)%count;mrLimit=15;mrSig='';document.getElementById('dm').hidden=false;renderDm();
-}
-function bindHistory(){chart.onclick=openHistory;chart.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openHistory();}};}
+function bindHistory(){chart.onclick=null;chart.onkeydown=null;chart.removeAttribute('tabindex');chart.removeAttribute('role');chart.setAttribute('aria-label','学習時間のグラフ');}
 function animateEntry(){cancelAnimationFrame(entryFrame);entryFrame=requestAnimationFrame(()=>{entryFrame=requestAnimationFrame(()=>{if(state.page===4){entryPending=false;draw(true,null,true);bindHistory();}});});}
-const baseRender=renderStats;renderStats=function(){if(!entryPending&&animations.some(a=>a.playState==='running')&&renderedSignature===visualSignature())return;const old=chart.querySelector('.stats-plot70')?.cloneNode(true);baseRender.apply(this,arguments);draw(state.page===4&&!entryPending,entryPending?null:old);bindHistory();if(entryPending)animateEntry();};
+const baseRender=renderStats;renderStats=function(){if(!entryPending&&animations.some(a=>a.playState==='running')&&renderedSignature===visualSignature())return;const old=chart.querySelector('.stats-plot70')?.cloneNode(true);const pies=renderPies;renderPies=()=>{};try{baseRender.apply(this,arguments);}finally{renderPies=pies;}draw(state.page===4&&!entryPending,entryPending?null:old);bindHistory();if(entryPending)animateEntry();};
 const baseLive=updateStatsLive;updateStatsLive=function(){const before=statsLiveKey;baseLive.apply(this,arguments);if(statsLiveKey!==before)draw(false);};
 let resizeFrame=0;new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{if(state.page===4&&Math.max(280,chart.clientWidth||350)!==lastWidth)draw(false);});}).observe(chart);
 const baseShow=showPage;showPage=function(n){if(n===4&&state.page!==4)entryPending=true;if(n!==4){entryPending=false;cancelAnimationFrame(entryFrame);stopMotion();}return baseShow.apply(this,arguments);};
