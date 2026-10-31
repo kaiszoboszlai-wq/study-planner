@@ -1,0 +1,110 @@
+/* Liquid Glass-inspired web materials. Appearance only; keep all existing geometry.
+   https://developer.apple.com/design/human-interface-guidelines/materials
+   Regular glass for controls/navigation; thicker materials for text-heavy overlays.
+   Selection indicators use fills rather than stacking another backdrop-filter. */
+html:root[data-app-theme]{
+ --liquid-fill:rgb(255 255 255 / .76);
+ --liquid-thick:rgb(255 255 255 / .92);
+ --liquid-edge:rgb(255 255 255 / .88);
+ --liquid-edge-low:rgb(255 255 255 / .3);
+ --liquid-highlight:rgb(255 255 255 / .68);
+ --liquid-shade:rgb(45 62 89 / .1);
+ --liquid-shadow:0 8px 28px rgb(32 48 76 / .1),0 2px 6px rgb(32 48 76 / .04);
+ --liquid-sheen:linear-gradient(135deg,rgb(255 255 255 / .48),transparent 37%,transparent 65%,rgb(255 255 255 / .2));
+ --liquid-control-accent:color-mix(in srgb,var(--acc) 65%,var(--ink));
+ --liquid-tint:color-mix(in srgb,var(--acc) 96%,transparent);
+}
+html:root[data-app-theme=black]{
+ --liquid-control-accent:color-mix(in srgb,var(--acc) 55%,var(--ink));
+ --liquid-fill:rgb(36 38 44 / .86);
+ --liquid-thick:rgb(28 28 32 / .93);
+ --liquid-edge:rgb(255 255 255 / .24);
+ --liquid-edge-low:rgb(255 255 255 / .07);
+ --liquid-highlight:rgb(255 255 255 / .2);
+ --liquid-shade:rgb(0 0 0 / .32);
+ --liquid-shadow:0 10px 32px rgb(0 0 0 / .32),0 2px 6px rgb(0 0 0 / .16);
+ --liquid-sheen:linear-gradient(135deg,rgb(255 255 255 / .13),transparent 35%,transparent 65%,rgb(255 255 255 / .04));
+}
+
+/* A restrained wash gives the material something to pick up without obscuring content. */
+html:root[data-app-theme] body main{background:radial-gradient(ellipse at 0 8%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 65%),radial-gradient(ellipse at 100% 75%,color-mix(in srgb,var(--acc) 4%,transparent),transparent 58%),var(--bg)!important}
+html:root[data-app-theme] body #appScrollHeader68{
+ background:var(--liquid-sheen),var(--liquid-fill);
+ box-shadow:inset 0 -1px 0 var(--liquid-edge-low);
+ backdrop-filter:blur(28px) saturate(165%);-webkit-backdrop-filter:blur(28px) saturate(165%);
+}
+html:root[data-app-theme] body .app nav.side{
+ background:var(--liquid-sheen),var(--liquid-fill)!important;
+ border-color:var(--liquid-edge)!important;
+ box-shadow:var(--liquid-shadow),inset 0 1px 0 var(--liquid-highlight),inset 0 -1px 0 var(--liquid-edge-low);
+ backdrop-filter:blur(32px) saturate(170%);-webkit-backdrop-filter:blur(32px) saturate(170%);
+}
+html:root[data-app-theme] body .app nav.side .nav-glass-indicator{
+ background:linear-gradient(135deg,color-mix(in srgb,var(--card) 74%,transparent),color-mix(in srgb,var(--card) 34%,transparent));
+ border-color:var(--liquid-edge-low);
+ box-shadow:inset 0 1px 1px var(--liquid-highlight),0 2px 8px var(--liquid-shade);
+}
+html:root[data-app-theme] body :is(#today,#longTermPlanner,#lm) :is(.today-view-tabs,.lt-view-tabs,.following-tabs66){
+ background:var(--liquid-sheen),var(--liquid-fill);
+ border-color:var(--liquid-edge-low);
+ box-shadow:inset 0 1px 0 var(--liquid-edge-low);
+ backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);
+}
+html:root[data-app-theme] body :is(.inbox-sheet-header,#inboxTabs){background:transparent}
+html:root[data-app-theme] body :is(#stats #seg,.rank-tabs61){
+ background:var(--liquid-sheen),color-mix(in srgb,var(--hig-fill) 72%,transparent);
+ box-shadow:inset 0 1px 0 var(--liquid-edge-low);
+}
+html:root[data-app-theme] body :is(.stats-period-thumb70,.rank-scope-thumb71){
+ background:var(--liquid-sheen),var(--liquid-thick);
+ box-shadow:inset 0 1px 0 var(--liquid-highlight),0 2px 6px var(--liquid-shade);
+}
+
+/* Tinted glass remains prominent and keeps the same readable action colors. */
+html:root[data-app-theme] body :is(button.main,#flowNext40,#routeQuestionNext,#goTodayStudy,#profileEdit63,.follow-action){
+ background:linear-gradient(180deg,rgb(255 255 255 / .1),transparent 38%,rgb(0 0 0 / .04)),var(--liquid-tint)!important;
+ border-color:color-mix(in srgb,var(--acc) 85%,var(--liquid-edge))!important;
+ box-shadow:inset 0 1px 0 rgb(255 255 255 / .32),inset 0 -1px 0 rgb(0 0 0 / .1),0 3px 10px color-mix(in srgb,var(--acc) 16%,transparent)!important;
+}
+html:root[data-app-theme] body :is(.lt-route-add,#planSettingsOpen,#statsPrev38,#statsNext38,.plan-material-actions80 button,.plan-material-photos80 button,.lt-custom-actions button,#profileShare64,#flowBack40,#flowLater40,#routeCreateClose,#routeQuestionBack){
+ background:var(--liquid-sheen),color-mix(in srgb,var(--card) 66%,transparent);
+ border-color:var(--liquid-edge);
+ box-shadow:inset 0 1px 0 var(--liquid-highlight),inset 0 -1px 0 var(--liquid-edge-low),0 3px 12px var(--liquid-shade);
+ color:var(--acc);
+}
+html:root[data-app-theme] body #mypage #profileShare64{background:var(--liquid-sheen),var(--liquid-fill);box-shadow:inset 0 1px 0 var(--liquid-highlight),0 3px 12px var(--liquid-shade)}
+html:root[data-app-theme] body :is(.actions,.lt-dialog>footer,.lt-crop-actions)>button:not(.main):not(.dng){background:var(--liquid-sheen),var(--hig-fill);box-shadow:inset 0 1px 0 var(--liquid-highlight);color:var(--acc)}
+html:root[data-app-theme] body button:not(:disabled):active{box-shadow:inset 0 2px 6px var(--liquid-shade)}
+@media(hover:hover){html:root[data-app-theme] body button.main:not(:disabled):hover{background:linear-gradient(180deg,rgb(255 255 255 / .16),transparent 48%),var(--acc)!important}}
+
+/* Long-form text uses the regular/thicker material; never clear glass over dense content. */
+html:root[data-app-theme] body :is(.tmbox,.lt-dialog,.subject-book-picker,#profileEditor64,#dmm>.tmbox){
+ background:var(--liquid-sheen),var(--liquid-thick);
+ border-color:var(--liquid-edge-low);
+ box-shadow:var(--liquid-shadow),inset 0 1px 0 var(--liquid-highlight);
+ backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%);
+}
+html:root[data-app-theme] body #today #tdSummary{
+ background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 12%,transparent),transparent 70%),var(--liquid-thick);
+ box-shadow:inset 0 1px 0 var(--liquid-highlight),inset 0 -1px 0 var(--liquid-edge-low),0 4px 16px var(--liquid-shade);
+ border-color:color-mix(in srgb,var(--acc) 22%,var(--liquid-edge));
+}
+/* Cards and text fields remain in the content layer; the glass controls float above them. */
+html:root[data-app-theme] body :is(.lt-timeline-card,#stats #pies>.pie,#statsRecent62){background:var(--card)}
+
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){html:root[data-app-theme]{--liquid-fill:var(--card);--liquid-thick:var(--card)}}
+@media(prefers-reduced-transparency:reduce){
+ html:root[data-app-theme]{--liquid-fill:var(--card);--liquid-thick:var(--card);--liquid-sheen:linear-gradient(transparent,transparent);--liquid-tint:var(--acc)}
+ html:root[data-app-theme] body :is(#appScrollHeader68,.app nav.side,.today-view-tabs,.lt-view-tabs,.following-tabs66,.tmbox,.lt-dialog,.subject-book-picker,#profileEditor64){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@media(prefers-contrast:more){html:root[data-app-theme]{--liquid-fill:var(--card);--liquid-thick:var(--card);--liquid-edge:var(--sub);--liquid-edge-low:var(--line);--liquid-tint:var(--acc)}}
+@media(forced-colors:active){html:root[data-app-theme] body :is(#appScrollHeader68,.app nav.side,.tmbox){background:Canvas!important;box-shadow:none;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+/* Inside an already frosted overlay, tabs are a fill, not a second glass layer. */
+html:root[data-app-theme] body .tmbox :is(.following-tabs66,.today-view-tabs,.lt-view-tabs){background:transparent;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* Vibrant foregrounds stay readable when content passes beneath regular glass. */
+html:root[data-app-theme] body .app nav.side :is(.nv,#navToday){color:var(--ink)!important}
+html:root[data-app-theme] body .app nav.side :is(.nv.on,#navToday.on){color:var(--liquid-control-accent)!important}
+html:root[data-app-theme] body :is(#today,#longTermPlanner,#lm) :is(.today-view-tabs,.lt-view-tabs,.following-tabs66) button{color:var(--ink)}
+
+html:root[data-app-theme] body #lm .tmbox .following-tabs66{background:transparent;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
