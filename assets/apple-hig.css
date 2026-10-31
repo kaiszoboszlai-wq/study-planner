@@ -3,6 +3,7 @@
    Appearance only: no DOM changes, sizing, spacing, positioning or layout rules.
    Existing theme choices, subject colors, navigation, gestures and transitions remain intact. */
 html:root[data-app-theme]{
+ color-scheme:light!important;
  background:var(--bg)!important;
  --app-font:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Noto Sans JP",sans-serif;
  --bg:#f2f2f7;--card:#fff;--ink:#1c1c1e;--sub:#636366;--line:rgb(60 60 67 / .2);
@@ -18,7 +19,7 @@ html:root[data-app-theme=sage]{--acc:#28734d;--accbg:#e6f2eb}
 html:root[data-app-theme=lavender]{--acc:#6c47b8;--accbg:#f0eafb}
 html:root[data-app-theme=peach]{--acc:#9e4e2a;--accbg:#faece5}
 html:root[data-app-theme=black]{
- color-scheme:dark;--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--sub:#aeaeb2;--line:rgb(84 84 88 / .65);
+ color-scheme:dark!important;--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--sub:#aeaeb2;--line:rgb(84 84 88 / .65);
  --acc:#0a84ff;--accbg:#102d4b;--done:#98989d;--red:#ff6961;
  --hig-fill:#2c2c2e;--hig-field:#2c2c2e;--hig-action-ink:#000;
  --hig-glass:rgb(28 28 30 / .88);--hig-glass-line:rgb(255 255 255 / .12);
