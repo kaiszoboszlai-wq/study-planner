@@ -1,0 +1,25 @@
+.exam-calendar105{padding:12px;border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--ink)}
+.exam-month105{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;margin-bottom:8px}
+.exam-month105 h3{margin:0;text-align:center;font-size:1rem}
+.exam-month105 button{display:grid;place-items:center;width:44px;height:44px;padding:8px;border:0;background:transparent;color:var(--ink)}
+.exam-month105 svg{display:block;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.exam-tools105{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.exam-tools105 button{min-height:44px;padding:9px 14px;font-size:.8rem}
+.exam-legend105{display:flex;gap:14px;flex-wrap:wrap;margin:0 4px 14px;font-size:.68rem;color:var(--sub)}
+.kind-test{--event-color:#dc8b22}.kind-mock{--event-color:#8c56bc}.kind-exam{--event-color:#1879d1}
+.exam-kind105{display:flex;gap:5px;align-items:center}.exam-kind105:before,.exam-dots105 i{content:'';width:5px;height:5px;border-radius:50%;background:var(--event-color);flex:none}
+.exam-week105,.exam-grid105{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.exam-week105{text-align:center;font-size:.7rem;color:var(--sub);margin-bottom:5px}.exam-week105 span:first-child{color:var(--red)}
+html body #longTermPlanner .exam-day105{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:48px;padding:6px 0;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--ink);font-size:.85rem;line-height:1}
+html body #longTermPlanner .exam-day105.is-outside{color:var(--sub);opacity:.45}
+html body #longTermPlanner .exam-day105.is-today>span:first-child{font-weight:750;color:var(--acc)}
+html body #longTermPlanner .exam-day105[aria-pressed=true]{border-color:var(--acc);background:var(--accbg);opacity:1}
+.exam-dots105{display:flex;justify-content:center;gap:3px;min-height:5px}
+.exam-day-detail105{margin:20px 0 0}.exam-day-detail105 h3{font-size:.9rem;margin:0 0 12px}.exam-empty105{color:var(--sub);font-size:.8rem;padding:12px 0}
+html body #longTermPlanner .exam-event105{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:14px;margin-bottom:10px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);text-align:left}
+.exam-badge105{flex:none;color:var(--event-color);background:color-mix(in srgb,var(--event-color) 10%,var(--card));padding:6px 8px;border-radius:10px;font-size:.7rem}
+.exam-event105>span:nth-child(2){min-width:0;flex:1}.exam-event105 strong{display:block;overflow-wrap:anywhere;font-size:.85rem}.exam-event105 small{display:block;color:var(--sub);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:5px;font-size:.72rem}.exam-event-arrow105{color:var(--sub);font-size:1.3rem}
+.exam-event-dialog105 input,.exam-event-dialog105 select,.exam-event-dialog105 textarea{width:100%;min-width:0;font:inherit;font-size:16px}.exam-event-dialog105 textarea{resize:vertical;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink)}
+@media(max-width:360px){.exam-calendar105{padding:8px}.exam-legend105{gap:10px}.exam-badge105{padding:6px}.exam-event105{gap:8px}}
+
+@media(max-width:360px){.exam-calendar105{width:calc(100% + 32px);margin-inline:-16px;padding:8px 0}.exam-calendar105 .exam-month105,.exam-calendar105 .exam-tools105,.exam-calendar105 .exam-legend105{margin-left:8px;margin-right:8px}.exam-calendar105 .exam-week105,.exam-calendar105 .exam-grid105{gap:0}}
