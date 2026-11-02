@@ -1000,8 +1000,18 @@ function ownsCurrentData(uid){return !!uid&&uid===dataOwner&&uid===FB.uid}
 var SYNC_SKIP=["_persistedAt88","timer","idleReview","pendingTimerRelease","page","planPage","updatedAt","dataAt"],lastData="",saveRevision=0;
 function syncData(){var o={};Object.keys(state).forEach(function(k){if(SYNC_SKIP.indexOf(k)<0)o[k]=state[k]});return JSON.stringify(o)} // 別の端末と同期する中身(計測中のタイマー・画面の位置は、同期しない)
 function load(){try{dataOwner=localStorage.getItem(KEY+":owner")||null;var s=readAccount(dataOwner);accountNeedsCloud=!!dataOwner&&!s;if(!s&&!dataOwner&&!localStorage.getItem(KEY+":legacy-archived")){s=JSON.parse(localStorage.getItem(KEY+":legacy-backup")||localStorage.getItem(KEY)||"null");legacyUnclaimed=!!s}if(s)state=Object.assign(JSON.parse(initialState),s);loadTimerRuntime();repairLog58(state);}catch(e){}lastData=syncData()}
-function loadTimerRuntime(){try{var r=JSON.parse(sessionStorage.getItem(accountKey(dataOwner)+":timer-runtime")||"null");if(r){state.timer=r.timer;state.idleReview=r.idleReview;state.pendingTimerRelease=r.pendingTimerRelease}else{if(state.timer&&state.timer.lease&&state.timer.lease.tab!==timerTabId)state.timer=null;if(state.idleReview&&state.idleReview.lease&&state.idleReview.lease.tab!==timerTabId)state.idleReview=null}}catch(e){}}
-function store(){if(!AccountStorage88.hydrated)return true;try{if(!AccountStorage88.sync(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),state))return false;try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
+function loadTimerRuntime(){try{
+  var r=JSON.parse(sessionStorage.getItem(accountKey(dataOwner)+":timer-runtime")||"null");
+  // The account snapshot survives closing the tab. Prefer it over stale session state.
+  if(r&&Number(r.persistedAt95||0)>=Number(state._persistedAt88||0)){
+    state.timer=r.timer;state.idleReview=r.idleReview;state.pendingTimerRelease=r.pendingTimerRelease;
+  }
+  if(state.timer){
+    if(state.timer.lease&&state.timer.lease.device!==timerDeviceId)state.timer=null;
+    else state.timer.awaitingGuard95=true;
+  }
+}catch(e){}}
+function store(){if(!AccountStorage88.hydrated)return true;try{if(!AccountStorage88.sync(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),state))return false;try{sessionStorage.setItem(accountKey(dataOwner)+":timer-runtime",JSON.stringify({persistedAt95:state._persistedAt88||0,timer:state.timer||null,idleReview:state.idleReview||null,pendingTimerRelease:state.pendingTimerRelease||null}))}catch(e){}saveHealth.localError=null;saveHealth.localSaved=true;paintSaveStatus();return true}catch(e){saveHealth.localError=e;paintSaveStatus();return false}}
 function switchAccountData(uid){
   uid=uid||null;
   if(dataOwner===uid){try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}return false}
@@ -1253,7 +1263,7 @@ function showWeeklySetupStatus(){
 }
 function rollForward(){
   if(!state.plan||!state.plan.length)return false;
-  if(state.idleReview||checkIdleTimer())return false;
+  if(state.timer||state.idleReview||checkIdleTimer())return false;
   var today=fmtDate(new Date());
   if(!state.planCycleStart)state.planCycleStart=state.plan[0].date;
   if(state.weekSetupPending||state.planDaySeen===today)return false;
@@ -1451,13 +1461,13 @@ async function adoptPlanCandidate(){
 // 計測時間は state.spent[項目のid] に秒で保存。同時に動くタイマーは1つだけ。
 var openId=null;
 function fmtT(sec){sec=Math.floor(sec);var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),r=sec%60;return h+":"+("0"+m).slice(-2)+":"+("0"+r).slice(-2)}
-function running(id){return !!(state.timer&&state.timer.id===id)}
+function running(id){return !!(state.timer&&!state.timer.awaitingGuard95&&state.timer.id===id)}
 function elapsed(id){return (state.spent[id]||0)+(running(id)?(Date.now()-state.timer.start)/1000:0)}
 function remain(id){var x=findBlock(id);return x?x.h*3600-elapsed(id):0}
 function fmtR(sec){return sec>=0?fmtT(Math.ceil(sec)):"+"+fmtT(Math.floor(-sec))+" 超過"} // 残り時間(カウントダウン)。過ぎたら「+ ○ 超過」
 function spText(id){var e=elapsed(id);return e>=1?(running(id)?"● ":"")+"残り "+fmtR(remain(id)):""}
 function pauseTimer(at,keepLease){
-  if(!state.timer)return;if(!keepLease)timerUndoState=null;var t=state.timer,now=at===undefined?Date.now():Math.max(t.start,Math.min(Date.now(),at)),sec=Math.max(0,(now-t.start)/1000),x=findBlock(t.id);
+  if(!state.timer||state.timer.awaitingGuard95)return;if(!keepLease)timerUndoState=null;var t=state.timer,now=at===undefined?Date.now():Math.max(t.start,Math.min(Date.now(),at)),sec=Math.max(0,(now-t.start)/1000),x=findBlock(t.id);
   if(x)splitTimerDays(t.start,now,function(d,s){logAdd(x.name,s,t.id,"t",d)});state.spent[t.id]=(state.spent[t.id]||0)+sec;state.timer=null;
   if(t.lease&&!keepLease)state.pendingTimerRelease=t.lease;
   save();if(t.lease&&!keepLease)releaseTimerLease(t.lease);renderActiveTimer();
@@ -1485,8 +1495,24 @@ function acquireTimerGuard41(token){
   });
 }
 function releaseTimerGuard41(token){var release=timerGuards41[token];if(release){delete timerGuards41[token];release()}}
+// Reopening uses wall-clock time, never a background interval. The lock prevents
+// another live tab (including a duplicated session) from recording the same span.
+var timerResumeTask95=null;
+function resumeLocalTimer95(){
+  if(timerResumeTask95)return timerResumeTask95;
+  var t=state.timer;if(!t||!t.awaitingGuard95)return Promise.resolve(true);
+  var owner=dataOwner;
+  timerResumeTask95=(async function(){
+    var lease=t.lease||{local:!owner,uid:owner,device:timerDeviceId,tab:timerTabId,token:"legacy:"+timerDeviceId+":"+accountKey(owner),active:true};
+    var guard=await acquireTimerGuard41(lease.token);
+    if(state.timer!==t||dataOwner!==owner){if(guard===true)releaseTimerGuard41(lease.token);return false}
+    if(guard===false||(guard===null&&lease.tab!==timerTabId))return false;
+    t.lease=Object.assign({},lease,{tab:timerTabId,localGuard:guard===true?1:0});
+    delete t.awaitingGuard95;return true;
+  })().finally(function(){timerResumeTask95=null});return timerResumeTask95;
+}
 async function claimTimerLease(id,resume){
-  if(!FB.uid)return {local:true};var uid=FB.uid,epoch=authEpoch;
+  if(!FB.uid){var localToken=resume&&resume.token||rid(),localGuard=await acquireTimerGuard41(localToken);if(localGuard===false)return null;return {local:true,device:timerDeviceId,tab:timerTabId,token:localToken,localGuard:localGuard===true?1:0,active:true}}var uid=FB.uid,epoch=authEpoch;
   if(!ownsCurrentData(uid)||!FB.syncReady){showTimerMessage("同期を確認しています。","同期が完了してから開始してください。");return null}
   if(state.pendingTimerRelease){await releaseTimerLease(state.pendingTimerRelease);if(state.pendingTimerRelease){showTimerMessage("一時停止した時間を保存しています。","同期が完了してから開始してください。");return null}}
   var x=findBlock(id),token=resume&&resume.token||rid(),now=Date.now();
@@ -1499,7 +1525,7 @@ async function claimTimerLease(id,resume){
       if(available41===true){held41.push(old.token);staleLocal41=true}
     }
     var abandonedHere=old&&old.localGuard!==1&&old.device===timerDeviceId&&old.tab===timerTabId&&!state.timer&&!state.idleReview&&!state.pendingTimerRelease;
-    if(old&&old.active&&!staleLocal41&&!abandonedHere&&!(resume&&old.token===resume.token&&old.device===timerDeviceId&&old.tab===timerTabId))return {blocked:true,name:old.name||"別の科目",lease:old};
+    if(old&&old.active&&!staleLocal41&&!abandonedHere&&!(resume&&old.token===resume.token&&old.device===timerDeviceId&&(old.tab===timerTabId||!!timerGuards41[old.token])))return {blocked:true,name:old.name||"別の科目",lease:old};
     if(!resume&&doc.data&&Number(doc.dataAt)>(state.dataAt||0))return {sync:doc};
     var hadGuard41=!!timerGuards41[token],guard41=await acquireTimerGuard41(token);
     if(guard41===false)return {blocked:true,lease:old};
@@ -1531,6 +1557,7 @@ function offerTimerRecovery40(id,observed){
   },"キャンセル");
 }
 function releaseTimerLease(lease){
+  if(lease&&lease.local){releaseTimerGuard41(lease.token);if(state.pendingTimerRelease&&state.pendingTimerRelease.token===lease.token){state.pendingTimerRelease=null;store()}return Promise.resolve(true)}
   if(!lease||!ownsCurrentData(lease.uid))return Promise.resolve(false);
   if(timerReleaseTask&&timerReleaseOwner===lease.uid)return timerReleaseTask;
   var uid=lease.uid,epoch=authEpoch,task=(async function(){
@@ -1545,27 +1572,27 @@ function releaseTimerLease(lease){
 }
 async function restoreTimerLease(){
   if(state.pendingTimerRelease)await releaseTimerLease(state.pendingTimerRelease);
+  if(!await resumeLocalTimer95())return;
   var t=state.timer;if(!t)return;
-  if(t.lease&&(t.lease.device!==timerDeviceId||t.lease.tab!==timerTabId)){state.timer=null;store();renderActiveTimer();return}
-  try{var lease=await claimTimerLease(t.id,t.lease||null);if(state.timer!==t)return;if(!lease){state.timer=null;store();renderActiveTimer();return}t.lease=lease.local?null:lease;store()}catch(e){if(state.timer===t){pauseTimer();showTimerMessage("計測を再開できませんでした。",readErrorMessage(e))}}
+  try{var lease=await claimTimerLease(t.id,t.lease||null);if(state.timer!==t)return;if(!lease){state.timer=null;store();renderActiveTimer();return}t.lease=lease;store()}catch(e){if(state.timer===t){pauseTimer();showTimerMessage("計測を再開できませんでした。",readErrorMessage(e))}}
 }
 
 var timerStartBusy=false,timerUndoState=null,timerUndoSerial=0;
 async function toggleTimer(id){
-  if(timerStartBusy)return;if(state.idleReview){showIdleReview();return}if(checkIdleTimer())return;
+  if(timerStartBusy)return;if(state.timer&&state.timer.awaitingGuard95&&!await resumeLocalTimer95())return;if(state.idleReview){showIdleReview();return}if(checkIdleTimer())return;
   if(running(id)){pauseTimer();updateTimer();renderPlan();return}
   if(!findBlock(id))return;timerStartBusy=true;updateTimer();
   try{
     unlockAudio();askNotify();pauseTimer();if(timerReleaseTask&&timerReleaseOwner===FB.uid)await timerReleaseTask;
     var lease=await claimTimerLease(id);if(!lease)return;
     if(state.done[id])setDone(id,false);
-    state.timer={id:id,start:Date.now(),lastActivity:Date.now(),lease:lease.local?null:lease};notified=remain(id)<=0?id:null;timerUndoState=null;save();
+    state.timer={id:id,start:Date.now(),lastActivity:Date.now(),lease:lease};notified=remain(id)<=0?id:null;timerUndoState=null;save();
   }catch(e){showTimerMessage("計測を開始できませんでした。",readErrorMessage(e))}finally{timerStartBusy=false;updateTimer();renderPlan();renderActiveTimer()}
 }
 function showTimerMessage(title,text){askConfirm(title,text,"OK")}
 function renderActiveTimer(){
   if(document.hidden)return;var el=$("activeTimer"),text=$("activeTimerText");if(!el)return;
-  var review=state.idleReview,t=state.timer,x=t&&findBlock(t.id);el.hidden=!review&&!x;
+  var review=state.idleReview,t=state.timer,x=t&&!t.awaitingGuard95&&findBlock(t.id);el.hidden=!review&&!x;
   if(review)setTextIfChanged(text,review.name+" · 記録の確認");
   else if(x){var left=remain(t.id),label=x.name+" · 計測中 · "+(left<=0?"予定時間終了 · 超過 "+fmtT(-left):"残り "+fmtT(left));setTextIfChanged(text,label)}
   el.setAttribute("aria-label",review?"未確認の計測時間を確認する":x?x.name+"の計測中タイマーに戻る":"計測中のタイマーに戻る");
@@ -1963,7 +1990,7 @@ var lastSel=null;
 function logData(){ // 計測中の分も含めた記録
   var L={};
   Object.keys(state.log||{}).forEach(function(d){L[d]=Object.assign({},state.log[d])});
-  if(state.timer){
+  if(state.timer&&!state.timer.awaitingGuard95){
     var x=findBlock(state.timer.id);
     if(x)splitTimerDays(state.timer.start,Date.now(),function(d,s){L[d]=L[d]||{};L[d][x.name]=(L[d][x.name]||0)+s});
   }
@@ -4019,7 +4046,7 @@ function installV57(){
 // v58: persist elapsed study time before a timer runtime/tab can disappear.
 // Advancing start after each checkpoint keeps both the timer and logData additive exactly once.
 function checkpointRunning58(at){
-  var t=state.timer,x=t&&findBlock(t.id);if(!t||!x||!Number.isFinite(t.start)||!Number.isFinite(at)||at<=t.start)return false;
+  var t=state.timer,x=t&&findBlock(t.id);if(!t||t.awaitingGuard95||!x||!Number.isFinite(t.start)||!Number.isFinite(at)||at<=t.start)return false;
   var sec=(at-t.start)/1000;if(!(sec>0))return false;
   splitTimerDays(t.start,at,function(date,seconds){logAdd(x.name,seconds,t.id,'t',date)});
   state.spent[t.id]=(Number(state.spent[t.id])||0)+sec;t.start=at;return true;
