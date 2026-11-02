@@ -18,3 +18,20 @@ html body #dmm #dmBody{max-height:none;flex:1 1 0;min-height:0;overflow-y:auto;o
 html body #dmm #broadcastAnnouncement86{flex-shrink:0;max-width:100%;margin-bottom:16px}
 html body #dmm .announcement-caption86{padding-bottom:4px}
 @media(max-width:360px){#appScrollHeader68 .studyplanner-wordmark69{font-size:1.4rem}#appScrollHeader68 .app-wordmark68{gap:6px}#appScrollHeader68 .app-wordmark68 img.app-icon68{width:29px;height:29px}}
+
+/* User menu follows the notification drawer's right-hand, three-quarter presentation. */
+body.account-menu-open97{overflow:hidden}
+html body #accountMenuOpen96{border:0;background:transparent;box-shadow:none;padding:6px}
+html body #accountMenuOpen96 svg{width:30px;height:30px}
+html body #accountMenu96{position:fixed;inset:var(--visual-top,0px) 0 auto;z-index:61;display:flex;justify-content:flex-end;width:100%;height:var(--visual-height,100dvh);padding:0;min-width:0;border:0;border-radius:0;background:rgb(10 20 35 / .38);backdrop-filter:blur(4px);box-shadow:none;box-sizing:border-box}
+html body #accountMenu96[hidden]{display:none}
+.account-menu-panel97{box-sizing:border-box;width:75%;height:100%;min-height:0;overflow:auto;padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));background:var(--bg);color:var(--ink);box-shadow:-12px 0 36px #0002}
+.account-menu-panel97>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.account-menu-panel97 h2{font-size:.9rem;margin:0;font-weight:650}
+html body #accountMenuClose97{width:44px;height:44px;min-width:44px;border:0;background:transparent;box-shadow:none;padding:0;color:var(--sub);font-size:28px!important}
+html body #mrOpen.stats-record-fab94{font-size:44px!important}
+html body :is(#statsPrev38,#statsNext38){font-size:36px!important;line-height:1}
+html body #tdTitle,html body #planbox .plan-week-top{display:none!important}
+html body #todaySchedulePanel>.today-heading{display:none}
+html body #todaySchedulePanel>#adjustTodayPlan{display:block;width:100%;min-height:44px;margin:24px 0 0!important;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--acc)}
+#stats #pies .dc{font-size:15px}
