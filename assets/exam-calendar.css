@@ -23,3 +23,18 @@ html body #longTermPlanner .exam-event105{display:flex;align-items:center;gap:12
 @media(max-width:360px){.exam-calendar105{padding:8px}.exam-legend105{gap:10px}.exam-badge105{padding:6px}.exam-event105{gap:8px}}
 
 @media(max-width:360px){.exam-calendar105{width:calc(100% + 32px);margin-inline:-16px;padding:8px 0}.exam-calendar105 .exam-month105,.exam-calendar105 .exam-tools105,.exam-calendar105 .exam-legend105{margin-left:8px;margin-right:8px}.exam-calendar105 .exam-week105,.exam-calendar105 .exam-grid105{gap:0}}
+/* Names in each day and continuous ranges, split only at week boundaries. */
+.exam-tools105{flex-wrap:wrap;justify-content:flex-start;gap:6px}.exam-tools105 button{padding:9px 10px;font-size:.75rem!important}.exam-tools105 button:first-child{margin-right:auto}
+.exam-calendar105 .exam-grid105{display:block}.exam-week-row109{margin-bottom:5px;min-width:0}.exam-week-days109,.exam-period-bars109{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-width:0}
+html body #longTermPlanner .exam-day105{height:76px;min-height:76px;justify-content:flex-start;padding:8px 2px;gap:6px;overflow:hidden}
+html body #longTermPlanner .exam-day105.has-exam109{background:color-mix(in srgb,#2087ea 16%,var(--card));border-color:color-mix(in srgb,#2087ea 38%,var(--line));color:var(--ink)}
+html body #longTermPlanner .exam-day105.has-period109:not(.has-exam109){background:color-mix(in srgb,#8774d8 7%,var(--card))}
+html body #longTermPlanner .exam-day105[aria-pressed=true]{border:2px solid var(--acc)}
+html body #longTermPlanner .exam-cell-title109{display:block;width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:1.5;font-weight:650;color:var(--ink)}
+.exam-cell-more109{font-size:10px;line-height:1;color:var(--sub)}
+.exam-period-bars109{gap:3px 0;padding:3px 0 4px}
+html body #longTermPlanner button.exam-period-bar109{display:block;min-width:0;min-height:24px;height:24px;margin:0 1px;padding:3px 6px;border:0;border-radius:6px!important;background:#6b58bc;color:#fff;font-size:10px!important;line-height:18px!important;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none}
+html body #longTermPlanner button.exam-period-bar109.continues-before109{border-top-left-radius:0!important;border-bottom-left-radius:0!important}
+html body #longTermPlanner button.exam-period-bar109.continues-after109{border-top-right-radius:0!important;border-bottom-right-radius:0!important}
+@media(max-width:360px){.exam-tools105 button{padding-inline:7px;font-size:11px!important}.exam-week-days109{gap:1px}}
+.exam-event-dialog105>footer{gap:8px}.exam-event-dialog105>footer button{min-width:0;flex:1;padding-inline:8px}

@@ -211,3 +211,21 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-subject-panel103{min-width:0}
 
 #longTermPlanner .lt-view-body{overflow-x:hidden;overflow-x:clip}
+
+/* Active study presence, with quiet upcoming/completed cards. */
+html:root[data-app-theme] body #longTermPlanner .is-active .lt-timeline-card{border-color:#32a776;background:color-mix(in srgb,#26b47c 8%,var(--card));box-shadow:0 0 0 1px #26b47c25,0 6px 20px #14976812}
+#longTermPlanner .is-active .lt-timeline-status{display:inline-flex;align-items:center;gap:6px;background:#e1f6ec;color:#146b48;font-weight:650}
+#longTermPlanner .is-active .lt-timeline-status:before{content:'';width:7px;height:7px;flex:none;border-radius:50%;background:#20a66d;animation:study-presence109 2s ease-out infinite}
+#longTermPlanner .lt-timeline-item.is-active:after{background:#20a66d;box-shadow:0 0 0 3px #20a66d22}
+html:root[data-app-theme] body #longTermPlanner :is(.is-upcoming,.is-done) .lt-timeline-card{background:color-mix(in srgb,var(--sub) 4%,var(--card));border-color:color-mix(in srgb,var(--line) 65%,transparent);box-shadow:none}
+#longTermPlanner :is(.is-upcoming,.is-done) .lt-timeline-cover{opacity:.6;filter:saturate(.45)}
+#longTermPlanner :is(.is-upcoming,.is-done) .lt-timeline-open{color:var(--sub)}
+#longTermPlanner :is(.is-upcoming,.is-done) .lt-timeline-meta>small{color:var(--sub)}
+#longTermPlanner .is-done .lt-timeline-status{color:var(--sub);background:var(--bg)}
+.lt-dialog .lt-route-choice input[type=checkbox]{appearance:none!important;-webkit-appearance:none!important;display:block!important;flex:0 0 24px!important;width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;max-width:24px!important;max-height:24px!important;padding:0!important;margin:0!important;border:2px solid var(--sub)!important;border-radius:50%!important;background:var(--card)!important;box-shadow:none!important;align-self:center;position:relative}
+.lt-dialog .lt-route-choice input[type=checkbox]:checked{border-color:var(--acc)!important;background:var(--acc)!important}
+.lt-dialog .lt-route-choice input[type=checkbox]:checked:after{content:'';position:absolute;inset:5px;border-radius:50%;background:white}
+.lt-dialog .lt-route-choice input[type=checkbox]:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+@keyframes study-presence109{0%{box-shadow:0 0 0 0 #20a66d66}75%,100%{box-shadow:0 0 0 6px #20a66d00}}
+@media(prefers-reduced-motion:reduce){#longTermPlanner .is-active .lt-timeline-status:before{animation:none}}
+#longTermPlanner .lt-timeline-item.is-done:after{background:var(--sub);box-shadow:none;opacity:.6}
