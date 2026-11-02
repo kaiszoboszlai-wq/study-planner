@@ -1,0 +1,20 @@
+html body #appScrollHeader68{grid-template-columns:minmax(0,1fr) auto;gap:6px}
+html body #appScrollHeader68 .app-header-actions68{gap:6px}
+.account-menu96{position:relative;flex:none}
+html body #accountMenuOpen96{display:grid;place-items:center;width:42px;height:42px;min-width:42px;padding:9px;border:1px solid var(--line);border-radius:50%;background:var(--accbg);color:var(--ink)}
+#accountMenuOpen96 img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+html body #accountMenuOpen96:has(img){padding:0;overflow:hidden}
+#accountMenu96{position:absolute;top:calc(100% + 8px);right:0;min-width:190px;padding:6px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);box-shadow:0 8px 30px #0002}
+#accountMenu96[hidden]{display:none}
+html body #accountMenu96 #navMy{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:10px 14px;border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;text-align:left;white-space:nowrap}
+html body #accountMenu96 #navMy:hover{background:var(--accbg)}
+html body #accountMenu96 #navMy svg{width:22px;height:22px;flex:none}
+.app nav.side:not(:has(.nv.on)) .nav-glass-indicator{visibility:hidden}
+html body #planbox .plan-hours-actions96{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0}
+html body #planbox .plan-hours-actions96>.plan-header-actions{position:static;display:flex;margin:0;min-height:42px;flex:none}
+html body #planbox .plan-week62{width:100%}
+/* The drawer owns its scrolling; legacy body height limits must not clip the announcement. */
+html body #dmm #dmBody{max-height:none;flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+html body #dmm #broadcastAnnouncement86{flex-shrink:0;max-width:100%;margin-bottom:16px}
+html body #dmm .announcement-caption86{padding-bottom:4px}
+@media(max-width:360px){#appScrollHeader68 .studyplanner-wordmark69{font-size:1.4rem}#appScrollHeader68 .app-wordmark68{gap:6px}#appScrollHeader68 .app-wordmark68 img.app-icon68{width:29px;height:29px}}

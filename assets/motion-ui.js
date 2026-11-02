@@ -43,6 +43,8 @@ document.addEventListener('toggle',e=>{if(e.target.tagName==='DETAILS'&&e.target
 document.addEventListener('load',e=>{const img=e.target;if(img.tagName==='IMG'&&img.closest('.route-cover73')&&!img.src.includes('placeholder'))play(img,[{opacity:.1},{opacity:1}],{duration:300});},true);
 const dialogSelector='dialog,.tm[role=dialog],#weeklyFlow40,#profileEditor64,#routeCreation';
 function watchDialog(node){
+ // These drawers own their horizontal entrance; avoid a second generic entrance.
+ if(node.matches('#lm.follow-list66,#dmm'))return;
  const on=node.tagName==='DIALOG'?node.open:!node.hidden&&!!node.getClientRects().length;
  if(visibility.get(node)===on)return;visibility.set(node,on);if(!on)return;
  const surface=node.querySelector(':scope > .tmbox,:scope > .flow-shell40,:scope > .profile-editor-shell64')||node;
