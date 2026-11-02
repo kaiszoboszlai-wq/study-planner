@@ -38,10 +38,16 @@ html body #accountMenu96:not(.is-profile109) .account-menu-panel97{flex:0 0 75%;
 html body #accountMenu96:not(.is-profile109) #accountMenuClose97{position:absolute;right:10px;top:calc(10px + env(safe-area-inset-top,0px));left:auto;background:transparent;color:var(--ink);border:0;border-radius:50%!important}
 .account-summary109{padding:0;margin:0;border:0;background:transparent;box-shadow:none}
 .account-summary109[hidden],html body #profileSearch108[hidden]{display:none!important}
-.account-identity109{display:flex;flex-direction:column;gap:14px;min-width:0}
-html body #accountMenu96 #accountProfileOpen109{display:grid;place-items:center;width:72px;height:72px;min-width:72px;padding:0;overflow:hidden;border:0;border-radius:50%!important;background:var(--accbg);color:var(--ink);box-shadow:none}
+.account-identity109{display:flex;flex-direction:row;align-items:flex-start;gap:12px;min-width:0}.account-details115{flex:1;min-width:0}
+html body #accountMenu96 #accountProfileOpen109{position:relative;display:block;box-sizing:border-box;flex:0 0 72px;aspect-ratio:1;width:72px;height:72px;min-width:72px;max-width:72px;min-height:72px;max-height:72px;padding:0;overflow:hidden;border:0;border-radius:50%!important;background:var(--accbg);color:var(--ink);box-shadow:none}
 #accountProfileOpen109 img{width:100%;height:100%;object-fit:cover}html body #accountProfileOpen109 svg{width:40px;height:40px;max-width:40px!important;max-height:40px!important}
-.account-identity109 strong{font-size:20px;line-height:1.4;overflow-wrap:anywhere}
-.account-counts109{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px}
+.account-identity109 strong{display:block;font-size:clamp(16px,4vw,20px);line-height:1.4;overflow-wrap:anywhere}
+.account-counts109{display:flex;flex-wrap:wrap;gap:0 12px;margin-top:6px;min-width:0}
 html body #accountMenu96 .account-counts109 button{display:flex;align-items:baseline;gap:5px;min-height:44px;padding:0;border:0;background:transparent;color:var(--sub);box-shadow:none;font-size:13px!important}
 .account-counts109 b{color:var(--ink);font-size:14px}
+
+/* Keep media square and centered independently of global button/image rules. */
+html body #accountMenu96 #accountProfileOpen109>.account-avatar-photo115{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:inherit;object-fit:cover;object-position:center;transform:none}
+html body #accountMenu96 #accountProfileOpen109>.account-avatar-fallback115{position:absolute;inset:auto;left:50%;top:50%;display:block;width:40px;height:40px;max-width:40px!important;max-height:40px!important;margin:0;transform:translate(-50%,-50%);fill:none;stroke:currentColor;overflow:visible}
+html body #accountMenuOpen96>.account-avatar-fallback115{display:block;width:30px;height:30px;max-width:30px!important;max-height:30px!important;fill:none;stroke:currentColor}
+html body #accountMenu96 .account-counts109 button{white-space:nowrap;min-width:0;font-size:12px!important}
