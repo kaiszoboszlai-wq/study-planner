@@ -1,5 +1,5 @@
 :root{--app-header-height68:calc(64px + env(safe-area-inset-top,0px))}
-#appScrollHeader68{position:fixed;top:0;left:0;right:0;margin:auto;z-index:8;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px;max-width:720px;width:100%;height:var(--app-header-height68);padding:env(safe-area-inset-top,0px) 16px 0;background:var(--card);color:var(--ink);border:0;transform:translateY(calc(-1 * var(--header-offset68,0px)));will-change:transform}
+#appScrollHeader68{position:fixed;top:0;left:0;right:0;margin:auto;z-index:8;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px;max-width:720px;width:100%;height:var(--app-header-height68);padding:env(safe-area-inset-top,0px) 16px 0;background:var(--card);color:var(--ink);border:0;transform:none;will-change:auto}
 #appScrollHeader68[hidden]{display:none!important}#appScrollHeader68.header-away68{pointer-events:none}
 body.app-has-header68 main{padding-top:calc(var(--app-header-height68) + 12px)}
 .app-wordmark68{display:flex;align-items:center;justify-content:center;min-width:0;height:100%}.app-wordmark68 img{display:block;width:180px;height:54px;max-width:100%;object-fit:contain}
