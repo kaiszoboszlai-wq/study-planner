@@ -1,8 +1,8 @@
 /* Remaining time and artwork occupy separate rows inside the progress ring. */
 html body #tm #clock.has-cover117{isolation:isolate}
 html body #tm #clock #timerCover117{position:absolute;inset:43% 30% 16%;z-index:0;display:grid;place-items:center;min-width:0;pointer-events:none;overflow:hidden;border-radius:10px}
-html body #tm #timerCover117 figure{display:grid;place-items:center;width:100%;height:100%;min-width:0;margin:0!important}
-html body #tm #timerCover117 img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;border-radius:6px}
+html body #tm #timerCover117 figure{position:absolute;inset:0;display:block;width:100%;height:100%;min-width:0;min-height:0;margin:0!important}
+html body #tm #timerCover117 img{position:absolute;inset:0;display:block;width:100%;height:100%;min-width:0;min-height:0;max-width:100%;max-height:100%;object-fit:contain;object-position:center;border-radius:6px}
 html body #tm #timerCover117 figcaption{display:none}
 html body #tm #clock.has-cover117 #tmtime{position:absolute;inset:16% 12% auto;height:21%;z-index:2;display:flex;align-items:center;justify-content:center;margin:0;pointer-events:none;font-size:clamp(1.4rem,8vw,2.8rem);font-weight:650;text-shadow:none}
 html body #tm #clock.has-cover117 #tmtime:before{content:none;display:none}
