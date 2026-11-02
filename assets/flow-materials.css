@@ -65,3 +65,15 @@ html:root[data-app-theme] body #weeklyFlow40 #flowLater40:after{transform:transl
 #weeklyFlow40 .flow-allocation110 .flow-daily90 input{margin-top:1px}
 #weeklyFlow40 .flow-day-total110{font-weight:650;padding:16px;border-radius:18px;background:var(--qa-selected,var(--accbg));color:var(--qa-ink,var(--ink))}
 @media(max-width:380px){#weeklyFlow40 .flow-allocation110{grid-template-columns:44px minmax(0,1fr)!important;gap:10px!important}#weeklyFlow40 .flow-allocation110>label{grid-column:2}#weeklyFlow40 .flow-priority-cover110 img{width:44px;height:62px}}
+/* Seven compact native pickers, aligned in one row on phones. */
+#weeklyFlow40 .flow-day-grid112{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:26px 0 0;min-width:0}
+#weeklyFlow40 .flow-day-choice112{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;margin:0;font-size:.85rem;text-align:center}
+#weeklyFlow40 .flow-day-choice112>strong{font-weight:650}#weeklyFlow40 .flow-day-choice112>small{font-size:10px;color:var(--qa-muted,var(--sub));white-space:nowrap}
+#weeklyFlow40 .flow-day-control112{position:relative;display:grid;place-items:center;box-sizing:border-box;width:100%;height:48px;margin-top:5px;padding:6px 1px 15px;border:1px solid var(--line);border-radius:12px;background:var(--qa-card,var(--card));color:var(--qa-ink,var(--ink))}
+#weeklyFlow40 .flow-day-control112:after{content:'';position:absolute;left:50%;bottom:9px;width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateX(-50%) rotate(45deg);pointer-events:none;opacity:.6}
+#weeklyFlow40 .flow-day-control112:focus-within{outline:2px solid var(--qa-accent,var(--acc));outline-offset:2px}
+#weeklyFlow40 .flow-day-value112{font-size:16px;font-variant-numeric:tabular-nums;line-height:1.2;pointer-events:none}
+#weeklyFlow40 .flow-day-control112 select{position:absolute;inset:0;display:block;box-sizing:border-box;width:100%;height:100%;min-width:0;margin:0;padding:0;opacity:0;cursor:pointer;font-size:16px!important}
+#weeklyFlow40 .flow-day-unit112{font-size:.73rem;color:var(--qa-muted,var(--sub));margin:12px 0 22px;text-align:right}
+
+#weeklyFlow40 .flow-day-title112{text-wrap:balance}

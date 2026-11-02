@@ -679,7 +679,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/app-announcements.css">
 <link rel="stylesheet" href="assets/header-slide.css">
 <link rel="stylesheet" href="assets/plan-materials.css">
-<link rel="stylesheet" href="assets/flow-materials.css?v=round-close-20261102">
+<link rel="stylesheet" href="assets/flow-materials.css?v=day-select-20261102">
 <link rel="stylesheet" href="assets/stats-polish.css">
 <link rel="stylesheet" href="assets/apple-hig.css">
 <link rel="stylesheet" href="assets/liquid-glass.css">
@@ -3623,7 +3623,22 @@ async function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w|
   planCandidate=candidate.plan;planCandidateBase=candidate.source;planCandidateConfig=flowConfig40();planCandidateResetWeek=true;w.saving=true;$('flowNext40').disabled=true;$('flowBack40').disabled=true;try{await adoptPlanCandidate()}finally{w.saving=false;if(weeklyFlow40){$('flowNext40').disabled=false;$('flowBack40').disabled=false}}
 }
 function flowField40(box,label,type,value,onInput,attrs){var wrap=document.createElement('label');wrap.className='flow-field40';wrap.textContent=label;var input=document.createElement('input');input.type=type;input.value=value==null?'':value;Object.keys(attrs||{}).forEach(function(k){input.setAttribute(k,attrs[k])});input.oninput=function(){onInput(input.value);persistFlow40();flowError40('')};wrap.appendChild(input);box.appendChild(wrap);return input}
-function renderDayHours110(body,w,title){title.textContent='1週間の各曜日の勉強時間を調整しよう';var c=w.config;if(!Array.isArray(c.dayHours))c.dayHours=Array.from({length:7},function(_,day){return Number(day===0||day===6?c.we:c.wd)});var total=document.createElement('p');total.className='flow-day-total110';var update=function(){total.textContent='週間合計 '+hm(c.dayHours.reduce(function(n,h){return n+Number(h)},0))};for(var i=0;i<7;i++){var date=new Date();date.setDate(date.getDate()+i);(function(day,date){flowField40(body,dayLabel(fmtDate(date))+'（時間）', 'number',c.dayHours[day],function(value){c.dayHours[day]=value===''?null:Number(value);update()},{min:0,max:16,step:.25,'aria-label':['日','月','火','水','木','金','土'][day]+'曜日の勉強時間'});})(date.getDay(),date);}update();body.append(total);}
+function renderDayHours110(body,w,title){
+  title.textContent='1週間の各曜日の勉強時間を調整しよう';title.className='flow-day-title112';var c=w.config;
+  if(!Array.isArray(c.dayHours))c.dayHours=Array.from({length:7},function(_,day){return Number(day===0||day===6?c.we:c.wd)});
+  var grid=document.createElement('div');grid.className='flow-day-grid112';body.append(grid);
+  var total=document.createElement('p');total.className='flow-day-total110';
+  function update(){total.textContent='週間合計 '+hm(c.dayHours.reduce(function(n,h){return n+Number(h)},0))}
+  for(var i=0;i<7;i++){var date=new Date();date.setDate(date.getDate()+i);(function(day,date){
+    var label=document.createElement('label');label.className='flow-day-choice112';var weekday=document.createElement('strong');weekday.textContent=['日','月','火','水','木','金','土'][day];var stamp=document.createElement('small');stamp.textContent=(date.getMonth()+1)+'/'+date.getDate();
+    var control=document.createElement('span');control.className='flow-day-control112';var value=document.createElement('span');value.className='flow-day-value112';value.textContent=String(c.dayHours[day]);var select=document.createElement('select');select.setAttribute('aria-label',['日','月','火','水','木','金','土'][day]+'曜日の勉強時間');
+    for(var step=0;step<=32;step++){var option=document.createElement('option');option.value=String(step/2);option.textContent=hm(step/2);select.append(option)}
+    // Keep already-saved 15-minute settings until the user selects a new half-hour value.
+    if(!Array.from(select.options).some(function(o){return Number(o.value)===c.dayHours[day]})){var current=document.createElement('option');current.value=String(c.dayHours[day]);current.textContent='現在：'+hm(c.dayHours[day]);current.disabled=true;select.append(current)}
+    select.value=String(c.dayHours[day]);select.onchange=function(){c.dayHours[day]=Number(select.value);value.textContent=select.value;update();persistFlow40();flowError40('')};control.append(value,select);label.append(weekday,stamp,control);grid.append(label);
+  })(date.getDay(),date)}
+  var hint=document.createElement('p');hint.className='flow-day-unit112';hint.textContent='単位：時間（0.5時間＝30分）';body.append(hint);update();body.append(total);
+}
 function flowCustomMaterial40(body,w,list,refresh){
   var wrap=document.createElement('section');wrap.className='flow-custom-wrap110';var toggle=document.createElement('button');toggle.type='button';toggle.textContent='独自教材';toggle.className='flow-custom-toggle110';toggle.setAttribute('aria-expanded','false');var form=document.createElement('form');form.className='flow-custom-material79';form.hidden=true;toggle.onclick=function(){form.hidden=!form.hidden;toggle.setAttribute('aria-expanded',String(!form.hidden));};wrap.append(toggle,form);
   var heading=document.createElement('h2');heading.textContent='独自教材を追加';
