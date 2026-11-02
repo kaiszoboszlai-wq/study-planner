@@ -3637,7 +3637,7 @@ function renderDayHours110(body,w,title){
     if(!Array.from(select.options).some(function(o){return Number(o.value)===c.dayHours[day]})){var current=document.createElement('option');current.value=String(c.dayHours[day]);current.textContent='現在：'+hm(c.dayHours[day]);current.disabled=true;select.append(current)}
     select.value=String(c.dayHours[day]);select.onchange=function(){c.dayHours[day]=Number(select.value);value.textContent=select.value;update();persistFlow40();flowError40('')};control.append(value,select);label.append(weekday,stamp,control);grid.append(label);
   })(date.getDay(),date)}
-  var hint=document.createElement('p');hint.className='flow-day-unit112';hint.textContent='単位：時間（0.5時間＝30分）';body.append(hint);update();body.append(total);
+  update();body.append(total);
 }
 function flowCustomMaterial40(body,w,list,refresh){
   var wrap=document.createElement('section');wrap.className='flow-custom-wrap110';var toggle=document.createElement('button');toggle.type='button';toggle.textContent='独自教材';toggle.className='flow-custom-toggle110';toggle.setAttribute('aria-expanded','false');var form=document.createElement('form');form.className='flow-custom-material79';form.hidden=true;toggle.onclick=function(){form.hidden=!form.hidden;toggle.setAttribute('aria-expanded',String(!form.hidden));};wrap.append(toggle,form);
