@@ -1,7 +1,8 @@
 (function(){'use strict';
 const record=document.getElementById('mrOpen'),main=document.querySelector('.app main'),nav=document.querySelector('nav.side');if(!record||!main)return;
 // Keep the existing click handler and ID. Outside animated pages, fixed means viewport-fixed.
-const oldHeader=record.parentElement;document.body.append(record);record.classList.add('stats-record-fab94');record.type='button';record.textContent='+';record.setAttribute('aria-label','学習記録を追加');record.title='記録を追加';if(oldHeader.matches('#stats>.mh')&&!oldHeader.childElementCount)oldHeader.remove();
+const oldHeader=record.parentElement;document.body.append(record);record.classList.add('stats-record-fab94');record.type='button';record.innerHTML='<svg class="stats-glyph103 stats-plus103" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>';record.setAttribute('aria-label','学習記録を追加');record.title='記録を追加';if(oldHeader.matches('#stats>.mh')&&!oldHeader.childElementCount)oldHeader.remove();
+for(const [id,path] of [['statsPrev38','M15.5 5l-7 7 7 7'],['statsNext38','M8.5 5l7 7-7 7']]){const button=document.getElementById(id);if(button){button.setAttribute('aria-label',id==='statsPrev38'?'前の期間':'次の期間');button.innerHTML='<svg class="stats-glyph103" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';}}
 function measure(){const inline=parseFloat(getComputedStyle(main).paddingLeft)||16;document.documentElement.style.setProperty('--page-inline94',inline+'px');if(nav)document.documentElement.style.setProperty('--bottom-nav-height94',nav.getBoundingClientRect().height+'px');}
 const resize=new ResizeObserver(measure);resize.observe(main);if(nav)resize.observe(nav);window.addEventListener('resize',measure);measure();
 })();

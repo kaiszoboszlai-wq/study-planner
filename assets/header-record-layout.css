@@ -25,3 +25,7 @@ html:root[data-app-theme] body:has(.tm:not([hidden]),dialog[open],[role=dialog]:
 @media(prefers-contrast:more){html:root[data-app-theme] body>button#mrOpen.stats-record-fab94{background:#0066cc!important}}
 /* Let the last record scroll completely above the floating action. */
 html:root[data-app-theme] body:has(#stats:not([hidden])) main{padding-bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 88px)}
+
+html body :is(#mrOpen,#statsPrev38,#statsNext38) .stats-glyph103{display:block;flex:none;width:28px;height:28px;margin:0;pointer-events:none}
+html body #mrOpen .stats-plus103{width:32px;height:32px}
+html body #planbox #planDates{margin-bottom:12px}

@@ -18,6 +18,6 @@ const show=showPage;showPage=function(n){if(Number(n)===5){open();return;}close(
 if(Number(state.page)===5){show(6);requestAnimationFrame(open);}
 const account=switchAccountData;switchAccountData=function(){close();const result=account.apply(this,arguments);paint();return result;};paint();
 // Keep settings beside the weekly hours.
-const week=document.querySelector('#planbox>.plan-week62'),hours=document.getElementById('planWeekHours62'),settings=document.querySelector('#planbox .plan-header-actions');if(week&&hours&&settings){const row=document.createElement('div');row.className='plan-hours-actions96';week.append(row);row.append(hours,settings);}
+const week=document.querySelector('#planbox>.plan-week62'),hours=document.getElementById('planWeekHours62'),settings=document.querySelector('#planbox .plan-header-actions');if(week&&hours&&settings){const row=document.createElement('div');row.className='plan-hours-actions96';week.append(row);row.append(hours,settings);document.getElementById('planDates')?.after(week);}
 const adjust=document.getElementById('adjustTodayPlan'),schedule=document.getElementById('todaySchedulePanel');if(adjust&&schedule)schedule.append(adjust);
 })();

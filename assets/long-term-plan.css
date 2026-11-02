@@ -201,3 +201,13 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-timeline-subject-heading101 h3:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--subject);flex:none}
 #longTermPlanner .lt-timeline-subject-heading101 small{color:var(--sub);font-size:.75rem}
 #longTermPlanner .lt-timeline-subject-empty101{padding:18px;margin:0;background:var(--card);border:1px solid var(--line);border-radius:18px;color:var(--sub);font-size:.8rem;line-height:1.7}
+
+#longTermPlanner .lt-planner-actions{display:flex;align-items:center;gap:8px;min-width:0}
+#longTermPlanner .lt-subject-tabs103{display:flex;gap:6px;flex:1;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+#longTermPlanner .lt-subject-tabs103::-webkit-scrollbar{display:none}
+#longTermPlanner .lt-subject-tabs103 button{flex:none;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--sub);white-space:nowrap;font-size:.8rem}
+#longTermPlanner .lt-subject-tabs103 button[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+#longTermPlanner .lt-planner-actions>.lt-route-add{flex:none;min-height:44px}
+#longTermPlanner .lt-subject-panel103{min-width:0}
+
+#longTermPlanner .lt-view-body{overflow-x:hidden;overflow-x:clip}
