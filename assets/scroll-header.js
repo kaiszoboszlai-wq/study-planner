@@ -8,6 +8,7 @@ function setOffset(value){const height=header.offsetHeight;offset=Math.max(0,Mat
 function reveal(){setOffset(0);}
 function sync(){const visible=pages.has(Number(state.page));header.hidden=!visible;document.body.classList.toggle('app-has-header68',visible);reveal();previous=Math.max(0,window.scrollY);}
 const page=showPage;showPage=function(){const result=page.apply(this,arguments);sync();return result;};
-function scroll(){frame=0;const y=Math.max(0,Math.min(window.scrollY,Math.max(0,document.documentElement.scrollHeight-innerHeight))),delta=y-previous;previous=y;if(header.hidden)return;if(y===0||header.contains(document.activeElement)){reveal();return;}setOffset(offset+delta);}
+function scroll(){frame=0;const y=Math.max(0,Math.min(window.scrollY,Math.max(0,document.documentElement.scrollHeight-innerHeight))),delta=y-previous;previous=y;if(header.hidden)return;if(document.documentElement.classList.contains('pull-header-fixed98')||y===0||header.contains(document.activeElement)){reveal();return;}setOffset(offset+delta);}
+new MutationObserver(()=>{if(document.documentElement.classList.contains('pull-header-fixed98'))reveal();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
 window.addEventListener('scroll',()=>{if(!frame)frame=requestAnimationFrame(scroll)},{passive:true});window.addEventListener('resize',()=>{previous=Math.max(0,window.scrollY);setOffset(offset);});window.addEventListener('pageshow',sync);header.addEventListener('focusin',reveal);sync();
 })();

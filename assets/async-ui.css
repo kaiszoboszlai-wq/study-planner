@@ -33,3 +33,9 @@ html.pull-active72,html.pull-active72 body{overscroll-behavior-y:contain}
 #pullRefresh72.pull-visible72 svg{animation:pull-spin72 .55s linear infinite}
 .pull-shift72{translate:0 var(--pull-content72,0px)}
 @media(prefers-reduced-motion:reduce){#pullRefresh72.pull-visible72 svg{animation:none}}
+
+/* Keep app and page headings in place; reveal the refresh indicator beneath them. */
+html.pull-header-fixed98 #appScrollHeader68{transform:translateY(0)!important}
+#pullRefresh72{top:var(--pull-top98,calc(var(--app-header-height68,64px) + 10px));left:var(--pull-left98,50%);transform:translateX(-50%)}
+.pull-shift72{translate:none}
+.pull-content-part98{translate:0 var(--pull-content72,0px)}

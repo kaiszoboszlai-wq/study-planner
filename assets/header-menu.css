@@ -35,3 +35,14 @@ html body #tdTitle,html body #planbox .plan-week-top{display:none!important}
 html body #todaySchedulePanel>.today-heading{display:none}
 html body #todaySchedulePanel>#adjustTodayPlan{display:block;width:100%;min-height:44px;margin:24px 0 0!important;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--acc)}
 #stats #pies .dc{font-size:15px}
+
+/* Reuse the actual My Page and its handlers inside the drawer, without a second navigation step. */
+body>#navMy{display:none!important}
+.account-menu-panel97>#mypage{min-width:0;max-width:100%;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.account-menu-panel97{overflow-x:hidden;overscroll-behavior:contain}
+.account-menu-panel97>header{position:sticky;top:0;z-index:3;margin-top:calc(-1 * max(12px,env(safe-area-inset-top)));padding-top:max(12px,env(safe-area-inset-top));background:var(--bg)}
+body.account-menu-open97>.tm,body.account-menu-open97>#profileEditor64{z-index:80!important}
+body.account-menu-open97>#pm,body.account-menu-open97>#fm{z-index:81!important}
+body.account-menu-open97>#cf{z-index:82!important}
+
+@media(max-width:480px){#accountMenu96 #mypage .profile-actions64{flex-direction:column;gap:8px}#accountMenu96 #mypage .profile-actions64 button{flex:none;width:100%;white-space:normal}}

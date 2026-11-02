@@ -29,7 +29,20 @@ function context(){
 }
 function top(ctx,target){if((ctx.scroll?.scrollTop||0)>0)return false;for(let n=target;n&&n!==ctx.root;n=n.parentElement){if(n.scrollTop>0)return false;}return true;}
 function paint(distance,text,busy=false){indicator.style.setProperty('--pull-distance72',distance+'px');indicator.style.setProperty('--pull-rotation72',distance*4+'deg');indicator.classList.toggle('pull-visible72',distance>0);indicator.classList.toggle('pull-busy72',busy);indicator.dataset.status=text;}
-function shift(ctx,distance){if(ctx?.scroll!==document.scrollingElement)return;if(pullRoot&&pullRoot!==ctx.root){pullRoot.classList.remove('pull-shift72');pullRoot.style.removeProperty('--pull-content72');}pullRoot=ctx.root;pullRoot.classList.add('pull-shift72');pullRoot.style.setProperty('--pull-content72',Math.min(56,distance*.5)+'px');}function hide(){paint(0,'');if(pullRoot){pullRoot.classList.remove('pull-shift72');pullRoot.style.removeProperty('--pull-content72');pullRoot=null;}document.documentElement.classList.remove('pull-active72');}
+const pinnedSelector='.plan-heading,.today-view-tabs,.lt-view-tabs,#seg',shifted=new Set();
+function pinHeader(ctx){
+ document.documentElement.classList.add('pull-header-fixed98');
+ const appHeader=byId('appScrollHeader68'),modal=ctx?.root?.matches('.tm'),heads=modal?[...ctx.root.querySelectorAll('.following-header66,.following-tabs66,.inbox-sheet-header')]:[appHeader,...(ctx?.root?.querySelectorAll(pinnedSelector)||[])];
+ let bottom=0;for(const head of heads){if(!head||head.hidden||!head.getClientRects().length)continue;const r=head.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)bottom=Math.max(bottom,r.bottom);}
+ indicator.style.setProperty('--pull-top98',(bottom+10)+'px');
+ const surface=modal?ctx.root.querySelector('.tmbox'):null;indicator.style.setProperty('--pull-left98',surface?(surface.getBoundingClientRect().left+surface.getBoundingClientRect().width/2)+'px':'50%');
+}
+function clearShift(){for(const node of shifted){node.classList.remove('pull-content-part98');node.style.removeProperty('--pull-content72');}shifted.clear();if(pullRoot){pullRoot.classList.remove('pull-shift72');pullRoot=null;}}
+function shift(ctx,distance){pinHeader(ctx);if(ctx?.scroll!==document.scrollingElement)return;if(pullRoot&&pullRoot!==ctx.root)clearShift();pullRoot=ctx.root;pullRoot.classList.add('pull-shift72');
+ function visit(parent){for(const node of parent.children){if(node.matches(pinnedSelector))continue;if(node.querySelector(pinnedSelector)){visit(node);continue;}node.classList.add('pull-content-part98');node.style.setProperty('--pull-content72',Math.min(56,distance*.5)+'px');shifted.add(node);}}
+ visit(ctx.root);
+}
+function hide(){paint(0,'');clearShift();document.documentElement.classList.remove('pull-active72','pull-header-fixed98');}
 async function run(ctx){if(flight||!ctx)return;const uid=FB.uid,epoch=authEpoch,key=ctx.key,generation=++refreshGeneration;clearTimeout(resetTimer);gesture=null;paint(110,'更新中…',true);shift(ctx,110);status.textContent='更新中…';
  const active=()=>uid===FB.uid&&epoch===authEpoch&&context()?.key===key;
  // Invalidate only read caches. Existing pending writes and local data are retained.
