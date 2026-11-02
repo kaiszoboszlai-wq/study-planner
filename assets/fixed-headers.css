@@ -8,3 +8,7 @@ html:root[data-app-theme] body :is(#planbox>.plan-heading,#today>.today-view-tab
 html body #appScrollHeader68{transform:none!important;translate:none!important;top:0!important}
 .fixed-heading-spacer101{pointer-events:none;flex:none}
 body:is(.weekly-flow-mode40,.route-creating,.lt-calendar-open) :is(#planbox>.plan-heading,#today>.today-view-tabs,#longTermPlanner>.lt-view-tabs,.fixed-heading-spacer101){display:none!important}
+
+/* Reserve only the heading itself; no permanent refresh gap below it. */
+html body.app-has-header68 main{padding-top:var(--app-header-height68)!important}
+html body #planbox{padding-top:0!important}
