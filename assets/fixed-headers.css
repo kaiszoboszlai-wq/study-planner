@@ -9,6 +9,8 @@ html body #appScrollHeader68{transform:none!important;translate:none!important;t
 .fixed-heading-spacer101{pointer-events:none;flex:none}
 body:is(.weekly-flow-mode40,.route-creating,.lt-calendar-open) :is(#planbox>.plan-heading,#today>.today-view-tabs,#longTermPlanner>.lt-view-tabs,.fixed-heading-spacer101){display:none!important}
 
-/* Reserve only the heading itself; no permanent refresh gap below it. */
+/* Keep a small mobile content inset below the fixed heading. */
 html body.app-has-header68 main{padding-top:var(--app-header-height68)!important}
 html body #planbox{padding-top:0!important}
+
+html body.app-has-header68 #stats{padding-top:8px!important}

@@ -1,6 +1,6 @@
 (function(){'use strict';
 const selector='#planbox>.plan-heading,#today>.today-view-tabs,#longTermPlanner>.lt-view-tabs',spacers=new WeakMap();let frame=0;
-function install(){frame=0;for(const bar of document.querySelectorAll(selector)){if(spacers.has(bar))continue;const spacer=document.createElement('div');spacer.className='fixed-heading-spacer101';spacer.setAttribute('aria-hidden','true');bar.after(spacer);spacers.set(bar,spacer);const resize=new ResizeObserver(()=>{spacer.style.height=(bar.getBoundingClientRect().height)+'px';});resize.observe(bar);spacer.style.height=(bar.getBoundingClientRect().height)+'px';}}
+function install(){frame=0;for(const bar of document.querySelectorAll(selector)){if(spacers.has(bar))continue;const spacer=document.createElement('div');spacer.className='fixed-heading-spacer101';spacer.setAttribute('aria-hidden','true');bar.after(spacer);spacers.set(bar,spacer);const resize=new ResizeObserver(()=>{spacer.style.height=(bar.getBoundingClientRect().height+8)+'px';});resize.observe(bar);spacer.style.height=(bar.getBoundingClientRect().height+8)+'px';}}
 function schedule(){if(!frame)frame=requestAnimationFrame(install);}
 new MutationObserver(schedule).observe(document.querySelector('.app main'),{subtree:true,childList:true});const show=showPage;showPage=function(){const result=show.apply(this,arguments);install();return result;};install();
 // Older mobile Safari can move the visual viewport during native edge bounce.
