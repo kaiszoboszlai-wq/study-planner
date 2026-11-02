@@ -46,3 +46,21 @@ body.account-menu-open97>#pm,body.account-menu-open97>#fm{z-index:81!important}
 body.account-menu-open97>#cf{z-index:82!important}
 
 @media(max-width:480px){#accountMenu96 #mypage .profile-actions64{flex-direction:column;gap:8px}#accountMenu96 #mypage .profile-actions64 button{flex:none;width:100%;white-space:normal}}
+
+/* Compact profile: no title strip or cover; identity and counts sit beside the avatar. */
+.account-menu-panel97{position:relative}
+html body #accountMenu96 #accountMenuClose97{position:fixed;top:max(4px,env(safe-area-inset-top));right:4px;z-index:4}
+html body #accountMenu96 #profileCover65,html body #accountMenu96 .my-profile62:before{display:none!important}
+html body #accountMenu96 #mypage .my-profile62{padding:12px 0 0;margin-bottom:18px}
+html body #accountMenu96 #mypage .my-profile62>.me{display:flex;flex-direction:row;align-items:center;gap:10px;padding-right:30px}
+html body #accountMenu96 #mypage #meAv{width:64px;height:64px;min-width:64px;flex:none;border:0;font-size:2rem}
+html body #accountMenu96 .me>div:nth-child(2){min-width:0;flex:1}
+html body #accountMenu96 #mypage #meName{display:block;font-size:1.2rem;line-height:1.4;overflow-wrap:anywhere}
+html body #accountMenu96 #cntRow{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:4px 10px;margin:8px 0 0;padding:0;border:0}
+html body #accountMenu96 #cntRow[hidden]{display:none!important}
+html body #accountMenu96 #cntRow button{display:flex;align-items:baseline;gap:4px;flex:0 1 auto;min-height:28px;padding:0;font-size:.66rem;white-space:nowrap;color:var(--sub)}
+html body #accountMenu96 #cntRow b{font-size:.8rem!important;color:var(--ink)}
+html body #accountMenu96 #mypage #myGoal62{padding:16px;margin-bottom:16px}
+html body #accountMenu96 #myGoal62 .goal-title62{font-size:1.05rem;line-height:1.4;margin-bottom:10px}
+html body #accountMenu96 #mypage .my-menu62 button{min-height:52px;padding:8px 12px;gap:10px}
+html body #accountMenu96 #mypage .profile-actions64{margin-top:14px}
