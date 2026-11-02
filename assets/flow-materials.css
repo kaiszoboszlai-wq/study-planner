@@ -47,3 +47,19 @@ body #weeklyFlow40 #flowBody40{width:100%;min-width:0;max-width:100%;box-sizing:
 #weeklyFlow40 .flow-daily90{display:flex;align-items:center;gap:8px;min-height:44px;margin-top:8px;font-size:.78rem;line-height:1.5;color:var(--qa-ink,var(--ink));cursor:pointer}
 #weeklyFlow40 .flow-daily90 input{width:22px;height:22px;min-height:22px;flex:none;accent-color:var(--qa-accent,var(--acc));margin:0}
 #weeklyFlow40 .flow-daily-hint90{font-size:.8rem;line-height:1.8;color:var(--qa-muted,var(--sub));margin:0 0 18px}
+/* Mobile weekly setup refinements. */
+#weeklyFlow40 .flow-custom-wrap110{padding:0;margin:14px 0 20px;border:0;box-shadow:none;background:transparent}
+#weeklyFlow40 .flow-custom-toggle110{display:flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border:1px solid var(--line);border-radius:999px;background:var(--qa-card,var(--card));color:var(--qa-ink,var(--ink))}
+#weeklyFlow40 .flow-custom-material79[hidden]{display:none!important}
+#weeklyFlow40 .flow-custom-material79{display:flex;flex-direction:column;margin:12px 0 0}
+#weeklyFlow40 .flow-custom-material79>button{align-self:flex-end;min-width:80px}
+html:root[data-app-theme] body #weeklyFlow40 .flow-subject40>.flow-cover83{background:transparent!important;border:0!important;box-shadow:none!important}
+#weeklyFlow40 #flowLater40{display:grid;place-items:center;min-width:60px;min-height:44px;padding:8px 12px;line-height:1.4!important;text-align:center}
+#weeklyFlow40 .flow-priority-cover110{min-width:0;align-self:start;padding-top:4px}
+#weeklyFlow40 .flow-priority-cover110 figure{margin:0!important}
+#weeklyFlow40 .flow-priority-cover110 img{display:block;width:52px;height:74px;object-fit:contain}
+#weeklyFlow40 .flow-priority-cover110 figcaption{display:none}
+#weeklyFlow40 .flow-allocation110 .flow-daily90{font-size:.72rem;align-items:flex-start;overflow-wrap:anywhere}
+#weeklyFlow40 .flow-allocation110 .flow-daily90 input{margin-top:1px}
+#weeklyFlow40 .flow-day-total110{font-weight:650;padding:16px;border-radius:18px;background:var(--qa-selected,var(--accbg));color:var(--qa-ink,var(--ink))}
+@media(max-width:380px){#weeklyFlow40 .flow-allocation110{grid-template-columns:44px minmax(0,1fr)!important;gap:10px!important}#weeklyFlow40 .flow-allocation110>label{grid-column:2}#weeklyFlow40 .flow-priority-cover110 img{width:44px;height:62px}}

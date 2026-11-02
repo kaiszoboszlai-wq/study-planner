@@ -26,9 +26,9 @@
 </script>
 <link rel="stylesheet" href="assets/account-storage.css">
 <script src="assets/account-storage.js?v=photo-sync-20261030"></script>
-<script src="assets/step-indicator.js"></script>
+<script src="assets/step-indicator.js?v=weekly-refinements-20261102"></script>
 <script src="assets/subject-book-picker.js"></script>
-<script src="assets/flow-materials.js"></script>
+<script src="assets/flow-materials.js?v=weekly-refinements-20261102"></script>
 <title>StudyPlanner</title>
 <style>
 
@@ -679,7 +679,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/app-announcements.css">
 <link rel="stylesheet" href="assets/header-slide.css">
 <link rel="stylesheet" href="assets/plan-materials.css">
-<link rel="stylesheet" href="assets/flow-materials.css">
+<link rel="stylesheet" href="assets/flow-materials.css?v=weekly-refinements-20261102">
 <link rel="stylesheet" href="assets/stats-polish.css">
 <link rel="stylesheet" href="assets/apple-hig.css">
 <link rel="stylesheet" href="assets/liquid-glass.css">
@@ -689,6 +689,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/exam-calendar.css?v=planner-calendar-menu-20261102">
 <link rel="stylesheet" href="assets/timer-mini.css?v=rounder-20261102">
 <link rel="stylesheet" href="assets/profile-video.css?v=planner-calendar-menu-20261102">
+<script src="assets/weekly-allocation.js?v=weekly-refinements-20261102"></script>
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-in">
@@ -986,7 +987,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 // ===== 設定(ここを直せば初期値が変わる) =====
 var DEFAULT_SUBJECTS=[["数学",5],["物理",4],["化学",4],["英語",4],["国語",2],["社会",2]];
 // 科目ごとの色(ここを直せば色が変わる。未登録の科目はグレー)
-var SUBJECT_COLORS={"国語":"#e03131","数学":"#3bc9db","英語":"#9c36b5","化学":"#82c91e","物理":"#1971c2"};
+var SUBJECT_COLORS={"社会":"#f4c430","国語":"#e03131","数学":"#3bc9db","英語":"#9c36b5","化学":"#82c91e","物理":"#1971c2"};
 var PALETTE=["#e8590c","#d6336c","#0ca678","#5c7cfa","#f59f00","#845ef7","#15aabf","#868e96"];
 function colorOf(name){var n=String(name).trim();return (state.subjColors&&state.subjColors[n])||SUBJECT_COLORS[n]||"#8b98a5"}
 var DAYS=["日","月","火","水","木","金","土"]; // Date.getDay() の番号(0=日)にそのまま対応
@@ -1369,7 +1370,7 @@ function closePlanDialogs(){
   planCandidate=null;planCandidateConfig=null;
   if(planDialogFocus&&planDialogFocus.isConnected)planDialogFocus.focus();
 }
-function planConfig(){return {dailySubjects:(state.dailySubjects||[]).slice(),goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjColors:Object.assign({},state.subjColors||{}),subjects:state.subjects.map(function(s){return s.slice()})}}
+function planConfig(){return {dayHours:Array.isArray(state.dayHours)?state.dayHours.slice():null,dailySubjects:(state.dailySubjects||[]).slice(),goal:state.goal||"",exam:state.exam||"",tot:state.tot,wd:Number(state.wd)||0,we:Number(state.we)||0,rwd:state.rwd,rwe:state.rwe,carry:state.carry!==false,subjColors:Object.assign({},state.subjColors||{}),subjects:state.subjects.map(function(s){return s.slice()})}}
 function addDraftSubject(name,weight){
   var row=document.createElement("div");row.className="draft-subject";
   row.innerHTML='<input type="color" aria-label="科目・教材の色"><input type="text" maxlength="30" aria-label="科目・教材名" placeholder="科目・教材名"><input type="number" min="1" max="7" aria-label="配分"><button aria-label="科目を削除">×</button>';
@@ -1388,7 +1389,7 @@ function calculateDraftHours(){
 }
 function readPlanDraft(){
   var c=planConfig();c.tot=$("draftTotal").value;c.carry=$("draftCarry").checked;
-  c.wd=Number($("draftWd").value);c.we=Number($("draftWe").value);c.rwd=Number($("draftRwd").value);c.rwe=Number($("draftRwe").value);
+  delete c.dayHours;c.wd=Number($("draftWd").value);c.we=Number($("draftWe").value);c.rwd=Number($("draftRwd").value);c.rwe=Number($("draftRwe").value);
   c.subjects=Array.prototype.map.call($("draftSubjects").children,function(r){var name=r.children[1].value.trim();if(name)c.subjColors[name]=r.children[0].value;return [name,Number(r.children[2].value)]}).filter(function(s){return s[0]});
   if(!c.subjects.length||c.subjects.some(function(s){return !isFinite(s[1])||s[1]<1||s[1]>7}))throw new Error("科目を1つ以上、配分を1〜7で設定してください。");
   if(new Set(c.subjects.map(function(s){return s[0]})).size!==c.subjects.length)throw new Error("同じ名前の科目は1つにまとめてください。");
@@ -1405,18 +1406,19 @@ function buildPlanCandidate(c,style,carry,cycleStart){
     if(date<fmtDate(today)){if(prior)plan.push(Object.assign({},prior,{blocks:prior.blocks.map(function(x){return Object.assign({},x)})}));continue}
     var kept=prior?prior.blocks.filter(keepPlannedBlock).map(function(x){return Object.assign({},x)}):[];
     if(c.exam&&date>=c.exam&&!kept.length)continue;
-    var keptHours=kept.reduce(function(n,x){return n+x.h},0),hours=(dt.getDay()===0||dt.getDay()===6)?c.we:c.wd;
+    var keptHours=kept.reduce(function(n,x){return n+x.h},0),hours=WeeklyAllocation110.hours(c,date);
     plan.push({date:date,h:Math.max(hours,keptHours),blocks:kept});
   }
   if(carry&&carry.length)appendWeekCarry(plan,carry);
+  var dailyQuotas=WeeklyAllocation110.dailyQuotas(subs,c.dailySubjects||[],plan.filter(function(d){return d.date>=fmtDate(today)}).map(function(d){return {hours:d.h,blocks:d.blocks}}));
   var target=makeTargets(subs,plan.reduce(function(n,d){return n+d.h},0));
   plan.forEach(function(d){d.blocks.forEach(function(x){subs.forEach(function(sub,i){if(sub[0]===x.name)target[i]-=x.h})})});
   plan.forEach(function(day){
     if(day.date<fmtDate(today))return;
     var left=Math.max(0,day.h-day.blocks.reduce(function(n,x){return n+x.h},0)),made=[];
-    subs.forEach(function(sub,i){if((c.dailySubjects||[]).indexOf(sub[0])<0||day.blocks.some(function(b){return b.name===sub[0]&&b.h>0})||left<.25-.00001)return;made.push({id:newId(),name:sub[0],h:.25});target[i]-=.25;left-=.25;});
+    subs.forEach(function(sub,i){if(dailyQuotas[sub[0]]===undefined)return;var kept=day.blocks.filter(function(b){return b.name===sub[0]}).reduce(function(n,b){return n+b.h},0),amount=Math.max(0,dailyQuotas[sub[0]]-kept);if(amount>0.00001){made.push({id:newId(),name:sub[0],h:amount});target[i]-=amount;left-=amount;}});
     while(left>0.00001&&subs.length){
-      var batch=allocDay(left,subs,target,style),used=batch.reduce(function(n,x){return n+x.h},0);if(used<=0)break;
+      var indexes=subs.map(function(_,i){return i}).filter(function(i){return dailyQuotas[subs[i][0]]===undefined}),otherTargets=indexes.map(function(i){return target[i]}),batch=allocDay(left,indexes.map(function(i){return subs[i]}),otherTargets,style);indexes.forEach(function(i,j){target[i]=otherTargets[j]});var used=batch.reduce(function(n,x){return n+x.h},0);if(used<=0)break;
       batch.forEach(function(x){var existing=made.find(function(b){return b.name===x.name});if(existing)existing.h+=x.h;else{x.id=newId();made.push(x)}});left-=used;
     }
     if(made.length>1){var shift=style%made.length;made=made.slice(shift).concat(made.slice(0,shift))}
@@ -1449,7 +1451,7 @@ async function adoptPlanCandidate(){
     generatePlanPreview();$("planPreviewNote").textContent="元の計画に変更があったため、最新の状態で候補を作り直しました。確認してから採用してください。";return;
   }
   var c=planCandidateConfig,next=Object.assign({},state,{plan:planCandidate,planStyle:planCandidateStyle,planCycleStart:planCandidateResetWeek||!state.planCycleStart?fmtDate(new Date()):state.planCycleStart,planDaySeen:fmtDate(new Date()),weekSetupPending:false,weekCarry:(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]),start:state.start||fmtDate(new Date()),updatedAt:Date.now(),dataAt:Date.now()});
-  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors","dailySubjects"].forEach(function(k){next[k]=c[k]});
+  ["goal","exam","tot","wd","we","rwd","rwe","subjects","carry","subjColors","dailySubjects","dayHours"].forEach(function(k){next[k]=c[k]});
   // Never show a successful creation until the entire plan is durable on this device.
   var committingOwner=dataOwner,committingEpoch=authEpoch,committingState=state,committingSource=planBaseSignature();
   try{await AccountStorage88.write(legacyUnclaimed?KEY+":legacy-backup":accountKey(dataOwner),next);saveHealth.localError=null;saveHealth.localSaved=true;}catch(e){saveHealth.localError=e;var hasOriginal=(state.plan||[]).some(function(d){return d.blocks.length});var message=hasOriginal?'新しいプランを保存できませんでした。現在の予定は変更していません。':'新しいプランを保存できませんでした。以前の予定は削除済みです。入力した設定と学習記録は残っています。';if(weeklyFlow40)flowError40(message);else $("planPreviewNote").textContent=message;return false;}
@@ -2039,7 +2041,7 @@ function niceTop(maxH){ // 縦軸の目盛り(5本以内)
 }
 function weekTarget(){ // 1週間あたりの予定時間(条件で設定した値。なければ平日・休日の時間から)
   var T=Number(state.tot);
-  return T>0?T:5*(Number(state.wd)||0)+2*(Number(state.we)||0);
+  return T>0?T:WeeklyAllocation110.validDays(state.dayHours)?state.dayHours.reduce(function(n,h){return n+h},0):5*(Number(state.wd)||0)+2*(Number(state.we)||0);
 }
 function r1(v){return Math.round(v*10)/10}
 function donut(parts,total,center){ // 円グラフ(ドーナツ)。parts=[{c:色,v:量}]
@@ -2726,7 +2728,7 @@ function protectSyncedPlan(remote){
   var emptyIncoming=Array.isArray(remote.plan)&&!remote.plan.some(function(d){return d.blocks.length});
   if(missingIncoming||(base&&JSON.stringify(current)!==JSON.stringify(base.plan))||(!base&&hasCurrent&&emptyIncoming)){
     remote.plan=JSON.parse(JSON.stringify(current));
-    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle','dailySubjects'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
+    ['done','spent','credit','contrib','planCycleStart','planDaySeen','weekSetupPending','weekCarry','planHistory','subjects','subjColors','planStyle','dailySubjects','dayHours'].forEach(function(k){if(state[k]!==undefined)remote[k]=JSON.parse(JSON.stringify(state[k]))});
   }
   return remote;
 }
@@ -3304,7 +3306,7 @@ function planClone(v){return JSON.parse(JSON.stringify(v))}
 function cleanSubject(v){return String(v||'').trim()}
 function syncPlanTotals(plan){(plan||[]).forEach(function(d){d.normalHours=d.blocks.reduce(function(n,b){b.name=cleanSubject(b.name);return n+(!b.carried?Number(b.h)||0:0)},0);d.carryHours=d.blocks.reduce(function(n,b){return n+(b.carried?Number(b.h)||0:0)},0);d.h=d.normalHours+d.carryHours})}
 function duplicateSubject(subs){var seen=new Set();return (subs||[]).some(function(s){var n=cleanSubject(s[0]);if(!n)return false;if(seen.has(n))return true;seen.add(n);return false})}
-function allocationAudit(plan,c){var configured=0,actual=0,extra=0;(plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))return;var dt=new Date(d.date+'T00:00:00'),h=Number(dt.getDay()%6===0?c.we:c.wd)||0;configured+=h;actual+=d.normalHours;extra+=d.carryHours});return {configured:configured,actual:actual,carry:extra,ok:actual+0.00001>=configured,text:'設定した合計 '+hm(configured)+' ／ 通常の配分 '+hm(actual)+(extra?' ＋ 繰り越し '+hm(extra):'')+(Number(c.tot)>0?'（週間目標 '+hm(Number(c.tot))+'）':'')+(actual>configured+0.001?'。計測済み・手動の項目を保護した分を含みます。':'')+(Number(c.tot)>0&&Math.abs(Number(c.tot)-configured)>.001?'。週間目標と日別設定の合計が異なります。日別設定を基準に配分しています。':'') }}
+function allocationAudit(plan,c){var configured=0,actual=0,extra=0;(plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))return;var dt=new Date(d.date+'T00:00:00'),h=WeeklyAllocation110.hours(c,d.date);configured+=h;actual+=d.normalHours;extra+=d.carryHours});return {configured:configured,actual:actual,carry:extra,ok:actual+0.00001>=configured,text:'設定した合計 '+hm(configured)+' ／ 通常の配分 '+hm(actual)+(extra?' ＋ 繰り越し '+hm(extra):'')+(Number(c.tot)>0?'（週間目標 '+hm(Number(c.tot))+'）':'')+(actual>configured+0.001?'。計測済み・手動の項目を保護した分を含みます。':'')+(Number(c.tot)>0&&Math.abs(Number(c.tot)-configured)>.001?'。週間目標と日別設定の合計が異なります。日別設定を基準に配分しています。':'') }}
 var allocationSave=save;save=function(){syncPlanTotals(state.plan);allocationSave()};
 function v36Dialog(title){var el=document.createElement('div');el.className='tm plan-dialog';el.style.zIndex='32';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');var box=document.createElement('div');box.className='tmbox';el.appendChild(box);var heading=document.createElement('h2');heading.textContent=title;box.appendChild(heading);el.hide=function(){el.remove()};document.body.appendChild(el);el.box=box;setTimeout(function(){var b=el.querySelector('button,input,select');if(b)b.focus()},0);return el}
 function v36Text(box,text,cls){var p=document.createElement('p');p.className=cls||'note';p.textContent=text;box.appendChild(p);return p}
@@ -3312,7 +3314,7 @@ function v36Button(box,text,fn){var b=document.createElement('button');b.type='b
 function renamePast(old,nw){Object.keys(state.log||{}).forEach(function(date){var row=state.log[date];if(Object.prototype.hasOwnProperty.call(row,old)){row[nw]=(row[nw]||0)+row[old];delete row[old]}});Object.keys(state.contrib||{}).forEach(function(id){state.contrib[id].forEach(function(e){if(e.name===old)e.name=nw})});Object.keys(state.credit||{}).forEach(function(id){var c=state.credit[id];if(c&&typeof c==='object'&&c.name===old)c.name=nw});(state.planHistory||[]).forEach(function(h){h.plan.forEach(function(d){d.blocks.forEach(function(b){if(b.name===old)b.name=nw})})});(state.plan||[]).forEach(function(d){if(d.date<fmtDate(new Date()))d.blocks.forEach(function(b){if(b.name===old)b.name=nw})})}
 var renameDialog36=null;function chooseRename(old,nw,apply){apply(false)}
 var renderSubjects36=renderSubjects;renderSubjects=function(){renderSubjects36();var warning=$('subjectDuplicateWarning');if(!warning){warning=document.createElement('p');warning.id='subjectDuplicateWarning';warning.className='note';warning.setAttribute('role','alert');$('subjects').after(warning)}warning.textContent=duplicateSubject(state.subjects)?'同じ名前の科目が登録されています。変更するか重複を削除してください。':'';warning.hidden=!warning.textContent;Array.from($('subjects').children).forEach(function(row,i){var input=row.querySelectorAll('input')[1];input.oninput=function(){var v=cleanSubject(input.value),dupe=state.subjects.some(function(s,k){return k!==i&&v&&cleanSubject(s[0])===v});input.setCustomValidity(dupe?'同じ名前の科目が登録されています。':'');var note=row.querySelector('.duplicate-note');if(dupe&&!note){note=document.createElement('small');note.className='duplicate-note';note.textContent='同じ科目名があります';note.style.cssText='color:#b42318;grid-column:1 / -1';row.appendChild(note)}if(!dupe&&note)note.remove()};input.onchange=function(){var old=cleanSubject(state.subjects[i][0]),nw=cleanSubject(input.value);input.value=nw;if(!nw||state.subjects.some(function(s,k){return k!==i&&cleanSubject(s[0])===nw})){input.setCustomValidity('空白または重複した科目名は登録できません。');input.reportValidity();return}input.setCustomValidity('');function apply(past){pauseTimer();if(past)renamePast(old,nw);state.subjects[i][0]=nw;(state.plan||[]).forEach(function(d){if(d.date>=fmtDate(new Date()))d.blocks.forEach(function(b){if(b.name===old)b.name=nw})});(state.weekCarry||[]).forEach(function(b){if(b.name===old)b.name=nw});if(state.carryReview)state.carryReview.items.forEach(function(b){if(b.name===old)b.name=nw});state.subjColors=state.subjColors||{};if(state.subjColors[old])state.subjColors[nw]=state.subjColors[old];save();renderSubjects();renderPlan()}if(nw===old){state.subjects[i][0]=nw;save()}else chooseRename(old,nw,apply)}})};
-var build36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){c=planClone(c);c.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});var p=build36(c,style,null,start);syncPlanTotals(p);var subs=c.subjects.filter(function(s){return s[0]});p.forEach(function(d){if(d.date<fmtDate(new Date()))return;var date=new Date(d.date+'T00:00:00'),required=Number(date.getDay()%6===0?c.we:c.wd)||0,left=Math.max(0,required-d.normalHours);if(left>0.00001&&subs.length){var targets=makeTargets(subs,left);allocDay(left,subs,targets,style).forEach(function(b){b.id=newId();d.blocks.push(b)})}});syncPlanTotals(p);var applied=appendWeekCarry(p,carry||[],'spread');p.carryRemaining=applied.remaining;syncPlanTotals(p);return p};
+var build36=buildPlanCandidate;buildPlanCandidate=function(c,style,carry,start){c=planClone(c);c.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});var p=build36(c,style,null,start);syncPlanTotals(p);var subs=c.subjects.filter(function(s){return s[0]});p.forEach(function(d){if(d.date<fmtDate(new Date()))return;var date=new Date(d.date+'T00:00:00'),required=WeeklyAllocation110.hours(c,d.date),left=Math.max(0,required-d.normalHours);if(left>0.00001&&subs.length){var targets=makeTargets(subs,left);allocDay(left,subs,targets,style).forEach(function(b){b.id=newId();d.blocks.push(b)})}});syncPlanTotals(p);var applied=appendWeekCarry(p,carry||[],'spread');p.carryRemaining=applied.remaining;syncPlanTotals(p);return p};
 var make36=makePlan;makePlan=function(){if(state.carryReview||state.pendingWeekReview){showPendingPlanReview();return false}state.subjects.forEach(function(s){s[0]=cleanSubject(s[0])});if(duplicateSubject(state.subjects)){$('planMakeError').hidden=false;$('planMakeError').textContent='同じ名前の科目があります。科目名を変更するか、重複を削除してください。';return false}archivePlan('計画の更新');var before=planClone(state.weekCarry||[]),usedCarry=state.weekSetupPending&&state.carry!==false,ok=make36();if(ok){state.weekCarry=usedCarry?(state.plan.carryRemaining||[]):before;var a=allocationAudit(state.plan,planConfig());state.lastAllocationAudit=a;save();renderPlan()}return ok};
 var preview36=generatePlanPreview;generatePlanPreview=function(){preview36();var a=allocationAudit(planCandidate,planCandidateConfig);$('planPreviewNote').textContent+=' '+a.text;$('planAdopt').disabled=!planCandidate.length||!a.ok};
 var adopt36=adoptPlanCandidate;adoptPlanCandidate=async function(){if(!planCandidate)return;var a=allocationAudit(planCandidate,planCandidateConfig);if(!a.ok){$('planPreviewNote').textContent='設定時間を満たしていません。設定を確認してください。';return}archivePlan('計画の更新');var held=(state.weekCarry||[]).concat(planCandidate.carryRemaining||[]);await adopt36();state.weekCarry=held;state.lastAllocationAudit=a;save();renderPlan()};
@@ -3488,6 +3490,7 @@ function validateBackup38(raw){
   function carry(v){return items(v||[]).map(function(x){object(x);var b={name:text(x.name,100),h:number(x.h,100000)};['sourceId','sourceDate','carryFrom'].forEach(function(k){if(x[k]!=null)b[k]=text(x[k],120)});if(x.selected!=null)b.selected=!!x.selected;return b})}
   function plan(v){if(v==null)return null;var ids=new Set();return items(v).map(function(d){object(d);var blocks=items(d.blocks).map(function(b){if(++count>100000)throw new Error('項目が多すぎます。');object(b);var next={id:text(b.id,120),name:text(b.name,100),h:number(b.h,100000)};if(ids.has(next.id))throw new Error('計画の項目IDが重複しています。');ids.add(next.id);['manual','carried','skipCarry'].forEach(function(k){if(b[k]!=null)next[k]=!!b[k]});['carryFrom','sourceId'].forEach(function(k){if(b[k]!=null)next[k]=text(b[k],120)});return next});return {date:date(d.date),blocks:blocks,h:blocks.reduce(function(n,b){return n+b.h},0),carryProcessed:!!d.carryProcessed}})}
   out.subjects=items(src.subjects).map(function(s){if(!Array.isArray(s)||s.length<2)throw new Error('科目の形式が正しくありません。');var row=[cleanSubject(text(s[0],100)),number(Number(s[1]),7)||1];if(s[2])row.push(material(s[2]));return row});if(duplicateSubject(out.subjects))throw new Error('科目名が重複しています。');
+  if(src.dayHours!=null){if(!WeeklyAllocation110.validDays(src.dayHours))throw Error('日別の勉強時間が正しくありません。');out.dayHours=src.dayHours.slice();}
   out.dailySubjects=items(src.dailySubjects||[]).map(function(name){return cleanSubject(text(name,100))});
   ['goal','exam','start','planCycleStart','planDaySeen','pendingWeekReview'].forEach(function(k){if(src[k]!=null)out[k]=text(src[k],k==='goal'?200:120)});['exam','start','planCycleStart','planDaySeen'].forEach(function(k){if(out[k])date(out[k])});
   ['wd','we','tot','rwd','rwe','timerIdleMinutes','planStyle'].forEach(function(k){if(src[k]!=null)out[k]=number(Number(src[k]),k==='wd'||k==='we'?16:k==='timerIdleMinutes'?480:100000)});
@@ -3574,7 +3577,7 @@ async function savePlanReset85(owner,epoch,source){
 }
 function flowSteps40(w){
   if(w.mode==='goal')return [{key:'goal'},{key:'exam'},{key:'review'}];
-  return (w.mode==='rebuild'?['weekday','weekend','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
+  return (w.mode==='rebuild'?['weekday','weekend','dayhours','subjects','allocation','carry','plan']:['goal','exam','weekday','weekend','dayhours','subjects','allocation','carry','plan']).map(function(key){return {key:key}});
 }
 function persistFlow40(){if(!AccountStorage88.hydrated)return;var w=weeklyFlow40;if(!w||w.owner!==dataOwner)return;try{sessionStorage.setItem(flowStorageKey40(),JSON.stringify({version:1,owner:w.owner,source:w.source,mode:w.mode,key:w.key,created:!!w.created,config:w.config,entries:w.entries}))}catch(e){}}
 function leaveFlow40(clear){if(!weeklyFlow40){if(clear)try{sessionStorage.removeItem(flowStorageKey40())}catch(e){}return;}var key=flowStorageKey40();if(!clear)persistFlow40();else try{sessionStorage.removeItem(key)}catch(e){}weeklyFlow40=null;flowCandidate40=null;if(flowNode40)flowNode40.hidden=true;document.body.classList.remove('weekly-flow-mode40');}
@@ -3587,10 +3590,11 @@ function validateFlow40(key){
   if(key==='exam'&&(!validDate38(c.exam)||c.exam<=fmtDate(new Date())))error='試験日は明日以降の日付を選んでください。';
   if((key==='weekday'||key==='weekend')&&![c.wd,c.we].every(function(n){return Number.isFinite(Number(n))&&Number(n)>=0&&Number(n)<=16}))error='1日の時間は0〜16時間で設定してください。';
   if(key==='weekend'&&!(Number(c.wd)+Number(c.we)>0))error='平日か休日のどちらかは、30分以上にしてください。';
+  if(key==='dayhours'&&(!WeeklyAllocation110.validDays(c.dayHours)||!c.dayHours.some(function(h){return h>0})))error='各曜日の時間を0〜16時間、15分単位で設定し、少なくとも1日は15分以上にしてください。';
   if(key==='subjects'&&(!w.entries.length||w.entries.some(function(e){return !cleanSubject(e.name)})))error='科目名を1つ以上入力してください。空欄の行は入力するか削除してください。';
   if(key==='subjects'&&duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]})))error='同じ名前の科目があります。名前を変更するか、重複した行を削除してください。';
   if(key==='allocation'&&(!w.entries.length||w.entries.some(function(e){return !Number.isFinite(Number(e.weight))||Number(e.weight)<.5||Number(e.weight)>10})))error='科目の配分を確認してください。';
-  if(key==='allocation'){var daily=w.entries.filter(function(e){return e.daily}).length;if(daily&&(Number(c.wd)<daily*.25-.00001||Number(c.we)<daily*.25-.00001))error='毎日の教材には1冊あたり15分以上が必要です。平日・休日ともに'+hm(daily*.25)+'以上に設定するか、毎日の教材を減らしてください。';}
+  if(key==='allocation'){var daily=w.entries.filter(function(e){return e.daily}).length;if(daily&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<daily*.25-.00001}))error='毎日の教材には1冊あたり15分以上が必要です。各曜日を'+hm(daily*.25)+'以上に設定するか、毎日の教材を減らしてください。';}
   if(key==='subjects'&&w.entries.length>100)error='科目・教材は100個以内にしてください。';
   flowError40(error);return !error;
 }
@@ -3603,10 +3607,11 @@ function prepareFlowCandidate40(message){
   var w=weeklyFlow40;if(!w)return;
   if(state.pendingWeekReview||state.carryReview){flowError40('前週の振り返り・繰り越しの確認を終えてから進めてください。');showPendingPlanReview();return}
   var c=flowConfig40();if(!c.goal||!validDate38(c.exam)||c.exam<=fmtDate(new Date())){if(w.mode==='rebuild'){flowError40('設定済みの目標・試験日を確認してください。変更はマイページから行えます。');return false}w.key=!c.goal?'goal':'exam';w.preview=false;renderFlow40(true);flowError40('目標と試験日を確認してください。');return}
+  if(c.dayHours!=null&&!WeeklyAllocation110.validDays(c.dayHours)){w.key='dayhours';renderFlow40(true);flowError40('各曜日の時間を0〜16時間、15分単位で設定してください。');return false;}
   if(!c.subjects.length||duplicateSubject(c.subjects)){w.key='subjects';w.preview=false;renderFlow40(true);flowError40('科目名を確認してください。');return}
-  if(c.dailySubjects.length&&(Number(c.wd)<c.dailySubjects.length*.25-.00001||Number(c.we)<c.dailySubjects.length*.25-.00001)){w.key='allocation';renderFlow40(true);flowError40('毎日の教材を入れるための学習時間が足りません。平日・休日の時間か、毎日の教材の数を見直してください。');return false;}
+  if(c.dailySubjects.length&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<c.dailySubjects.length*.25-.00001})){w.key='allocation';renderFlow40(true);flowError40('毎日の教材を入れるための学習時間が足りません。各曜日の時間か、毎日均等にする教材の数を見直してください。');return false;}
   var carry=state.weekSetupPending&&c.carry?(state.weekCarry||[]):[];
-  planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);
+  planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();try{planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);}catch(error){flowError40(error.message);return false;}
   if(planCandidate.some(function(d){return d.date>=fmtDate(new Date())&&c.dailySubjects.some(function(name){return !d.blocks.some(function(b){return b.name===name&&b.h>0})})})){flowError40('毎日の教材を入れる時間が不足しています。既存の予定か学習時間を見直してください。');return false;}
   var audit=allocationAudit(planCandidate,c);if(!planCandidate.length||!audit.ok){flowError40('設定時間を満たす計画を作れませんでした。時間と科目を確認してください。');return}
   flowCandidate40={plan:planCandidate,owner:dataOwner,epoch:authEpoch,usedCarry:!!(state.weekSetupPending&&c.carry),source:planCandidateBase};w.preview=w.key==='plan';w.audit=audit;w.previewMessage=message||'';if(message){renderFlow40(true);flowError40(message)}return true;
@@ -3618,14 +3623,15 @@ async function adoptFlow40(){var w=weeklyFlow40,candidate=flowCandidate40;if(!w|
   planCandidate=candidate.plan;planCandidateBase=candidate.source;planCandidateConfig=flowConfig40();planCandidateResetWeek=true;w.saving=true;$('flowNext40').disabled=true;$('flowBack40').disabled=true;try{await adoptPlanCandidate()}finally{w.saving=false;if(weeklyFlow40){$('flowNext40').disabled=false;$('flowBack40').disabled=false}}
 }
 function flowField40(box,label,type,value,onInput,attrs){var wrap=document.createElement('label');wrap.className='flow-field40';wrap.textContent=label;var input=document.createElement('input');input.type=type;input.value=value==null?'':value;Object.keys(attrs||{}).forEach(function(k){input.setAttribute(k,attrs[k])});input.oninput=function(){onInput(input.value);persistFlow40();flowError40('')};wrap.appendChild(input);box.appendChild(wrap);return input}
-function flowCustomMaterial40(body,w,list){
-  var form=document.createElement('form');form.className='flow-custom-material79';
+function renderDayHours110(body,w,title){title.textContent='1週間の各曜日の勉強時間を調整しよう';var c=w.config;if(!Array.isArray(c.dayHours))c.dayHours=Array.from({length:7},function(_,day){return Number(day===0||day===6?c.we:c.wd)});var total=document.createElement('p');total.className='flow-day-total110';var update=function(){total.textContent='週間合計 '+hm(c.dayHours.reduce(function(n,h){return n+Number(h)},0))};for(var i=0;i<7;i++){var date=new Date();date.setDate(date.getDate()+i);(function(day,date){flowField40(body,dayLabel(fmtDate(date))+'（時間）', 'number',c.dayHours[day],function(value){c.dayHours[day]=value===''?null:Number(value);update()},{min:0,max:16,step:.25,'aria-label':['日','月','火','水','木','金','土'][day]+'曜日の勉強時間'});})(date.getDay(),date);}update();body.append(total);}
+function flowCustomMaterial40(body,w,list,refresh){
+  var wrap=document.createElement('section');wrap.className='flow-custom-wrap110';var toggle=document.createElement('button');toggle.type='button';toggle.textContent='独自教材';toggle.className='flow-custom-toggle110';toggle.setAttribute('aria-expanded','false');var form=document.createElement('form');form.className='flow-custom-material79';form.hidden=true;toggle.onclick=function(){form.hidden=!form.hidden;toggle.setAttribute('aria-expanded',String(!form.hidden));};wrap.append(toggle,form);
   var heading=document.createElement('h2');heading.textContent='独自教材を追加';
   var label=document.createElement('label');label.textContent='教材名';
   var input=document.createElement('input');input.type='text';input.maxLength=30;input.placeholder='例 学校のプリント・自作ノート';input.required=true;
-  label.appendChild(input);var add=document.createElement('button');add.type='submit';add.textContent='独自教材を追加';
-  form.append(heading,label,add);body.insertBefore(form,list);
-  form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,book:{id:rid(),title:name,custom:true},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();renderFlow40();var row=$('flowSubjects40').lastElementChild;row.scrollIntoView({block:'nearest'});row.querySelector('input[type=text]').focus()};
+  label.appendChild(input);var add=document.createElement('button');add.type='submit';add.textContent='追加';
+  form.append(heading,label,add);body.insertBefore(wrap,list);
+  form.onsubmit=function(event){event.preventDefault();if(weeklyFlow40!==w)return;var name=cleanSubject(input.value);if(!name){input.setCustomValidity('教材名を入力してください。');input.reportValidity();return}if(w.entries.length>=100){flowError40('科目・教材は100個以内にしてください。');return}if(w.entries.some(function(e){return cleanSubject(e.name)===name})){flowError40('同じ名前の科目・教材が追加されています。');input.focus();return}w.entries.push({key:rid(),name:name,book:{id:rid(),title:name,custom:true},weight:1,color:PALETTE[w.entries.length%PALETTE.length],oldName:''});persistFlow40();input.value='';input.blur();form.hidden=true;toggle.setAttribute('aria-expanded','false');if(refresh)refresh();else renderFlow40();FlowMaterials83.reveal(body,$('flowSubjects40').lastElementChild,w)};
   input.oninput=function(){input.setCustomValidity('');flowError40('')};
 }
 function renderFlowPlan84(body,w,title){
@@ -3641,25 +3647,26 @@ function renderFlowPlan84(body,w,title){
 function renderFlow40(focus){var w=weeklyFlow40;if(!w||!flowNode40)return;if(w.key==='plan'&&w.mode!=='goal'){if(w.created){flowCandidate40={plan:state.plan,owner:dataOwner,epoch:authEpoch,source:planBaseSignature()};w.preview=false;}else if(!flowCandidate40){if(!prepareFlowCandidate40()){if(w.key==='plan')w.key='carry';}else w.preview=true;}else w.preview=true;}var body=$('flowBody40');body.innerHTML='';body.classList.toggle('flow-subjects-fixed84',w.key==='subjects');flowError40('');
   if(w.mode!=='goal'&&w.key==='review')w.key='carry';var steps=flowSteps40(w),index=steps.findIndex(function(s){return s.key===w.key});if(index<0){w.key=steps[0].key;index=0}var c=w.config,key=w.key,finalPlan=w.mode!=='goal'&&(key==='carry'||key==='plan');
   $('flowCount40').textContent=w.preview?'計画の確認':(index+1)+' / '+steps.length+' 問';StepIndicator.render($('flowStepsIndicator40'),steps,w.preview?steps.length-1:index);
-  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.created?'週間プランを開く':w.preview?'保存して週間プランを開く':finalPlan?'計画を作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.created?finishCreatedFlow87:w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
+  $('flowBack40').disabled=!w.preview&&index===0;$('flowNext40').textContent=w.created?'週間プランを開く':w.preview?'保存して週間プランを開く':finalPlan?'プランを作成':key==='review'?'変更を保存':'次へ';$('flowNext40').onclick=w.created?finishCreatedFlow87:w.preview?adoptFlow40:flowNext40;$('flowNext40').parentNode.classList.toggle('flow-final40',finalPlan);
   var title=document.createElement('h1');title.id='flowTitle40';title.tabIndex=-1;body.appendChild(title);
   if(key==='goal'){title.textContent='目標を設定しよう';flowField40(body,'目標','text',c.goal,function(v){c.goal=v},{maxlength:60,placeholder:'例 第一志望に合格する'});
   }else if(key==='exam'){title.textContent='試験日はいつですか？';var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);flowField40(body,'試験日','date',c.exam,function(v){c.exam=v},{min:fmtDate(tomorrow)});
-  }else if(key==='weekday'||key==='weekend'){var field=key==='weekday'?'wd':'we';title.textContent=(key==='weekday'?'平日':'休日')+'は1日どのくらい勉強しますか？';var output=document.createElement('output');output.className='flow-value40';output.textContent=hm(Number(c[field]));body.appendChild(output);var range=flowField40(body,'1日の勉強時間','range',c[field],function(v){c[field]=Number(v);output.textContent=hm(c[field]);range.setAttribute('aria-valuetext',hm(c[field]))},{min:0,max:16,step:.5,'aria-label':key==='weekday'?'平日の勉強時間':'休日の勉強時間'});range.setAttribute('aria-valuetext',hm(Number(c[field])));
-  }else if(key==='subjects'){title.textContent='どの科目・教材を勉強しますか？';FlowMaterials83.render(body,w);
+  }else if(key==='weekday'||key==='weekend'){var field=key==='weekday'?'wd':'we';title.textContent=(key==='weekday'?'平日':'休日')+'は1日どのくらい勉強しますか？';var output=document.createElement('output');output.className='flow-value40';output.textContent=hm(Number(c[field]));body.appendChild(output);var range=flowField40(body,'1日の勉強時間','range',c[field],function(v){c[field]=Number(v);delete c.dayHours;output.textContent=hm(c[field]);range.setAttribute('aria-valuetext',hm(c[field]))},{min:0,max:16,step:.5,'aria-label':key==='weekday'?'平日の勉強時間':'休日の勉強時間'});range.setAttribute('aria-valuetext',hm(Number(c[field])));
+  }else if(key==='dayhours'){renderDayHours110(body,w,title);
+  }else if(key==='subjects'){title.textContent='1週間で取り組む参考書・教材を追加しよう';FlowMaterials83.render(body,w);
   }else if(key==='allocation'){
-    title.textContent='科目・教材の優先度を選んでください';normalizeRatios53(w.entries);var dailyHint=document.createElement('p');dailyHint.className='flow-daily-hint90';dailyHint.textContent='チェックした教材を毎日15分以上入れ、残りの時間を優先度に応じて配分します。';body.appendChild(dailyHint);
+    title.textContent='参考書・教材の優先度を設定しよう';normalizeRatios53(w.entries);var dailyHint=document.createElement('p');dailyHint.className='flow-daily-hint90';dailyHint.textContent='各参考書・教材を優先度に応じて1週間の各曜日に分配します';body.appendChild(dailyHint);
     var rows=[];w.entries.forEach(function(e){
-      var card=document.createElement('div');card.style.cssText='display:grid;grid-template-columns:minmax(0,1fr) 120px;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:16px 0';
-      var text=document.createElement('div');text.style.cssText='min-width:0;border-left:4px solid '+e.color+';padding-left:10px;overflow-wrap:anywhere';v36Text(text,cleanSubject(e.name));
-      var dailyLabel=document.createElement('label');dailyLabel.className='flow-daily90';var dailyCheck=document.createElement('input');dailyCheck.type='checkbox';dailyCheck.checked=!!e.daily;dailyCheck.setAttribute('aria-label',cleanSubject(e.name)+'を毎日プランに入れる');dailyCheck.onchange=function(){e.daily=dailyCheck.checked;persistFlow40();flowError40('')};dailyLabel.append(dailyCheck,document.createTextNode('毎日プランに入れる'));text.appendChild(dailyLabel);
+      var card=document.createElement('div');card.className='flow-allocation110';card.style.cssText='display:grid;grid-template-columns:52px minmax(0,1fr) 110px;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:16px 0';
+      var cover=document.createElement('div');cover.className='flow-priority-cover110';FlowMaterials83.cover(Object.assign({},e.book||{},{title:cleanSubject(e.name)}),cover);var text=document.createElement('div');text.style.cssText='min-width:0;border-left:4px solid '+e.color+';padding-left:10px;overflow-wrap:anywhere';v36Text(text,cleanSubject(e.name));
+      var dailyLabel=document.createElement('label');dailyLabel.className='flow-daily90';var dailyCheck=document.createElement('input');dailyCheck.type='checkbox';dailyCheck.checked=!!e.daily;dailyCheck.setAttribute('aria-label',cleanSubject(e.name)+'を毎日均等にプランに入れる');dailyCheck.onchange=function(){e.daily=dailyCheck.checked;persistFlow40();flowError40('')};dailyLabel.append(dailyCheck,document.createTextNode('毎日均等にプランに入れる'));text.appendChild(dailyLabel);
       var label=document.createElement('label');label.textContent='優先度';label.style.cssText='font-size:.8rem;color:var(--sub)';
       var select=document.createElement('select');select.setAttribute('aria-label',cleanSubject(e.name)+'の優先度');select.style.cssText='display:block;width:100%;min-height:44px;font:inherit;font-size:1rem;margin-top:5px;padding:8px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px';
       priorityOptions59(select,e.weight);select.onchange=function(){e.weight=Number(select.value);persistFlow40();flowError40('')};
-      label.appendChild(select);rows.push(select);card.append(text,label);body.appendChild(card);
+      label.appendChild(select);rows.push(select);card.append(cover,text,label);body.appendChild(card);
     });
-    v36Button(body,'均等に分ける',function(){w.entries.forEach(function(e,i){e.weight=1;rows[i].value=1});persistFlow40()});
-  }else if(key==='carry'){title.textContent='その日のうちに終わらなかった教科を自動で別の日に繰り越しますか？';[['繰り越す',true],['繰り越さない',false]].forEach(function(option){var b=v36Button(body,option[0],function(){c.carry=option[1];persistFlow40();renderFlow40()});b.className='flow-choice40'+(c.carry===option[1]?' selected':'');b.setAttribute('aria-pressed',c.carry===option[1]?'true':'false')});
+
+  }else if(key==='carry'){title.textContent='その日のうちに終わらなかった教科を自動で別の日に繰り越しますか？';[['はい',true],['いいえ',false]].forEach(function(option){var b=v36Button(body,option[0],function(){c.carry=option[1];persistFlow40();renderFlow40()});b.className='flow-choice40'+(c.carry===option[1]?' selected':'');b.setAttribute('aria-pressed',c.carry===option[1]?'true':'false')});
   }else if(key==='plan'){renderFlowPlan84(body,w,title);
   }else if(key==='review'){title.textContent='この目標に変更しますか？';v36Text(body,'目標：'+c.goal);v36Text(body,'試験日：'+c.exam)}
 
