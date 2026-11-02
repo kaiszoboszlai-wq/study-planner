@@ -21,7 +21,7 @@ const renderQuestion=renderFlow40;renderFlow40=function(){const w=window.weeklyF
  const result=renderQuestion.apply(this,arguments);questionKey=w?.key||'';questionMode=mode;
  if(changed){questionMotion?.cancel();questionMotion=enter(document.getElementById('flowBody40'),next>=old?1:-1);}return result;
 };
-function eligible(target){const b=target?.closest?.('button');return b&&!b.disabled&&b.getAttribute('aria-disabled')!=='true'&&!b.closest('[inert]')&&!b.matches('.lt-grip,.lt-bar-open,.lt-zoom,[data-no-motion]')?b:null;}
+function eligible(target){const b=target?.closest?.('button');return b&&!b.disabled&&b.getAttribute('aria-disabled')!=='true'&&!b.closest('[inert]')&&!b.matches('.lt-grip,.lt-bar-open,.lt-zoom,[data-no-motion]')&&!b.closest('nav.side')?b:null;}
 function ink(button,x,y){
  if(reduced.matches)return null;if(getComputedStyle(button).position==='static')button.classList.add('motion-button76');
  const rect=button.getBoundingClientRect(),wrap=document.createElement('span'),dot=document.createElement('span'),size=Math.max(rect.width,rect.height)*2;

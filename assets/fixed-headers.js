@@ -6,8 +6,8 @@ new MutationObserver(schedule).observe(document.querySelector('.app main'),{subt
 // Older mobile Safari can move the visual viewport during native edge bounce.
 // Cancel only outward vertical motion when no ancestor can consume the scroll.
 let touch=null;
-document.addEventListener('touchstart',e=>{touch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null;},{passive:true});
-document.addEventListener('touchmove',e=>{if(!touch||e.touches.length!==1)return;const t=e.touches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;touch={x:t.clientX,y:t.clientY};if(Math.abs(dy)<Math.abs(dx)||!dy||!e.cancelable)return;
+document.addEventListener('touchstart',e=>{touch=e.touches.length===1&&!e.target.closest('nav.side')?{x:e.touches[0].clientX,y:e.touches[0].clientY,startX:e.touches[0].clientX,startY:e.touches[0].clientY,vertical:false}:null;},{passive:true});
+document.addEventListener('touchmove',e=>{if(!touch||e.touches.length!==1)return;const t=e.touches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(!touch.vertical){const totalX=t.clientX-touch.startX,totalY=t.clientY-touch.startY;if(Math.hypot(totalX,totalY)<10)return;if(Math.abs(totalX)>=Math.abs(totalY)){touch=null;return;}touch.vertical=true;}touch.x=t.clientX;touch.y=t.clientY;if(Math.abs(dy)<Math.abs(dx)||!dy||!e.cancelable)return;
  if(e.target.closest('#appScrollHeader68,'+selector)){e.preventDefault();return;}
  for(let node=e.target;node&&node!==document.body;node=node.parentElement){const css=getComputedStyle(node);if(/auto|scroll/.test(css.overflowY)&&node.scrollHeight>node.clientHeight+1){if((dy>0&&node.scrollTop>0)||(dy<0&&node.scrollTop+node.clientHeight<node.scrollHeight-1))return;e.preventDefault();return;}}
  const root=document.scrollingElement;if((dy>0&&root.scrollTop<=0)||(dy<0&&root.scrollTop+root.clientHeight>=root.scrollHeight-1))e.preventDefault();

@@ -658,7 +658,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 </style>
 <link rel="stylesheet" href="assets/book-route-ui.css">
 <link rel="stylesheet" href="assets/profile-question-design.css">
-<link rel="stylesheet" href="assets/glass-navigation.css">
+<link rel="stylesheet" href="assets/glass-navigation.css?v=reliable-taps-20261102">
 <link rel="stylesheet" href="assets/button-shapes.css">
 <link rel="stylesheet" href="assets/profile-editor.css">
 <link rel="stylesheet" href="assets/follow-list.css">
@@ -1082,6 +1082,8 @@ function limitRead(task){return new Promise(function(resolve,reject){var timer=s
   var lastTap=null;
   document.addEventListener("touchend",function(e){
     if(e.touches.length||e.changedTouches.length!==1){lastTap=null;return}
+    // Native controls handle rapid taps themselves; cancelling touchend here drops their click on iOS.
+    if(e.target.closest&&e.target.closest('button,a,input,select,textarea,label,summary,[role="button"],[role="tab"],[role="checkbox"],[role="switch"],[contenteditable="true"]')){lastTap=null;return}
     var t=e.changedTouches[0],now=Date.now();
     if(lastTap&&now-lastTap.at<300&&Math.abs(t.clientX-lastTap.x)<24&&Math.abs(t.clientY-lastTap.y)<24){if(e.cancelable)e.preventDefault();lastTap=null}
     else lastTap={at:now,x:t.clientX,y:t.clientY};
@@ -4370,7 +4372,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/book-covers.js"></script>
 <script src="assets/book-route-ui.js"></script>
 <script src="assets/book-registry-ui.js"></script>
-<script src="assets/navigation-motion.js"></script>
+<script src="assets/navigation-motion.js?v=reliable-taps-20261102"></script>
 <script src="assets/profile-editor.js"></script>
 <script src="assets/follow-list.js"></script>
 <script src="assets/scroll-header.js?v=pinned-subjects-20261102"></script>
@@ -4386,7 +4388,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/exam-calendar.js?v=planner-calendar-menu-20261102"></script>
 <script src="assets/long-term-plan-ui.js?v=planner-calendar-menu-20261102"></script>
 <script src="assets/page-swipe.js"></script>
-<script src="assets/motion-ui.js?v=pinned-subjects-20261102"></script>
+<script src="assets/motion-ui.js?v=reliable-taps-20261102"></script>
 <script src="assets/inbox-sheet.js"></script>
 <script src="assets/header-slide.js"></script>
 <script src="assets/plan-materials.js"></script>
@@ -4395,7 +4397,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/stats-polish.js"></script>
 <script src="assets/header-record-layout.js?v=subject-tabs-20261102"></script>
 <script src="assets/header-menu.js?v=planner-calendar-menu-20261102"></script>
-<script src="assets/fixed-headers.js?v=header-gap8-20261102"></script>
+<script src="assets/fixed-headers.js?v=reliable-taps-20261102"></script>
 <script src="assets/timer-mini.js"></script>
 <script src="assets/profile-video.js?v=planner-calendar-menu-20261102"></script>
 </body>
