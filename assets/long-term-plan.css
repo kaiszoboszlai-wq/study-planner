@@ -194,3 +194,10 @@ body.lt-calendar-open{overflow:hidden}
 #longTermPlanner .lt-timeline-empty{padding:36px 20px;text-align:center;border-radius:22px;background:var(--card);border:1px solid var(--line)}
 #longTermPlanner .lt-timeline-empty p{font-size:.84rem;line-height:1.8;color:var(--sub);margin:14px 0 24px}
 @media(max-width:360px){#longTermPlanner .lt-timeline-item{grid-template-columns:44px minmax(0,1fr);gap:16px}#longTermPlanner .lt-timeline-item:before{left:51px}#longTermPlanner .lt-timeline-item:after{left:46px}#longTermPlanner .lt-timeline-card{grid-template-columns:40px minmax(0,1fr);padding:12px;gap:10px}#longTermPlanner .lt-timeline-cover img{width:40px;height:58px}#longTermPlanner .lt-timeline-open strong{font-size:.82rem}}
+
+#longTermPlanner .lt-timeline-subject101{margin:0 0 28px;min-width:0}
+#longTermPlanner .lt-timeline-subject-heading101{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;padding:0 4px}
+#longTermPlanner .lt-timeline-subject-heading101 h3{margin:0;font-size:1rem;color:var(--ink);display:flex;align-items:center;gap:8px}
+#longTermPlanner .lt-timeline-subject-heading101 h3:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--subject);flex:none}
+#longTermPlanner .lt-timeline-subject-heading101 small{color:var(--sub);font-size:.75rem}
+#longTermPlanner .lt-timeline-subject-empty101{padding:18px;margin:0;background:var(--card);border:1px solid var(--line);border-radius:18px;color:var(--sub);font-size:.8rem;line-height:1.7}

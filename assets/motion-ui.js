@@ -8,7 +8,7 @@ function play(node,frames,options={}){
  const animation=node.animate(frames,{duration:300,easing:ease,...options});active.add(animation);
  const cleanup=()=>active.delete(animation);animation.addEventListener('finish',cleanup,{once:true});animation.addEventListener('cancel',cleanup,{once:true});return animation;
 }
-function enter(node,direction=1){return play(node,[{opacity:.28,transform:'translate3d('+(direction*18)+'px,8px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:360});}
+function enter(node,direction=1){if(node?.matches('#planbox,#today,#bookRoutePage,#longTermPlanner'))return play(node,[{opacity:.28},{opacity:1}],{duration:360});return play(node,[{opacity:.28,transform:'translate3d('+(direction*18)+'px,8px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:360});}
 function pageAnimation(a){if(a){pageAnimations.add(a);const done=()=>pageAnimations.delete(a);a.addEventListener('finish',done,{once:true});a.addEventListener('cancel',done,{once:true});}}
 function stagger(root){
  const cards=[...root.querySelectorAll('.plan-items62 .blk,.today-summary,#tdList .tcard,#myGoal62,.my-menu62,.lt-goal,.route-saved-item')].filter(n=>{const r=n.getBoundingClientRect();return r.height&&r.top<innerHeight+80&&r.bottom>0}).slice(0,7);

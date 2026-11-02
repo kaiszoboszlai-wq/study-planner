@@ -1,0 +1,10 @@
+html,body{overscroll-behavior:none}
+/* Fixed headings must not inherit a moving page's containing block. */
+html body :is(#planbox,#today,#bookRoutePage,#longTermPlanner){transform:none!important;translate:none!important;will-change:auto}
+html:root[data-app-theme] body :is(#planbox>.plan-heading,#today>.today-view-tabs,#longTermPlanner>.lt-view-tabs){
+ position:fixed!important;top:var(--app-header-height68);left:50%;right:auto;width:min(100%,720px);max-width:720px;
+ margin:0!important;transform:translateX(-50%)!important;translate:none!important;z-index:7;box-sizing:border-box;
+}
+html body #appScrollHeader68{transform:none!important;translate:none!important;top:0!important}
+.fixed-heading-spacer101{pointer-events:none;flex:none}
+body:is(.weekly-flow-mode40,.route-creating,.lt-calendar-open) :is(#planbox>.plan-heading,#today>.today-view-tabs,#longTermPlanner>.lt-view-tabs,.fixed-heading-spacer101){display:none!important}
