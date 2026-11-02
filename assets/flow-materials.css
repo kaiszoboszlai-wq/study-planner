@@ -54,7 +54,9 @@ body #weeklyFlow40 #flowBody40{width:100%;min-width:0;max-width:100%;box-sizing:
 #weeklyFlow40 .flow-custom-material79{display:flex;flex-direction:column;margin:12px 0 0}
 #weeklyFlow40 .flow-custom-material79>button{align-self:flex-end;min-width:80px}
 html:root[data-app-theme] body #weeklyFlow40 .flow-subject40>.flow-cover83{background:transparent!important;border:0!important;box-shadow:none!important}
-#weeklyFlow40 #flowLater40{display:grid;place-items:center;min-width:60px;min-height:44px;padding:8px 12px;line-height:1.4!important;text-align:center}
+html:root[data-app-theme] body #weeklyFlow40 #flowLater40{display:block;flex:none;box-sizing:border-box;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:50%!important;font-size:0!important;line-height:1!important}
+html:root[data-app-theme] body #weeklyFlow40 #flowLater40:before,html:root[data-app-theme] body #weeklyFlow40 #flowLater40:after{content:'';position:absolute;inset:auto;left:50%;top:50%;display:block;width:20px;height:2px;margin:0;padding:0;border:0;border-radius:1px;background:currentColor;opacity:1;pointer-events:none;transform:translate(-50%,-50%) rotate(45deg)}
+html:root[data-app-theme] body #weeklyFlow40 #flowLater40:after{transform:translate(-50%,-50%) rotate(-45deg)}
 #weeklyFlow40 .flow-priority-cover110{min-width:0;align-self:start;padding-top:4px}
 #weeklyFlow40 .flow-priority-cover110 figure{margin:0!important}
 #weeklyFlow40 .flow-priority-cover110 img{display:block;width:52px;height:74px;object-fit:contain}
