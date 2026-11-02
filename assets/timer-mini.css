@@ -1,0 +1,26 @@
+/* Apple HIG mini player: one clear primary action, readable metadata, 44px controls. */
+html body #timerMini106{position:fixed;left:50%;bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 8px);transform:translateX(-50%);z-index:9;display:flex;align-items:center;gap:4px;width:calc(100% - 32px);max-width:664px;min-height:64px;padding:3px 6px 4px;margin:0;box-sizing:border-box;overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--liquid-thick,color-mix(in srgb,var(--card) 92%,transparent));color:var(--ink);box-shadow:0 4px 24px #15263a18,inset 0 1px 0 #ffffff60;backdrop-filter:blur(24px) saturate(170%);-webkit-backdrop-filter:blur(24px) saturate(170%)}
+html body #timerMini106[hidden]{display:none!important}
+html body #timerMini106 #activeTimer{position:static;display:flex;align-items:center;gap:10px;flex:1;min-width:0;width:auto;min-height:56px;height:56px;padding:4px;margin:0;border:0;border-radius:12px;box-shadow:none;background:transparent;color:var(--ink);text-align:left;top:auto}
+.timer-mini-cover106{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:8px;overflow:hidden;background:var(--accbg)}
+html body #timerMini106 .route-cover73{width:44px;height:44px;margin:0;padding:0}
+html body #timerMini106 .route-cover73 img{display:block;width:44px;height:44px;max-width:44px;max-height:44px;object-fit:contain;border-radius:6px}
+#timerMini106 .route-cover-credit73{display:none}
+.timer-mini-copy106{display:block;min-width:0;flex:1}
+html body #timerMini106 #activeTimerText{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;font-size:14px;font-weight:650;line-height:1.45}
+#timerMiniTime106{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.5;color:var(--sub);font-variant-numeric:tabular-nums}
+html body #timerMiniToggle106{display:grid;place-items:center;flex:none;width:44px;height:44px;min-width:44px;padding:10px;margin:0;border:0;border-radius:50%;box-shadow:none;background:transparent;color:var(--ink)}
+#timerMiniToggle106 svg{display:block;width:24px;height:24px;fill:currentColor}
+#timerMiniToggle106:disabled{opacity:.45}
+.timer-mini-progress106{position:absolute;left:12px;right:12px;bottom:0;height:3px;background:color-mix(in srgb,var(--ink) 9%,transparent);pointer-events:none}
+.timer-mini-progress106>span{display:block;height:100%;border-radius:3px;background:var(--mini-accent106,var(--acc))}
+html:root[data-app-theme] body.timer-mini-visible106>button#mrOpen.stats-record-fab94{bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 84px)}
+html body.timer-mini-visible106 .app main{padding-bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 96px)!important}
+html body.timer-mini-visible106:has(#stats:not([hidden])) .app main{padding-bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 176px)!important}
+body:is(.weekly-flow-mode40,.route-creating,.profile-editing64,.timer-focus,.lt-calendar-open) #timerMini106,body:has(dialog[open],.tm:not([hidden]),[role=dialog]:not(dialog):not([hidden])) #timerMini106{display:none!important}
+:root[data-app-theme=black] #timerMini106{box-shadow:0 4px 24px #0006,inset 0 1px 0 #ffffff0a}
+@media(prefers-reduced-transparency:reduce){html body #timerMini106{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-contrast:more){html body #timerMini106{border-color:var(--ink)}}
+
+html body #timerMini106 :is(#activeTimer,#timerMiniToggle106){color:var(--ink)!important}
+html body #timerMiniToggle106 svg{max-width:24px!important;max-height:24px!important}
