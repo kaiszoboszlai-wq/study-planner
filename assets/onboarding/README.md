@@ -1,8 +1,8 @@
 # First-visit introduction screenshots
 
-Captured from the real StudyPlanner UI at a 390 × 844 CSS-pixel mobile viewport, with a device scale factor of 2 and the Asia/Tokyo timezone. These are example plans, study records and fictional ranking names, not real user data. Capture does not contact Firestore or modify a real account.
+Captured from the real StudyPlanner UI at a 487 × 820 CSS-pixel mobile viewport, with a device scale factor of 2 and the Asia/Tokyo timezone. These are example plans, study records and fictional ranking names, not real user data. Capture does not contact Firestore or modify a real account.
 
-Regenerate from the source checkout with `node scripts/capture-onboarding.cjs` (Playwright and Chromium required). The six JPEGs are direct browser captures; no interface elements or book artwork are painted into them after capture.
+Regenerate from the source checkout with `node scripts/capture-onboarding.cjs` (Playwright and Chromium required). The six JPEGs are uncropped captures of the entire app viewport, including its header and bottom controls; no interface elements or book artwork are painted into them after capture.
 
 Book artwork uses the existing unmodified openBD images in `assets/book-covers`:
 
