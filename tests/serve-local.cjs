@@ -1,6 +1,6 @@
 const fs=require('fs'),path=require('path');
 module.exports=function(r,options={}){const u=new URL(r.request().url());if(u.origin!=='http://localhost:8000')return r.abort();const relative=u.pathname==='/'?'index.html':u.pathname.slice(1),file=path.resolve(__dirname,'..',relative),base=path.resolve(__dirname,'..');if(!file.startsWith(base+path.sep)||!fs.existsSync(file))return r.abort();const contentType=file.endsWith('.woff')?'font/woff':file.endsWith('.ttf')?'font/ttf':file.endsWith('.css')?'text/css':file.endsWith('.js')?'application/javascript':file.endsWith('.mp4')?'video/mp4':file.endsWith('.json')?'application/json':file.endsWith('.svg')?'image/svg+xml':file.endsWith('.jpg')?'image/jpeg':file.endsWith('.gif')?'image/gif':file.endsWith('.webp')?'image/webp':file.endsWith('.png')?'image/png':'text/html';let body=fs.readFileSync(file);if(relative==='index.html'){
 // Feature tests start as returning users. The dedicated first-visit tests opt out.
-const completed=options.firstVisit?'':'try{localStorage.setItem("studyplanner:onboarding:v1",JSON.stringify({status:"done",page:3}))}catch(e){};';
+const completed=options.firstVisit?'':'try{localStorage.setItem("studyplanner:onboarding:v2",JSON.stringify({status:"done",page:3}))}catch(e){};';
 body=body.toString().replace('<head>','<head><script>'+completed+'try{localStorage.setItem("studyplanner:announcement:learning-plan-in-progress-20261027","dismissed")}catch(e){}</script>');}
 return r.fulfill({contentType,body});};

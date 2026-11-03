@@ -1,5 +1,5 @@
 (function(){'use strict';
-const boot=window.FirstVisit118||{key:'studyplanner:onboarding:v1',saved:null,hadLocal:true};
+const boot=window.FirstVisit118||{key:'studyplanner:onboarding:v2',saved:null,hadLocal:true};
 const pages=[
  {tag:'週間プラン',title:'1週間のプランを、\nあなたに合わせて。',description:'勉強できる時間と教材を設定するだけ。\n毎日のプランを自動で作れます。',image:'weekly',alt:'表紙付き教材を自動で配分した、実際の週間プラン画面の使用例'},
  {tag:'計測・学習記録',title:'「再生」から、\n勉強をはじめよう。',description:'今日のタスクの再生ボタンで時間を計測。\n学習時間は自動で記録され、グラフで振り返れます。',image:'today',alt:'今日のタスクと、教材ごとの再生ボタンが並ぶ実際の画面の使用例',detail:'stats',detailAlt:'計測した学習時間を色別に表示した実際のグラフの使用例',detailLabel:'自動で記録・グラフ化'},
