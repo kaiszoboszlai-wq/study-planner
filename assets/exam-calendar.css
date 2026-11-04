@@ -95,3 +95,5 @@ html body #longTermPlanner .exam-calendar105{border:1px solid var(--line);border
 html body #longTermPlanner button.exam-period-bar109{position:relative;isolation:isolate;overflow:visible;background:transparent;border-radius:8px!important}
 html body #longTermPlanner button.exam-period-bar109::before{content:"";position:absolute;inset:10px 0;background:var(--exam-period-color109);border-radius:8px;z-index:-1}
 html body #longTermPlanner button.exam-period-bar109.continues-before109,html body #longTermPlanner button.exam-period-bar109.continues-after109{border-radius:8px!important}
+
+.exam-month-list105{display:grid;gap:14px}.exam-month-holder105{min-width:0}.exam-month-holder105 .exam-month105 h3{scroll-margin-top:calc(var(--header-visible-height68,72px) + 10px)}.exam-more-months105{display:block;margin:16px auto 28px;min-height:44px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--acc);padding:10px 18px}.exam-month-holder105 .exam-tools105[hidden]{display:none!important}

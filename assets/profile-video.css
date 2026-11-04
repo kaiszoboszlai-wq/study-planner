@@ -18,6 +18,9 @@ html body #accountMenu96.is-profile109 #mypage #cntRow button{display:inline-fle
 html body #accountMenu96.is-profile109 #mypage #cntRow b{font-size:13px!important;font-weight:650;color:var(--ink)}
 html body #accountMenu96.is-profile109 #mypage .profile-actions64{display:flex;flex-direction:row!important;gap:8px;margin:14px 12px 0}
 html:root[data-app-theme] body #accountMenu96.is-profile109 #mypage .profile-actions64 :is(#profileEdit63,#profileShare64){display:flex;align-items:center;justify-content:center;flex:1;width:auto;min-width:0;min-height:44px;height:auto;margin:0;padding:9px 6px;border:1px solid var(--line)!important;border-radius:999px!important;background:var(--card)!important;color:var(--ink)!important;box-shadow:none!important;font-size:clamp(11px,3.3vw,14px)!important;font-weight:600;line-height:1.4;white-space:nowrap}
+html:root[data-app-theme] body #accountMenu96.is-profile109 #mypage .profile-page-actions123 button{display:flex;align-items:center;justify-content:center;flex:1;min-width:0;min-height:44px;margin:0;padding:9px 6px;border:1px solid var(--line)!important;border-radius:999px!important;background:var(--card)!important;color:var(--ink)!important;box-shadow:none!important;font-size:clamp(11px,3.3vw,14px)!important;font-weight:600;line-height:1.4;white-space:nowrap}
+html body #accountMenu96.is-profile109 #mypage .profile-page-actions123{box-sizing:border-box;width:calc(100vw - 24px);max-width:calc(100% - 24px)}
+html body #accountMenu96.is-profile109 #mypage .profile-page-share-status123{margin:8px 12px 0}
 html body #accountMenu96.is-profile109 #mypage #myGoal62{margin:20px 12px 24px;padding:16px;border:0;border-radius:16px;background:#f0f0f0!important;box-shadow:none!important}
 html body #accountMenu96.is-profile109 #myGoal62>.section-heading62{margin:0 0 9px;padding:0}
 html body #accountMenu96.is-profile109 #myGoal62>.section-heading62 h3{font-size:14px;line-height:1.4;margin:0}

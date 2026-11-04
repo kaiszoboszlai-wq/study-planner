@@ -212,6 +212,13 @@ body.lt-calendar-open{overflow:hidden}
 
 #longTermPlanner .lt-view-body{overflow-x:hidden;overflow-x:clip}
 
+/* Match the study record action's position, size and visual treatment. */
+html:root[data-app-theme] body>button.lt-route-fab110{position:fixed;right:max(16px,calc((100vw - 720px)/2 + 16px));bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 16px);z-index:9;display:grid;place-items:center;width:56px;min-width:56px;height:56px;min-height:56px;margin:0;padding:0;border:1px solid rgb(255 255 255 / .36);border-radius:50%!important;background:linear-gradient(180deg,rgb(255 255 255 / .14),transparent 48%),#007aff!important;color:#fff!important;box-shadow:0 6px 20px rgb(0 100 220 / .22),inset 0 1px 0 rgb(255 255 255 / .35)!important}
+html:root[data-app-theme] body>button.lt-route-fab110 svg{display:block;width:32px;height:32px;pointer-events:none}
+html:root[data-app-theme] body>button.lt-route-fab110[hidden],html:root[data-app-theme] body:has(dialog[open],[role=dialog]:not(dialog):not([hidden]))>button.lt-route-fab110{display:none!important}
+html:root[data-app-theme] body:has(#bookRoutePage:not([hidden])) main{padding-bottom:calc(var(--bottom-nav-height94,74px) + max(10px,env(safe-area-inset-bottom,0px)) + 88px)}
+@media(prefers-contrast:more){html:root[data-app-theme] body>button.lt-route-fab110{background:#0066cc!important}}
+
 /* Active study presence, with quiet upcoming/completed cards. */
 html:root[data-app-theme] body #longTermPlanner .is-active .lt-timeline-card{border-color:#32a776;background:color-mix(in srgb,#26b47c 8%,var(--card));box-shadow:0 0 0 1px #26b47c25,0 6px 20px #14976812}
 #longTermPlanner .is-active .lt-timeline-status{display:inline-flex;align-items:center;gap:6px;background:#e1f6ec;color:#146b48;font-weight:650}
