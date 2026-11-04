@@ -9,11 +9,11 @@
 <script>
 // Apply saved chrome before blocking assets or the first paint, including standalone launches.
 (function(){
-  var colors={sky:'#b9e1f5',sage:'#d5e8d4',lavender:'#d8c9f2',peach:'#f4d8c8',black:'#090909'};
+  var colors={sky:'#b9e1f5',sage:'#d5e8d4',lavender:'#d8c9f2',peach:'#f4d8c8',black:'#000000'};
   function applyChrome(theme){
     theme=Object.prototype.hasOwnProperty.call(colors,theme)?theme:'sky';var dark=theme==='black',root=document.documentElement;
     root.setAttribute('data-app-theme',theme);root.setAttribute('data-chrome-theme','theme');
-    root.style.backgroundColor=dark?'#090909':'#f5f5f5';root.style.colorScheme=dark?'dark':'light';
+    root.style.backgroundColor=dark?'#000000':'#f5f5f5';root.style.colorScheme=dark?'dark':'light';
     document.querySelector('meta[name="theme-color"]').content=colors[theme];
     document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').content=dark?'black-translucent':'default';
     document.querySelector('meta[name="color-scheme"]').content=dark?'dark':'light';
@@ -568,7 +568,7 @@ button.follow-action:disabled{opacity:.6}
 window.updateAppManifest75=function(theme){
   var manifest={"name": "StudyPlanner", "short_name": "StudyPlanner", "display": "standalone", "background_color": "#171719", "theme_color": "#b9e1f5", "lang": "ja", "icons": [{"src": "assets/app-flag-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}, {"src": "assets/app-flag-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}]};
   manifest.theme_color=AppAppearance75.colors[theme]||AppAppearance75.colors.sky;
-  manifest.background_color=theme==='black'?'#090909':'#f5f5f5';
+  manifest.background_color=theme==='black'?'#000000':'#f5f5f5';
   var root=new URL("./",location.href).href;
   manifest.id=root;manifest.start_url=root;manifest.scope=root;
   manifest.icons.forEach(function(icon){icon.src=new URL(icon.src,root).href});
@@ -689,7 +689,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/fixed-headers.css?v=header-gap8-20261102">
 <link rel="stylesheet" href="assets/exam-calendar.css?v=stacked-20261105">
 <link rel="stylesheet" href="assets/timer-mini.css?v=rounder-20261102">
-<link rel="stylesheet" href="assets/profile-video.css?v=profile-actions-20261105">
+<link rel="stylesheet" href="assets/profile-video.css?v=black-chrome-20261105">
 <script src="assets/weekly-allocation.js?v=weekly-refinements-20261102"></script>
 <link rel="stylesheet" href="assets/timer-cover.css?v=time-above-cover-20261102">
 <link rel="stylesheet" href="assets/onboarding.css?v=visible-help-20261103">
