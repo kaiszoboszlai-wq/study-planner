@@ -22,3 +22,13 @@ html body #accountControls123 #appSyncPanel{display:flex;align-items:center;just
 html body #accountControls123 #appSyncButton{flex:none;min-height:44px;max-width:48%;padding:10px 12px;border:1px solid var(--line);border-radius:999px!important;background:var(--card);color:var(--ink);font-size:12px!important;white-space:normal}
 html:root[data-app-theme=black] body #accountControls123 #myGoal62{background:#252528!important}
 html:root[data-app-theme=black] body #accountControls123 #myGoalEdit62{background:#f5f5f7!important;color:#0f1419!important}
+
+/* In the black appearance, the goal card is the only filled surface in the account drawer. */
+html:root[data-app-theme] body #accountMenu96 .account-menu-panel97{border:0!important}
+html:root[data-app-theme=black] body #accountMenu96 .account-menu-panel97{box-shadow:none!important}
+html:root[data-app-theme=black] body #accountMenu96 .account-summary109{background:#000!important;border:0!important;box-shadow:none!important}
+html:root[data-app-theme=black] body #accountMenu96 #accountProfileOpen109,html:root[data-app-theme=black] body #accountMenu96 #accountControls123 .profile-actions64 button,html:root[data-app-theme=black] body #accountMenu96 #accountControls123 #appSyncPanel,html:root[data-app-theme=black] body #accountMenu96 #accountControls123 #appSyncButton,html:root[data-app-theme=black] body #accountMenu96 #onboardingOpen120{background:#000!important}
+html:root[data-app-theme=black] body #accountMenu96.is-profile109 #mypage .profile-page-actions123 button{background:#000!important}
+/* Keep keyboard focus visible without the blue accent around menu controls. */
+html:root[data-app-theme] body #accountMenu96 :is(#accountMenuClose97,#accountProfileOpen109):focus-visible{outline:2px solid var(--ink)!important;outline-offset:2px}
+@media(forced-colors:active){html:root[data-app-theme] body #accountMenu96 :is(#accountMenuClose97,#accountProfileOpen109):focus-visible{outline-color:Highlight!important}}
