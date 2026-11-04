@@ -90,3 +90,8 @@ html body #longTermPlanner .exam-period-bars109{padding:0 2px 3px;gap:2px 0}
 html body #longTermPlanner button.exam-period-bar109{display:flex;align-items:center;min-height:44px;height:44px;padding:0 5px;border:0;border-radius:0!important;background:linear-gradient(to bottom,transparent 0 10px,var(--exam-period-color109) 10px 34px,transparent 34px);color:var(--exam-period-ink109);font-size:11px!important;line-height:24px!important}
 html body #longTermPlanner button.exam-period-bar109.continues-before109,html body #longTermPlanner button.exam-period-bar109.continues-after109{border-radius:0!important}
 @media(max-width:380px){html body #longTermPlanner .exam-day105 .exam-cell-title109,html body #longTermPlanner .exam-day105 .exam-holiday105{font-size:11px}}
+
+html body #longTermPlanner .exam-calendar105{border:1px solid var(--line);border-radius:20px;overflow:hidden}
+html body #longTermPlanner button.exam-period-bar109{position:relative;isolation:isolate;overflow:visible;background:transparent;border-radius:8px!important}
+html body #longTermPlanner button.exam-period-bar109::before{content:"";position:absolute;inset:10px 0;background:var(--exam-period-color109);border-radius:8px;z-index:-1}
+html body #longTermPlanner button.exam-period-bar109.continues-before109,html body #longTermPlanner button.exam-period-bar109.continues-after109{border-radius:8px!important}
