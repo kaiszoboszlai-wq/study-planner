@@ -666,9 +666,9 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/scroll-header.css?v=pinned-subjects-20261102">
 <link rel="stylesheet" href="assets/login-row.css">
 <link rel="stylesheet" href="assets/stats-health.css">
-<link rel="stylesheet" href="assets/ranking-health.css">
+<link rel="stylesheet" href="assets/ranking-health.css?v=review-20261105">
 <link rel="stylesheet" href="assets/async-ui.css">
-<link rel="stylesheet" href="assets/shared-page-health.css">
+<link rel="stylesheet" href="assets/shared-page-health.css?v=review-20261105">
 <link rel="stylesheet" href="assets/long-term-plan.css?v=planner-calendar-menu-20261102">
 <link rel="stylesheet" href="assets/cover-crop.css">
 <link rel="stylesheet" href="assets/design-consistency.css">
@@ -687,9 +687,9 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/header-record-layout.css?v=subject-tabs-20261102">
 <link rel="stylesheet" href="assets/header-menu.css">
 <link rel="stylesheet" href="assets/fixed-headers.css?v=header-gap8-20261102">
-<link rel="stylesheet" href="assets/exam-calendar.css?v=planner-calendar-menu-20261102">
+<link rel="stylesheet" href="assets/exam-calendar.css?v=review-20261105">
 <link rel="stylesheet" href="assets/timer-mini.css?v=rounder-20261102">
-<link rel="stylesheet" href="assets/profile-video.css?v=bare-account-icon-20261102">
+<link rel="stylesheet" href="assets/profile-video.css?v=review-20261105">
 <script src="assets/weekly-allocation.js?v=weekly-refinements-20261102"></script>
 <link rel="stylesheet" href="assets/timer-cover.css?v=time-above-cover-20261102">
 <link rel="stylesheet" href="assets/onboarding.css?v=visible-help-20261103">
@@ -812,7 +812,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <div id="tdList"></div>
 </section>
 <section id="grades" hidden>
-<button id="gradesBackMy" class="lnk" type="button">← マイページへ戻る</button>
+<button id="gradesBackMy" class="lnk" type="button">← 今日のタスクへ戻る</button>
 <div class="grades-heading"><h2>模試・テストの成績</h2><button id="gAdd" class="main">成績を追加</button></div>
 <p class="note" id="gNote"></p>
 <div class="grades-chart-card"><div class="chips" id="gchips"></div>
@@ -4254,7 +4254,7 @@ $("navToday").onclick=function(){showPage(6)};
 $("goTodayStudy").onclick=function(){showPage(6)};
 $("adjustTodayPlan").onclick=function(){selectedPlanDate=fmtDate(new Date());showPage(3);if(state.page===3)renderPlan()};
 $("myGradesOpen").onclick=function(){showPage(7)};
-$("gradesBackMy").onclick=function(){showPage(5)};
+$("gradesBackMy").onclick=function(){showPage(6);document.getElementById("todayScheduleTab")?.click()};
 $("gAdd").onclick=function(){openGrade(null)};
 $("gmSave").onclick=saveGrade;
 $("gmAddRow").onclick=function(){addGmRow("","","100")};
@@ -4302,7 +4302,7 @@ $("shareBtn").onclick=async function(){
 setInterval(function(){if(automaticReadsAllowed())fbPoll()},60000);
 setInterval(function(){if(automaticReadsAllowed())syncRefresh().catch(function(){})},60000);
 setInterval(function(){if(!document.hidden&&state.timer&&FB.uid)fbPublish(true)},60000); // 表示中だけ勉強中の印を更新
-setInterval(function(){if(automaticReadsAllowed()&&rankVisible54())rankLoad()},60000);
+
 document.addEventListener("visibilitychange",function(){if(document.hidden&&state.timer)store();if(!document.hidden){checkIdleTimer();if(backgroundPlanDirty){backgroundPlanDirty=false;rollAndRender(true)}paintSaveStatus();fbPoll();syncRefresh().catch(function(){});tickAll()}});
 installV38();
 installWeeklyFlow40();
@@ -4377,19 +4377,19 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/book-route-ui.js"></script>
 <script src="assets/book-registry-ui.js"></script>
 <script src="assets/navigation-motion.js?v=reliable-taps-20261102"></script>
-<script src="assets/profile-editor.js"></script>
+<script src="assets/profile-editor.js?v=review-20261105"></script>
 <script src="assets/follow-list.js"></script>
 <script src="assets/scroll-header.js?v=pinned-subjects-20261102"></script>
 <script src="assets/login-row.js"></script>
 <script src="assets/stats-health.js"></script>
-<script src="assets/ranking-health.js"></script>
+<script src="assets/ranking-health.js?v=review-20261105"></script>
 <script src="assets/refresh-ui.js?v=spinner-gap-20261102"></script>
 
 <script src="assets/header-notifications.js"></script>
 <script src="assets/app-announcements.js?v=pinned-subjects-20261102"></script>
 <script src="assets/long-term-plan.js"></script>
 <script src="assets/cover-crop.js"></script>
-<script src="assets/exam-calendar.js?v=planner-calendar-menu-20261102"></script>
+<script src="assets/exam-calendar.js?v=review-20261105"></script>
 <script src="assets/long-term-plan-ui.js?v=planner-calendar-menu-20261102"></script>
 <script src="assets/page-swipe.js"></script>
 <script src="assets/motion-ui.js?v=reliable-taps-20261102"></script>

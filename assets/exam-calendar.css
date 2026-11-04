@@ -38,3 +38,7 @@ html body #longTermPlanner button.exam-period-bar109.continues-before109{border-
 html body #longTermPlanner button.exam-period-bar109.continues-after109{border-top-right-radius:0!important;border-bottom-right-radius:0!important}
 @media(max-width:360px){.exam-tools105 button{padding-inline:7px;font-size:11px!important}.exam-week-days109{gap:1px}}
 .exam-event-dialog105>footer{gap:8px}.exam-event-dialog105>footer button{min-width:0;flex:1;padding-inline:8px}
+
+html body #longTermPlanner .exam-day105.has-exam109{background:var(--exam-background105);border-color:var(--exam-color105);color:var(--ink)}
+html body #longTermPlanner .exam-day105.has-exam109 .exam-cell-title109{color:var(--exam-color105)}
+html body #longTermPlanner .exam-day105.is-holiday105>span:first-child{color:#c43d44;font-weight:700}.exam-holiday105{font-size:9px;color:#c43d44;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}

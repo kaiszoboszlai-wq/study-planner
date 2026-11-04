@@ -54,3 +54,6 @@ html body #accountMenu96 .account-counts109 button{white-space:nowrap;min-width:
 
 /* The header account control shows the icon without a circular button surface. */
 html:root[data-app-theme] body #appScrollHeader68 #accountMenuOpen96{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+html body #accountMenu96 .account-menu-panel97{border-radius:0!important;clip-path:inset(0)}
+html body #accountMenu96{border-radius:0!important;background:rgb(10 20 35 / .38)}

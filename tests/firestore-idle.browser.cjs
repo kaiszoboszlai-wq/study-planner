@@ -14,6 +14,6 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   const idle={...readCounts};document.dispatchEvent(new Event('pointerdown'));await new Promise(r=>setTimeout(r,0));
   const resumed={...readCounts};return {idle,resumed,timers:automatic.length,visibleQueries,hiddenQueries};
  });
- assert.equal(result.visibleQueries,1);assert.equal(result.hiddenQueries,1);assert(result.timers>=4);assert.deepEqual(result.idle,{notification:0,sync:0,chat:0,rank:0});assert.equal(result.resumed.notification,1);assert.equal(result.resumed.sync,1);assert.equal(result.resumed.chat,0);assert.equal(result.resumed.rank,1);assert.deepEqual(errors,[]);
- console.log('PASS real page automatic timer callbacks: no idle reads across 60 simulated ticks; one interaction resumes notifications, sync, chat and ranking; no browser errors');
+ assert.equal(result.visibleQueries,1);assert.equal(result.hiddenQueries,1);assert(result.timers>=3);assert.deepEqual(result.idle,{notification:0,sync:0,chat:0,rank:0});assert.equal(result.resumed.notification,1);assert.equal(result.resumed.sync,1);assert.equal(result.resumed.chat,0);assert.equal(result.resumed.rank,1);assert.deepEqual(errors,[]);
+ console.log('PASS real page automatic timer callbacks: no idle reads across 60 simulated ticks; one interaction resumes notifications, sync and ranking; no browser errors');
 }finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
