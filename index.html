@@ -1039,7 +1039,7 @@ function switchAccountData(uid){
   saveHealth={localSaved:!!saved,localError:null,cloudError:null,writeError:null,pending:!!uid,synced:false};
   try{localStorage.setItem(KEY+":owner",uid||"")}catch(e){}
   lastData=syncData();ensureIds();rollForward();fillWeeklySetup();countdown();renderPlan();
-  showPage(state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)));
+  showPage(6);
   return true;
 }
 function save(localOnly){checkpointRunning58(Date.now());state.updatedAt=Date.now();var d=syncData();if(d!==lastData){lastData=d;state.dataAt=Date.now();saveRevision++}store();if(localOnly===true){if(typeof syncSig!=="undefined"&&d!==syncSig){saveHealth.pending=true;saveHealth.synced=false;paintSaveStatus()}return}if(typeof fbSchedule==="function")fbSchedule();if(typeof syncSchedule==="function")syncSchedule();if(typeof renderActiveTimer==="function")renderActiveTimer()}
@@ -4105,8 +4105,7 @@ load();
 if(state.plan&&state.plan.length&&!state.plan[0].date)state.plan=null; // 旧形式(日付なし)の計画は破棄
 ensureIds();
 rollForward();
-state.page=state.weekSetupPending?1:(state.plan?3:((state.goal||"").trim()?1:0)); // アプリを開いたときは「プラン」から。計画がまだなければ、設定の途中から
-if(state.page===3&&!state.plan)state.page=1;
+state.page=6; // アプリを開いたときは「今日」から。
 $("exam").value=state.exam;$("wd").value=state.wd;$("we").value=state.we;$("tot").value=state.tot;$("rwd").value=state.rwd;$("rwe").value=state.rwe;
 $("exam").onchange=function(){state.exam=this.value;save();countdown();calcNeed()};
 $("wd").oninput=function(){state.wd=Number(this.value)||0;save()};
@@ -4397,7 +4396,7 @@ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{naviga
 <script src="assets/inbox-sheet.js"></script>
 <script src="assets/header-slide.js"></script>
 <script src="assets/plan-materials.js"></script>
-<script src="assets/account-storage-init.js"></script>
+<script src="assets/account-storage-init.js?v=start-today-20261104"></script>
 <script src="assets/profile-links.js"></script>
 <script src="assets/stats-polish.js"></script>
 <script src="assets/header-record-layout.js?v=subject-tabs-20261102"></script>
