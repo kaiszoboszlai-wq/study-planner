@@ -20,3 +20,6 @@ dialog::backdrop{animation:motion-backdrop76 .24s ease both;backdrop-filter:blur
  :is(.today-progress,.barx,.plan-meter)>:is(span,i),:is(.flow-choice40,.route-question-options button,.theme-choice,[role=tab],.lt-tabs button){transition:none}
  dialog::backdrop{animation:none;backdrop-filter:none}
 }
+
+/* Today and weekly plan appear immediately, including their cards and meters. */
+html body :is(#today,#planbox),html body :is(#today,#planbox) *,html body :is(#today,#planbox) *::before,html body :is(#today,#planbox) *::after{animation:none!important;transition:none!important}
