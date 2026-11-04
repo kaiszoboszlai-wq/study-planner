@@ -64,3 +64,29 @@ html body #longTermPlanner .exam-day105 .exam-holiday105{display:block;box-sizin
 html body #longTermPlanner .exam-period-bars109{padding:0 2px 8px;gap:3px 0}
 html body #longTermPlanner button.exam-period-bar109{height:21px;min-height:21px;padding:2px 4px;font-size:9px!important;line-height:17px!important}
 @media(max-width:380px){html body #longTermPlanner .exam-day105{padding-inline:1px}html body #longTermPlanner .exam-day105 .exam-cell-title109{font-size:9px}html body #longTermPlanner .exam-day105 .exam-holiday105{font-size:8px}}
+
+/* Compact Sunday-first month inspired by the reference, with accessible controls. */
+html body #longTermPlanner .exam-calendar105{border:0;background:var(--card);color:var(--ink)}
+html body #longTermPlanner .exam-month105 h3{color:var(--ink);font-size:1.15rem}
+html body #longTermPlanner .exam-month105 button{min-width:44px;min-height:44px;color:var(--acc)}
+html body #longTermPlanner .exam-week105{font-size:.8rem;color:var(--sub);margin-top:4px}
+html body #longTermPlanner .exam-week105 span:first-child{color:#ba3342}
+html body #longTermPlanner .exam-week105 span:nth-child(6){color:var(--sub)}
+html body #longTermPlanner .exam-week105 span:last-child{color:#297bc9}
+html body #longTermPlanner .exam-week-row109{min-height:132px;border-bottom:1px solid var(--line)}
+html body #longTermPlanner .exam-week-days109{min-height:118px}
+html body #longTermPlanner .exam-day105{min-height:118px;height:118px;align-items:stretch;padding:10px 2px 4px;gap:4px;background:transparent!important;border:0;border-radius:0;text-align:center}
+html body #longTermPlanner .exam-day105>span:first-child{font-size:1rem;font-weight:550}
+html body #longTermPlanner .exam-day105:nth-child(6)>span:first-child{color:var(--ink)}
+html body #longTermPlanner .exam-day105:nth-child(7)>span:first-child{color:#297bc9}
+html body #longTermPlanner .exam-day105:nth-child(1)>span:first-child{color:#ba3342}
+html body #longTermPlanner .exam-day105.is-outside>span:first-child{color:var(--sub)}
+html body #longTermPlanner .exam-day105.is-today{background:color-mix(in srgb,var(--acc) 10%,var(--card))!important}
+html body #longTermPlanner .exam-day105[aria-pressed=true]{outline:2px solid var(--acc);outline-offset:-2px;border:0}
+html body #longTermPlanner .exam-day105:focus-visible,html body #longTermPlanner .exam-period-bar109:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+html body #longTermPlanner .exam-day105 .exam-cell-title109{padding:4px 2px;min-height:21px;background:var(--exam-label-color109);color:var(--exam-label-ink109)!important;font-size:11px;line-height:1.2;font-weight:600;border-radius:3px}
+html body #longTermPlanner .exam-day105 .exam-holiday105{padding:4px 2px;min-height:21px;background:#b92f3c;color:#fff;font-size:11px;line-height:1.2;border-radius:3px}
+html body #longTermPlanner .exam-period-bars109{padding:0 2px 3px;gap:2px 0}
+html body #longTermPlanner button.exam-period-bar109{display:flex;align-items:center;min-height:44px;height:44px;padding:0 5px;border:0;border-radius:0!important;background:linear-gradient(to bottom,transparent 0 10px,var(--exam-period-color109) 10px 34px,transparent 34px);color:var(--exam-period-ink109);font-size:11px!important;line-height:24px!important}
+html body #longTermPlanner button.exam-period-bar109.continues-before109,html body #longTermPlanner button.exam-period-bar109.continues-after109{border-radius:0!important}
+@media(max-width:380px){html body #longTermPlanner .exam-day105 .exam-cell-title109,html body #longTermPlanner .exam-day105 .exam-holiday105{font-size:11px}}
