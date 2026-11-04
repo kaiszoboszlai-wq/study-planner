@@ -1,0 +1,24 @@
+/* The first account drawer contains the live profile actions and settings. */
+#accountControls123{min-width:0;margin-top:22px;padding-bottom:8px}
+html body #accountMenu96 #accountControls123 .profile-actions64{display:flex;flex-direction:row;gap:8px;margin:0}
+html:root[data-app-theme] body #accountControls123 .profile-actions64 button{display:flex;align-items:center;justify-content:center;flex:1;min-width:0;min-height:44px;height:auto;margin:0;padding:10px 6px;border:1px solid var(--line)!important;border-radius:999px!important;background:var(--card)!important;color:var(--ink)!important;box-shadow:none!important;font-size:12px!important;font-weight:600;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+html body #accountControls123 #myGoal62{margin:20px 0 24px;padding:16px;border:0;border-radius:16px;background:#f0f0f0!important;box-shadow:none}
+#accountControls123 #myGoal62>.section-heading62{margin:0 0 10px;padding:0}
+#accountControls123 #myGoal62 h3{font-size:14px;margin:0}
+#accountControls123 .goal-title62{font-size:16px;line-height:1.6;margin-bottom:16px}
+#accountControls123 .goal-deadline62{padding:0;border:0;font-size:12px}
+#accountControls123 #myGoalDays62{font-size:24px}
+html body #accountControls123 #myGoalEdit62{display:block;width:100%;min-height:44px;margin-top:16px;padding:10px 16px;border:0;border-radius:999px!important;background:#0f1419!important;color:#fff!important;font-size:14px!important;font-weight:650;text-align:center}
+html body #accountControls123 .my-menu62{margin:0;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--card)}
+html body #accountControls123 .my-menu62>button{min-height:54px;padding:12px 8px;border-radius:0!important;border-bottom:1px solid var(--line);background:var(--card);font-size:14px!important;font-weight:500;box-shadow:none}
+#accountControls123 .menu-icon62{background:transparent;color:var(--ink)}
+#accountControls123 .my-menu62 #loginRow69{justify-content:space-between}
+html body #accountControls123 .my-account62{margin-top:16px;padding:0;border:0;background:transparent;overflow:visible}
+#accountControls123 #settingsSyncStatus{display:none}
+html body #accountControls123 #appSyncPanel{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:14px 12px;border:1px solid var(--line);border-radius:16px;background:var(--card);min-width:0}
+#accountControls123 #appSyncPanel>div{flex:1;min-width:0}
+#accountControls123 #appSyncPanel strong{display:block;margin-bottom:5px;font-size:14px}
+#accountControls123 #appSyncStatus{display:block;font-size:12px;overflow-wrap:anywhere}
+html body #accountControls123 #appSyncButton{flex:none;min-height:44px;max-width:48%;padding:10px 12px;border:1px solid var(--line);border-radius:999px!important;background:var(--card);color:var(--ink);font-size:12px!important;white-space:normal}
+html:root[data-app-theme=black] body #accountControls123 #myGoal62{background:#252528!important}
+html:root[data-app-theme=black] body #accountControls123 #myGoalEdit62{background:#f5f5f7!important;color:#0f1419!important}
