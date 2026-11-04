@@ -67,3 +67,5 @@ html:root[data-app-theme=black] body #accountMenu96 .account-menu-panel97,html:r
 html:root[data-app-theme=black] body #accountMenu96.is-profile109 #mypage #profileCover65{background-color:#000!important}
 html:root[data-app-theme=black] body #accountControls123 .my-menu62,html:root[data-app-theme=black] body #accountControls123 .my-menu62>button{background:#000!important}
 html:root[data-app-theme=black] body #today .today-view-tabs{background:#000!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root[data-app-theme=black] body :is(#planbox>.plan-heading,#longTermPlanner>.lt-view-tabs){background:#000!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html:root[data-app-theme=black] body #dmm>.tmbox{background:#000!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
