@@ -4,7 +4,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)'),active=new Set(),pa
 const roots={8:'bookRoutePage',3:'planbox',6:'today',4:'stats',5:'mypage',7:'grades'},order=[8,3,6,4,5,7],ease='cubic-bezier(.16,1,.3,1)';
 let questionMotion=null,questionKey=window.weeklyFlow40?.key||'',questionMode=window.weeklyFlow40?.mode||'';
 function play(node,frames,options={}){
- if(reduced.matches||!node?.isConnected||!node.getClientRects().length||node.closest('#today,#planbox'))return null;
+ if((node?.tagName==='IMG'&&node.closest('.route-cover73'))||reduced.matches||!node?.isConnected||!node.getClientRects().length||node.closest('#today,#planbox'))return null;
  const animation=node.animate(frames,{duration:300,easing:ease,...options});active.add(animation);
  const cleanup=()=>active.delete(animation);animation.addEventListener('finish',cleanup,{once:true});animation.addEventListener('cancel',cleanup,{once:true});return animation;
 }
