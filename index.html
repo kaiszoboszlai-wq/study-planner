@@ -690,7 +690,7 @@ body:has(#today:not([hidden])){background:color-mix(in srgb,var(--acc) 4%,var(--
 <link rel="stylesheet" href="assets/exam-calendar.css?v=stacked-20261105">
 <link rel="stylesheet" href="assets/timer-mini.css?v=rounder-20261102">
 <link rel="stylesheet" href="assets/profile-video.css?v=black-plan-headers-20261105">
-<script src="assets/weekly-allocation.js?v=weekly-refinements-20261102"></script>
+<script src="assets/weekly-allocation.js?v=daily-five-min-20261106"></script>
 <link rel="stylesheet" href="assets/timer-cover.css?v=time-above-cover-20261102">
 <link rel="stylesheet" href="assets/onboarding.css?v=visible-help-20261103">
 <link rel="stylesheet" href="assets/tablet-landscape.css?v=20261103">
@@ -3601,7 +3601,7 @@ function validateFlow40(key){
   if(key==='subjects'&&(!w.entries.length||w.entries.some(function(e){return !cleanSubject(e.name)})))error='科目名を1つ以上入力してください。空欄の行は入力するか削除してください。';
   if(key==='subjects'&&duplicateSubject(w.entries.map(function(e){return [e.name,e.weight]})))error='同じ名前の科目があります。名前を変更するか、重複した行を削除してください。';
   if(key==='allocation'&&(!w.entries.length||w.entries.some(function(e){return !Number.isFinite(Number(e.weight))||Number(e.weight)<.5||Number(e.weight)>10})))error='科目の配分を確認してください。';
-  if(key==='allocation'){var daily=w.entries.filter(function(e){return e.daily}).length;if(daily&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<daily*.25-.00001}))error='毎日の教材には1冊あたり15分以上が必要です。各曜日を'+hm(daily*.25)+'以上に設定するか、毎日の教材を減らしてください。';}
+  if(key==='allocation'){var daily=w.entries.filter(function(e){return e.daily}).length;if(daily&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<daily/12-.00001}))error='毎日の教材には1冊あたり5分以上が必要です。各曜日を'+hm(daily/12)+'以上に設定するか、毎日の教材を減らしてください。';}
   if(key==='subjects'&&w.entries.length>100)error='科目・教材は100個以内にしてください。';
   flowError40(error);return !error;
 }
@@ -3616,7 +3616,7 @@ function prepareFlowCandidate40(message){
   var c=flowConfig40();if(!c.goal||!validDate38(c.exam)||c.exam<=fmtDate(new Date())){if(w.mode==='rebuild'){flowError40('設定済みの目標・試験日を確認してください。変更はマイページから行えます。');return false}w.key=!c.goal?'goal':'exam';w.preview=false;renderFlow40(true);flowError40('目標と試験日を確認してください。');return}
   if(c.dayHours!=null&&!WeeklyAllocation110.validDays(c.dayHours)){w.key='dayhours';renderFlow40(true);flowError40('各曜日の時間を0〜16時間、15分単位で設定してください。');return false;}
   if(!c.subjects.length||duplicateSubject(c.subjects)){w.key='subjects';w.preview=false;renderFlow40(true);flowError40('科目名を確認してください。');return}
-  if(c.dailySubjects.length&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<c.dailySubjects.length*.25-.00001})){w.key='allocation';renderFlow40(true);flowError40('毎日の教材を入れるための学習時間が足りません。各曜日の時間か、毎日均等にする教材の数を見直してください。');return false;}
+  if(c.dailySubjects.length&&Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);return WeeklyAllocation110.hours(c,fmtDate(d))}).some(function(h){return h<c.dailySubjects.length/12-.00001})){w.key='allocation';renderFlow40(true);flowError40('毎日の教材を入れるための学習時間が足りません。各曜日の時間か、毎日均等にする教材の数を見直してください。');return false;}
   var carry=state.weekSetupPending&&c.carry?(state.weekCarry||[]):[];
   planCandidateConfig=c;planCandidateStyle=w.style||0;planCandidateResetWeek=true;planCandidateBase=planBaseSignature();try{planCandidate=buildPlanCandidate(c,planCandidateStyle,carry);}catch(error){flowError40(error.message);return false;}
   if(planCandidate.some(function(d){return d.date>=fmtDate(new Date())&&c.dailySubjects.some(function(name){return !d.blocks.some(function(b){return b.name===name&&b.h>0})})})){flowError40('毎日の教材を入れる時間が不足しています。既存の予定か学習時間を見直してください。');return false;}
