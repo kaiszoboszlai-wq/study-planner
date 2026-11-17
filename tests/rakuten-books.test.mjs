@@ -40,7 +40,7 @@ test('duplicates coalesce; other books are throttled; upstream 429 creates coold
  time=121000;await limited(request(),env);assert.equal(limitedCalls,2);
 });
 test('upstream exceptions are contained and do not leak credentials',async()=>{
- const handle=make(async()=>{throw Error('test-secret');});const response=await handle(request(),env);assert.deepEqual(await response.json(),{book:null});
+ const handle=make(async()=>{throw Error('test-secret');});const response=await handle(request(),env);assert.equal(response.status,503);assert.equal(response.headers.get('Retry-After'),'10');assert.deepEqual(await response.json(),{book:null,reason:'temporary_unavailable'});
 });
 
 test('valid ISBN outside the catalog is available, without a fuzzy title match',async()=>{
@@ -56,4 +56,17 @@ test('medium and small API covers fill gaps in large images; arbitrary hosts nev
   const handle=make(async()=>Response.json({Items:[{...item,largeImageUrl:'', [key]:item.largeImageUrl}]}));
   assert.equal((await (await handle(request(),env)).json()).book.cover,item.largeImageUrl);
  }
+});
+
+test('temporary upstream failures are retryable rather than a missing cover',async()=>{
+ for(const status of [401,403,429,500,503]) {
+  const handle=make(async()=>new Response('',{status}));
+  const response=await handle(request(),env);
+  assert.equal(response.status,503);assert.ok(Number(response.headers.get('Retry-After'))>=10);
+  assert.deepEqual(await response.json(),{book:null,reason:'temporary_unavailable'});
+ }
+});
+test('missing editions are distinguishable from transport failures',async()=>{
+ const handle=make(async()=>Response.json({Items:[]}));const response=await handle(request(),env);
+ assert.equal(response.status,200);assert.deepEqual(await response.json(),{book:null,reason:'not_found'});
 });

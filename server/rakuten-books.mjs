@@ -1,11 +1,14 @@
 // Request-time lookup only. Never save Rakuten responses or images in the catalog.
 const endpoint = 'https://openapi.rakuten.co.jp/services/api/BooksBook/Search/20170404';
-const normalize = value => String(value || '').replace(/\([Rr]\)|®/g, '').normalize('NFKC').replace(/[\s・:：+＋,，.．「」『』〈〉<>\[\]［］【】()（）!！?？\-—‐]/g, '').toLowerCase();
 const isbnValid = value => /^97[89]\d{10}$/.test(value) && [...value].reduce((n,c,i) => n + Number(c)*(i%2?3:1), 0)%10 === 0;
 function safeUrl(value, hosts) {
   try { const u = new URL(value); return u.protocol === 'https:' && !u.username && !u.password && !u.port && hosts.includes(u.hostname) ? u : null; } catch { return null; }
 }
 const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(body), {status, headers: {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff', ...extra}});
+
+const resultResponse = payload => payload.reason === 'temporary_unavailable'
+  ? json({book:null,reason:payload.reason},503,{'Retry-After':String(payload.retryAfter || 10)})
+  : json(payload);
 
 export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, interval = 1100} = {}) {
   const inflight = new Map(); let busy = false, nextAt = 0;
@@ -20,7 +23,7 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
     if (url.origin !== env.RAKUTEN_APP_ORIGIN || (request.headers.get('Origin') && request.headers.get('Origin') !== env.RAKUTEN_APP_ORIGIN) || request.headers.get('Sec-Fetch-Site') === 'cross-site') return json({book:null},403);
     const isbn = url.searchParams.get('isbn') || '';
     if (!isbnValid(isbn)) return json({book:null});
-    if (inflight.has(isbn)) return json(await inflight.get(isbn));
+    if (inflight.has(isbn)) return resultResponse(await inflight.get(isbn));
     if (busy || now() < nextAt) return json({book:null,reason:'rate_limited'},429,{'Retry-After':String(Math.max(2,Math.ceil((nextAt-now())/1000)))});
     busy = true; nextAt = now() + interval;
     const lookup = (async () => {
@@ -35,23 +38,24 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
             const seconds = /^\d+$/.test(retry || '') ? Number(retry) : (Date.parse(retry)-now())/1000;
             nextAt = now() + Math.min(3600000,Math.max(60000,(seconds || 0)*1000));
           }
-          return {book:null};
+          return {book:null,reason:'temporary_unavailable',retryAfter:Math.max(10,Math.ceil((nextAt-now())/1000))};
         }
         const payload = await response.json(), items = payload.Items || payload.items;
         const first = items?.[0], item = first?.Item || first?.item || first;
+        if (!item) return {book:null,reason:'not_found'};
         // The complete, checksum-validated ISBN identifies the edition. Catalog title
         // punctuation and missing catalog entries must not hide a verified API cover.
-        if (String(item?.isbn) !== isbn || typeof item?.title !== 'string' || !item.title.trim() || item.title.length > 1000) return {book:null};
+        if (String(item?.isbn) !== isbn || typeof item?.title !== 'string' || !item.title.trim() || item.title.length > 1000) return {book:null,reason:'edition_mismatch'};
         const cover = [item.largeImageUrl, item.mediumImageUrl, item.smallImageUrl]
           .map(value => safeUrl(value,['thumbnail.image.rakuten.co.jp','image.books.rakuten.co.jp'])).find(Boolean);
         const product = safeUrl(item.itemUrl,['books.rakuten.co.jp']);
         const affiliate = safeUrl(item.affiliateUrl,['hb.afl.rakuten.co.jp']);
-        if (!cover || !product || !/^\/rb\/\d+\/?$/.test(product.pathname) || !affiliate || !/^\/hgc\//.test(affiliate.pathname)) return {book:null};
+        if (!cover || !product || !/^\/rb\/\d+\/?$/.test(product.pathname) || !affiliate || !/^\/hgc\//.test(affiliate.pathname)) return {book:null,reason:'no_verified_cover'};
         return {book:{isbn,title:item.title,cover:cover.href,url:affiliate.href,provider:'rakuten'}};
-      } catch { return {book:null}; } finally {clearTimeout(timeout);}
+      } catch { return {book:null,reason:'temporary_unavailable',retryAfter:10}; } finally {clearTimeout(timeout);}
     })();
     inflight.set(isbn,lookup);
-    try {return json(await lookup);} finally {busy=false;inflight.delete(isbn);}
+    try {return resultResponse(await lookup);} finally {busy=false;inflight.delete(isbn);}
   };
 }
 
