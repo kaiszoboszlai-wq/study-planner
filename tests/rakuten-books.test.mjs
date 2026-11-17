@@ -22,13 +22,13 @@ test('exact registered ISBN uses current endpoint and accessKey header; response
  const response=await handle(request(),env),body=await response.text();
  assert.equal(response.headers.get('Cache-Control'),'no-store');assert.equal(JSON.parse(body).book.isbn,isbn);assert.ok(!body.includes('test-secret'));assert.ok(!body.includes('test-app-id'));
 });
-test('invalid/unknown ISBN, cross-site calls and wrong methods never reach upstream',async()=>{
+test('invalid ISBN, cross-site calls and wrong methods never reach upstream',async()=>{
  let calls=0;const handle=make(async()=>{calls++;return Response.json({Items:[item]});});
- for(const r of [request('isbn=9784010347479'),request('isbn=9784010347478',{headers:{Origin:'https://evil.example'}}),request('isbn=9784010347478',{headers:{'Sec-Fetch-Site':'cross-site'}}),request('isbn='+isbn,{method:'POST'}),request('isbn=9784000000000')]) await handle(r,env);
+ for(const r of [request('isbn=9784010347479'),request('isbn=9784010347478',{headers:{Origin:'https://evil.example'}}),request('isbn=9784010347478',{headers:{'Sec-Fetch-Site':'cross-site'}}),request('isbn='+isbn,{method:'POST'}),request('isbn=9784000000001')]) await handle(r,env);
  assert.equal(calls,0);
 });
 test('mismatched edition/title, unsafe image and product URLs fail closed',async()=>{
- for(const change of [{isbn:'9784010347479'},{title:'別の版'},{largeImageUrl:'https://evil.example/x.jpg'},{largeImageUrl:'https://u:p@thumbnail.image.rakuten.co.jp/x.jpg'},{itemUrl:'https://books.rakuten.co.jp/redirect?url=evil'},{itemUrl:'https://books.rakuten.co.jp.evil.example/rb/1/'},{affiliateUrl:''},{affiliateUrl:'https://evil.example/hgc/test'}]) {
+ for(const change of [{isbn:'9784010347479'},{title:''},{largeImageUrl:'https://evil.example/x.jpg'},{largeImageUrl:'https://u:p@thumbnail.image.rakuten.co.jp/x.jpg'},{itemUrl:'https://books.rakuten.co.jp/redirect?url=evil'},{itemUrl:'https://books.rakuten.co.jp.evil.example/rb/1/'},{affiliateUrl:''},{affiliateUrl:'https://evil.example/hgc/test'}]) {
   const handle=make(async()=>Response.json({items:[{...item,...change}]}));assert.equal((await (await handle(request(),env)).json()).book,null);
  }
 });
@@ -41,4 +41,19 @@ test('duplicates coalesce; other books are throttled; upstream 429 creates coold
 });
 test('upstream exceptions are contained and do not leak credentials',async()=>{
  const handle=make(async()=>{throw Error('test-secret');});const response=await handle(request(),env);assert.deepEqual(await response.json(),{book:null});
+});
+
+test('valid ISBN outside the catalog is available, without a fuzzy title match',async()=>{
+ const handle=createRakutenBooks({catalog:{}, interval:0,fetcher:async()=>Response.json({Items:[item]})});
+ assert.equal((await (await handle(request(),env)).json()).book.isbn,isbn);
+});
+test('verified ISBN tolerates catalog title punctuation but rejects another ISBN',async()=>{
+ const handle=make(async()=>Response.json({Items:[{...item,title:'英単語 ターゲット 1200 新版'}]}));
+ assert.equal((await (await handle(request(),env)).json()).book.isbn,isbn);
+});
+test('medium and small API covers fill gaps in large images; arbitrary hosts never do',async()=>{
+ for(const key of ['mediumImageUrl','smallImageUrl']) {
+  const handle=make(async()=>Response.json({Items:[{...item,largeImageUrl:'', [key]:item.largeImageUrl}]}));
+  assert.equal((await (await handle(request(),env)).json()).book.cover,item.largeImageUrl);
+ }
 });

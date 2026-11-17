@@ -18,14 +18,14 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
     if (url.searchParams.get('capabilities') === '1') return json({enabled});
     if (!enabled) return json({book:null,reason:'not_configured'});
     if (url.origin !== env.RAKUTEN_APP_ORIGIN || (request.headers.get('Origin') && request.headers.get('Origin') !== env.RAKUTEN_APP_ORIGIN) || request.headers.get('Sec-Fetch-Site') === 'cross-site') return json({book:null},403);
-    const isbn = url.searchParams.get('isbn') || '', titles = catalog?.[isbn];
-    if (!isbnValid(isbn) || !Array.isArray(titles)) return json({book:null});
+    const isbn = url.searchParams.get('isbn') || '';
+    if (!isbnValid(isbn)) return json({book:null});
     if (inflight.has(isbn)) return json(await inflight.get(isbn));
     if (busy || now() < nextAt) return json({book:null,reason:'rate_limited'},429,{'Retry-After':String(Math.max(2,Math.ceil((nextAt-now())/1000)))});
     busy = true; nextAt = now() + interval;
     const lookup = (async () => {
       const upstream = new URL(endpoint);
-      upstream.search = new URLSearchParams({applicationId:env.RAKUTEN_APPLICATION_ID,affiliateId:env.RAKUTEN_AFFILIATE_ID,isbn,format:'json',formatVersion:'2',hits:'1',elements:'title,subTitle,isbn,publisherName,largeImageUrl,itemUrl,affiliateUrl',outOfStockFlag:'1'}).toString();
+      upstream.search = new URLSearchParams({applicationId:env.RAKUTEN_APPLICATION_ID,affiliateId:env.RAKUTEN_AFFILIATE_ID,isbn,format:'json',formatVersion:'2',hits:'1',elements:'title,subTitle,isbn,publisherName,largeImageUrl,mediumImageUrl,smallImageUrl,itemUrl,affiliateUrl',outOfStockFlag:'1'}).toString();
       const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 5000);
       try {
         const response = await fetcher(upstream.href, {headers:{accessKey:env.RAKUTEN_ACCESS_KEY,Origin:env.RAKUTEN_APP_ORIGIN,Referer:env.RAKUTEN_APP_ORIGIN+'/'},signal:controller.signal,redirect:'error'});
@@ -39,9 +39,11 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
         }
         const payload = await response.json(), items = payload.Items || payload.items;
         const first = items?.[0], item = first?.Item || first?.item || first;
-        const expected = titles.flatMap(t => [normalize(t),normalize(t.split(/[:：]/)[0])]);
-        if (String(item?.isbn) !== isbn || ![item?.title,[item?.title,item?.subTitle].filter(Boolean).join(' ')].some(t => t && expected.includes(normalize(t)))) return {book:null};
-        const cover = safeUrl(item.largeImageUrl,['thumbnail.image.rakuten.co.jp','image.books.rakuten.co.jp']);
+        // The complete, checksum-validated ISBN identifies the edition. Catalog title
+        // punctuation and missing catalog entries must not hide a verified API cover.
+        if (String(item?.isbn) !== isbn || typeof item?.title !== 'string' || !item.title.trim() || item.title.length > 1000) return {book:null};
+        const cover = [item.largeImageUrl, item.mediumImageUrl, item.smallImageUrl]
+          .map(value => safeUrl(value,['thumbnail.image.rakuten.co.jp','image.books.rakuten.co.jp'])).find(Boolean);
         const product = safeUrl(item.itemUrl,['books.rakuten.co.jp']);
         const affiliate = safeUrl(item.affiliateUrl,['hb.afl.rakuten.co.jp']);
         if (!cover || !product || !/^\/rb\/\d+\/?$/.test(product.pathname) || !affiliate || !/^\/hgc\//.test(affiliate.pathname)) return {book:null};
@@ -52,3 +54,4 @@ export function createRakutenBooks({catalog, fetcher = fetch, now = Date.now, in
     try {return json(await lookup);} finally {busy=false;inflight.delete(isbn);}
   };
 }
+
